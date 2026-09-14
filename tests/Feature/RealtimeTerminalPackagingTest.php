@@ -143,7 +143,7 @@ it('shows connection progress in the terminal body instead of the header', funct
         ->not->toContain('wire:loading.flex wire:target="selected_container,connectToContainer"')
         ->not->toContain('wire:loading.flex wire:target="selected_uuid,connectToContainer"')
         ->and($terminalView)
-        ->toContain("x-on:terminal-starting.window=\"starting = true; setTerminalTheme(localStorage.getItem('coolify-console-theme') ?? 'system')\"")
+        ->toContain("x-on:terminal-starting.window=\"starting = true; setTerminalTheme(localStorage.getItem('xlaunch-console-theme') ?? 'system')\"")
         ->toContain('data-auto-start="{{ $autoStart ? \'true\' : \'false\' }}"')
         ->toContain("starting ? 'connecting…'")
         ->and($terminalClient)
@@ -194,15 +194,15 @@ it('does not overlay the session expiry label on the application terminal', func
 });
 
 it('copies the realtime terminal utilities into the container image', function () {
-    $dockerfile = file_get_contents(base_path('docker/coolify-realtime/Dockerfile'));
+    $dockerfile = file_get_contents(base_path('docker/xlaunch-realtime/Dockerfile'));
 
-    expect($dockerfile)->toContain('COPY docker/coolify-realtime/terminal-utils.js /terminal/terminal-utils.js');
+    expect($dockerfile)->toContain('COPY docker/xlaunch-realtime/terminal-utils.js /terminal/terminal-utils.js');
 });
 
 it('mounts the realtime terminal utilities in local development compose files', function (string $composeFile) {
     $composeContents = file_get_contents(base_path($composeFile));
 
-    expect($composeContents)->toContain('./docker/coolify-realtime/terminal-utils.js:/terminal/terminal-utils.js');
+    expect($composeContents)->toContain('./docker/xlaunch-realtime/terminal-utils.js:/terminal/terminal-utils.js');
 })->with([
     'default dev compose' => 'docker-compose.dev.yml',
     'maxio dev compose' => 'docker-compose-maxio.dev.yml',
@@ -213,23 +213,23 @@ it('keeps terminal browser logging restricted to development or explicit diagnos
 
     expect($terminalClient)
         ->toContain('const terminalDebugEnabled = import.meta.env.DEV')
-        ->toContain("localStorage.getItem('coolify-terminal-debug') === '1'")
+        ->toContain("localStorage.getItem('xlaunch-terminal-debug') === '1'")
         ->toContain("logTerminal('log', '[Terminal] WebSocket connection established.');")
         ->not->toContain("console.log('[Terminal] WebSocket connection established. Cool cool cool cool cool cool.');");
 });
 
 it('keeps realtime terminal server logging behind the explicit debug flag', function () {
-    $terminalServer = file_get_contents(base_path('docker/coolify-realtime/terminal-server.js'));
+    $terminalServer = file_get_contents(base_path('docker/xlaunch-realtime/terminal-server.js'));
 
     expect($terminalServer)
         ->toContain('const debugOverride = String(process.env.TERMINAL_DEBUG')
         ->toContain("['1', 'true', 'yes', 'on'].includes(debugOverride)")
         ->toContain('if (!terminalDebugEnabled) {')
-        ->not->toContain("console.log('Coolify realtime terminal server listening on port 6002. Let the hacking begin!');");
+        ->not->toContain("console.log('Xlaunch realtime terminal server listening on port 6002. Let the hacking begin!');");
 });
 
 it('configures a server-initiated WebSocket heartbeat to survive proxy idle timeouts', function () {
-    $terminalServer = file_get_contents(base_path('docker/coolify-realtime/terminal-server.js'));
+    $terminalServer = file_get_contents(base_path('docker/xlaunch-realtime/terminal-server.js'));
 
     expect($terminalServer)
         ->toContain('ws.isAlive = true;')
@@ -254,7 +254,7 @@ it('uses a fast probe timeout when the tab regains visibility', function () {
 });
 
 it('does not hard close terminal sessions after 30 minutes on the server', function () {
-    $terminalServer = file_get_contents(base_path('docker/coolify-realtime/terminal-server.js'));
+    $terminalServer = file_get_contents(base_path('docker/xlaunch-realtime/terminal-server.js'));
 
     expect($terminalServer)
         ->not->toContain('IDLE_TIMEOUT_MS = 30 * 60 * 1000')
@@ -304,7 +304,7 @@ it('replays the last command on reconnect so the PTY respawns automatically', fu
 });
 
 it('buffers messages received before the realtime server finishes auth so the replay is not lost', function () {
-    $terminalServer = file_get_contents(base_path('docker/coolify-realtime/terminal-server.js'));
+    $terminalServer = file_get_contents(base_path('docker/xlaunch-realtime/terminal-server.js'));
 
     expect($terminalServer)
         ->toContain('authReady: false')

@@ -21,10 +21,10 @@ it('uses the redesigned elevated surface and status badge patterns', function ()
     $indicatorView = file_get_contents(resource_path('views/livewire/deployments-indicator.blade.php'));
 
     expect($indicatorView)
-        ->toContain('var(--coollabs-elevated)')
-        ->toContain('var(--coollabs-line)')
+        ->toContain('var(--northlatch-elevated)')
+        ->toContain('var(--northlatch-line)')
         ->toContain('var(--shadow-modal)')
-        ->toContain('var(--coollabs-hairline)')
+        ->toContain('var(--northlatch-hairline)')
         ->toContain('<x-status-badge')
         ->toContain('name="chevron-down"')
         ->toContain("'In progress'")

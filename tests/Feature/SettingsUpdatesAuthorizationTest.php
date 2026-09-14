@@ -41,7 +41,7 @@ test('instance admin can access settings updates page', function () {
 });
 
 test('instance admin cannot save an invalid docker registry url', function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 
     $rootTeam = Team::find(0) ?? Team::factory()->create(['id' => 0]);
     $settings = InstanceSettings::forceCreate(['id' => 0]);

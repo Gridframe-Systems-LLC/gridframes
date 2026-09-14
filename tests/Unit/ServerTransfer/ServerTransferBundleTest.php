@@ -56,7 +56,7 @@ test('passphrase encrypt decrypt round trip', function () {
             'port' => 22,
             'user' => 'root',
         ],
-        'destinations' => [['uuid' => 'd1', 'name' => 'coolify', 'network' => 'coolify', 'type' => 'standalone']],
+        'destinations' => [['uuid' => 'd1', 'name' => 'xlaunch', 'network' => 'xlaunch', 'type' => 'standalone']],
         'projects' => [],
     ]);
 

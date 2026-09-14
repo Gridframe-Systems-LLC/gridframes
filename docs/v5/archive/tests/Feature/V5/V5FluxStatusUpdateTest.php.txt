@@ -39,7 +39,7 @@ it('applies flux application status updates to the database and broadcasts to th
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'nginx-container-id',
@@ -52,7 +52,7 @@ it('applies flux application status updates to the database and broadcasts to th
     $resource = ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'exited',
         'status_message' => 'Status received from coold through flux.',
@@ -91,7 +91,7 @@ it('ignores stale flux status updates for a superseded container', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'new-container-id',
@@ -102,7 +102,7 @@ it('ignores stale flux status updates for a superseded container', function () {
     ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'old-container-id',
         'status' => 'exited',
         'status_message' => 'Stale event for the old container.',
@@ -151,7 +151,7 @@ it('scopes flux application status updates to the reporting server', function ()
         'created_by_user_id' => $userA->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api-a',
+        'container_name' => 'xlaunch-v5-api-a',
         'status' => 'running',
     ]);
     $applicationB = V5Application::query()->create([
@@ -163,7 +163,7 @@ it('scopes flux application status updates to the reporting server', function ()
         'created_by_user_id' => $userB->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api-b',
+        'container_name' => 'xlaunch-v5-api-b',
         'status' => 'running',
     ]);
 
@@ -205,7 +205,7 @@ it('ignores flux application status updates whose host does not resolve to a ser
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
     ]);
 
@@ -244,7 +244,7 @@ it('maps generic flux container status updates to v5 applications', function () 
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'nginx-container-id',
@@ -255,7 +255,7 @@ it('maps generic flux container status updates to v5 applications', function () 
     $resource = ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'container',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'exited',
         'status_message' => 'Container state received from coold.',
@@ -391,7 +391,7 @@ it('broadcasts v5 canvas application updates when a non-ingress server goes unre
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
     ]);
@@ -447,7 +447,7 @@ it('applies flux caddy ingress container status updates without changing server 
     $resource = ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'caddy_ingress',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-caddy',
+        'container_name' => 'xlaunch-v5-caddy',
         'status' => 'exited',
         'message' => 'Caddy container exited.',
     ]);
@@ -464,7 +464,7 @@ it('applies flux caddy ingress container status updates without changing server 
         && $event->caddyIngressServerId === $server->id);
 });
 
-it('accepts flux status updates for non coolify managed containers', function () {
+it('accepts flux status updates for non xlaunch managed containers', function () {
     Config::set('flux.laravel_api_token', 'test-flux-token');
     createSharedUserAndTeamTables();
 
@@ -538,7 +538,7 @@ it('accepts flux resource status http updates identified by resource uuids', fun
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'starting',
         'status_message' => 'Container starting.',
     ]);
@@ -599,7 +599,7 @@ it('accepts flux resource status http updates and stores them in the database', 
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'starting',
         'status_message' => 'Container starting.',
         'runtime_container_id' => 'old-container-id',
@@ -612,7 +612,7 @@ it('accepts flux resource status http updates and stores them in the database', 
         ->postJson('/api/v1/internal/flux/resource-status', [
             'resource_type' => 'application',
             'host_id' => '100.64.0.5',
-            'container_name' => 'coolify-v5-nginx-1',
+            'container_name' => 'xlaunch-v5-nginx-1',
             'container_id' => 'old-container-id',
             'status' => 'running',
             'status_message' => 'Status received from coold through flux.',
@@ -632,8 +632,8 @@ it('configures flux resource status updates for local http instead of redis', fu
     $configSource = file_get_contents(config_path('flux.php'));
 
     expect($configSource)
-        ->toContain('COOLIFY_FLUX_LARAVEL_API_TOKEN')
+        ->toContain('XLAUNCH_FLUX_LARAVEL_API_TOKEN')
         ->not->toContain('APP_KEY')
-        ->not->toContain('COOLIFY_FLUX_RESOURCE_STATUS_CHANNEL')
+        ->not->toContain('XLAUNCH_FLUX_RESOURCE_STATUS_CHANNEL')
         ->not->toContain('resource_status_channel');
 });

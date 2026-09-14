@@ -283,7 +283,7 @@ test('service backup executions combine database execution history', function ()
     $execution = ScheduledDatabaseBackupExecution::create([
         'scheduled_database_backup_id' => $backup->id,
         'status' => 'success',
-        'database_name' => 'coolify',
+        'database_name' => 'xlaunch',
         'size' => 2048,
         'finished_at' => now(),
     ]);

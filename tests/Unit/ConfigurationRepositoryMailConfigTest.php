@@ -17,7 +17,7 @@ it('configures the laravel smtp scheme from encryption', function (string $mode,
         'smtp_password' => 'secret',
         'smtp_timeout' => null,
         'smtp_from_address' => 'from@example.com',
-        'smtp_from_name' => 'Coolify',
+        'smtp_from_name' => 'Xlaunch',
     ]);
 
     expect($config->get('mail.mailers.smtp.scheme'))->toBe($scheme)
@@ -32,7 +32,7 @@ it('preserves the configured smtp ehlo domain', function () {
     $config = new Repository([
         'mail' => [
             'mailers' => [
-                'smtp' => ['local_domain' => 'coolify.example.com'],
+                'smtp' => ['local_domain' => 'xlaunch.example.com'],
             ],
         ],
     ]);
@@ -48,8 +48,8 @@ it('preserves the configured smtp ehlo domain', function () {
         'smtp_password' => null,
         'smtp_timeout' => null,
         'smtp_from_address' => 'from@example.com',
-        'smtp_from_name' => 'Coolify',
+        'smtp_from_name' => 'Xlaunch',
     ]);
 
-    expect($config->get('mail.mailers.smtp.local_domain'))->toBe('coolify.example.com');
+    expect($config->get('mail.mailers.smtp.local_domain'))->toBe('xlaunch.example.com');
 });

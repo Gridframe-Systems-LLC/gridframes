@@ -149,7 +149,7 @@
                                 class="peer absolute inset-0 m-0 h-full w-full appearance-none opacity-0"
                                 tabindex="-1">
                             <span
-                                class="pointer-events-none absolute inset-0 rounded-[5px] border border-neutral-300 bg-white transition-colors peer-checked:border-coollabs peer-checked:bg-coollabs dark:border-white/[0.14] dark:bg-white/[0.045] dark:peer-checked:border-warning dark:peer-checked:bg-warning"></span>
+                                class="pointer-events-none absolute inset-0 rounded-[5px] border border-neutral-300 bg-white transition-colors peer-checked:border-northlatch peer-checked:bg-northlatch dark:border-white/[0.14] dark:bg-white/[0.045] dark:peer-checked:border-warning dark:peer-checked:bg-warning"></span>
                             <svg class="pointer-events-none absolute inset-0 m-auto size-3 scale-75 text-white opacity-0 transition-[opacity,transform] peer-checked:scale-100 peer-checked:opacity-100 dark:text-black"
                                 viewBox="0 0 12 12" fill="none" aria-hidden="true">
                                 <path d="m2.25 6.15 2.35 2.3 5.15-5" stroke="currentColor"

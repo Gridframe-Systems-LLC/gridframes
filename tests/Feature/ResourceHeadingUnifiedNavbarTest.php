@@ -306,7 +306,7 @@ it('places the state-aware no-cache action immediately after deploy or redeploy'
         ->toBeLessThan(strpos($actions, 'Restart'));
 });
 
-it('uses the shared Coollabs gradient for primary resource actions in the desktop header', function () {
+it('uses the shared Northlatch gradient for primary resource actions in the desktop header', function () {
     $css = file_get_contents(resource_path('css/app.css'));
 
     expect($css)

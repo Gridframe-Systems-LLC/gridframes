@@ -20,7 +20,7 @@
                                     {{ data_get($resource, 'destination.server.name') }}
                                 </h4>
                                 <span
-                                    class="rounded-sm bg-coollabs/10 px-1.5 py-0.5 text-[11px] font-medium text-coollabs dark:bg-warning/10 dark:text-warning">
+                                    class="rounded-sm bg-northlatch/10 px-1.5 py-0.5 text-[11px] font-medium text-northlatch dark:bg-warning/10 dark:text-warning">
                                     Primary
                                 </span>
                             </div>
@@ -203,7 +203,7 @@
                                     {{ data_get($resource, 'destination.server.name') }}
                                 </h4>
                                 <span
-                                    class="rounded-sm bg-coollabs/10 px-1.5 py-0.5 text-[11px] font-medium text-coollabs dark:bg-warning/10 dark:text-warning">
+                                    class="rounded-sm bg-northlatch/10 px-1.5 py-0.5 text-[11px] font-medium text-northlatch dark:bg-warning/10 dark:text-warning">
                                     Primary
                                 </span>
                             </div>

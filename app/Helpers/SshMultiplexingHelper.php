@@ -169,7 +169,7 @@ class SshMultiplexingHelper
     }
 
     /**
-     * Build an SCP command that downloads a remote file onto the Coolify host.
+     * Build an SCP command that downloads a remote file onto the Xlaunch host.
      */
     public static function generateScpDownloadCommand(Server $server, string $remoteSource, string $localDest): string
     {
@@ -356,7 +356,7 @@ class SshMultiplexingHelper
 
     private static function isMultiplexingEnabled(): bool
     {
-        return config('constants.ssh.mux_enabled') && ! config('constants.coolify.is_windows_docker_desktop');
+        return config('constants.ssh.mux_enabled') && ! config('constants.xlaunch.is_windows_docker_desktop');
     }
 
     private static function validateSshKey(PrivateKey $privateKey): void

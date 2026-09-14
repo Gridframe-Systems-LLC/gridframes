@@ -11,7 +11,7 @@
 use App\Models\Application;
 
 it('detects when HEALTHCHECK is removed from dockerfile', function () {
-    // This test verifies the fix for the bug where Coolify doesn't detect
+    // This test verifies the fix for the bug where Xlaunch doesn't detect
     // when a HEALTHCHECK is removed from a Dockerfile, causing deployments to fail.
 
     $dockerfile = str("FROM nginx:latest\nCOPY . /app\nEXPOSE 80")->trim()->explode("\n");

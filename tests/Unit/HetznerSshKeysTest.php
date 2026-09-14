@@ -1,12 +1,12 @@
 <?php
 
-it('merges Coolify key with selected Hetzner keys', function () {
-    $coolifyKeyId = 123;
+it('merges Xlaunch key with selected Hetzner keys', function () {
+    $xlaunchKeyId = 123;
     $selectedHetznerKeys = [456, 789];
 
     // Simulate the merge logic from createHetznerServer
     $sshKeys = array_merge(
-        [$coolifyKeyId],
+        [$xlaunchKeyId],
         $selectedHetznerKeys
     );
 
@@ -15,12 +15,12 @@ it('merges Coolify key with selected Hetzner keys', function () {
 });
 
 it('removes duplicate SSH key IDs', function () {
-    $coolifyKeyId = 123;
-    $selectedHetznerKeys = [123, 456, 789]; // User also selected Coolify key
+    $xlaunchKeyId = 123;
+    $selectedHetznerKeys = [123, 456, 789]; // User also selected Xlaunch key
 
     // Simulate the merge and deduplication logic
     $sshKeys = array_merge(
-        [$coolifyKeyId],
+        [$xlaunchKeyId],
         $selectedHetznerKeys
     );
     $sshKeys = array_unique($sshKeys);
@@ -31,12 +31,12 @@ it('removes duplicate SSH key IDs', function () {
 });
 
 it('works with no selected Hetzner keys', function () {
-    $coolifyKeyId = 123;
+    $xlaunchKeyId = 123;
     $selectedHetznerKeys = [];
 
     // Simulate the merge logic
     $sshKeys = array_merge(
-        [$coolifyKeyId],
+        [$xlaunchKeyId],
         $selectedHetznerKeys
     );
 

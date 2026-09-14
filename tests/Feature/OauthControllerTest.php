@@ -18,7 +18,7 @@ beforeEach(function () {
         'provider' => 'google',
         'client_id' => 'client-id',
         'client_secret' => 'client-secret',
-        'redirect_uri' => 'https://coolify.example.com/auth/google/callback',
+        'redirect_uri' => 'https://xlaunch.example.com/auth/google/callback',
         'tenant' => 'example.com',
     ]);
 });

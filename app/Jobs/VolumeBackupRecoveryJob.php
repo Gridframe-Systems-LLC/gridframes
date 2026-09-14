@@ -112,6 +112,6 @@ class VolumeBackupRecoveryJob implements ShouldBeEncrypted, ShouldQueue
 
     public static function stateFile(ScheduledVolumeBackupExecution $execution): string
     {
-        return '/tmp/coolify-volume-backup-'.$execution->uuid.'.stopped';
+        return '/tmp/xlaunch-volume-backup-'.$execution->uuid.'.stopped';
     }
 }

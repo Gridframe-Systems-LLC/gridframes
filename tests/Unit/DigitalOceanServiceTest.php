@@ -82,7 +82,7 @@ it('creates a droplet with the selected SSH keys and options', function () {
         'https://api.digitalocean.com/v2/droplets' => Http::response([
             'droplet' => [
                 'id' => 987,
-                'name' => 'coolify-test',
+                'name' => 'xlaunch-test',
                 'status' => 'new',
                 'networks' => [
                     'v4' => [
@@ -94,7 +94,7 @@ it('creates a droplet with the selected SSH keys and options', function () {
     ]);
 
     $droplet = (new DigitalOceanService('test-token'))->createDroplet([
-        'name' => 'coolify-test',
+        'name' => 'xlaunch-test',
         'region' => 'nyc1',
         'size' => 's-1vcpu-1gb',
         'image' => 'ubuntu-24-04-x64',

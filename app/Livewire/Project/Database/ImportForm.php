@@ -680,15 +680,15 @@ EOD;
             }
 
             // Get helper image
-            $helperImage = coolifyHelperImage();
+            $helperImage = xlaunchHelperImage();
             $latestVersion = getHelperVersion();
             $fullImageName = "{$helperImage}:{$latestVersion}";
 
             // Get the database destination network
             if ($this->resource->getMorphClass() === ServiceDatabase::class) {
-                $destinationNetwork = $this->resource->service->destination->network ?? 'coolify';
+                $destinationNetwork = $this->resource->service->destination->network ?? 'xlaunch';
             } else {
-                $destinationNetwork = $this->resource->destination->network ?? 'coolify';
+                $destinationNetwork = $this->resource->destination->network ?? 'xlaunch';
             }
 
             // Generate unique names for this operation

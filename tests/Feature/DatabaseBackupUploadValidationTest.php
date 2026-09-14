@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Process;
 
 function writeScanPayload(string $content, bool $gzip = false): string
 {
-    $path = tempnam(sys_get_temp_dir(), 'coolify-scan-payload-');
+    $path = tempnam(sys_get_temp_dir(), 'xlaunch-scan-payload-');
     file_put_contents($path, $gzip ? gzencode($content) : $content);
 
     return $path;
@@ -38,7 +38,7 @@ function scannerBlocks(string $script, array $env = []): bool
 
 function fakePgRestorePath(string $sql, int $listExitCode = 0): string
 {
-    $dir = sys_get_temp_dir().'/coolify-fake-pg-'.uniqid();
+    $dir = sys_get_temp_dir().'/xlaunch-fake-pg-'.uniqid();
     mkdir($dir);
 
     $sqlFile = $dir.'/archive.sql';
@@ -83,7 +83,7 @@ function backupValidationImportFormWithResource(string $modelClass): ImportForm
 
 function makeTemporaryUpload(string $name, string $content): UploadedFile
 {
-    $path = tempnam(sys_get_temp_dir(), 'coolify-upload-test-');
+    $path = tempnam(sys_get_temp_dir(), 'xlaunch-upload-test-');
     file_put_contents($path, $content);
 
     return new UploadedFile($path, $name, null, null, true);

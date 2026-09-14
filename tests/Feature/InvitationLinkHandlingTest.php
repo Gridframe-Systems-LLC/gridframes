@@ -180,7 +180,7 @@ it('rolls back invitation redemption when password rotation fails', function () 
 it('accepts a magic link when opened from a different public origin', function () {
     [$team, $user, $password, $token] = createInvitationLinkFixture();
 
-    $this->post('https://coolify.example.com/auth/link', ['token' => $token])
+    $this->post('https://xlaunch.example.com/auth/link', ['token' => $token])
         ->assertRedirect(route('dashboard'));
 
     $this->assertAuthenticatedAs($user);

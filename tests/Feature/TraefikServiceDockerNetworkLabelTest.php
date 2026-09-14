@@ -79,6 +79,6 @@ YAML,
 
     expect($serviceApplication->fresh()->image)->toBe('postgres:17')
         ->and($labels->values()->all())
-        ->toContain('coolify.service.subType=application')
-        ->not->toContain('coolify.service.subType=database');
+        ->toContain('xlaunch.service.subType=application')
+        ->not->toContain('xlaunch.service.subType=database');
 });

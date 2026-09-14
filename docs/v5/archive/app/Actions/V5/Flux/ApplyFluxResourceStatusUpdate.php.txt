@@ -263,8 +263,8 @@ class ApplyFluxResourceStatusUpdate
             return true;
         }
 
-        return $this->stringValue($payload, 'container_name') === 'coolify-v5-caddy'
-            || $this->stringValue($payload, 'name') === 'coolify-v5-caddy';
+        return $this->stringValue($payload, 'container_name') === 'xlaunch-v5-caddy'
+            || $this->stringValue($payload, 'name') === 'xlaunch-v5-caddy';
     }
 
     /**

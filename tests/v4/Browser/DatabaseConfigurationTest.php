@@ -52,7 +52,7 @@ it('saves postgres name description and credentials fields', function () {
     $page = visit($url);
     $page->fill('name', $updatedName)
         ->fill('description', 'Updated postgres description')
-        ->fill('postgresDb', 'coolify_browser')
+        ->fill('postgresDb', 'xlaunch_browser')
         ->screenshot(filename: 'database-postgres-before-save');
 
     submitLivewireForm($page);
@@ -60,11 +60,11 @@ it('saves postgres name description and credentials fields', function () {
     $this->postgres->refresh();
     expect($this->postgres->name)->toBe($updatedName)
         ->and($this->postgres->description)->toBe('Updated postgres description')
-        ->and($this->postgres->postgres_db)->toBe('coolify_browser');
+        ->and($this->postgres->postgres_db)->toBe('xlaunch_browser');
 
     visit($url)
         ->assertValue('name', $updatedName)
-        ->assertValue('postgresDb', 'coolify_browser')
+        ->assertValue('postgresDb', 'xlaunch_browser')
         ->screenshot(filename: 'database-postgres-after-reload');
 });
 

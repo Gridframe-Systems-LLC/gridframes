@@ -30,7 +30,7 @@
                 ['value' => false, 'label' => 'Do not drain logs'],
             ]" />
         <x-forms.input type="number" min="0" id="maxRestartCount" label="Max restart count"
-            helper="Maximum number of Docker restarts before Coolify stops this container. Set to 0 to disable the limit. Docker counts expected and unexpected restarts."
+            helper="Maximum number of Docker restarts before Xlaunch stops this container. Set to 0 to disable the limit. Docker counts expected and unexpected restarts."
             canGate="update" :canResource="$serviceApplication" />
     @else
         <x-forms.listbox id="excludeFromStatus" label="Service status"

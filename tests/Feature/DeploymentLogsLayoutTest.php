@@ -188,9 +188,9 @@ it('uses a mobile-friendly stacked logs toolbar markup', function () {
         ->and($runtimeLinesPos)->toBeLessThan($runtimeSearchPos)
         ->and($appCss)->toContain('.runtime-logs-viewer-end')
         ->toContain('.dark .runtime-log-icon-button-active')
-        ->toContain('background: var(--color-coollabs)')
+        ->toContain('background: var(--color-northlatch)')
         ->toContain(".dark .runtime-log-icon-button {\n    color: var(--color-fg-faint);")
-        ->toContain(".dark .runtime-log-icon-button-active {\n    background: var(--color-coollabs);\n    color: #fff;")
+        ->toContain(".dark .runtime-log-icon-button-active {\n    background: var(--color-northlatch);\n    color: #fff;")
         ->toContain(".runtime-log-toolbar {\n    position: relative;\n    z-index: 20;")
         ->and($sharedLogsView)
         ->toContain('runtime-log-icon-button order-1')
@@ -225,7 +225,7 @@ it('links deployment commit hashes to the source commit page', function () {
     $this->application->update([
         'source_id' => $githubApp->id,
         'source_type' => $githubApp->getMorphClass(),
-        'git_repository' => 'coollabsio/coolify',
+        'git_repository' => 'northlatch/xlaunch',
         'git_branch' => 'main',
     ]);
     ApplicationDeploymentQueue::query()->create([
@@ -244,7 +244,7 @@ it('links deployment commit hashes to the source commit page', function () {
 
     $response->assertSuccessful();
     $response->assertSee(
-        'href="https://github.com/coollabsio/coolify/commit/1234567890abcdef1234567890abcdef12345678" target="_blank" rel="noopener noreferrer"',
+        'href="https://github.com/northlatch/xlaunch/commit/1234567890abcdef1234567890abcdef12345678" target="_blank" rel="noopener noreferrer"',
         false,
     );
 });

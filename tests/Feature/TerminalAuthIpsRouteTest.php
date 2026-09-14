@@ -33,7 +33,7 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
 it('includes development terminal host aliases for authenticated users', function () {
     Server::factory()->create([
         'name' => 'Localhost',
-        'ip' => 'coolify-testing-host',
+        'ip' => 'xlaunch-testing-host',
         'team_id' => $this->team->id,
         'private_key_id' => $this->privateKey->id,
     ]);
@@ -41,10 +41,10 @@ it('includes development terminal host aliases for authenticated users', functio
     $response = $this->postJson('/terminal/auth/ips');
 
     $response->assertSuccessful();
-    $response->assertJsonPath('ipAddresses.0', 'coolify-testing-host');
+    $response->assertJsonPath('ipAddresses.0', 'xlaunch-testing-host');
 
     expect($response->json('ipAddresses'))
-        ->toContain('coolify-testing-host')
+        ->toContain('xlaunch-testing-host')
         ->toContain('localhost')
         ->toContain('127.0.0.1')
         ->toContain('host.docker.internal');

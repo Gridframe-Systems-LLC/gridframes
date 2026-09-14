@@ -21,6 +21,6 @@ it('seeds only the development testing host', function () {
 
     expect($testingHost)
         ->not->toBeNull()
-        ->and($testingHost->ip)->toBe('coolify-testing-host')
+        ->and($testingHost->ip)->toBe('xlaunch-testing-host')
         ->and(Server::query()->count())->toBe(1);
 });

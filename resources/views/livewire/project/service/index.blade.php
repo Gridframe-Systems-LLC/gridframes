@@ -29,7 +29,7 @@
                 @unless ($embedded)
                     <x-slot:title>
                         {{ data_get_str($service, 'name')->limit(10) }} >
-                        {{ data_get_str($serviceApplication, 'name')->limit(10) }} | Coolify
+                        {{ data_get_str($serviceApplication, 'name')->limit(10) }} | Xlaunch
                     </x-slot>
                 @endunless
                     <form wire:submit="submitApplication" class="space-y-6">
@@ -126,7 +126,7 @@
                                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                                         x-transition:leave-end="opacity-0 -translate-y-2 sm:scale-95"
                                         class="application-settings-form application-settings-section relative w-full lg:min-w-[36rem] lg:max-w-2xl"
-                                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                                         <header>
                                             <h3>Use a different port?</h3>
                                             <button @click="modalOpen = false; $wire.call('cancelRemovePort')"
@@ -169,7 +169,7 @@
                 @unless ($embedded)
                     <x-slot:title>
                         {{ data_get_str($service, 'name')->limit(10) }} >
-                        {{ data_get_str($serviceDatabase, 'name')->limit(10) }} | Coolify
+                        {{ data_get_str($serviceDatabase, 'name')->limit(10) }} | Xlaunch
                     </x-slot>
                 @endunless
                 @if ($currentRoute === 'project.service.database.import')

@@ -1,11 +1,11 @@
-name: Coolify Helper Image Development
+name: Xlaunch Helper Image Development
 
 on:
   push:
     branches: [ "next" ]
     paths:
-      - .github/workflows/coolify-helper-next.yml
-      - docker/coolify-helper/Dockerfile
+      - .github/workflows/xlaunch-helper-next.yml
+      - docker/xlaunch-helper/Dockerfile
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ permissions:
 env:
   GITHUB_REGISTRY: ghcr.io
   DOCKER_REGISTRY: docker.io
-  IMAGE_NAME: "coollabsio/coolify-helper"
+  IMAGE_NAME: "northlatch/xlaunch-helper"
 
 jobs:
   build-push:
@@ -56,14 +56,14 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/coolify-helper/Dockerfile
+          file: docker/xlaunch-helper/Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-next-${{ matrix.arch }}
             ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-next-${{ matrix.arch }}
           labels: |
-            coolify.managed=true
+            xlaunch.managed=true
 
   merge-manifest:
     runs-on: ubuntu-24.04

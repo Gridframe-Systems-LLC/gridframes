@@ -13,7 +13,7 @@
  * Fix: Changed to firstOrCreate() so magic references don't overwrite existing values.
  *
  * IMPORTANT: These tests require database access and must be run inside Docker:
- * docker exec coolify php artisan test --filter ServiceMagicVariableOverwriteTest
+ * docker exec xlaunch php artisan test --filter ServiceMagicVariableOverwriteTest
  */
 
 use App\Models\Server;

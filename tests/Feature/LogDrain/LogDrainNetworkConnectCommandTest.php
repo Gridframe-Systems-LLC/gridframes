@@ -54,7 +54,7 @@ it('connects the log drain container to a service preferred network when the ser
 
     $commands = reflectedLogDrainNetworkCommands(new StartService, $service->fresh(['destination.server.settings']));
 
-    expect($commands)->toContain("docker network connect 'signoz-net' coolify-log-drain >/dev/null 2>&1 || true");
+    expect($commands)->toContain("docker network connect 'signoz-net' xlaunch-log-drain >/dev/null 2>&1 || true");
 });
 
 it('does not connect the log drain container when service preferred network is disabled', function () {
@@ -89,9 +89,9 @@ it('connects a restarted log drain container to all enabled service preferred ne
     $commands = reflectedLogDrainNetworkCommands(new StartLogDrain, $server->fresh(['settings']));
 
     expect($commands)
-        ->toContain("docker network connect 'signoz-net' coolify-log-drain >/dev/null 2>&1 || true")
-        ->not->toContain("docker network connect 'ignored-net' coolify-log-drain >/dev/null 2>&1 || true")
-        ->not->toContain("docker network connect 'other-server-net' coolify-log-drain >/dev/null 2>&1 || true");
+        ->toContain("docker network connect 'signoz-net' xlaunch-log-drain >/dev/null 2>&1 || true")
+        ->not->toContain("docker network connect 'ignored-net' xlaunch-log-drain >/dev/null 2>&1 || true")
+        ->not->toContain("docker network connect 'other-server-net' xlaunch-log-drain >/dev/null 2>&1 || true");
 
     expect($commands)->toHaveCount(1);
 });

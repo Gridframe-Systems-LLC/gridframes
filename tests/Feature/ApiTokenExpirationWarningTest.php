@@ -141,13 +141,13 @@ describe('ApiTokenExpirationWarningJob', function () {
     });
 
     test('manage url uses the instance fqdn when configured', function () {
-        InstanceSettings::query()->update(['fqdn' => 'https://coolify.example.com']);
+        InstanceSettings::query()->update(['fqdn' => 'https://xlaunch.example.com']);
         $token = createTokenExpiring($this->user, $this->team, Carbon::now()->addHours(12));
 
         $notification = new ApiTokenExpiringNotification($token);
 
         expect($notification->toSlack()->description)
-            ->toContain('https://coolify.example.com/security/api-tokens')
+            ->toContain('https://xlaunch.example.com/security/api-tokens')
             ->not->toContain('localhost');
     });
 });

@@ -19,7 +19,7 @@ use Symfony\Component\Yaml\Yaml;
  * This mirrors the logic in LocalFileVolume::isReadOnlyVolume()
  *
  * Note: We match on mount_path (container path) only, since fs_path gets transformed
- * from relative (./file) to absolute (/data/coolify/services/uuid/file) during parsing
+ * from relative (./file) to absolute (/data/xlaunch/services/uuid/file) during parsing
  */
 function isVolumeReadOnly(string $dockerComposeRaw, string $serviceName, string $mountPath): bool
 {

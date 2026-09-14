@@ -7,7 +7,7 @@ use Symfony\Component\Yaml\Yaml;
 /**
  * Integration test to verify docker_compose_raw remains clean after parsing
  */
-it('verifies docker_compose_raw does not contain Coolify labels after parsing', function () {
+it('verifies docker_compose_raw does not contain Xlaunch labels after parsing', function () {
     // This test requires database, so skip if not available
     if (! DB::connection()->getDatabaseName()) {
         $this->markTestSkipped('Database not available');
@@ -45,31 +45,31 @@ YAML;
                 'generate_exact_labels' => true,
             ],
         ],
-        'network' => 'coolify',
+        'network' => 'xlaunch',
     ]);
 
     // Parse the YAML after running through the parser logic
     $yamlAfterParsing = Yaml::parse($app->docker_compose_raw);
 
-    // Check that docker_compose_raw does NOT contain Coolify labels
+    // Check that docker_compose_raw does NOT contain Xlaunch labels
     $labels = data_get($yamlAfterParsing, 'services.web.labels', []);
     $hasTraefikLabels = false;
-    $hasCoolifyManagedLabel = false;
+    $hasXlaunchManagedLabel = false;
 
     foreach ($labels as $label) {
         if (is_string($label)) {
             if (str_contains($label, 'traefik.')) {
                 $hasTraefikLabels = true;
             }
-            if (str_contains($label, 'coolify.managed')) {
-                $hasCoolifyManagedLabel = true;
+            if (str_contains($label, 'xlaunch.managed')) {
+                $hasXlaunchManagedLabel = true;
             }
         }
     }
 
-    // docker_compose_raw should NOT have Coolify additions
+    // docker_compose_raw should NOT have Xlaunch additions
     expect($hasTraefikLabels)->toBeFalse('docker_compose_raw should not contain Traefik labels');
-    expect($hasCoolifyManagedLabel)->toBeFalse('docker_compose_raw should not contain coolify.managed label');
+    expect($hasXlaunchManagedLabel)->toBeFalse('docker_compose_raw should not contain xlaunch.managed label');
 
     // But it SHOULD still have the original custom label
     $hasCustomLabel = false;

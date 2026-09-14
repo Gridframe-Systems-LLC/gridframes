@@ -15,11 +15,11 @@ set -e # Exit immediately if a command exits with a non-zero status
 ## $1 could be empty, so we need to disable this check
 #set -u # Treat unset variables as an error and exit
 set -o pipefail # Cause a pipeline to return the status of the last command that exited with a non-zero status
-CDN="https://cdn.coollabs.io/coolify-nightly"
+CDN="https://cdn.northlatch.com/xlaunch-nightly"
 DATE=$(date +"%Y%m%d-%H%M%S")
 
 OS_TYPE=$(grep -w "ID" /etc/os-release | cut -d "=" -f 2 | tr -d '"')
-ENV_FILE="/data/coolify/source/.env"
+ENV_FILE="/data/xlaunch/source/.env"
 DOCKER_VERSION="latest"
 # TODO: Ask for a user
 CURRENT_USER=$USER
@@ -31,12 +31,12 @@ fi
 
 echo ""
 echo "=========================================="
-echo "   Coolify Installation - ${DATE}"
+echo "   Xlaunch Installation - ${DATE}"
 echo "=========================================="
 echo ""
-echo "Welcome to Coolify Installer!"
+echo "Welcome to Xlaunch Installer!"
 echo "This script will install everything for you. Sit back and relax."
-echo "Source code: https://github.com/coollabsio/coolify/blob/v4.x/scripts/install.sh"
+echo "Source code: https://github.com/northlatch/xlaunch/blob/v4.x/scripts/install.sh"
 
 # Predefined root user
 ROOT_USERNAME=${ROOT_USERNAME:-}
@@ -124,9 +124,9 @@ DOCKER_ADDRESS_POOL_BASE=${DOCKER_ADDRESS_POOL_BASE:-"$DOCKER_ADDRESS_POOL_BASE_
 DOCKER_ADDRESS_POOL_SIZE=${DOCKER_ADDRESS_POOL_SIZE:-$DOCKER_ADDRESS_POOL_SIZE_DEFAULT}
 
 # Load Docker address pool configuration from .env file if it exists and environment variables were not provided
-if [ -f "/data/coolify/source/.env" ] && [ "$DOCKER_POOL_BASE_PROVIDED" = false ] && [ "$DOCKER_POOL_SIZE_PROVIDED" = false ]; then
-    ENV_DOCKER_ADDRESS_POOL_BASE=$(grep -E "^DOCKER_ADDRESS_POOL_BASE=" /data/coolify/source/.env | cut -d '=' -f2 || true)
-    ENV_DOCKER_ADDRESS_POOL_SIZE=$(grep -E "^DOCKER_ADDRESS_POOL_SIZE=" /data/coolify/source/.env | cut -d '=' -f2 || true)
+if [ -f "/data/xlaunch/source/.env" ] && [ "$DOCKER_POOL_BASE_PROVIDED" = false ] && [ "$DOCKER_POOL_SIZE_PROVIDED" = false ]; then
+    ENV_DOCKER_ADDRESS_POOL_BASE=$(grep -E "^DOCKER_ADDRESS_POOL_BASE=" /data/xlaunch/source/.env | cut -d '=' -f2 || true)
+    ENV_DOCKER_ADDRESS_POOL_SIZE=$(grep -E "^DOCKER_ADDRESS_POOL_SIZE=" /data/xlaunch/source/.env | cut -d '=' -f2 || true)
 
     if [ -n "$ENV_DOCKER_ADDRESS_POOL_BASE" ]; then
         DOCKER_ADDRESS_POOL_BASE="$ENV_DOCKER_ADDRESS_POOL_BASE"
@@ -228,14 +228,14 @@ if [ "$WARNING_SPACE" = true ]; then
     sleep 5
 fi
 
-mkdir -p /data/coolify/{source,ssh,applications,databases,backups,services,proxy,sentinel}
-mkdir -p /data/coolify/ssh/{keys,mux}
-mkdir -p /data/coolify/proxy/dynamic
+mkdir -p /data/xlaunch/{source,ssh,applications,databases,backups,services,proxy,sentinel}
+mkdir -p /data/xlaunch/ssh/{keys,mux}
+mkdir -p /data/xlaunch/proxy/dynamic
 
-chown -R 9999:root /data/coolify
-chmod -R 700 /data/coolify
+chown -R 9999:root /data/xlaunch
+chmod -R 700 /data/xlaunch
 
-INSTALLATION_LOG_WITH_DATE="/data/coolify/source/installation-${DATE}.log"
+INSTALLATION_LOG_WITH_DATE="/data/xlaunch/source/installation-${DATE}.log"
 
 exec > >(tee -a $INSTALLATION_LOG_WITH_DATE) 2>&1
 
@@ -348,7 +348,7 @@ fi
 echo "---------------------------------------------"
 echo "| Operating System  | $OS_TYPE $OS_VERSION"
 echo "| Docker            | $DOCKER_VERSION"
-echo "| Coolify           | $LATEST_VERSION"
+echo "| Xlaunch           | $LATEST_VERSION"
 echo "| Helper            | $LATEST_HELPER_VERSION"
 echo "| Realtime          | $LATEST_REALTIME_VERSION"
 echo "| Docker Pool       | $DOCKER_ADDRESS_POOL_BASE (size $DOCKER_ADDRESS_POOL_SIZE)"
@@ -468,7 +468,7 @@ if [ "$SSH_DETECTED" = "false" ]; then
     *)
         echo "###############################################################################"
         echo "WARNING: Could not detect and install OpenSSH server - this does not mean that it is not installed or not running, just that we could not detect it."
-        echo -e "Please make sure it is installed and running, otherwise Coolify cannot connect to the host system. \n"
+        echo -e "Please make sure it is installed and running, otherwise Xlaunch cannot connect to the host system. \n"
         echo "###############################################################################"
         exit 1
         ;;
@@ -483,7 +483,7 @@ if [ "$SSH_PERMIT_ROOT_LOGIN" = "yes" ] || [ "$SSH_PERMIT_ROOT_LOGIN" = "without
     echo " - SSH PermitRootLogin is enabled."
 else
     echo " - SSH PermitRootLogin is disabled."
-    echo "   If you have problems with SSH, please read this: https://coolify.io/docs/knowledge-base/server/openssh"
+    echo "   If you have problems with SSH, please read this: https://northlatch.com/docs/knowledge-base/server/openssh"
 fi
 
 # Detect if docker is installed via snap
@@ -491,7 +491,7 @@ if [ -x "$(command -v snap)" ]; then
     SNAP_DOCKER_INSTALLED=$(snap list docker >/dev/null 2>&1 && echo "true" || echo "false")
     if [ "$SNAP_DOCKER_INSTALLED" = "true" ]; then
         echo "Docker is installed via snap."
-        echo "   Please note that Coolify does not support Docker installed via snap."
+        echo "   Please note that Xlaunch does not support Docker installed via snap."
         echo "   Please remove Docker with snap (snap remove docker) and reexecute this script."
         exit 1
     fi
@@ -631,7 +631,7 @@ INSTALLED_DOCKER_VERSION=$(docker version --format '{{.Server.Version}}' 2>/dev/
 if [ -z "$INSTALLED_DOCKER_VERSION" ]; then
     echo " - WARNING: Could not determine Docker version. Please ensure Docker $MIN_DOCKER_VERSION+ is installed."
 elif [ "$INSTALLED_DOCKER_VERSION" -lt "$MIN_DOCKER_VERSION" ]; then
-    echo " - ERROR: Docker version $INSTALLED_DOCKER_VERSION is too old. Coolify requires Docker $MIN_DOCKER_VERSION or newer."
+    echo " - ERROR: Docker version $INSTALLED_DOCKER_VERSION is too old. Xlaunch requires Docker $MIN_DOCKER_VERSION or newer."
     echo "   Please upgrade Docker: https://docs.docker.com/engine/install/"
     exit 1
 else
@@ -651,7 +651,7 @@ if [ -f /etc/docker/daemon.json ]; then
     cp /etc/docker/daemon.json /etc/docker/daemon.json.original-"$DATE"
 fi
 
-# Create coolify configuration with or without address pools based on whether they were explicitly provided
+# Create xlaunch configuration with or without address pools based on whether they were explicitly provided
 if [ "$DOCKER_POOL_FORCE_OVERRIDE" = true ] || [ "$EXISTING_POOL_CONFIGURED" = false ]; then
     # First check if the configuration would actually change anything
     if [ -f /etc/docker/daemon.json ]; then
@@ -703,7 +703,7 @@ else
         NEED_MERGE=false
     else
         # Create a configuration without address pools to preserve existing ones
-        cat >/etc/docker/daemon.json.coolify <<EOL
+        cat >/etc/docker/daemon.json.xlaunch <<EOL
 {
   "log-driver": "json-file",
   "log-opts": {
@@ -773,15 +773,15 @@ echo "5/9 Downloading required files from CDN..."
 log "Downloading configuration files in parallel..."
 
 # Download files in parallel for faster installation
-curl -fsSL -L $CDN/docker-compose.yml -o /data/coolify/source/docker-compose.yml &
+curl -fsSL -L $CDN/docker-compose.yml -o /data/xlaunch/source/docker-compose.yml &
 PID1=$!
-curl -fsSL -L $CDN/docker-compose.prod.yml -o /data/coolify/source/docker-compose.prod.yml &
+curl -fsSL -L $CDN/docker-compose.prod.yml -o /data/xlaunch/source/docker-compose.prod.yml &
 PID2=$!
-curl -fsSL -L $CDN/.env.production -o /data/coolify/source/.env.production &
+curl -fsSL -L $CDN/.env.production -o /data/xlaunch/source/.env.production &
 PID3=$!
-curl -fsSL -L $CDN/upgrade.sh -o /data/coolify/source/upgrade.sh &
+curl -fsSL -L $CDN/upgrade.sh -o /data/xlaunch/source/upgrade.sh &
 PID4=$!
-curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/coolify/source/upgrade-postgres.sh &
+curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/xlaunch/source/upgrade-postgres.sh &
 PID5=$!
 
 # Wait for all downloads to complete and check for errors
@@ -797,7 +797,7 @@ if [ "$DOWNLOAD_FAILED" = true ]; then
     exit 1
 fi
 
-chmod +x /data/coolify/source/upgrade.sh /data/coolify/source/upgrade-postgres.sh
+chmod +x /data/xlaunch/source/upgrade.sh /data/xlaunch/source/upgrade-postgres.sh
 log "All configuration files downloaded successfully"
 echo "     Done."
 
@@ -810,12 +810,12 @@ if [ -f "$ENV_FILE" ]; then
     cp "$ENV_FILE" "$ENV_FILE-$DATE"
     # Merge .env.production values into .env
     echo " - Merging .env.production values into .env"
-    awk -F '=' '!seen[$1]++' "$ENV_FILE" "/data/coolify/source/.env.production" > "$ENV_FILE.tmp" && mv "$ENV_FILE.tmp" "$ENV_FILE"
+    awk -F '=' '!seen[$1]++' "$ENV_FILE" "/data/xlaunch/source/.env.production" > "$ENV_FILE.tmp" && mv "$ENV_FILE.tmp" "$ENV_FILE"
     echo " - .env file merged successfully"
 else
     # If no .env exists, copy .env.production to .env
     echo " - No .env file found, copying .env.production to .env"
-    cp "/data/coolify/source/.env.production" "$ENV_FILE"
+    cp "/data/xlaunch/source/.env.production" "$ENV_FILE"
 fi
 log "Environment file setup completed"
 echo "     Done."
@@ -894,44 +894,44 @@ if [ ! -f ~/.ssh/authorized_keys ]; then
 fi
 
 set +e
-IS_COOLIFY_VOLUME_EXISTS=$(docker volume ls | grep coolify-db | wc -l)
+IS_XLAUNCH_VOLUME_EXISTS=$(docker volume ls | grep xlaunch-db | wc -l)
 set -e
 
-if [ "$IS_COOLIFY_VOLUME_EXISTS" -eq 0 ]; then
+if [ "$IS_XLAUNCH_VOLUME_EXISTS" -eq 0 ]; then
     echo " - Generating SSH key."
-    test -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal && rm -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal
-    test -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub && rm -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub
-    ssh-keygen -t ed25519 -a 100 -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal -q -N "" -C coolify
-    chown 9999 /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal
-    sed -i "/coolify/d" ~/.ssh/authorized_keys
-    cat /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub >>~/.ssh/authorized_keys
-    rm -f /data/coolify/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub
+    test -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal && rm -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal
+    test -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub && rm -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub
+    ssh-keygen -t ed25519 -a 100 -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal -q -N "" -C xlaunch
+    chown 9999 /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal
+    sed -i "/xlaunch/d" ~/.ssh/authorized_keys
+    cat /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub >>~/.ssh/authorized_keys
+    rm -f /data/xlaunch/ssh/keys/id.$CURRENT_USER@host.docker.internal.pub
 fi
 
-chown -R 9999:root /data/coolify
-chmod -R 700 /data/coolify
+chown -R 9999:root /data/xlaunch
+chmod -R 700 /data/xlaunch
 log "SSH key check completed"
 echo "     Done."
 
-log_section "Step 9/9: Installing Coolify"
-echo "9/9 Installing Coolify ($LATEST_VERSION)..."
+log_section "Step 9/9: Installing Xlaunch"
+echo "9/9 Installing Xlaunch ($LATEST_VERSION)..."
 echo -e " - It could take a while based on your server's performance, network speed, stars, etc."
 echo -e " - Please wait."
 getAJoke
 
 if [[ $- == *x* ]]; then
-    bash -x /data/coolify/source/upgrade.sh "${LATEST_VERSION:-latest}" "${LATEST_HELPER_VERSION:-latest}" "${REGISTRY_URL:-docker.io}" "true"
+    bash -x /data/xlaunch/source/upgrade.sh "${LATEST_VERSION:-latest}" "${LATEST_HELPER_VERSION:-latest}" "${REGISTRY_URL:-docker.io}" "true"
 else
-    bash /data/coolify/source/upgrade.sh "${LATEST_VERSION:-latest}" "${LATEST_HELPER_VERSION:-latest}" "${REGISTRY_URL:-docker.io}" "true"
+    bash /data/xlaunch/source/upgrade.sh "${LATEST_VERSION:-latest}" "${LATEST_HELPER_VERSION:-latest}" "${REGISTRY_URL:-docker.io}" "true"
 fi
-echo " - Coolify installed successfully."
-echo " - Waiting for Coolify to be ready..."
+echo " - Xlaunch installed successfully."
+echo " - Waiting for Xlaunch to be ready..."
 
 # Wait for upgrade.sh background process to complete
-# upgrade.sh writes status to /data/coolify/source/.upgrade-status
+# upgrade.sh writes status to /data/xlaunch/source/.upgrade-status
 # Status file format: step|message|timestamp
 # Step 6 = "Upgrade complete", file deleted 10 seconds after
-UPGRADE_STATUS_FILE="/data/coolify/source/.upgrade-status"
+UPGRADE_STATUS_FILE="/data/xlaunch/source/.upgrade-status"
 MAX_WAIT=180
 WAITED=0
 SEEN_STATUS_FILE=false
@@ -947,7 +947,7 @@ while [ $WAITED -lt $MAX_WAIT ]; do
             break
         elif [ "$STATUS" = "error" ]; then
             echo " - ERROR: Upgrade failed: $MESSAGE"
-            echo " - Please check the upgrade logs: /data/coolify/source/upgrade-*.log"
+            echo " - Please check the upgrade logs: /data/xlaunch/source/upgrade-*.log"
             exit 1
         else
             if [ $((WAITED % 10)) -eq 0 ]; then
@@ -979,20 +979,20 @@ if [ $WAITED -ge $MAX_WAIT ]; then
         sleep 20
     else
         echo " - ERROR: Upgrade timed out after ${MAX_WAIT}s"
-        echo " - Please check the upgrade logs: /data/coolify/source/upgrade-*.log"
+        echo " - Please check the upgrade logs: /data/xlaunch/source/upgrade-*.log"
         exit 1
     fi
 fi
 
 # Final health verification - wait for container to be healthy
-echo " - Verifying Coolify is healthy..."
+echo " - Verifying Xlaunch is healthy..."
 HEALTH_WAIT=60
 HEALTH_WAITED=0
 while [ $HEALTH_WAITED -lt $HEALTH_WAIT ]; do
-    HEALTH=$(docker inspect --format='{{.State.Health.Status}}' coolify 2>/dev/null || echo "unknown")
+    HEALTH=$(docker inspect --format='{{.State.Health.Status}}' xlaunch 2>/dev/null || echo "unknown")
     if [ "$HEALTH" = "healthy" ]; then
-        log "Coolify container is healthy"
-        echo " - Coolify is ready!"
+        log "Xlaunch container is healthy"
+        echo " - Xlaunch is ready!"
         break
     fi
     sleep 2
@@ -1000,8 +1000,8 @@ while [ $HEALTH_WAITED -lt $HEALTH_WAIT ]; do
 done
 
 if [ "$HEALTH" != "healthy" ]; then
-    echo " - ERROR: Coolify container is not healthy after ${HEALTH_WAIT}s. Status: $HEALTH"
-    echo " - Please check: docker logs coolify"
+    echo " - ERROR: Xlaunch container is not healthy after ${HEALTH_WAIT}s. Status: $HEALTH"
+    echo " - Please check: docker logs xlaunch"
     exit 1
 fi
 echo -e "\033[0;35m
@@ -1028,10 +1028,10 @@ rm -f "$IPV4_TMP" "$IPV6_TMP"
 
 echo -e "\nYour instance is ready to use!\n"
 if [ -n "$IPV4_PUBLIC_IP" ]; then
-    echo -e "You can access Coolify through your Public IPV4: http://$IPV4_PUBLIC_IP:8000"
+    echo -e "You can access Xlaunch through your Public IPV4: http://$IPV4_PUBLIC_IP:8000"
 fi
 if [ -n "$IPV6_PUBLIC_IP" ]; then
-    echo -e "You can access Coolify through your Public IPv6: http://[$IPV6_PUBLIC_IP]:8000"
+    echo -e "You can access Xlaunch through your Public IPv6: http://[$IPV6_PUBLIC_IP]:8000"
 fi
 
 set +e
@@ -1048,9 +1048,9 @@ if [ -n "$PRIVATE_IPS" ]; then
     done
 fi
 
-echo -e "\nWARNING: It is highly recommended to backup your Environment variables file (/data/coolify/source/.env) to a safe location, outside of this server (e.g. into a Password Manager).\n"
+echo -e "\nWARNING: It is highly recommended to backup your Environment variables file (/data/xlaunch/source/.env) to a safe location, outside of this server (e.g. into a Password Manager).\n"
 
 log_section "Installation Complete"
-log "Coolify installation completed successfully"
+log "Xlaunch installation completed successfully"
 log "Version: ${LATEST_VERSION}"
 log "Log file: ${INSTALLATION_LOG_WITH_DATE}"

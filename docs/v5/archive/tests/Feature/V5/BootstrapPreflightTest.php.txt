@@ -153,7 +153,7 @@ it('rejects bootstrap when flux url is not configured', function () {
         ->withSession(['currentTeam' => $team])
         ->postJson("/v5/clusters/{$cluster->uuid}/servers/{$server->uuid}/bootstrap")
         ->assertUnprocessable()
-        ->assertJsonPath('message', 'COOLIFY_COOLD_FLUX_URL is not configured, so bootstrapped servers cannot be enrolled into Flux. Set it and retry the bootstrap.');
+        ->assertJsonPath('message', 'XLAUNCH_COOLD_FLUX_URL is not configured, so bootstrapped servers cannot be enrolled into Flux. Set it and retry the bootstrap.');
 
     Queue::assertNothingPushed();
 
@@ -163,7 +163,7 @@ it('rejects bootstrap when flux url is not configured', function () {
 
 it('queues the bootstrap when the flux url is configured', function () {
     createBootstrapPreflightTables();
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
 
     [$user, $team, $cluster, $server] = createBootstrapPreflightClusterWithServer();
 
@@ -181,8 +181,8 @@ it('queues the bootstrap when the flux url is configured', function () {
 
 it('writes the marker with the same coold version that is persisted on the server row', function () {
     createBootstrapPreflightTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
 
     [, , $cluster, $server] = createBootstrapPreflightClusterWithServer([
         'namespaces' => ['default'],

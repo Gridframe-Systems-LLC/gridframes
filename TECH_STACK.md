@@ -1,4 +1,4 @@
-# Coolify Technology Stack
+# Xlaunch Technology Stack
 
 ## Frontend
 

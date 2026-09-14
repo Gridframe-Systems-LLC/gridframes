@@ -1,34 +1,34 @@
 <?php
 
 return [
-    'coolify' => [
-        'version' => env('COOLIFY_VERSION') ?: '4.3.19',
+    'xlaunch' => [
+        'version' => env('XLAUNCH_VERSION') ?: '4.3.19',
         'helper_version' => '1.0.16',
         'realtime_version' => '1.0.19',
         'railpack_version' => '0.23.0',
         'self_hosted' => env('SELF_HOSTED', true),
         'autoupdate' => env('AUTOUPDATE'),
-        'base_config_path' => env('BASE_CONFIG_PATH', '/data/coolify'),
+        'base_config_path' => env('BASE_CONFIG_PATH', '/data/xlaunch'),
         'registry_url' => env('REGISTRY_URL', 'docker.io'),
-        'helper_image' => env('HELPER_IMAGE', env('REGISTRY_URL', 'docker.io').'/coollabsio/coolify-helper'),
-        'realtime_image' => env('REALTIME_IMAGE', env('REGISTRY_URL', 'docker.io').'/coollabsio/coolify-realtime'),
+        'helper_image' => env('HELPER_IMAGE', env('REGISTRY_URL', 'docker.io').'/northlatch/xlaunch-helper'),
+        'realtime_image' => env('REALTIME_IMAGE', env('REGISTRY_URL', 'docker.io').'/northlatch/xlaunch-realtime'),
         'is_windows_docker_desktop' => env('IS_WINDOWS_DOCKER_DESKTOP', false),
-        'cdn_url' => env('CDN_URL', 'https://cdn.coollabs.io'),
-        'versions_url' => env('VERSIONS_URL', env('CDN_URL', 'https://cdn.coollabs.io').'/coolify/versions.json'),
-        'upgrade_script_url' => env('UPGRADE_SCRIPT_URL', env('CDN_URL', 'https://cdn.coollabs.io').'/coolify/upgrade.sh'),
-        'releases_url' => env('RELEASES_URL', 'https://cdn.coollabs.io/coolify/releases.json'),
+        'cdn_url' => env('CDN_URL', 'https://cdn.northlatch.com'),
+        'versions_url' => env('VERSIONS_URL', env('CDN_URL', 'https://cdn.northlatch.com').'/xlaunch/versions.json'),
+        'upgrade_script_url' => env('UPGRADE_SCRIPT_URL', env('CDN_URL', 'https://cdn.northlatch.com').'/xlaunch/upgrade.sh'),
+        'releases_url' => env('RELEASES_URL', 'https://cdn.northlatch.com/xlaunch/releases.json'),
     ],
 
     'urls' => [
-        'docs' => 'https://coolify.io/docs',
-        'contact' => 'https://coolify.io/docs/contact',
+        'docs' => 'https://northlatch.com/docs',
+        'contact' => 'https://northlatch.com/docs/contact',
     ],
 
     'services' => [
-        'official' => 'https://cdn.coollabs.io/coolify/service-templates-latest.json',
+        'official' => 'https://cdn.northlatch.com/xlaunch/service-templates-latest.json',
         'file_name' => 'service-templates-latest.json',
         // Shared across HTTP/Horizon nodes when CACHE_DRIVER is redis (default).
-        'cache_key' => 'coolify:service-templates-bundle',
+        'cache_key' => 'xlaunch:service-templates-bundle',
     ],
 
     'terminal' => [

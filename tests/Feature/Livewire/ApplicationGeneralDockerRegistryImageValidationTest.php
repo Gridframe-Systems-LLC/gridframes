@@ -42,7 +42,7 @@ it('uses safe docker registry image validation rules in the application general 
     $rules = $method->invoke($component);
 
     $validator = validator([
-        'dockerRegistryImageName' => 'coolify/poc$(touch /tmp/pwned)',
+        'dockerRegistryImageName' => 'xlaunch/poc$(touch /tmp/pwned)',
         'dockerRegistryImageTag' => 'latest$(touch /tmp/pwned)',
     ], [
         'dockerRegistryImageName' => $rules['dockerRegistryImageName'],

@@ -107,15 +107,15 @@ it('accepts explicitly allowlisted intranet S3 endpoints', function (string $end
 
 it('accepts allowlisted docker-style MinIO hostnames that resolve to private IPs', function () {
     InstanceSettings::unguarded(fn () => InstanceSettings::query()->updateOrCreate(['id' => 0], [
-        'webhook_allowed_internal_hosts' => ['coolify-minio'],
+        'webhook_allowed_internal_hosts' => ['xlaunch-minio'],
     ]));
 
     $validator = Validator::make(
-        ['endpoint' => 'http://coolify-minio:9000'],
+        ['endpoint' => 'http://xlaunch-minio:9000'],
         ['endpoint' => ['required', 'max:255', new SafeWebhookUrl(fn (string $host): array => ['172.16.0.5'])]],
     );
 
-    expect($validator->passes())->toBeTrue('Expected coolify-minio with private IP to pass when allowlisted');
+    expect($validator->passes())->toBeTrue('Expected xlaunch-minio with private IP to pass when allowlisted');
 });
 
 it('rejects docker-style MinIO hostnames resolving to private IPs without allowlist', function () {
@@ -124,19 +124,19 @@ it('rejects docker-style MinIO hostnames resolving to private IPs without allowl
     ]));
 
     $validator = Validator::make(
-        ['endpoint' => 'http://coolify-minio:9000'],
+        ['endpoint' => 'http://xlaunch-minio:9000'],
         ['endpoint' => ['required', 'max:255', new SafeWebhookUrl(fn (string $host): array => ['172.16.0.5'])]],
     );
 
-    expect($validator->fails())->toBeTrue('Expected coolify-minio private IP rejection without allowlist');
+    expect($validator->fails())->toBeTrue('Expected xlaunch-minio private IP rejection without allowlist');
 });
 
 it('allows the bundled MinIO endpoint only when explicitly trusted by S3 storage', function () {
     $validator = Validator::make(
-        ['endpoint' => 'http://coolify-minio:9000'],
+        ['endpoint' => 'http://xlaunch-minio:9000'],
         ['endpoint' => ['required', new SafeWebhookUrl(
             fn (string $host): array => ['172.16.0.5'],
-            trustedInternalHosts: ['coolify-minio'],
+            trustedInternalHosts: ['xlaunch-minio'],
         )]],
     );
 
@@ -146,7 +146,7 @@ it('allows the bundled MinIO endpoint only when explicitly trusted by S3 storage
 it('accepts allowlisted docker MinIO hostname after custom DNS miss and system DNS hit', function () {
     InstanceSettings::unguarded(fn () => InstanceSettings::query()->updateOrCreate(['id' => 0], [
         'custom_dns_servers' => '1.1.1.1',
-        'webhook_allowed_internal_hosts' => ['coolify-minio'],
+        'webhook_allowed_internal_hosts' => ['xlaunch-minio'],
     ]));
 
     $rule = new class extends SafeWebhookUrl
@@ -163,7 +163,7 @@ it('accepts allowlisted docker MinIO hostname after custom DNS miss and system D
     };
 
     $validator = Validator::make(
-        ['endpoint' => 'http://coolify-minio:9000'],
+        ['endpoint' => 'http://xlaunch-minio:9000'],
         ['endpoint' => ['required', 'max:255', $rule]],
     );
 

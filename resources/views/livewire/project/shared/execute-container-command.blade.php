@@ -1,6 +1,6 @@
 <div @if ($type !== 'server') wire:init="loadContainers" @endif>
     <x-slot:title>
-        {{ data_get_str($resource, 'name')->limit(10) }} > Terminal | Coolify
+        {{ data_get_str($resource, 'name')->limit(10) }} > Terminal | Xlaunch
     </x-slot>
 
     @if ($type === 'application')
@@ -80,18 +80,18 @@
                 selectedContainer: @entangle('selected_container').live,
                 containerOptions: @js($containerOptions),
                 init() {
-                    const savedTheme = localStorage.getItem('coolify-console-theme');
+                    const savedTheme = localStorage.getItem('xlaunch-console-theme');
                     this.consoleTheme = this.themeKeys.includes(savedTheme) ? savedTheme : 'system';
-                    localStorage.setItem('coolify-console-theme', this.consoleTheme);
+                    localStorage.setItem('xlaunch-console-theme', this.consoleTheme);
                 },
                 setTheme(theme) {
                     this.consoleTheme = theme;
                     this.themeOpen = false;
-                    localStorage.setItem('coolify-console-theme', theme);
+                    localStorage.setItem('xlaunch-console-theme', theme);
                     window.dispatchEvent(new CustomEvent('terminal-theme-change', { detail: { theme } }));
                 },
                 syncTheme() {
-                    const savedTheme = localStorage.getItem('coolify-console-theme');
+                    const savedTheme = localStorage.getItem('xlaunch-console-theme');
                     this.consoleTheme = this.themeKeys.includes(savedTheme) ? savedTheme : 'system';
                 },
                 selectContainer(value) {

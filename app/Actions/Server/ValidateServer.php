@@ -26,7 +26,7 @@ class ValidateServer
     public function handle(Server $server)
     {
         if (! $server->canBeValidated()) {
-            $this->error = 'This server was transferred to another Coolify instance and cannot be revalidated here.';
+            $this->error = 'This server was transferred to another Xlaunch instance and cannot be revalidated here.';
             $server->update([
                 'validation_logs' => $this->error,
                 'is_validating' => false,
@@ -66,7 +66,7 @@ class ValidateServer
         ['uptime' => $this->uptime, 'error' => $error] = $server->validateConnection();
         if (! $this->uptime) {
             $sanitizedError = htmlspecialchars($error ?? '', ENT_QUOTES, 'UTF-8');
-            $this->error = 'Server is not reachable. Please validate your configuration and connection.<br>Check this <a target="_blank" class="text-black underline dark:text-white" href="https://coolify.io/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br><div class="text-error">Error: '.$sanitizedError.'</div>';
+            $this->error = 'Server is not reachable. Please validate your configuration and connection.<br>Check this <a target="_blank" class="text-black underline dark:text-white" href="https://northlatch.com/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br><div class="text-error">Error: '.$sanitizedError.'</div>';
             $server->update([
                 'validation_logs' => $this->error,
             ]);

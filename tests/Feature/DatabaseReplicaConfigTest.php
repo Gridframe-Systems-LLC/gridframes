@@ -49,8 +49,8 @@ it('falls back to DB_* values for unset replica options', function () {
     $pgsql = loadDbConfig()['connections']['pgsql'];
 
     expect($pgsql['read']['port'])->toBe(env('DB_PORT', '5432'))
-        ->and($pgsql['read']['username'])->toBe(env('DB_USERNAME', 'coolify'))
-        ->and($pgsql['write']['host'])->toBe([env('DB_HOST', 'coolify-db')]);
+        ->and($pgsql['read']['username'])->toBe(env('DB_USERNAME', 'xlaunch'))
+        ->and($pgsql['write']['host'])->toBe([env('DB_HOST', 'xlaunch-db')]);
 });
 
 it('respects discrete replica overrides', function () {

@@ -1,13 +1,13 @@
 ---
-title: Coolify AI Documentation
-description: Master reference to all Coolify AI documentation in .ai/ directory
+title: Xlaunch AI Documentation
+description: Master reference to all Xlaunch AI documentation in .ai/ directory
 globs: **/*
 alwaysApply: true
 ---
 
-# Coolify AI Documentation
+# Xlaunch AI Documentation
 
-All Coolify AI documentation has been consolidated in the **`.ai/`** directory for better organization and single source of truth.
+All Xlaunch AI documentation has been consolidated in the **`.ai/`** directory for better organization and single source of truth.
 
 ## Quick Start
 
@@ -21,7 +21,7 @@ All detailed documentation lives in `.ai/` with the following organization:
 
 ### 📚 Core Documentation
 - **[Technology Stack](.ai/core/technology-stack.md)** - All versions, packages, dependencies (SINGLE SOURCE OF TRUTH for versions)
-- **[Project Overview](.ai/core/project-overview.md)** - What Coolify is, high-level architecture
+- **[Project Overview](.ai/core/project-overview.md)** - What Xlaunch is, high-level architecture
 - **[Application Architecture](.ai/core/application-architecture.md)** - System design, components, relationships
 - **[Deployment Architecture](.ai/core/deployment-architecture.md)** - Deployment flows, Docker, proxies
 
@@ -49,7 +49,7 @@ All detailed documentation lives in `.ai/` with the following organization:
 → `.ai/development/development-workflow.md`
 - `npm run dev` / `npm run build` - Frontend
 - `php artisan serve` / `php artisan migrate` - Backend
-- `docker exec coolify php artisan test` - Feature tests (requires Docker)
+- `docker exec xlaunch php artisan test` - Feature tests (requires Docker)
 - `./vendor/bin/pest tests/Unit` - Unit tests (no Docker needed)
 - `./vendor/bin/pint` - Code formatting
 
@@ -101,7 +101,7 @@ All detailed documentation lives in `.ai/` with the following organization:
 ./vendor/bin/pest tests/Unit
 
 # Feature tests (requires database, inside Docker)
-docker exec coolify php artisan test
+docker exec xlaunch php artisan test
 ```
 
 **NEVER** run Feature tests outside Docker - they will fail with database connection errors.

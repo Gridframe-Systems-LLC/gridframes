@@ -27,7 +27,7 @@ beforeEach(function () {
     InstanceSettings::forceCreate([
         'id' => 0,
         'is_api_enabled' => true,
-        'fqdn' => 'https://coolify-a.test',
+        'fqdn' => 'https://xlaunch-a.test',
     ]);
 
     $this->team = Team::factory()->create();
@@ -259,11 +259,11 @@ describe('POST /api/v1/servers/{uuid}/claim', function () {
             ->assertJsonPath('server_uuid', $importedUuid)
             ->assertJsonPath('claim_written', false)
             ->assertJsonPath('sentinel_rebound', true)
-            ->assertJsonPath('claim.instance_url', 'https://coolify-a.test');
+            ->assertJsonPath('claim.instance_url', 'https://xlaunch-a.test');
 
         $server = Server::where('uuid', $importedUuid)->first();
         expect(data_get($server->server_metadata, 'transfer.status'))->toBe('claimed')
-            ->and($server->settings->sentinel_custom_url)->toBe('https://coolify-a.test')
+            ->and($server->settings->sentinel_custom_url)->toBe('https://xlaunch-a.test')
             ->and($server->settings->sentinel_token)->not->toBeEmpty();
     });
 });
@@ -273,7 +273,7 @@ describe('POST /api/v1/servers/{uuid}/transfer/complete', function () {
         $response = $this->withHeaders(transferHeaders($this->sensitiveToken))
             ->postJson("/api/v1/servers/{$this->server->uuid}/transfer/complete", [
                 'export_id' => 'exp-123',
-                'target_instance_url' => 'https://coolify-b.test',
+                'target_instance_url' => 'https://xlaunch-b.test',
             ]);
 
         $response->assertOk()
@@ -283,7 +283,7 @@ describe('POST /api/v1/servers/{uuid}/transfer/complete', function () {
         expect($server->settings->force_disabled)->toBeTrue()
             ->and(data_get($server->server_metadata, 'transfer.status'))->toBe('transferred')
             ->and(data_get($server->server_metadata, 'transfer.export_id'))->toBe('exp-123')
-            ->and(data_get($server->server_metadata, 'transfer.target_instance_url'))->toBe('https://coolify-b.test');
+            ->and(data_get($server->server_metadata, 'transfer.target_instance_url'))->toBe('https://xlaunch-b.test');
     });
 });
 
@@ -297,7 +297,7 @@ describe('full transfer flow A to B on same process', function () {
         $this->withHeaders(transferHeaders($this->sensitiveToken))
             ->postJson("/api/v1/servers/{$this->server->uuid}/transfer/complete", [
                 'export_id' => $export['export_id'],
-                'target_instance_url' => 'https://coolify-b.test',
+                'target_instance_url' => 'https://xlaunch-b.test',
             ])
             ->assertOk();
 
@@ -308,7 +308,7 @@ describe('full transfer flow A to B on same process', function () {
 
         // Target instance (simulated as same app, after source cleanup)
         $settings = InstanceSettings::get();
-        $settings->fqdn = 'https://coolify-b.test';
+        $settings->fqdn = 'https://xlaunch-b.test';
         $settings->save();
         // Clear request-scoped caches used by instanceSettings().
         if (function_exists('once')) {
@@ -330,13 +330,13 @@ describe('full transfer flow A to B on same process', function () {
                 'rebind_sentinel' => true,
             ])
             ->assertOk()
-            ->assertJsonPath('claim.instance_url', 'https://coolify-b.test');
+            ->assertJsonPath('claim.instance_url', 'https://xlaunch-b.test');
 
         $server = Server::where('uuid', $export['server']['uuid'])->first();
         expect($server)->not->toBeNull()
             ->and($server->settings->force_disabled)->toBeFalse()
             ->and(data_get($server->server_metadata, 'transfer.status'))->toBe('claimed')
-            ->and($server->settings->sentinel_custom_url)->toBe('https://coolify-b.test');
+            ->and($server->settings->sentinel_custom_url)->toBe('https://xlaunch-b.test');
     });
 });
 
@@ -348,7 +348,7 @@ describe('ServerTransferClaimer unit-ish via container', function () {
 
         $result = $claimer->writeMailbox($this->server, $bundle, 'pass');
 
-        expect($result['path'])->toContain('/data/coolify/exports/server-transfer-')
+        expect($result['path'])->toContain('/data/xlaunch/exports/server-transfer-')
             ->and($result)->toHaveKey('written');
     });
 });

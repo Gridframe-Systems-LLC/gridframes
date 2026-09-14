@@ -53,11 +53,11 @@ class StartLogDrain
 [FILTER]
     Name                modify
     Match               *
-    Set                 coolify.server_name {$server->name}
-    Rename              COOLIFY_APP_NAME coolify.app_name
-    Rename              COOLIFY_PROJECT_NAME coolify.project_name
-    Rename              COOLIFY_SERVER_IP coolify.server_ip
-    Rename              COOLIFY_ENVIRONMENT_NAME coolify.environment_name
+    Set                 xlaunch.server_name {$server->name}
+    Rename              XLAUNCH_APP_NAME xlaunch.app_name
+    Rename              XLAUNCH_PROJECT_NAME xlaunch.project_name
+    Rename              XLAUNCH_SERVER_IP xlaunch.server_ip
+    Rename              XLAUNCH_ENVIRONMENT_NAME xlaunch.environment_name
 [OUTPUT]
     Name nrlogs
     Match *
@@ -108,11 +108,11 @@ class StartLogDrain
 [FILTER]
     Name                modify
     Match               *
-    Set                 coolify.server_name {$server->name}
-    Rename              COOLIFY_APP_NAME coolify.app_name
-    Rename              COOLIFY_PROJECT_NAME coolify.project_name
-    Rename              COOLIFY_SERVER_IP coolify.server_ip
-    Rename              COOLIFY_ENVIRONMENT_NAME coolify.environment_name
+    Set                 xlaunch.server_name {$server->name}
+    Rename              XLAUNCH_APP_NAME xlaunch.app_name
+    Rename              XLAUNCH_PROJECT_NAME xlaunch.project_name
+    Rename              XLAUNCH_SERVER_IP xlaunch.server_ip
+    Rename              XLAUNCH_ENVIRONMENT_NAME xlaunch.environment_name
 [OUTPUT]
     Name            http
     Match           *
@@ -146,9 +146,9 @@ class StartLogDrain
             }
             $compose = base64_encode('
 services:
-  coolify-log-drain:
+  xlaunch-log-drain:
     image: cr.fluentbit.io/fluent/fluent-bit:2.0
-    container_name: coolify-log-drain
+    container_name: xlaunch-log-drain
     command: -c /fluent-bit.conf
     env_file:
       - .env
@@ -158,7 +158,7 @@ services:
     ports:
       - 127.0.0.1:24224:24224
     labels:
-      - coolify.managed=true
+      - xlaunch.managed=true
     restart: unless-stopped
 ');
             $readme = base64_encode('# New Relic Log Drain
@@ -171,7 +171,7 @@ Files:
 ');
             $license_key = $server->settings->logdrain_newrelic_license_key;
             $base_uri = $server->settings->logdrain_newrelic_base_uri;
-            $base_path = config('constants.coolify.base_config_path');
+            $base_path = config('constants.xlaunch.base_config_path');
 
             $config_path = $base_path.'/log-drains';
             $fluent_bit_config = $config_path.'/fluent-bit.conf';
@@ -223,7 +223,7 @@ Files:
             ->map(fn (Service $service) => data_get($service, 'destination.network'))
             ->filter()
             ->unique()
-            ->map(fn (string $network) => 'docker network connect '.escapeshellarg($network).' coolify-log-drain >/dev/null 2>&1 || true')
+            ->map(fn (string $network) => 'docker network connect '.escapeshellarg($network).' xlaunch-log-drain >/dev/null 2>&1 || true')
             ->values()
             ->all();
     }

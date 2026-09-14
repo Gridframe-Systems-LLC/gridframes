@@ -168,7 +168,7 @@ describe('privilege escalation prevention', function () {
     test('new user invitation magic link uses instance fqdn when configured', function () {
         InstanceSettings::unguarded(fn () => InstanceSettings::query()->updateOrCreate(
             ['id' => 0],
-            ['fqdn' => 'https://coolify.example.com']
+            ['fqdn' => 'https://xlaunch.example.com']
         ));
 
         $this->actingAs($this->owner);
@@ -182,7 +182,7 @@ describe('privilege escalation prevention', function () {
 
         $invitation = TeamInvitation::whereEmail('fqdn-invitee@example.com')->firstOrFail();
 
-        expect($invitation->link)->toStartWith('https://coolify.example.com/auth/link?token=');
+        expect($invitation->link)->toStartWith('https://xlaunch.example.com/auth/link?token=');
     });
 
     test('new user invitation magic link falls back to route url when instance fqdn is not configured', function () {

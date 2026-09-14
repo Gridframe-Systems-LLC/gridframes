@@ -1,11 +1,11 @@
 <?php
 
-use App\Jobs\CoolifyTask;
+use App\Jobs\XlaunchTask;
 use App\Jobs\DatabaseBackupJob;
 use App\Jobs\ScheduledTaskJob;
 
-it('CoolifyTask has correct retry properties defined', function () {
-    $reflection = new ReflectionClass(CoolifyTask::class);
+it('XlaunchTask has correct retry properties defined', function () {
+    $reflection = new ReflectionClass(XlaunchTask::class);
 
     // Check public properties exist
     expect($reflection->hasProperty('tries'))->toBeTrue()

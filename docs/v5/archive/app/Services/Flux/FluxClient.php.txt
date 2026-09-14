@@ -100,7 +100,7 @@ class FluxClient
     /**
      * @param  array<int, array{name: string, config: string}>  $apps
      */
-    public function applyIngress(string $hostId, string $kind, string $config, array $apps = [], string $meshNetwork = 'coolify-default-mesh'): string
+    public function applyIngress(string $hostId, string $kind, string $config, array $apps = [], string $meshNetwork = 'xlaunch-default-mesh'): string
     {
         $payload = $this->dispatch($hostId, [
             'type' => 'ingress.apply',
@@ -363,7 +363,7 @@ class FluxClient
         }
 
         if (preg_match('/^HTTP\/\d(?:\.\d)?\s+(\d{3})/', $response, $matches) !== 1) {
-            throw new RuntimeException('Could not talk to Flux. Check that Flux is running in the Coolify container.');
+            throw new RuntimeException('Could not talk to Flux. Check that Flux is running in the Xlaunch container.');
         }
 
         return (int) $matches[1];

@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Queue;
 uses(RefreshDatabase::class);
 
 it('dispatches scheduled tasks across chunks', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow(Carbon::create(2026, 5, 27, 0, 1, 0, 'UTC'));
     Queue::fake();
 
@@ -75,7 +75,7 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
 });
 
 it('skips expensive dispatch for non-due schedules while seeding dedup cache', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow(Carbon::create(2026, 5, 27, 0, 1, 0, 'UTC'));
     Queue::fake();
 
@@ -94,8 +94,8 @@ it('skips expensive dispatch for non-due schedules while seeding dedup cache', f
     expect(Cache::get("scheduled-task:{$task->id}"))->not->toBeNull();
 });
 
-it('dispatches the instance coolify-db backup even when its id is zero', function () {
-    config(['constants.coolify.self_hosted' => true]);
+it('dispatches the instance xlaunch-db backup even when its id is zero', function () {
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow(Carbon::create(2026, 5, 27, 0, 1, 0, 'UTC'));
     Queue::fake();
 
@@ -114,13 +114,13 @@ it('dispatches the instance coolify-db backup even when its id is zero', functio
 });
 
 it('dispatches zero-id schedules and continues with positive ids', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow(Carbon::create(2026, 5, 27, 0, 1, 0, 'UTC'));
     Queue::fake();
 
     $application = createScheduledTaskApplication();
     $database = StandalonePostgresql::create([
-        'name' => 'coolify-db',
+        'name' => 'xlaunch-db',
         'image' => 'postgres:16-alpine',
         'postgres_user' => 'postgres',
         'postgres_password' => 'password',
@@ -214,7 +214,7 @@ function createScheduledBackupDatabase(): StandalonePostgresql
     $application = createScheduledTaskApplication();
 
     return StandalonePostgresql::create([
-        'name' => 'coolify-db',
+        'name' => 'xlaunch-db',
         'image' => 'postgres:16-alpine',
         'postgres_user' => 'postgres',
         'postgres_password' => 'password',

@@ -59,7 +59,7 @@
                 @if ($dumpAll)
                             <x-callout type="warning" title="Full restore overwrites administrator passwords">
                                 The backup replaces PostgreSQL administrator role passwords, including the destination administrator password.
-                                <span class="mt-1 block">If the administrator password changes, update it in Coolify's database configuration after the restore.</span>
+                                <span class="mt-1 block">If the administrator password changes, update it in Xlaunch's database configuration after the restore.</span>
                             </x-callout>
                             <x-forms.textarea rows="6" readonly label="Import command"
                                 wire:model="restoreCommandText" canGate="update"
@@ -104,7 +104,7 @@
                     <button type="button" @click="restoreType = 'file'"
                         class="flex min-h-20 items-center gap-3 rounded-[10px] border p-3 text-left transition-colors"
                         :class="restoreType === 'file'
-                            ? 'border-coollabs/35 bg-coollabs/[0.06] text-coollabs dark:border-warning/30 dark:bg-warning/[0.08] dark:text-warning'
+                            ? 'border-northlatch/35 bg-northlatch/[0.06] text-northlatch dark:border-warning/30 dark:bg-warning/[0.08] dark:text-warning'
                             : 'border-neutral-200 bg-white hover:border-neutral-300 dark:border-white/[0.08] dark:bg-white/[0.05] dark:hover:border-white/[0.14]'">
                         <span
                             class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-white/[0.06]">
@@ -121,7 +121,7 @@
                         <button type="button" @click="restoreType = 's3'"
                             class="flex min-h-20 items-center gap-3 rounded-[10px] border p-3 text-left transition-colors"
                             :class="restoreType === 's3'
-                                ? 'border-coollabs/35 bg-coollabs/[0.06] text-coollabs dark:border-warning/30 dark:bg-warning/[0.08] dark:text-warning'
+                                ? 'border-northlatch/35 bg-northlatch/[0.06] text-northlatch dark:border-warning/30 dark:bg-warning/[0.08] dark:text-warning'
                                 : 'border-neutral-200 bg-white hover:border-neutral-300 dark:border-white/[0.08] dark:bg-white/[0.05] dark:hover:border-white/[0.14]'">
                             <span
                                 class="flex size-9 shrink-0 items-center justify-center rounded-lg bg-neutral-100 dark:bg-white/[0.06]">
@@ -163,7 +163,7 @@
                         @csrf
                     </form>
                     <div x-show="isUploading" class="mt-3 h-1.5 overflow-hidden rounded-full bg-neutral-200 dark:bg-white/[0.08]">
-                        <div class="h-full rounded-full bg-coollabs dark:bg-warning"
+                        <div class="h-full rounded-full bg-northlatch dark:bg-warning"
                             :style="`width: ${progress}%`"></div>
                     </div>
 

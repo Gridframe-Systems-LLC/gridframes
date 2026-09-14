@@ -20,7 +20,7 @@ class DevelopmentRailpackExamplesSeeder extends Seeder
 {
     public const PROJECT_UUID = 'railpack-examples';
 
-    public const GIT_REPOSITORY = 'coollabsio/coolify-examples';
+    public const GIT_REPOSITORY = 'northlatch/xlaunch-examples';
 
     public const GIT_BRANCH = 'next';
 
@@ -360,7 +360,7 @@ class DevelopmentRailpackExamplesSeeder extends Seeder
             [
                 'uuid' => 'railpack-github-deploy-key',
                 'name' => 'Railpack GitHub Deploy Key Example',
-                'git_repository' => 'git@github.com:coollabsio/coolify-examples-deploy-key.git',
+                'git_repository' => 'git@github.com:northlatch/xlaunch-examples-deploy-key.git',
                 'git_branch' => 'main',
                 'ports_exposes' => '80',
                 'private_key_id' => 1,
@@ -368,7 +368,7 @@ class DevelopmentRailpackExamplesSeeder extends Seeder
             [
                 'uuid' => 'railpack-gitlab-deploy-key',
                 'name' => 'Railpack GitLab Deploy Key Example',
-                'git_repository' => 'git@gitlab.com:coollabsio/php-example.git',
+                'git_repository' => 'git@gitlab.com:northlatch/php-example.git',
                 'git_branch' => 'main',
                 'ports_exposes' => '80',
                 'source_id' => 1,
@@ -378,7 +378,7 @@ class DevelopmentRailpackExamplesSeeder extends Seeder
             [
                 'uuid' => 'railpack-gitlab-public-example',
                 'name' => 'Railpack GitLab Public Example',
-                'git_repository' => 'https://gitlab.com/andrasbacsai/coolify-examples.git',
+                'git_repository' => 'https://gitlab.com/andrasbacsai/xlaunch-examples.git',
                 'git_branch' => 'main',
                 'base_directory' => '/astro/static',
                 'publish_directory' => '/dist',
@@ -426,7 +426,7 @@ KEY,
                 'uuid' => 'localhost',
                 'name' => 'localhost',
                 'description' => 'This is a test docker container in development mode',
-                'ip' => 'coolify-testing-host',
+                'ip' => 'xlaunch-testing-host',
                 'team_id' => 0,
                 'private_key_id' => 1,
                 'proxy' => [
@@ -441,7 +441,7 @@ KEY,
             [
                 'uuid' => 'docker',
                 'name' => 'Standalone Docker 1',
-                'network' => 'coolify',
+                'network' => 'xlaunch',
                 'server_id' => 0,
             ],
         );
@@ -534,7 +534,7 @@ KEY,
         $project = Project::query()->firstOrNew(['uuid' => self::PROJECT_UUID]);
         $project->fill([
             'name' => 'Railpack Examples',
-            'description' => 'Development-only Railpack examples from coollabsio/coolify-examples@next.',
+            'description' => 'Development-only Railpack examples from northlatch/xlaunch-examples@next.',
             'team_id' => 0,
         ]);
         $project->save();

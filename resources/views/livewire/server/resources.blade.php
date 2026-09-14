@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($server, 'name')->limit(10) }} > Server Resources | Coolify
+        {{ data_get_str($server, 'name')->limit(10) }} > Server Resources | Xlaunch
     </x-slot>
 
     <livewire:server.navbar :server="$server" />
@@ -9,7 +9,7 @@
         <x-server.sidebar :server="$server" activeMenu="resources" />
         <div class="application-settings-form min-w-0 w-full">
         <x-application.settings-section id="server-resources-section" title="Resources"
-            helper="Review Coolify-managed resources and other Docker containers running on this server."
+            helper="Review Xlaunch-managed resources and other Docker containers running on this server."
             flush>
             <x-slot:actions>
                 <div class="inline-flex w-fit rounded-[10px] bg-neutral-100 p-1 dark:bg-white/[0.05]">
@@ -155,7 +155,7 @@
                 @else
                     <div class="p-6">
                         <x-empty size="sm" :title="trim($search) !== '' ? 'No matching containers' : 'No unmanaged containers'"
-                            :description="trim($search) !== '' ? 'Try another name or clear the search.' : 'All detected Docker containers are managed by Coolify.'"
+                            :description="trim($search) !== '' ? 'Try another name or clear the search.' : 'All detected Docker containers are managed by Xlaunch.'"
                             icon-name="servers" />
                     </div>
                 @endif
@@ -166,7 +166,7 @@
                     :last-page="$resources->lastPage()" wire-target="previousPage,nextPage,perPage"
                     previous-action="previousPage" next-action="nextPage">
                     <x-slot:pageSize>
-                        <x-page-size-select model="perPage" livewire storage-key="coolify.page-size.server-resources" />
+                        <x-page-size-select model="perPage" livewire storage-key="xlaunch.page-size.server-resources" />
                     </x-slot:pageSize>
                 </x-table-pagination>
             @endif

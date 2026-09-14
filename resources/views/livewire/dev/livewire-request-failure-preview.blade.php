@@ -1,10 +1,10 @@
 <div class="mx-auto flex min-h-screen w-full max-w-3xl flex-col gap-6 px-6 py-12">
     <div class="flex flex-col gap-2">
-        <p class="text-xs font-semibold uppercase tracking-wider text-coollabs">Development tool</p>
+        <p class="text-xs font-semibold uppercase tracking-wider text-northlatch">Development tool</p>
         <h1 class="text-2xl font-semibold text-neutral-950 dark:text-white">Livewire request failure preview</h1>
         <p class="text-sm leading-6 text-neutral-600 dark:text-fg-dim">
             Each button returns proxy-style HTML from a failed Livewire request. The page should remain visible and
-            Coolify should show a toast instead of Livewire's raw response modal.
+            Xlaunch should show a toast instead of Livewire's raw response modal.
         </p>
     </div>
 

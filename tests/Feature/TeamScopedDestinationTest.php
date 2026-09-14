@@ -40,7 +40,7 @@ beforeEach(function () {
     $this->destinationA = StandaloneDocker::factory()->create([
         'server_id' => $this->serverA->id,
         'name' => 'dest-a-'.fake()->unique()->word(),
-        'network' => 'coolify-a-'.fake()->unique()->word(),
+        'network' => 'xlaunch-a-'.fake()->unique()->word(),
     ]);
 
     $this->userB = User::factory()->create();
@@ -53,7 +53,7 @@ beforeEach(function () {
     $this->destinationB = StandaloneDocker::factory()->create([
         'server_id' => $this->serverB->id,
         'name' => 'dest-b-'.fake()->unique()->word(),
-        'network' => 'coolify-b-'.fake()->unique()->word(),
+        'network' => 'xlaunch-b-'.fake()->unique()->word(),
     ]);
     $this->swarmDestinationB = SwarmDocker::create([
         'uuid' => fake()->uuid(),
@@ -175,8 +175,8 @@ describe('PublicGitRepository destination team scope', function () {
         try {
             Livewire::withUrlParams(['destination' => $this->destinationB->uuid])
                 ->test(PublicGitRepository::class, $routeParams)
-                ->set('repository_url', 'https://github.com/coollabsio/coolify')
-                ->set('git_repository', 'coollabsio/coolify')
+                ->set('repository_url', 'https://github.com/northlatch/xlaunch')
+                ->set('git_repository', 'northlatch/xlaunch')
                 ->set('git_branch', 'main')
                 ->set('port', 3000)
                 ->set('build_pack', 'nixpacks')

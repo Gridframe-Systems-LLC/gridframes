@@ -71,7 +71,7 @@ it('renders the danger zone page for a storage destination', function () {
         'name' => 'minio',
         'description' => 'Local MinIO',
         'endpoint' => 'http://minio:9000',
-        'bucket' => 'coolify',
+        'bucket' => 'xlaunch',
         'region' => 'us-east-1',
         'key' => 'access',
         'secret' => 'secret',

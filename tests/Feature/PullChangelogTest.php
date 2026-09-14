@@ -33,12 +33,12 @@ afterEach(function () {
 });
 
 test('releases_url config defaults to the GitHub raw source', function () {
-    expect(config('constants.coolify.releases_url'))
-        ->toBe('https://cdn.coollabs.io/coolify/service-templates-latest.json');
+    expect(config('constants.xlaunch.releases_url'))
+        ->toBe('https://cdn.northlatch.com/xlaunch/service-templates-latest.json');
 });
 
 test('PullChangelog fetches from the configured releases_url and writes the changelog', function () {
-    config(['constants.coolify.releases_url' => 'https://example.test/releases.json']);
+    config(['constants.xlaunch.releases_url' => 'https://example.test/releases.json']);
 
     Http::fake([
         'https://example.test/releases.json' => Http::response(fakeReleasesPayload(), 200),
@@ -57,7 +57,7 @@ test('PullChangelog fetches from the configured releases_url and writes the chan
 });
 
 test('PullChangelog skips draft releases', function () {
-    config(['constants.coolify.releases_url' => 'https://example.test/releases.json']);
+    config(['constants.xlaunch.releases_url' => 'https://example.test/releases.json']);
 
     Http::fake([
         'https://example.test/releases.json' => Http::response(fakeReleasesPayload(), 200),

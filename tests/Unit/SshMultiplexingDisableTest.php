@@ -11,7 +11,7 @@ use Tests\TestCase;
  * These tests verify the parameter signatures for the disableMultiplexing feature
  * which prevents race conditions when multiple scheduled tasks run concurrently.
  *
- * @see https://github.com/coollabsio/coolify/issues/6736
+ * @see https://github.com/northlatch/xlaunch/issues/6736
  */
 class SshMultiplexingDisableTest extends TestCase
 {

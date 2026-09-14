@@ -1,12 +1,12 @@
 #!/bin/bash
-## Explicit Coolify internal PostgreSQL major-version migrator.
+## Explicit Xlaunch internal PostgreSQL major-version migrator.
 ## This script is intentionally not run by upgrade.sh automatically.
 
 set -Eeuo pipefail
 
-SOURCE_DIR="/data/coolify/source"
+SOURCE_DIR="/data/xlaunch/source"
 ENV_FILE="${SOURCE_DIR}/.env"
-BACKUP_DIR="/data/coolify/backups/internal-postgres"
+BACKUP_DIR="/data/xlaunch/backups/internal-postgres"
 OVERRIDE_FILE="${SOURCE_DIR}/docker-compose.postgres-upgrade.yml"
 ROLLBACK_FILE="${SOURCE_DIR}/postgres-upgrade-rollback.env"
 DATE=$(date +%Y-%m-%d-%H-%M-%S)
@@ -20,9 +20,9 @@ else
     COMMAND="upgrade"
 fi
 
-TARGET_IMAGE="${COOLIFY_POSTGRES_TARGET_IMAGE:-postgres:${TARGET_MAJOR}-alpine}"
-TARGET_VOLUME="${COOLIFY_POSTGRES_TARGET_VOLUME:-coolify-db-pg${TARGET_MAJOR}}"
-TEMP_CONTAINER="coolify-db-pg${TARGET_MAJOR:-rollback}-restore-${DATE}"
+TARGET_IMAGE="${XLAUNCH_POSTGRES_TARGET_IMAGE:-postgres:${TARGET_MAJOR}-alpine}"
+TARGET_VOLUME="${XLAUNCH_POSTGRES_TARGET_VOLUME:-xlaunch-db-pg${TARGET_MAJOR}}"
+TEMP_CONTAINER="xlaunch-db-pg${TARGET_MAJOR:-rollback}-restore-${DATE}"
 DUMP_FILE="${BACKUP_DIR}/postgres-upgrade-${DATE}.sql.gz"
 
 log() {
@@ -45,8 +45,8 @@ Examples:
   $0 rollback
 
 Environment overrides:
-  COOLIFY_POSTGRES_TARGET_IMAGE=postgres:18-alpine
-  COOLIFY_POSTGRES_TARGET_VOLUME=coolify-db-pg18
+  XLAUNCH_POSTGRES_TARGET_IMAGE=postgres:18-alpine
+  XLAUNCH_POSTGRES_TARGET_VOLUME=xlaunch-db-pg18
 EOF
 }
 
@@ -125,23 +125,23 @@ mount_path_for_major() {
 }
 
 current_postgres_mount_name() {
-    docker inspect coolify-db --format '{{range .Mounts}}{{if or (eq .Destination "/var/lib/postgresql/data") (eq .Destination "/var/lib/postgresql")}}{{.Name}}{{end}}{{end}}' 2>/dev/null
+    docker inspect xlaunch-db --format '{{range .Mounts}}{{if or (eq .Destination "/var/lib/postgresql/data") (eq .Destination "/var/lib/postgresql")}}{{.Name}}{{end}}{{end}}' 2>/dev/null
 }
 
 current_postgres_mount_path() {
-    docker inspect coolify-db --format '{{range .Mounts}}{{if or (eq .Destination "/var/lib/postgresql/data") (eq .Destination "/var/lib/postgresql")}}{{.Destination}}{{end}}{{end}}' 2>/dev/null
+    docker inspect xlaunch-db --format '{{range .Mounts}}{{if or (eq .Destination "/var/lib/postgresql/data") (eq .Destination "/var/lib/postgresql")}}{{.Destination}}{{end}}{{end}}' 2>/dev/null
 }
 
 current_postgres_image() {
-    docker inspect coolify-db --format '{{.Config.Image}}' 2>/dev/null
+    docker inspect xlaunch-db --format '{{.Config.Image}}' 2>/dev/null
 }
 
-current_coolify_image_tag() {
+current_xlaunch_image_tag() {
     local image
     local image_without_digest
     local last_segment
 
-    image=$(docker inspect coolify --format '{{.Config.Image}}' 2>/dev/null || true)
+    image=$(docker inspect xlaunch --format '{{.Config.Image}}' 2>/dev/null || true)
     image_without_digest="${image%@*}"
     last_segment="${image_without_digest##*/}"
 
@@ -160,9 +160,9 @@ services:
   postgres:
     image: "${image}"
     volumes:
-      - coolify-db:${mount_path}
+      - xlaunch-db:${mount_path}
 volumes:
-  coolify-db:
+  xlaunch-db:
     name: "${volume}"
     external: true
 YAML
@@ -189,12 +189,12 @@ EOF
 }
 
 start_stack() {
-    local coolify_image_tag="${1:-${LATEST_IMAGE:-latest}}"
+    local xlaunch_image_tag="${1:-${LATEST_IMAGE:-latest}}"
     local files
     files=$(compose_files)
 
     # shellcheck disable=SC2086
-    LATEST_IMAGE="$coolify_image_tag" docker compose --env-file "$ENV_FILE" $files up -d --remove-orphans --wait --wait-timeout 120
+    LATEST_IMAGE="$xlaunch_image_tag" docker compose --env-file "$ENV_FILE" $files up -d --remove-orphans --wait --wait-timeout 120
 }
 
 print_rollback_instructions() {
@@ -217,7 +217,7 @@ validate_common_requirements() {
     touch "$LOGFILE"
     chmod 700 "$BACKUP_DIR"
 
-    [ -f "$ENV_FILE" ] || fail "Missing ${ENV_FILE}. Run this on a self-hosted Coolify server."
+    [ -f "$ENV_FILE" ] || fail "Missing ${ENV_FILE}. Run this on a self-hosted Xlaunch server."
     command -v docker >/dev/null 2>&1 || fail "Docker is required."
     docker info >/dev/null 2>&1 || fail "Docker daemon is not reachable."
 }
@@ -235,21 +235,21 @@ rollback_postgres() {
     [ -n "${PREVIOUS_MOUNT_PATH:-}" ] || fail "Rollback metadata is missing PREVIOUS_MOUNT_PATH."
     [ -n "${PREVIOUS_OVERRIDE_PRESENT:-}" ] || fail "Rollback metadata is missing PREVIOUS_OVERRIDE_PRESENT."
 
-    CURRENT_COOLIFY_IMAGE_TAG=$(current_coolify_image_tag)
+    CURRENT_XLAUNCH_IMAGE_TAG=$(current_xlaunch_image_tag)
 
-    log "Rolling back Coolify internal PostgreSQL."
+    log "Rolling back Xlaunch internal PostgreSQL."
     log "Previous image: ${PREVIOUS_IMAGE}"
     log "Previous volume: ${PREVIOUS_VOLUME}"
     log "Previous mount path: ${PREVIOUS_MOUNT_PATH}"
-    log "Current Coolify image tag: ${CURRENT_COOLIFY_IMAGE_TAG:-latest}"
+    log "Current Xlaunch image tag: ${CURRENT_XLAUNCH_IMAGE_TAG:-latest}"
 
     docker volume inspect "$PREVIOUS_VOLUME" >/dev/null 2>&1 || fail "Previous volume '${PREVIOUS_VOLUME}' does not exist."
 
-    log "Stopping Coolify application container before rollback."
-    docker stop coolify >>"$LOGFILE" 2>&1 || true
+    log "Stopping Xlaunch application container before rollback."
+    docker stop xlaunch >>"$LOGFILE" 2>&1 || true
 
-    log "Removing current coolify-db container. Current upgraded volume is kept untouched."
-    docker rm -f coolify-db >>"$LOGFILE" 2>&1 || true
+    log "Removing current xlaunch-db container. Current upgraded volume is kept untouched."
+    docker rm -f xlaunch-db >>"$LOGFILE" 2>&1 || true
 
     if [ "$PREVIOUS_OVERRIDE_PRESENT" = "true" ]; then
         log "Restoring previous PostgreSQL compose override."
@@ -259,8 +259,8 @@ rollback_postgres() {
         rm -f "$OVERRIDE_FILE"
     fi
 
-    log "Starting Coolify stack with rollback database volume."
-    start_stack "$CURRENT_COOLIFY_IMAGE_TAG" >>"$LOGFILE" 2>&1 || fail "Could not start Coolify stack after rollback. See ${LOGFILE}."
+    log "Starting Xlaunch stack with rollback database volume."
+    start_stack "$CURRENT_XLAUNCH_IMAGE_TAG" >>"$LOGFILE" 2>&1 || fail "Could not start Xlaunch stack after rollback. See ${LOGFILE}."
 
     log "Rollback completed successfully."
     cat <<EOF | tee -a "$LOGFILE"
@@ -276,32 +276,32 @@ upgrade_postgres() {
     TARGET_MOUNT_PATH=$(mount_path_for_major "$TARGET_MAJOR")
     validate_common_requirements
 
-    log "Starting Coolify internal PostgreSQL major upgrade."
+    log "Starting Xlaunch internal PostgreSQL major upgrade."
     log "Target major: ${TARGET_MAJOR}"
     log "Target image: ${TARGET_IMAGE}"
     log "Target volume: ${TARGET_VOLUME}"
     log "Target mount path: ${TARGET_MOUNT_PATH}"
 
-    DB_USERNAME=$(get_env_var DB_USERNAME coolify)
-    DB_DATABASE=$(get_env_var DB_DATABASE coolify)
+    DB_USERNAME=$(get_env_var DB_USERNAME xlaunch)
+    DB_DATABASE=$(get_env_var DB_DATABASE xlaunch)
 
-    if ! docker ps -a --format '{{.Names}}' | grep -qx 'coolify-db'; then
-        fail "Container 'coolify-db' was not found. Start Coolify before running this script."
+    if ! docker ps -a --format '{{.Names}}' | grep -qx 'xlaunch-db'; then
+        fail "Container 'xlaunch-db' was not found. Start Xlaunch before running this script."
     fi
 
-    if ! docker ps --format '{{.Names}}' | grep -qx 'coolify-db'; then
-        log "Starting existing coolify-db container for version detection and dump."
-        docker start coolify-db >>"$LOGFILE" 2>&1 || fail "Could not start coolify-db."
+    if ! docker ps --format '{{.Names}}' | grep -qx 'xlaunch-db'; then
+        log "Starting existing xlaunch-db container for version detection and dump."
+        docker start xlaunch-db >>"$LOGFILE" 2>&1 || fail "Could not start xlaunch-db."
     fi
 
-    wait_for_postgres coolify-db "$DB_USERNAME" "$DB_DATABASE" || fail "Existing coolify-db is not ready."
+    wait_for_postgres xlaunch-db "$DB_USERNAME" "$DB_DATABASE" || fail "Existing xlaunch-db is not ready."
 
-    SERVER_VERSION_NUM=$(docker exec coolify-db psql -U "$DB_USERNAME" -d "$DB_DATABASE" -Atc 'SHOW server_version_num;' | tr -d '[:space:]')
+    SERVER_VERSION_NUM=$(docker exec xlaunch-db psql -U "$DB_USERNAME" -d "$DB_DATABASE" -Atc 'SHOW server_version_num;' | tr -d '[:space:]')
     CURRENT_MAJOR=$((SERVER_VERSION_NUM / 10000))
     PREVIOUS_VOLUME=$(current_postgres_mount_name)
     PREVIOUS_MOUNT_PATH=$(current_postgres_mount_path)
     PREVIOUS_IMAGE=$(current_postgres_image)
-    CURRENT_COOLIFY_IMAGE_TAG=$(current_coolify_image_tag)
+    CURRENT_XLAUNCH_IMAGE_TAG=$(current_xlaunch_image_tag)
 
     [ -n "$PREVIOUS_VOLUME" ] || fail "Could not detect current PostgreSQL Docker volume."
     [ -n "$PREVIOUS_MOUNT_PATH" ] || fail "Could not detect current PostgreSQL mount path."
@@ -317,7 +317,7 @@ upgrade_postgres() {
     log "Current active volume: ${PREVIOUS_VOLUME}"
     log "Current image: ${PREVIOUS_IMAGE}"
     log "Current mount path: ${PREVIOUS_MOUNT_PATH}"
-    log "Current Coolify image tag: ${CURRENT_COOLIFY_IMAGE_TAG:-latest}"
+    log "Current Xlaunch image tag: ${CURRENT_XLAUNCH_IMAGE_TAG:-latest}"
 
     if [ "$CURRENT_MAJOR" -eq "$TARGET_MAJOR" ]; then
         log "PostgreSQL is already on major ${TARGET_MAJOR}. Nothing to do."
@@ -329,14 +329,14 @@ upgrade_postgres() {
     fi
 
     if docker volume inspect "$TARGET_VOLUME" >/dev/null 2>&1; then
-        fail "Target volume '${TARGET_VOLUME}' already exists. Set COOLIFY_POSTGRES_TARGET_VOLUME to a new name or remove the old failed target volume."
+        fail "Target volume '${TARGET_VOLUME}' already exists. Set XLAUNCH_POSTGRES_TARGET_VOLUME to a new name or remove the old failed target volume."
     fi
 
-    log "Stopping Coolify application container to prevent writes during dump."
-    docker stop coolify >>"$LOGFILE" 2>&1 || true
+    log "Stopping Xlaunch application container to prevent writes during dump."
+    docker stop xlaunch >>"$LOGFILE" 2>&1 || true
 
     log "Creating compressed dump at ${DUMP_FILE}."
-    docker exec coolify-db pg_dumpall -U "$DB_USERNAME" | gzip -c > "$DUMP_FILE"
+    docker exec xlaunch-db pg_dumpall -U "$DB_USERNAME" | gzip -c > "$DUMP_FILE"
     chmod 600 "$DUMP_FILE"
 
     if [ ! -s "$DUMP_FILE" ]; then
@@ -352,7 +352,7 @@ upgrade_postgres() {
     log "Starting temporary PostgreSQL ${TARGET_MAJOR} container."
     docker run -d \
         --name "$TEMP_CONTAINER" \
-        --network coolify \
+        --network xlaunch \
         -e POSTGRES_HOST_AUTH_METHOD=trust \
         -v "${TARGET_VOLUME}:${TARGET_MOUNT_PATH}" \
         "$TARGET_IMAGE" >>"$LOGFILE" 2>&1
@@ -362,7 +362,7 @@ upgrade_postgres() {
     log "Restoring dump into target volume."
     gunzip -c "$DUMP_FILE" | docker exec -i "$TEMP_CONTAINER" psql -U postgres -d postgres >>"$LOGFILE" 2>&1
 
-    log "Smoke-checking restored Coolify database."
+    log "Smoke-checking restored Xlaunch database."
     docker exec "$TEMP_CONTAINER" psql -U "$DB_USERNAME" -d "$DB_DATABASE" -Atc 'SELECT 1;' | grep -qx '1' || fail "Restored database smoke check failed."
 
     log "Saving rollback metadata to ${ROLLBACK_FILE}."
@@ -374,17 +374,17 @@ upgrade_postgres() {
     log "Stopping temporary restore container."
     docker rm -f "$TEMP_CONTAINER" >>"$LOGFILE" 2>&1 || true
 
-    log "Stopping old coolify-db container. Previous volume '${PREVIOUS_VOLUME}' will be kept for rollback."
-    docker rm -f coolify-db >>"$LOGFILE" 2>&1 || true
+    log "Stopping old xlaunch-db container. Previous volume '${PREVIOUS_VOLUME}' will be kept for rollback."
+    docker rm -f xlaunch-db >>"$LOGFILE" 2>&1 || true
 
-    log "Starting Coolify stack with PostgreSQL ${TARGET_MAJOR}."
-    start_stack "$CURRENT_COOLIFY_IMAGE_TAG" >>"$LOGFILE" 2>&1 || fail "Could not start Coolify stack with upgraded PostgreSQL. See ${LOGFILE}."
+    log "Starting Xlaunch stack with PostgreSQL ${TARGET_MAJOR}."
+    start_stack "$CURRENT_XLAUNCH_IMAGE_TAG" >>"$LOGFILE" 2>&1 || fail "Could not start Xlaunch stack with upgraded PostgreSQL. See ${LOGFILE}."
 
-    log "Coolify internal PostgreSQL upgrade completed successfully."
+    log "Xlaunch internal PostgreSQL upgrade completed successfully."
     print_rollback_instructions
 }
 
-if [ "${COOLIFY_POSTGRES_UPGRADE_SOURCE_ONLY:-false}" = "true" ] && [ "${BASH_SOURCE[0]}" != "$0" ]; then
+if [ "${XLAUNCH_POSTGRES_UPGRADE_SOURCE_ONLY:-false}" = "true" ] && [ "${BASH_SOURCE[0]}" != "$0" ]; then
     return 0
 fi
 

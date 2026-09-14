@@ -31,11 +31,11 @@ function smtpSetupPayload(): array
 {
     return [
         'smtpFromAddress' => 'alerts@example.com',
-        'smtpFromName' => 'Coolify',
+        'smtpFromName' => 'Xlaunch',
         'smtpHost' => 'smtp.example.com',
         'smtpPort' => '587',
         'smtpEncryption' => 'starttls',
-        'smtpEhloDomain' => 'coolify.example.com',
+        'smtpEhloDomain' => 'xlaunch.example.com',
         'resendEnabled' => false,
         'resendApiKey' => null,
     ];
@@ -58,7 +58,7 @@ test('saving smtp settings does not require a resend api key when resend is disa
 
     expect($settings->smtp_enabled)->toBeTrue()
         ->and($settings->smtp_host)->toBe('smtp.example.com')
-        ->and($settings->smtp_ehlo_domain)->toBe('coolify.example.com')
+        ->and($settings->smtp_ehlo_domain)->toBe('xlaunch.example.com')
         ->and($settings->resend_enabled)->toBeFalse();
 });
 
@@ -79,7 +79,7 @@ test('team smtp settings save their own ehlo domain', function () {
         ->assertNotDispatched('error');
 
     expect($team->emailNotificationSettings->fresh()->smtp_ehlo_domain)
-        ->toBe('coolify.example.com');
+        ->toBe('xlaunch.example.com');
 });
 
 test('saving transactional email settings does not require a resend api key when resend is disabled', function () {

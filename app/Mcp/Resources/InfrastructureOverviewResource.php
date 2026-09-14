@@ -13,11 +13,11 @@ class InfrastructureOverviewResource extends Resource
 {
     use ResolvesTeam;
 
-    protected string $name = 'coolify-overview';
+    protected string $name = 'xlaunch-overview';
 
-    protected string $description = 'Team infrastructure overview JSON for the authenticated Coolify token.';
+    protected string $description = 'Team infrastructure overview JSON for the authenticated Xlaunch token.';
 
-    protected string $uri = 'coolify://overview';
+    protected string $uri = 'xlaunch://overview';
 
     protected string $mimeType = 'application/json';
 
@@ -79,7 +79,7 @@ class InfrastructureOverviewResource extends Resource
             ])->values()->all();
 
         return Response::text(json_encode([
-            'coolify_version' => config('constants.coolify.version'),
+            'xlaunch_version' => config('constants.xlaunch.version'),
             'servers' => $servers,
             'projects' => $projects,
             'counts' => [

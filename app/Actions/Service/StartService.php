@@ -42,7 +42,7 @@ class StartService
         }
         $commands[] = 'echo Starting service.';
         $commands[] = "docker compose --project-directory {$workdir} -f {$workdir}/docker-compose.yml --project-name {$service->uuid} up -d --remove-orphans --force-recreate --build";
-        $commands[] = "docker network connect $service->uuid coolify-proxy >/dev/null 2>&1 || true";
+        $commands[] = "docker network connect $service->uuid xlaunch-proxy >/dev/null 2>&1 || true";
         if (data_get($service, 'connect_to_docker_network')) {
             $compose = data_get($service, 'docker_compose', []);
             $safeNetwork = escapeshellarg($service->destination->network);
@@ -73,7 +73,7 @@ class StartService
         }
 
         return [
-            'docker network connect '.escapeshellarg($network).' coolify-log-drain >/dev/null 2>&1 || true',
+            'docker network connect '.escapeshellarg($network).' xlaunch-log-drain >/dev/null 2>&1 || true',
         ];
     }
 

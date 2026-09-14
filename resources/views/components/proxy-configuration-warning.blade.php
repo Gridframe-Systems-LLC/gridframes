@@ -23,7 +23,7 @@
                     Restart the proxy to apply these changes.
                     @if ($canRestart)
                         <button type="button"
-                            class="ml-0.5 inline-flex items-center gap-0.5 font-semibold text-coollabs transition-colors hover:text-coollabs-100 dark:text-warning dark:hover:text-warning/80"
+                            class="ml-0.5 inline-flex items-center gap-0.5 font-semibold text-northlatch transition-colors hover:text-northlatch-100 dark:text-warning dark:hover:text-warning/80"
                             @click="open = false; document.getElementById('server-mobile-restart-proxy-trigger')?.click()">
                             Restart proxy
                             <x-reicon name="arrow-right" class="size-2.5" />

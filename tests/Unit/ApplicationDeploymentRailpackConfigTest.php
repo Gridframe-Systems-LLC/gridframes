@@ -57,7 +57,7 @@ function invokeRailpackMethod(object $job, ReflectionClass $reflection, string $
     return $reflectionMethod->invokeArgs($job, $arguments);
 }
 
-it('deep merges repository railpack config with coolify overrides', function () {
+it('deep merges repository railpack config with xlaunch overrides', function () {
     $repositoryConfigJson = json_encode([
         '$schema' => 'https://schema.railpack.com',
         'packages' => [
@@ -147,7 +147,7 @@ it('writes a generated railpack config file when repository config exists', func
 
     $configPath = invokeRailpackMethod($job, $reflection, 'generate_railpack_config_file');
 
-    expect($configPath)->toBe('.coolify/railpack.generated.json');
+    expect($configPath)->toBe('.xlaunch/railpack.generated.json');
     expect($job->recordedCommands)->toHaveCount(3);
 });
 
@@ -193,7 +193,7 @@ it('builds railpack prepare command using railpack env for install and cli flags
         $job,
         $reflection,
         'railpack_prepare_command',
-        ['.coolify/railpack.generated.json'],
+        ['.xlaunch/railpack.generated.json'],
     );
 
     expect($command)->toContain('railpack prepare');
@@ -201,7 +201,7 @@ it('builds railpack prepare command using railpack env for install and cli flags
     expect($command)->toContain("--env 'RAILPACK_INSTALL_CMD=npm ci'");
     expect($command)->toContain('--build-cmd '.escapeshellarg('npm run build'));
     expect($command)->toContain('--start-cmd '.escapeshellarg('node server.js'));
-    expect($command)->toContain('--config-file '.escapeshellarg('.coolify/railpack.generated.json'));
+    expect($command)->toContain('--config-file '.escapeshellarg('.xlaunch/railpack.generated.json'));
     expect($command)->toContain('--plan-out /artifacts/railpack-plan.json /artifacts/test-app');
     expect($command)->not->toContain("--env 'RAILPACK_BUILD_CMD=");
     expect($command)->not->toContain("--env 'RAILPACK_START_CMD=");
@@ -250,14 +250,14 @@ it('pins docker config while running railpack buildx commands', function () {
         $reflection,
         'railpack_build_command',
         [
-            'coollabsio/coolify:test',
+            'northlatch/xlaunch:test',
             collect([]),
         ],
     );
 
     expect($command)
-        ->toContain('DOCKER_CONFIG=/root/.docker docker buildx create --name coolify-railpack')
-        ->toContain('DOCKER_CONFIG=/root/.docker docker buildx build --builder coolify-railpack');
+        ->toContain('DOCKER_CONFIG=/root/.docker docker buildx create --name xlaunch-railpack')
+        ->toContain('DOCKER_CONFIG=/root/.docker docker buildx build --builder xlaunch-railpack');
 });
 
 it('filters reserved docker client variables from railpack build secrets', function () {
@@ -270,7 +270,7 @@ it('filters reserved docker client variables from railpack build secrets', funct
         $reflection,
         'railpack_build_command',
         [
-            'coollabsio/coolify:test',
+            'northlatch/xlaunch:test',
             collect([
                 'DOCKER_CONFIG' => '/tmp/no-buildx',
                 'DOCKER_HOST' => 'tcp://invalid:2375',
@@ -299,7 +299,7 @@ it('builds railpack docker command with matching env and secret flags for all ra
         $reflection,
         'railpack_build_command',
         [
-            'coollabsio/coolify:test',
+            'northlatch/xlaunch:test',
             collect([
                 'RAILPACK_NODE_VERSION' => '22',
                 'RAILPACK_INSTALL_CMD' => 'npm ci && npm run postinstall',
@@ -310,7 +310,7 @@ it('builds railpack docker command with matching env and secret flags for all ra
     );
 
     // Build-time variables are interpolated by sourcing the build-time .env file before
-    // the build, so user/Coolify variables must NOT be forwarded inline as literals.
+    // the build, so user/Xlaunch variables must NOT be forwarded inline as literals.
     expect($command)->toContain('set -a && source /artifacts/build-time.env && set +a');
     expect($command)->toContain("env 'RAILPACK_NODE_VERSION=22'");
     expect($command)->toContain("'RAILPACK_INSTALL_CMD=npm ci && npm run postinstall'");
@@ -323,7 +323,7 @@ it('builds railpack docker command with matching env and secret flags for all ra
     expect($command)->toContain("--secret 'id=RAILPACK_DEPLOY_APT_PACKAGES,env=RAILPACK_DEPLOY_APT_PACKAGES'");
     expect($command)->toContain("--secret 'id=SECRET_JSON,env=SECRET_JSON'");
     expect($command)->toContain(' --build-arg secrets-hash=');
-    expect($command)->toContain('--build-arg BUILDKIT_SYNTAX="ghcr.io/railwayapp/railpack-frontend:v'.config('constants.coolify.railpack_version').'"');
+    expect($command)->toContain('--build-arg BUILDKIT_SYNTAX="ghcr.io/railwayapp/railpack-frontend:v'.config('constants.xlaunch.railpack_version').'"');
 });
 
 it('interpolates build-time variable references for railpack by sourcing the build-time env file', function () {
@@ -331,27 +331,27 @@ it('interpolates build-time variable references for railpack by sourcing the bui
         'uuid' => 'application-uuid',
     ]);
 
-    // Mirrors the issue: BETTER_AUTH_URL=$COOLIFY_URL must be interpolated at build time.
+    // Mirrors the issue: BETTER_AUTH_URL=$XLAUNCH_URL must be interpolated at build time.
     $command = invokeRailpackMethod(
         $job,
         $reflection,
         'railpack_build_command',
         [
-            'coollabsio/coolify:test',
+            'northlatch/xlaunch:test',
             collect([
-                'BETTER_AUTH_URL' => '$COOLIFY_URL',
-                'COOLIFY_URL' => 'https://sapere-10.bobman.dev',
+                'BETTER_AUTH_URL' => '$XLAUNCH_URL',
+                'XLAUNCH_URL' => 'https://sapere-10.bobman.dev',
             ]),
         ],
     );
 
-    // The literal `$COOLIFY_URL` must NOT be forwarded inline; it is resolved by the shell
+    // The literal `$XLAUNCH_URL` must NOT be forwarded inline; it is resolved by the shell
     // after sourcing the build-time .env file, then read through the build secret.
     expect($command)->toContain('set -a && source /artifacts/build-time.env && set +a');
-    expect($command)->not->toContain("'BETTER_AUTH_URL=\$COOLIFY_URL'");
+    expect($command)->not->toContain("'BETTER_AUTH_URL=\$XLAUNCH_URL'");
     expect($command)->not->toContain("env 'BETTER_AUTH_URL");
     expect($command)->toContain("--secret 'id=BETTER_AUTH_URL,env=BETTER_AUTH_URL'");
-    expect($command)->toContain("--secret 'id=COOLIFY_URL,env=COOLIFY_URL'");
+    expect($command)->toContain("--secret 'id=XLAUNCH_URL,env=XLAUNCH_URL'");
 });
 
 it('creates an empty build-time env file for railpack when there are no generated build-time variables', function () {
@@ -368,10 +368,10 @@ it('creates an empty build-time env file for railpack when there are no generate
         'is_env_sorting_enabled' => false,
     ]));
     $application->setRelation('environment_variables', collect([
-        new EnvironmentVariable(['key' => 'COOLIFY_FQDN']),
-        new EnvironmentVariable(['key' => 'COOLIFY_URL']),
-        new EnvironmentVariable(['key' => 'COOLIFY_BRANCH']),
-        new EnvironmentVariable(['key' => 'COOLIFY_RESOURCE_UUID']),
+        new EnvironmentVariable(['key' => 'XLAUNCH_FQDN']),
+        new EnvironmentVariable(['key' => 'XLAUNCH_URL']),
+        new EnvironmentVariable(['key' => 'XLAUNCH_BRANCH']),
+        new EnvironmentVariable(['key' => 'XLAUNCH_RESOURCE_UUID']),
     ]));
 
     foreach ([

@@ -148,7 +148,7 @@ class Index extends Component
                 if (! validateDNSEntry($this->fqdn, $this->server)) {
                     $target = serverDnsTargetIp($this->server) ?? $this->server->ip;
                     $guidance = dnsMismatchGuidanceMessage($target, $target);
-                    $this->dispatch('error', "Validating DNS failed.<br><br>{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://coolify.io/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
+                    $this->dispatch('error', "Validating DNS failed.<br><br>{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://northlatch.com/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
                     $error_show = true;
                 }
             }
@@ -199,7 +199,7 @@ class Index extends Component
 
             $this->validateOnly('dev_helper_version');
 
-            $version = $this->dev_helper_version ?: config('constants.coolify.helper_version');
+            $version = $this->dev_helper_version ?: config('constants.xlaunch.helper_version');
             if (empty($version)) {
                 $this->dispatch('error', 'Please specify a version to build.');
 
@@ -212,8 +212,8 @@ class Index extends Component
                 return;
             }
 
-            $imageRef = escapeshellarg(coolifyHelperImage().":{$version}");
-            $buildCommand = "docker build -t {$imageRef} -f docker/coolify-helper/Dockerfile .";
+            $imageRef = escapeshellarg(xlaunchHelperImage().":{$version}");
+            $buildCommand = "docker build -t {$imageRef} -f docker/xlaunch-helper/Dockerfile .";
 
             $activity = remote_process(
                 command: [$buildCommand],
@@ -224,7 +224,7 @@ class Index extends Component
             $this->buildActivityId = $activity->id;
             $this->dispatch('activityMonitor', $activity->id);
 
-            $this->dispatch('success', "Building coolify-helper:{$version}...");
+            $this->dispatch('success', "Building xlaunch-helper:{$version}...");
         } catch (\Exception $e) {
             return handleError($e, $this);
         }

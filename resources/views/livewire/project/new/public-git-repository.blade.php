@@ -29,9 +29,9 @@
                 </div>
                 <p class="mt-2 text-xs text-neutral-500 dark:text-fg-dim">
                     Need a sample? Browse
-                    <a class="font-medium text-coollabs hover:underline dark:text-warning"
-                        href="https://github.com/coollabsio/coolify-examples/" target="_blank">
-                        Coolify Examples
+                    <a class="font-medium text-northlatch hover:underline dark:text-warning"
+                        href="https://github.com/northlatch/xlaunch-examples/" target="_blank">
+                        Xlaunch Examples
                     </a>.
                 </p>
             </div>
@@ -44,7 +44,7 @@
                 <div class="application-settings-section-header">
                     <div>
                         <h2>Build configuration</h2>
-                        <p>Choose how Coolify builds and runs this repository.</p>
+                        <p>Choose how Xlaunch builds and runs this repository.</p>
                     </div>
                     <x-forms.button type="submit" isHighlighted>Continue</x-forms.button>
                 </div>
@@ -102,7 +102,7 @@
                                 @blur="composeLocation = normalize(composeLocation)" />
                             <p class="sm:col-span-2 text-xs text-neutral-500 dark:text-fg-dim">
                                 Resolved file:
-                                <code class="font-mono text-coollabs dark:text-warning"
+                                <code class="font-mono text-northlatch dark:text-warning"
                                     x-text='(baseDir === "/" ? "" : baseDir) + (composeLocation.startsWith("/") ? composeLocation : "/" + composeLocation)'></code>
                             </p>
                         </div>

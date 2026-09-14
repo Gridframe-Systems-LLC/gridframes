@@ -50,7 +50,7 @@ beforeEach(function () {
         return StandaloneDocker::firstOrCreate(
             [
                 'server_id' => $this->server->id,
-                'network' => 'coolify',
+                'network' => 'xlaunch',
             ],
             [
                 'uuid' => (string) Str::uuid(),
@@ -967,7 +967,7 @@ it('keeps noindex domains when normalizing a custom service domain port', functi
         ->toBe(['https://api.example.com' => 8080]);
 });
 
-it('shows an inherited internal port badge from the coolify service env port', function () {
+it('shows an inherited internal port badge from the xlaunch service env port', function () {
     $this->service->update([
         'docker_compose_raw' => "services:\n  api:\n    image: node:alpine\n    environment:\n      - SERVICE_FQDN_API_3000\n",
     ]);
@@ -985,7 +985,7 @@ it('shows an inherited internal port badge from the coolify service env port', f
         ->call('updateDomain')
         ->assertHasNoErrors()
         ->assertSee('Internal port 3000')
-        ->assertSee('Inherited from the Coolify service port', false)
+        ->assertSee('Inherited from the Xlaunch service port', false)
         ->assertDontSee('No internal port');
 
     expect($this->apiApp->fresh())

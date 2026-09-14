@@ -41,7 +41,7 @@ function expectGitlabPrivateKeyMaterializationCommandsSkipLogging(array|Collecti
         $commands = [$commands];
     }
 
-    $keyCommands = collect($commands)->filter(fn ($command) => str(data_get($command, 'command') ?? $command[0] ?? $command)->contains('base64 -d | tee /root/.ssh/id_rsa_coolify_'));
+    $keyCommands = collect($commands)->filter(fn ($command) => str(data_get($command, 'command') ?? $command[0] ?? $command)->contains('base64 -d | tee /root/.ssh/id_rsa_xlaunch_'));
 
     expect($keyCommands)->not->toBeEmpty();
     $keyCommands->each(function ($command): void {
@@ -210,6 +210,6 @@ it('applies OAuth git config to GitLab merge-request fetch and submodule checkou
     // The MR-ref fetch and submodule update must run through the OAuth-rewritten git, or private same-host submodules fail.
     expect($commands)
         ->toContain('oauth2:gitlab-access-token@gitlab.example.test')
-        ->toContain("http.version=HTTP/1.1 fetch origin 'merge-requests/2/head:pr-2-coolify'")
+        ->toContain("http.version=HTTP/1.1 fetch origin 'merge-requests/2/head:pr-2-xlaunch'")
         ->toContain('http.version=HTTP/1.1 submodule update --init --recursive');
 });

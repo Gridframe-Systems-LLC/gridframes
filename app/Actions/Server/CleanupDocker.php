@@ -13,19 +13,19 @@ class CleanupDocker
 
     public function handle(Server $server, bool $deleteUnusedVolumes = false, bool $deleteUnusedNetworks = false)
     {
-        $realtimeImage = config('constants.coolify.realtime_image');
-        $realtimeImageVersion = config('constants.coolify.realtime_version');
+        $realtimeImage = config('constants.xlaunch.realtime_image');
+        $realtimeImageVersion = config('constants.xlaunch.realtime_version');
         $realtimeImageWithVersion = "$realtimeImage:$realtimeImageVersion";
-        $realtimeImageWithoutPrefix = 'coollabsio/coolify-realtime';
-        $realtimeImageWithoutPrefixVersion = "coollabsio/coolify-realtime:$realtimeImageVersion";
+        $realtimeImageWithoutPrefix = 'northlatch/xlaunch-realtime';
+        $realtimeImageWithoutPrefixVersion = "northlatch/xlaunch-realtime:$realtimeImageVersion";
 
         $helperImageVersion = getHelperVersion();
-        $helperImage = coolifyHelperImage();
+        $helperImage = xlaunchHelperImage();
         $helperImageWithVersion = "$helperImage:$helperImageVersion";
-        $helperImageWithoutPrefix = 'coollabsio/coolify-helper';
-        $helperImageWithoutPrefixVersion = "coollabsio/coolify-helper:$helperImageVersion";
+        $helperImageWithoutPrefix = 'northlatch/xlaunch-helper';
+        $helperImageWithoutPrefixVersion = "northlatch/xlaunch-helper:$helperImageVersion";
         $buildxMetadataVolume = isDev() && $server->isLocalhost()
-            ? 'coolify-buildx'
+            ? 'xlaunch-buildx'
             : '$HOME/.docker/buildx';
 
         $cleanupLog = [];
@@ -40,8 +40,8 @@ class CleanupDocker
         $applicationCleanupLog = $this->cleanupApplicationImages($server, $applications);
         $cleanupLog = array_merge($cleanupLog, $applicationCleanupLog);
 
-        // Build image prune command that excludes application images and current Coolify infrastructure images
-        // This ensures we clean up non-Coolify images while preserving rollback images and current helper/realtime images
+        // Build image prune command that excludes application images and current Xlaunch infrastructure images
+        // This ensures we clean up non-Xlaunch images while preserving rollback images and current helper/realtime images
         // Note: Only the current version is protected; old versions will be cleaned up by explicit commands below
         // We pass the version strings so all registry variants are protected (ghcr.io, docker.io, no prefix)
         $imagePruneCmd = $this->buildImagePruneCommand(
@@ -51,10 +51,10 @@ class CleanupDocker
         );
 
         $commands = [
-            'docker container prune -f --filter "label=coolify.managed=true" --filter "label!=coolify.proxy=true" --filter "label!=coolify.type=database" --filter "label!=coolify.type=application" --filter "label!=coolify.type=service"',
+            'docker container prune -f --filter "label=xlaunch.managed=true" --filter "label!=xlaunch.proxy=true" --filter "label!=xlaunch.type=database" --filter "label!=xlaunch.type=application" --filter "label!=xlaunch.type=service"',
             $imagePruneCmd,
             'docker builder prune -af',
-            "docker run --rm -v {$buildxMetadataVolume}:/root/.docker/buildx -v /var/run/docker.sock:/var/run/docker.sock {$helperImageWithVersion} docker buildx prune --builder coolify-railpack -af 2>/dev/null || true",
+            "docker run --rm -v {$buildxMetadataVolume}:/root/.docker/buildx -v /var/run/docker.sock:/var/run/docker.sock {$helperImageWithVersion} docker buildx prune --builder xlaunch-railpack -af 2>/dev/null || true",
             "docker images --filter before=$helperImageWithVersion --filter reference=$helperImage | grep $helperImage | awk '{print $3}' | xargs -r docker rmi -f",
             "docker images --filter before=$realtimeImageWithVersion --filter reference=$realtimeImage | grep $realtimeImage | awk '{print $3}' | xargs -r docker rmi -f",
             "docker images --filter before=$helperImageWithoutPrefixVersion --filter reference=$helperImageWithoutPrefix | grep $helperImageWithoutPrefix | awk '{print $3}' | xargs -r docker rmi -f",
@@ -103,20 +103,20 @@ class CleanupDocker
             return preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $repo);
         })->implode('|');
 
-        // Build grep pattern to exclude Coolify infrastructure images (current version only)
+        // Build grep pattern to exclude Xlaunch infrastructure images (current version only)
         // This pattern matches the image name regardless of registry prefix:
-        // - ghcr.io/coollabsio/coolify-helper:1.0.12
-        // - docker.io/coollabsio/coolify-helper:1.0.12
-        // - coollabsio/coolify-helper:1.0.12
-        // Pattern: (^|/)coollabsio/coolify-(helper|realtime):VERSION$
+        // - ghcr.io/northlatch/xlaunch-helper:1.0.12
+        // - docker.io/northlatch/xlaunch-helper:1.0.12
+        // - northlatch/xlaunch-helper:1.0.12
+        // Pattern: (^|/)northlatch/xlaunch-(helper|realtime):VERSION$
         $escapedHelperVersion = preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $helperImageVersion);
         $escapedRealtimeVersion = preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $realtimeImageVersion);
-        $infraExcludePattern = "(^|/)coollabsio/coolify-helper:{$escapedHelperVersion}$|(^|/)coollabsio/coolify-realtime:{$escapedRealtimeVersion}$";
+        $infraExcludePattern = "(^|/)northlatch/xlaunch-helper:{$escapedHelperVersion}$|(^|/)northlatch/xlaunch-realtime:{$escapedRealtimeVersion}$";
 
         // Delete unused images that:
         // - Are not application images (don't match app repos)
-        // - Are not current Coolify infrastructure images (any registry)
-        // - Don't have coolify.managed=true label
+        // - Are not current Xlaunch infrastructure images (any registry)
+        // - Don't have xlaunch.managed=true label
         // Images in use by containers will fail silently with docker rmi
         // Pattern matches both uuid:tag and uuid_servicename:tag (Docker Compose with build)
         $grepCommands = "grep -v '<none>'";
@@ -131,7 +131,7 @@ class CleanupDocker
 
         $commands[] = "docker images --format '{{.Repository}}:{{.Tag}}' | ".
             $grepCommands.' | '.
-            "xargs -r -I {} sh -c 'docker inspect --format \"{{index .Config.Labels \\\"coolify.managed\\\"}}\" \"{}\" 2>/dev/null | grep -q true || docker rmi \"{}\" 2>/dev/null' || true";
+            "xargs -r -I {} sh -c 'docker inspect --format \"{{index .Config.Labels \\\"xlaunch.managed\\\"}}\" \"{}\" 2>/dev/null | grep -q true || docker rmi \"{}\" 2>/dev/null' || true";
 
         return implode(' && ', $commands);
     }

@@ -38,7 +38,7 @@ beforeEach(function () {
         'access_token' => 'access-token',
         'refresh_token' => 'refresh-token',
         'expires_at' => time() + 3600,
-        'redirect_uri' => 'https://coolify.example.com/webhooks/source/gitlab/redirect',
+        'redirect_uri' => 'https://xlaunch.example.com/webhooks/source/gitlab/redirect',
         'team_id' => $this->team->id,
         'is_system_wide' => false,
         'is_public' => false,

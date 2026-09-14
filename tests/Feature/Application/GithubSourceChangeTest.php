@@ -743,8 +743,8 @@ describe('GitHub Source Change Component', function () {
                 'date' => now()->toRfc7231String(),
             ]),
             'https://api.github.com/app' => Http::response([
-                'name' => 'Coolify GitHub App',
-                'slug' => 'coolify-github-app',
+                'name' => 'Xlaunch GitHub App',
+                'slug' => 'xlaunch-github-app',
             ]),
             'https://api.github.com/app/installations/67890/access_tokens' => Http::response([
                 'token' => 'ghs_test_installation_token',
@@ -755,7 +755,7 @@ describe('GitHub Source Change Component', function () {
             ->test(Change::class)
             ->assertSuccessful()
             ->call('testConnection')
-            ->assertDispatched('success', 'Connection successful! Authenticated as GitHub App: Coolify GitHub App');
+            ->assertDispatched('success', 'Connection successful! Authenticated as GitHub App: Xlaunch GitHub App');
     });
 
     test('testConnection fails when github app is not fully installed', function () {

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Storage;
  * timeout) reach the shell-level `timeout N ssh` wrapper instead of being capped
  * by the global constants.ssh.command_timeout default.
  *
- * @see https://github.com/coollabsio/coolify DatabaseBackupJob/VolumeBackupJob pass
+ * @see https://github.com/northlatch/xlaunch DatabaseBackupJob/VolumeBackupJob pass
  *      a per-backup timeout to instant_remote_process()
  */
 uses(RefreshDatabase::class);

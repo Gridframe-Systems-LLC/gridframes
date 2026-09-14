@@ -2,10 +2,10 @@
 
 /**
  * Unit tests to verify that docker_compose_raw only has content: removed from volumes,
- * while docker_compose contains all Coolify additions (labels, environment variables, networks).
+ * while docker_compose contains all Xlaunch additions (labels, environment variables, networks).
  *
  * These tests verify the fix for the issue where docker_compose_raw was being set to the
- * fully processed compose (with Coolify labels, networks, etc.) instead of keeping it clean
+ * fully processed compose (with Xlaunch labels, networks, etc.) instead of keeping it clean
  * with only content: fields removed.
  */
 it('ensures applicationParser stores original compose before processing', function () {

@@ -43,7 +43,7 @@ beforeEach(function () {
     Queue::fake();
 });
 
-it('deletes the Coolify resource when remote cleanup fails', function () {
+it('deletes the Xlaunch resource when remote cleanup fails', function () {
     Process::fake(['*' => Process::result(errorOutput: 'SSH connection timed out', exitCode: 255)]);
 
     (new DeleteResourceJob($this->application))->handle();
@@ -96,7 +96,7 @@ it('deletes preview metadata locally when its application destination is missing
         'uuid' => 'preview-without-destination',
         'application_id' => $this->application->id,
         'pull_request_id' => 45,
-        'pull_request_html_url' => 'https://github.com/coollabsio/coolify/pull/45',
+        'pull_request_html_url' => 'https://github.com/northlatch/xlaunch/pull/45',
     ]);
     $previewStorage = $preview->persistentStorages()->create([
         'name' => 'preview-without-destination-data',

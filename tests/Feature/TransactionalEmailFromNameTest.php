@@ -23,7 +23,7 @@ function setupTransactionalEmailFromNameAdmin(): User
         'smtp_enabled' => true,
         'smtp_from_address' => 'admin@example.com',
         'smtp_from_name' => 'admin',
-        'smtp_host' => 'coolify-mail',
+        'smtp_host' => 'xlaunch-mail',
         'smtp_port' => 1025,
     ]);
     Once::flush();
@@ -41,14 +41,14 @@ test('saving transactional sender persists the configured from name', function (
     session(['currentTeam' => ['id' => 0]]);
 
     Livewire::test(SettingsEmail::class)
-        ->set('smtpFromName', 'Coolify')
+        ->set('smtpFromName', 'Xlaunch')
         ->set('smtpFromAddress', 'admin@example.com')
         ->call('submit')
         ->assertHasNoErrors();
 
     Once::flush();
 
-    expect(instanceSettings()->smtp_from_name)->toBe('Coolify')
+    expect(instanceSettings()->smtp_from_name)->toBe('Xlaunch')
         ->and(instanceSettings()->smtp_from_address)->toBe('admin@example.com');
 });
 
@@ -61,7 +61,7 @@ test('sending a test email persists the current from name before delivery', func
     Notification::fake();
 
     Livewire::test(SettingsEmail::class)
-        ->set('smtpFromName', 'Coolify')
+        ->set('smtpFromName', 'Xlaunch')
         ->set('smtpFromAddress', 'admin@example.com')
         ->set('testEmailAddress', $user->email)
         ->call('sendTestEmail')
@@ -69,14 +69,14 @@ test('sending a test email persists the current from name before delivery', func
 
     Once::flush();
 
-    expect(instanceSettings()->smtp_from_name)->toBe('Coolify');
+    expect(instanceSettings()->smtp_from_name)->toBe('Xlaunch');
 });
 
 test('transactional emails send with the configured from name instead of the address local part', function () {
     setupTransactionalEmailFromNameAdmin();
 
     InstanceSettings::findOrFail(0)->update([
-        'smtp_from_name' => 'Coolify',
+        'smtp_from_name' => 'Xlaunch',
         'smtp_from_address' => 'admin@example.com',
     ]);
     Once::flush();
@@ -116,6 +116,6 @@ test('transactional emails send with the configured from name instead of the add
     $from = $messages->first()->getOriginalMessage()->getFrom()[0];
 
     expect($from->getAddress())->toBe('admin@example.com')
-        ->and($from->getName())->toBe('Coolify')
+        ->and($from->getName())->toBe('Xlaunch')
         ->and($from->getName())->not->toBe('admin');
 });

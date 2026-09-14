@@ -20,12 +20,12 @@ it('only exposes the BunnyCDN legacy sync option', function () {
         ->and($definition->hasOption('templates'))->toBeFalse();
 });
 
-it('loads service templates from the Coollabs CDN', function () {
+it('loads service templates from the Northlatch CDN', function () {
     expect(config('constants.services.official'))
-        ->toBe('https://cdn.coollabs.io/coolify/service-templates-latest.json');
+        ->toBe('https://cdn.northlatch.com/xlaunch/service-templates-latest.json');
 });
 
-it('only removes validated Coolify CDN temporary directories', function () {
+it('only removes validated Xlaunch CDN temporary directories', function () {
     $command = new class extends SyncBunny
     {
         public function removeDirectory(string $path): void
@@ -35,7 +35,7 @@ it('only removes validated Coolify CDN temporary directories', function () {
     };
 
     $invalidDirectory = sys_get_temp_dir().'/unrelated-directory-'.uniqid();
-    $validDirectory = sys_get_temp_dir().'/coollabs-cdn-files-'.uniqid();
+    $validDirectory = sys_get_temp_dir().'/northlatch-cdn-files-'.uniqid();
     mkdir($invalidDirectory);
     mkdir($validDirectory);
 
@@ -51,7 +51,7 @@ it('only removes validated Coolify CDN temporary directories', function () {
 
 it('syncs full files to BunnyCDN only when explicitly requested', function () {
     Http::fake([
-        'https://cdn.coollabs.io/coolify/*' => Http::response('', 404),
+        'https://cdn.northlatch.com/xlaunch/*' => Http::response('', 404),
         'https://storage.bunnycdn.com/*' => Http::response([], 201),
         'https://api.bunny.net/purge*' => Http::response([], 200),
     ]);
@@ -101,18 +101,18 @@ SH);
     expect($log)
         ->not->toContain('gh repo clone')
         ->not->toContain('gh pr create')
-        ->not->toContain('coollabsio/coolify-cdn');
+        ->not->toContain('northlatch/xlaunch-cdn');
 
     Http::assertSent(fn ($request) => $request->method() === 'PUT'
-        && $request->url() === 'https://storage.bunnycdn.com/coolcdn/coolify/upgrade-postgres.sh');
+        && $request->url() === 'https://storage.bunnycdn.com/coolcdn/xlaunch/upgrade-postgres.sh');
 
     Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://api.bunny.net/purge')
-        && $request['url'] === 'https://cdn.coollabs.io/coolify/upgrade-postgres.sh');
+        && $request['url'] === 'https://cdn.northlatch.com/xlaunch/upgrade-postgres.sh');
 });
 
 it('selects the environment and release files to sync to GitHub', function (string $targetDirectory, string $environment, array $selectedBasenames) {
     Http::fake([
-        'api.github.com/repos/coollabsio/coolify/releases*' => Http::response([], 200),
+        'api.github.com/repos/northlatch/xlaunch/releases*' => Http::response([], 200),
     ]);
 
     $binDir = sys_get_temp_dir().'/sync-bunny-bin-'.uniqid();
@@ -136,10 +136,10 @@ if [ "$1" = "status" ]; then
     printf 'M json/releases.json\n'
 fi
 if [ "$1" = "diff" ]; then
-    if [ -f json/coolify/nightly/releases.json ]; then
-        printf 'json/coolify/nightly/releases.json\n'
+    if [ -f json/xlaunch/nightly/releases.json ]; then
+        printf 'json/xlaunch/nightly/releases.json\n'
     else
-        printf 'json/coolify/releases.json\n'
+        printf 'json/xlaunch/releases.json\n'
     fi
 fi
 exit 0
@@ -179,8 +179,8 @@ SH);
     $log = file_get_contents($logFile);
 
     expect($log)
-        ->toContain('gh pr create --repo coollabsio/coollabs-cdn')
-        ->not->toContain('coollabsio/coolify-cdn');
+        ->toContain('gh pr create --repo northlatch/northlatch-cdn')
+        ->not->toContain('northlatch/xlaunch-cdn');
 
     foreach ($selectedTargets as $selectedTarget) {
         expect($log)->toContain($selectedTarget);
@@ -198,8 +198,8 @@ SH);
 
     Http::assertSentCount(1);
 })->with([
-    'select production files' => ['json/coolify', 'production', ['releases.json', 'versions.json']],
-    'select nightly with all files selected by default' => ['json/coolify/nightly', 'nightly', [
+    'select production files' => ['json/xlaunch', 'production', ['releases.json', 'versions.json']],
+    'select nightly with all files selected by default' => ['json/xlaunch/nightly', 'nightly', [
         'releases.json',
         'versions.json',
         'docker-compose.yml',

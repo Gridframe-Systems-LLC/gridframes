@@ -8,7 +8,7 @@ it('uses the current neutral loading indicator styles', function () {
         ->toContain("'size-3' => \$compact")
         ->toContain("'size-4' => ! \$compact")
         ->toContain('stroke="currentColor" stroke-width="2"')
-        ->not->toContain('text-coollabs')
+        ->not->toContain('text-northlatch')
         ->not->toContain('dark:text-warning');
 });
 

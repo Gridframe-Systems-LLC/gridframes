@@ -62,7 +62,7 @@ function generateComposeServiceWithStopGracePeriod(?int $stopGracePeriod): array
         'production_image_name' => 'example/app:latest',
         'deployment_uuid' => 'deployment-uuid',
         'workdir' => '/artifacts/stop-grace-period-app',
-        'configuration_dir' => '/data/coolify/applications/test',
+        'configuration_dir' => '/data/xlaunch/applications/test',
         'saved_outputs' => new Collection,
     ] as $property => $value) {
         $reflection->getProperty($property)->setValue($job, $value);

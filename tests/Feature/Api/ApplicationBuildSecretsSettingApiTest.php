@@ -107,7 +107,7 @@ describe('POST /api/v1/applications/public use_build_secrets', function () {
                 'project_uuid' => $this->project->uuid,
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
-                'git_repository' => 'https://gitlab.com/coolify/build-secrets-test',
+                'git_repository' => 'https://gitlab.com/xlaunch/build-secrets-test',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',
@@ -130,7 +130,7 @@ describe('POST /api/v1/applications/public use_build_secrets', function () {
                 'project_uuid' => $this->project->uuid,
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
-                'git_repository' => 'https://gitlab.com/coolify/build-secrets-test',
+                'git_repository' => 'https://gitlab.com/xlaunch/build-secrets-test',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',
@@ -188,7 +188,7 @@ describe('other application creation endpoints use_build_secrets', function () {
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
                 'private_key_uuid' => $privateKey->uuid,
-                'git_repository' => 'git@gitlab.com:coolify/build-secrets-test.git',
+                'git_repository' => 'git@gitlab.com:xlaunch/build-secrets-test.git',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',
@@ -230,7 +230,7 @@ describe('other application creation endpoints use_build_secrets', function () {
             'https://api.github.com/app/installations/67890/access_tokens' => Http::response([
                 'token' => 'github-installation-token',
             ], 201),
-            'https://api.github.com/repos/coolify/build-secrets-test' => Http::response([
+            'https://api.github.com/repos/xlaunch/build-secrets-test' => Http::response([
                 'id' => 123456,
             ]),
         ]);
@@ -241,7 +241,7 @@ describe('other application creation endpoints use_build_secrets', function () {
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
                 'github_app_uuid' => $githubApp->uuid,
-                'git_repository' => 'coolify/build-secrets-test',
+                'git_repository' => 'xlaunch/build-secrets-test',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',
@@ -284,7 +284,7 @@ describe('other application creation endpoints use_build_secrets', function () {
             'https://api.github.com/app/installations/9876/access_tokens' => Http::response([
                 'token' => 'github-installation-token',
             ], 201),
-            'https://api.github.com/repos/coolify/system-wide-test' => Http::response([
+            'https://api.github.com/repos/xlaunch/system-wide-test' => Http::response([
                 'id' => 654321,
             ]),
         ]);
@@ -295,7 +295,7 @@ describe('other application creation endpoints use_build_secrets', function () {
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
                 'github_app_uuid' => $githubApp->uuid,
-                'git_repository' => 'coolify/system-wide-test',
+                'git_repository' => 'xlaunch/system-wide-test',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',

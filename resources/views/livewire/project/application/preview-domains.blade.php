@@ -121,7 +121,7 @@
                                 <div class="flex min-w-0 items-center gap-2">
                                     <x-reicon name="globe" class="size-4 shrink-0 text-neutral-400 dark:text-fg-faint" />
                                     <a href="{{ getFqdnWithoutPort($row['url']) }}" target="_blank" rel="noopener noreferrer"
-                                        class="min-w-0 flex-1 truncate text-[13px] text-black underline decoration-neutral-300 underline-offset-2 hover:decoration-coollabs sm:truncate dark:text-fg dark:decoration-white/20 dark:hover:decoration-warning"
+                                        class="min-w-0 flex-1 truncate text-[13px] text-black underline decoration-neutral-300 underline-offset-2 hover:decoration-northlatch sm:truncate dark:text-fg dark:decoration-white/20 dark:hover:decoration-warning"
                                         title="{{ getFqdnWithoutPort($row['url']) }}">{{ getFqdnWithoutPort($row['url']) }}</a>
                                 </div>
                             </div>
@@ -273,7 +273,7 @@
                     <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
                     <div x-show="modalOpen" x-trap.inert.noscroll="modalOpen"
                         class="application-settings-form application-settings-section relative w-full lg:min-w-[36rem] lg:max-w-2xl"
-                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                         <header>
                             <h3>Use a different port?</h3>
                             <button type="button"

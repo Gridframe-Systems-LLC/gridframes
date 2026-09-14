@@ -26,7 +26,7 @@ it('creates application settings for internally created applications', function 
 
     $application = Application::create([
         'name' => 'internal-app',
-        'git_repository' => 'https://github.com/coollabsio/coolify',
+        'git_repository' => 'https://github.com/northlatch/xlaunch',
         'git_branch' => 'main',
         'build_pack' => 'nixpacks',
         'ports_exposes' => '3000',

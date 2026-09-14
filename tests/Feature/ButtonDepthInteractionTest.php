@@ -8,7 +8,7 @@ test('standard buttons use raised hover and pressed depth states', function () {
         ->toContain('--button-depth: 0 2px 0 var(--button-depth-color);')
         ->toContain('--button-depth-hover: 0 3px 0 var(--button-depth-color);')
         ->toContain('.button-highlighted:not(:disabled)')
-        ->toContain('--button-depth-color: color-mix(in oklab, var(--color-coollabs) 52%, black);')
+        ->toContain('--button-depth-color: color-mix(in oklab, var(--color-northlatch) 52%, black);')
         ->toContain('.dark .button:not(.button-highlighted):not(.button-error):not([isHighlighted]):not(:disabled)')
         ->not->toContain('.dark .button:not(.button-highlighted):not([isHighlighted]):not(:disabled)')
         ->toContain('--button-depth-color: rgb(255 255 255 / 0.08);')

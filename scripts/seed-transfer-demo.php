@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Seed a rich transfer-demo inventory on the current Coolify instance.
+ * Seed a rich transfer-demo inventory on the current Xlaunch instance.
  * Run: php artisan tinker scripts/seed-transfer-demo.php
  * Or:  ./scripts/dev-instances exec a php artisan tinker --execute "require 'scripts/seed-transfer-demo.php';"
  */
@@ -165,8 +165,8 @@ $report['server'] = $server->uuid;
 // --- Destinations ---
 $dest = StandaloneDocker::where('server_id', $server->id)->first()
     ?? StandaloneDocker::create([
-        'name' => 'coolify',
-        'network' => 'coolify',
+        'name' => 'xlaunch',
+        'network' => 'xlaunch',
         'server_id' => $server->id,
     ]);
 $dest->uuid = 'transfer-full-dest';
@@ -176,7 +176,7 @@ $report['destination'] = $dest->uuid;
 // --- Project / environments ---
 $project = Project::firstOrCreate(
     ['name' => 'Transfer Full Demo', 'team_id' => $teamId],
-    ['description' => 'Resources to migrate between Coolify instances']
+    ['description' => 'Resources to migrate between Xlaunch instances']
 );
 $project->uuid = $project->uuid ?: new_public_id();
 $production = $project->environments()->where('name', 'production')->first()
@@ -231,7 +231,7 @@ $report['github_app'] = $ghApp->uuid;
 // 1) Nixpacks git app with GH source
 $appNix = Application::create([
     'name' => 'demo-nixpacks-app',
-    'git_repository' => 'https://github.com/coollabsio/coolify-examples',
+    'git_repository' => 'https://github.com/northlatch/xlaunch-examples',
     'git_branch' => 'nodejs',
     'build_pack' => 'nixpacks',
     'ports_exposes' => '3000',
@@ -320,7 +320,7 @@ $preview = new ApplicationPreview;
 $preview->forceFill([
     'application_id' => $appNix->id,
     'pull_request_id' => 101,
-    'pull_request_html_url' => 'https://github.com/coollabsio/coolify-examples/pull/101',
+    'pull_request_html_url' => 'https://github.com/northlatch/xlaunch-examples/pull/101',
     'fqdn' => 'https://pr-101.nixpacks.demo.transfer.local',
     'status' => 'exited',
     'git_type' => 'github',
@@ -340,7 +340,7 @@ $previewVol->save();
 // 2) Dockerfile app
 $appDocker = Application::create([
     'name' => 'demo-dockerfile-app',
-    'git_repository' => 'https://github.com/coollabsio/coolify-examples',
+    'git_repository' => 'https://github.com/northlatch/xlaunch-examples',
     'git_branch' => 'main',
     'build_pack' => 'dockerfile',
     'ports_exposes' => '80',
@@ -358,7 +358,7 @@ $appDocker->tags()->syncWithoutDetaching([$tagDemo->id]);
 // 3) Docker image / static-ish
 $appImage = Application::create([
     'name' => 'demo-image-app',
-    'git_repository' => 'coollabsio/coolify-examples',
+    'git_repository' => 'northlatch/xlaunch-examples',
     'git_branch' => 'main',
     'build_pack' => 'dockercompose',
     'ports_exposes' => '80',
@@ -667,7 +667,7 @@ $report['service_databases'] = [$svcDb->uuid];
 SslCertificate::create([
     'ssl_certificate' => "-----BEGIN CERTIFICATE-----\nMIIDemoTransferCertPlaceholder\n-----END CERTIFICATE-----\n",
     'ssl_private_key' => "-----BEGIN PRIVATE KEY-----\nMIIDemoTransferKeyPlaceholder\n-----END PRIVATE KEY-----\n",
-    'configuration_dir' => '/data/coolify/proxy',
+    'configuration_dir' => '/data/xlaunch/proxy',
     'mount_path' => '/etc/ssl/certs',
     'common_name' => 'demo.transfer.local',
     'valid_until' => now()->addYear(),

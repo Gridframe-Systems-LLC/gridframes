@@ -92,7 +92,7 @@ it('accepts valid Docker network names', function (string $network) {
     'cuid2 format' => 'ck8s2z1x0000001mhg3f9d0g1',
     'alphanumeric' => 'network123',
     'starts with number' => '1network',
-    'complex valid' => 'coolify-proxy.net_2',
+    'complex valid' => 'xlaunch-proxy.net_2',
 ]);
 
 it('rejects Docker network names with shell metacharacters', function (string $network) {

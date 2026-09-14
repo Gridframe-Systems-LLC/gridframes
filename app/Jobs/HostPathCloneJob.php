@@ -13,13 +13,13 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 
 /**
- * Copy a bind-mount host path from one Coolify-managed server to another.
+ * Copy a bind-mount host path from one Xlaunch-managed server to another.
  */
 class HostPathCloneJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected string $cloneDir = '/data/coolify/clone';
+    protected string $cloneDir = '/data/xlaunch/clone';
 
     public int $timeout = 3600;
 

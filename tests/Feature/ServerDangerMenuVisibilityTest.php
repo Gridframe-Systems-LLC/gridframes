@@ -24,7 +24,7 @@ beforeEach(function () {
     ]);
 });
 
-test('danger menu is visible for non-coolify-host servers that use host.docker.internal', function () {
+test('danger menu is visible for non-xlaunch-host servers that use host.docker.internal', function () {
     $server = Server::factory()->create([
         'team_id' => $this->team->id,
         'private_key_id' => $this->privateKey->id,
@@ -35,7 +35,7 @@ test('danger menu is visible for non-coolify-host servers that use host.docker.i
 
     expect($server->getAttributes()['ip'])->toBe('host.docker.internal')
         ->and($server->isLocalhost())->toBeTrue()
-        ->and($server->is_coolify_host)->toBeFalse();
+        ->and($server->is_xlaunch_host)->toBeFalse();
 
     $this->get(route('server.show', ['server_uuid' => $server->uuid]))
         ->assertSuccessful()
@@ -43,7 +43,7 @@ test('danger menu is visible for non-coolify-host servers that use host.docker.i
         ->assertSee(route('server.delete', ['server_uuid' => $server->uuid]), false);
 });
 
-test('danger menu is hidden for the coolify host server', function () {
+test('danger menu is hidden for the xlaunch host server', function () {
     $server = Server::factory()->create([
         'id' => 0,
         'uuid' => 'localhost',
@@ -54,7 +54,7 @@ test('danger menu is hidden for the coolify host server', function () {
     ])->fresh();
 
     expect($server->isLocalhost())->toBeTrue()
-        ->and($server->is_coolify_host)->toBeTrue();
+        ->and($server->is_xlaunch_host)->toBeTrue();
 
     $this->get(route('server.show', ['server_uuid' => $server->uuid]))
         ->assertSuccessful()
@@ -62,7 +62,7 @@ test('danger menu is hidden for the coolify host server', function () {
         ->assertDontSee(route('server.delete', ['server_uuid' => $server->uuid]), false);
 });
 
-test('danger page is reachable for host.docker.internal non-coolify-host servers', function () {
+test('danger page is reachable for host.docker.internal non-xlaunch-host servers', function () {
     $server = Server::factory()->create([
         'team_id' => $this->team->id,
         'private_key_id' => $this->privateKey->id,

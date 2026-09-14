@@ -16,28 +16,28 @@ it('trusts the configured FQDN from InstanceSettings', function () {
     // Create instance settings with FQDN
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $middleware = new TrustHosts($this->app);
     $hosts = $middleware->hosts();
 
-    expect($hosts)->toContain('coolify.example.com');
+    expect($hosts)->toContain('xlaunch.example.com');
 });
 
 it('rejects password reset request with malicious host header', function () {
     // Set up instance settings with legitimate FQDN
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $middleware = new TrustHosts($this->app);
     $hosts = $middleware->hosts();
 
     // The malicious host should NOT be in the trusted hosts
-    expect($hosts)->not->toContain('coolify.example.com.evil.com');
-    expect($hosts)->toContain('coolify.example.com');
+    expect($hosts)->not->toContain('xlaunch.example.com.evil.com');
+    expect($hosts)->toContain('xlaunch.example.com');
 });
 
 it('handles missing FQDN gracefully', function () {
@@ -74,13 +74,13 @@ it('filters out null and empty values from trusted hosts', function () {
 it('extracts host from FQDN with protocol and port', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com:8443']
+        ['fqdn' => 'https://xlaunch.example.com:8443']
     );
 
     $middleware = new TrustHosts($this->app);
     $hosts = $middleware->hosts();
 
-    expect($hosts)->toContain('coolify.example.com');
+    expect($hosts)->toContain('xlaunch.example.com');
 });
 
 it('handles exception during InstanceSettings fetch', function () {
@@ -180,7 +180,7 @@ it('invalidates cache when FQDN is updated', function () {
 it('caches trusted hosts to avoid database queries on every request', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     // Clear cache first
@@ -192,14 +192,14 @@ it('caches trusted hosts to avoid database queries on every request', function (
 
     // Verify result is cached
     expect(Cache::has('instance_settings_fqdn_host'))->toBeTrue();
-    expect(Cache::get('instance_settings_fqdn_host'))->toBe('coolify.example.com');
+    expect(Cache::get('instance_settings_fqdn_host'))->toBe('xlaunch.example.com');
 
     // Subsequent calls should use cache (no DB query)
     $middleware2 = new TrustHosts($this->app);
     $hosts2 = $middleware2->hosts();
 
     expect($hosts1)->toBe($hosts2);
-    expect($hosts2)->toContain('coolify.example.com');
+    expect($hosts2)->toContain('xlaunch.example.com');
 });
 
 it('caches negative results when no FQDN is configured', function () {
@@ -232,7 +232,7 @@ it('caches negative results when no FQDN is configured', function () {
 it('skips host validation for terminal auth routes', function () {
     // These routes should be accessible with any Host header (for internal container communication)
     $response = $this->postJson('/terminal/auth', [], [
-        'Host' => 'coolify:8080',  // Internal Docker host
+        'Host' => 'xlaunch:8080',  // Internal Docker host
     ]);
 
     // Should not get 400 Bad Host (might get 401 Unauthorized instead)
@@ -252,7 +252,7 @@ it('skips host validation for terminal auth ips route', function () {
 it('still enforces host validation for non-terminal routes', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     // Regular routes should still validate Host header
@@ -290,7 +290,7 @@ it('skips host validation for API routes', function () {
 it('trusts localhost when FQDN is configured', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $middleware = new TrustHosts($this->app);
@@ -302,7 +302,7 @@ it('trusts localhost when FQDN is configured', function () {
 it('trusts 127.0.0.1 when FQDN is configured', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $middleware = new TrustHosts($this->app);
@@ -314,7 +314,7 @@ it('trusts 127.0.0.1 when FQDN is configured', function () {
 it('trusts IPv6 loopback when FQDN is configured', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $middleware = new TrustHosts($this->app);
@@ -326,7 +326,7 @@ it('trusts IPv6 loopback when FQDN is configured', function () {
 it('allows local access via localhost when FQDN is configured and request uses localhost host header', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
 
     $response = $this->get('/', [

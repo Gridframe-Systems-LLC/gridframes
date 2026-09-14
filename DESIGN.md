@@ -1,6 +1,6 @@
-# Coolify UI design system
+# Xlaunch UI design system
 
-This document defines Coolify's UI design system for its Livewire + Blade +
+This document defines Xlaunch's UI design system for its Livewire + Blade +
 Alpine + Tailwind v4 frontend. The visual system covers the global shell,
 project and environment pages, application navigation, settings surfaces,
 tables, modals, toasts, terminals, and metrics.
@@ -20,10 +20,10 @@ compact divided list, not legacy green check SVGs or fixed-width status rows.
 >   interactions while changing layout and presentation.
 > - Add or update tests when a UI change affects behavior. Follow the testing
 >   requirements in `AGENTS.md`.
-> - Validate Blade with `docker exec coolify php artisan view:cache`, then clear
->   it with `docker exec coolify php artisan view:clear`.
+> - Validate Blade with `docker exec xlaunch php artisan view:cache`, then clear
+>   it with `docker exec xlaunch php artisan view:clear`.
 > - Build frontend assets in the Vite container with
->   `docker exec coolify-vite npm run build`.
+>   `docker exec xlaunch-vite npm run build`.
 > - Use existing components before adding another styling abstraction.
 
 ---
@@ -39,8 +39,8 @@ The interface is compact and product-focused:
   never heavy borders or a strong floating shadow;
 - full-width data tables for dense collections;
 - outline Reicon glyphs through `<x-reicon>`;
-- the Coolify purple brand accent in light mode;
-- the readable Coolify yellow accent in dark mode;
+- the Xlaunch purple brand accent in light mode;
+- the readable Xlaunch yellow accent in dark mode;
 - solid active-item fills (neutral black/white opacity), not accent gradients;
   active state is the left accent rail plus a flat selected surface;
 - sentence-case labels and headings;
@@ -68,7 +68,7 @@ color. Highlighted buttons keep their dark, color-matched accent edge.
 
 ## 2. Development and cascade notes
 
-PHP runs in the `coolify` container. The development app is normally available
+PHP runs in the `xlaunch` container. The development app is normally available
 at `http://localhost:8000`, with Vite on port `5173`.
 
 `resources/css/app.css` still contains unlayered global element rules for
@@ -79,7 +79,7 @@ The settings and dense-surface CSS therefore lives as plain unlayered CSS near
 the end of `resources/css/app.css`, beginning at:
 
 ```css
-/* Coollabs layer-card settings surfaces */
+/* Northlatch layer-card settings surfaces */
 ```
 
 Important consequences:
@@ -104,27 +104,27 @@ The surface ladder is defined in `resources/css/app.css`.
 
 | Token | Light | Dark | Use |
 |---|---|---|---|
-| `--coollabs-canvas` | 97% off-white | 10% neutral | page canvas (kept below card fills so cards lift) |
-| `--coollabs-elevated` | 98% neutral | 15% neutral | shells and card headers |
-| `--coollabs-base` | white | 17% neutral | nested card bodies |
-| `--coollabs-recessed` | 96% neutral | 20% neutral | inputs and listboxes |
-| `--coollabs-fill` | 92.2% neutral | 26.9% neutral | dividers and passive fills |
-| `--coollabs-line` | translucent dark | 32% neutral | control borders |
-| `--coollabs-hairline` | 85.5% neutral | 32% neutral | shell rings (crisp enough to read as a card edge, ~1.5:1) |
-| `--coollabs-subtle` | 50% neutral | 70.8% neutral | labels and muted titles (light darkened for WCAG AA 4.5:1) |
+| `--northlatch-canvas` | 97% off-white | 10% neutral | page canvas (kept below card fills so cards lift) |
+| `--northlatch-elevated` | 98% neutral | 15% neutral | shells and card headers |
+| `--northlatch-base` | white | 17% neutral | nested card bodies |
+| `--northlatch-recessed` | 96% neutral | 20% neutral | inputs and listboxes |
+| `--northlatch-fill` | 92.2% neutral | 26.9% neutral | dividers and passive fills |
+| `--northlatch-line` | translucent dark | 32% neutral | control borders |
+| `--northlatch-hairline` | 85.5% neutral | 32% neutral | shell rings (crisp enough to read as a card edge, ~1.5:1) |
+| `--northlatch-subtle` | 50% neutral | 70.8% neutral | labels and muted titles (light darkened for WCAG AA 4.5:1) |
 
 Accent behavior is intentionally theme-aware:
 
-- **Light mode:** Coolify purple (`coollabs`) for active controls, focus,
+- **Light mode:** Xlaunch purple (`northlatch`) for active controls, focus,
   primary actions, and navigation accents.
-- **Dark mode:** Coolify yellow (`warning`) for the same states because the
+- **Dark mode:** Xlaunch yellow (`warning`) for the same states because the
   original purple did not provide sufficient text and ring contrast.
 
 Do not hard-code blue focus rings or leave yellow accent utilities active in
 light mode. Primary action patterns should normally follow:
 
 ```html
-bg-coollabs/10 text-coollabs ring-coollabs/25
+bg-northlatch/10 text-northlatch ring-northlatch/25
 dark:bg-warning/15 dark:text-warning dark:ring-warning/25
 ```
 
@@ -146,8 +146,8 @@ lifts, content is the base, cards lift off the content:
 Dark surface tokens are hex, not oklch. oklch lightness compresses toward pure
 black below ~15% (oklch(10%) renders as sRGB 3, oklch(15%) as sRGB 11), so oklch
 values there give no visible step between layers. The dark ladder is
-`--color-app` 10, `--coollabs-elevated` 22, `--coollabs-base` 28,
-`--coollabs-recessed` 34 (sRGB), which reads as distinct surfaces.
+`--color-app` 10, `--northlatch-elevated` 22, `--northlatch-base` 28,
+`--northlatch-recessed` 34 (sRGB), which reads as distinct surfaces.
 
 Temperature: every panel is **pure neutral gray** (r=g=b), one consistent
 temperature across the sidebar, tables, cards, inputs, dividers, borders, and
@@ -156,7 +156,7 @@ the others stay neutral. The light page canvas uses `bg-neutral-50` (not
 `bg-gray-50`, which is faintly cool) so it matches the neutral cards and chrome.
 The only intentional color is the purple/yellow brand accent.
 - **Cards, tables, and collection tiles** lift off the content canvas with
-  `dark:bg-white/[0.05]` plus the crisp `--coollabs-hairline` ring; in light
+  `dark:bg-white/[0.05]` plus the crisp `--northlatch-hairline` ring; in light
   they are `bg-white` with the ring and the restrained card lift.
 
 Do not paint the content area with the same `bg-panel` as the sidebar, and do
@@ -808,6 +808,6 @@ oversized 200px status numbers.
 14. Check fixed-nav anchor offsets and responsive stacking.
 15. Sweep every sibling route for legacy controls and shells.
 16. Run `git diff --check`.
-17. Compile Blade views in the `coolify` container.
-18. Build assets in `coolify-vite`.
+17. Compile Blade views in the `xlaunch` container.
+18. Build assets in `xlaunch-vite`.
 19. Hard-refresh and inspect the family routes in both themes.

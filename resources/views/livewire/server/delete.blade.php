@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($server, 'name')->limit(10) }} > Delete Server | Coolify
+        {{ data_get_str($server, 'name')->limit(10) }} > Delete Server | Xlaunch
     </x-slot>
 
     <livewire:server.navbar :server="$server" />
@@ -10,16 +10,16 @@
         <x-server.sidebar :server="$server" activeMenu="danger" />
 
         <div class="application-settings-form w-full">
-            @if (! $server->is_coolify_host)
+            @if (! $server->is_xlaunch_host)
                 <x-application.settings-section id="server-danger-section" title="Delete server"
-                    helper="Permanently remove this server and its configuration from Coolify."
+                    helper="Permanently remove this server and its configuration from Xlaunch."
                     class="server-danger-section">
                     <x-slot:actions>
                         <x-status-badge status="Irreversible" type="error" />
                     </x-slot:actions>
 
                     <x-callout type="danger" title="This action cannot be undone">
-                        The server will be removed from Coolify.
+                        The server will be removed from Xlaunch.
                         @if ($server->definedResources()->count() > 0)
                             It currently contains managed resources. Enable force deletion in the confirmation only
                             if those resources should also be removed.
@@ -35,7 +35,7 @@
                         </div>
                         <x-modal-confirmation title="Confirm Server Deletion?" isErrorButton
                             buttonTitle="Delete server" submitAction="delete"
-                            :actions="['This server will be permanently deleted from Coolify.']"
+                            :actions="['This server will be permanently deleted from Xlaunch.']"
                             :checkboxes="$checkboxes" confirmationText="{{ $server->name }}"
                             confirmationLabel="Please confirm by entering the Server Name below"
                             shortConfirmationLabel="Server Name" />

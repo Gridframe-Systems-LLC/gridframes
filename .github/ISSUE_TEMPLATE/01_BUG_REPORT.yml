@@ -7,7 +7,7 @@ body:
     attributes:
       value: |
         > [!IMPORTANT]
-        > **Please ensure you are using the latest version of Coolify before submitting an issue, as the bug may have already been fixed in a recent update.** (Of course, if you're experiencing an issue on the latest version that wasn't present in a previous version, please let us know.)
+        > **Please ensure you are using the latest version of Xlaunch before submitting an issue, as the bug may have already been fixed in a recent update.** (Of course, if you're experiencing an issue on the latest version that wasn't present in a previous version, please let us know.)
         >
         > If you plan to submit a fix, branch from `main` and target `main` with your pull request.
 
@@ -49,18 +49,18 @@ body:
 
   - type: input
     attributes:
-      label: Coolify Version
-      description: Please provide the Coolify version you are using. This can be found in the top left corner of your Coolify dashboard.
+      label: Xlaunch Version
+      description: Please provide the Xlaunch version you are using. This can be found in the top left corner of your Xlaunch dashboard.
       placeholder: "v4.1.2"
     validations:
       required: true
 
   - type: dropdown
     attributes:
-      label: Are you using Coolify Cloud?
+      label: Are you using Xlaunch Cloud?
       options:
         - "No (self-hosted)"
-        - "Yes (Coolify Cloud)"
+        - "Yes (Xlaunch Cloud)"
     validations:
       required: true
 

@@ -68,7 +68,7 @@ it('removes the on-host bootstrap identity over ssh and deletes the temporary ke
 
         $script = end($command);
 
-        if (! str_contains($script, '$SUDO rm -f /etc/coolify/v5-node.json /etc/coolify/host-jwt /etc/systemd/system/coold.service.d/10-flux.conf')) {
+        if (! str_contains($script, '$SUDO rm -f /etc/xlaunch/v5-node.json /etc/xlaunch/host-jwt /etc/systemd/system/coold.service.d/10-flux.conf')) {
             return false;
         }
 

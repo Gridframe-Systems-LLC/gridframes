@@ -34,10 +34,10 @@ class PushHostAgentToken
             return false;
         }
 
-        $jwtPath = trim((string) config('coold.flux_host_jwt_path', '/etc/coolify/host-jwt'));
+        $jwtPath = trim((string) config('coold.flux_host_jwt_path', '/etc/xlaunch/host-jwt'));
 
         if ($jwtPath === '') {
-            $jwtPath = '/etc/coolify/host-jwt';
+            $jwtPath = '/etc/xlaunch/host-jwt';
         }
 
         $jwtPath = str_replace(["\r", "\n"], '', $jwtPath);
@@ -62,7 +62,7 @@ class PushHostAgentToken
 set -e
 SUDO=''
 if [ "\$(id -u)" != "0" ]; then SUDO='sudo'; fi
-\$SUDO mkdir -p /etc/coolify
+\$SUDO mkdir -p /etc/xlaunch
 printf %s {$tokenArgument} | \$SUDO tee {$jwtPathArgument} >/dev/null
 \$SUDO chmod 600 {$jwtPathArgument}
 SH;

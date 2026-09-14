@@ -722,7 +722,7 @@ class All extends Component
         // Extract all hard-coded variables
         $hardcodedVars = extractHardcodedEnvironmentVariables($dockerComposeRaw);
 
-        // Compose self-references are inputs supplied through Coolify's .env file,
+        // Compose self-references are inputs supplied through Xlaunch's .env file,
         // not hard-coded values. Keep them editable in the environment variables UI.
         $hardcodedVars = $hardcodedVars->reject(
             fn (array $variable): bool => $this->isSelfReferencingComposeVariable($variable)
@@ -988,7 +988,7 @@ class All extends Component
         // Get all environment variables that will be deleted
         $variablesToDelete = $this->resource->$method()->whereNotIn('key', array_keys($variables))->get();
 
-        // Generated Compose variables are managed by Coolify and must survive a bulk
+        // Generated Compose variables are managed by Xlaunch and must survive a bulk
         // replacement even when they are omitted from the pasted environment file.
         $variablesToDelete = $variablesToDelete->reject(
             fn (EnvironmentVariable $environmentVariable): bool => $this->isProtectedEnvironmentVariable($environmentVariable->key)

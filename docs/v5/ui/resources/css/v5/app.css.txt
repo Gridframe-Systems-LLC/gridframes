@@ -29,11 +29,11 @@
     --color-destructive: var(--destructive);
     --color-destructive-foreground: var(--destructive-foreground);
     --color-warning: var(--warning);
-    --color-coollabs-50: #f5f0ff;
-    --color-coollabs: #6b16ed;
-    --color-coollabs-100: #7317ff;
-    --color-coollabs-200: #5a12c7;
-    --color-coollabs-300: #4a0fa3;
+    --color-northlatch-50: #f5f0ff;
+    --color-northlatch: #6b16ed;
+    --color-northlatch-100: #7317ff;
+    --color-northlatch-200: #5a12c7;
+    --color-northlatch-300: #4a0fa3;
     --color-border: var(--border);
     --color-input: var(--input);
     --color-ring: var(--ring);

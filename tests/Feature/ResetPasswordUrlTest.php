@@ -24,7 +24,7 @@ function callResetUrl(ResetPassword $notification, $notifiable): string
 it('generates reset URL using configured FQDN, not request host', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com', 'public_ipv4' => '65.21.3.91']
+        ['fqdn' => 'https://xlaunch.example.com', 'public_ipv4' => '65.21.3.91']
     );
     Once::flush();
 
@@ -34,7 +34,7 @@ it('generates reset URL using configured FQDN, not request host', function () {
     $url = callResetUrl($notification, $user);
 
     expect($url)
-        ->toStartWith('https://coolify.example.com/')
+        ->toStartWith('https://xlaunch.example.com/')
         ->toContain('test-token-abc')
         ->toContain(urlencode($user->email))
         ->not->toContain('localhost');
@@ -61,7 +61,7 @@ it('generates reset URL using public IP when no FQDN is configured', function ()
 it('is immune to X-Forwarded-Host header poisoning when FQDN is set', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com', 'public_ipv4' => '65.21.3.91']
+        ['fqdn' => 'https://xlaunch.example.com', 'public_ipv4' => '65.21.3.91']
     );
     Once::flush();
 
@@ -76,7 +76,7 @@ it('is immune to X-Forwarded-Host header poisoning when FQDN is set', function (
     $url = callResetUrl($notification, $user);
 
     expect($url)
-        ->toStartWith('https://coolify.example.com/')
+        ->toStartWith('https://xlaunch.example.com/')
         ->toContain('poisoned-token')
         ->not->toContain('evil.com');
 });
@@ -150,7 +150,7 @@ it('uses APP_URL fallback when no FQDN or public IPs are configured', function (
     );
     Once::flush();
 
-    config(['app.url' => 'http://my-coolify.local']);
+    config(['app.url' => 'http://my-xlaunch.local']);
 
     $user = User::factory()->create();
 
@@ -162,7 +162,7 @@ it('uses APP_URL fallback when no FQDN or public IPs are configured', function (
     $url = callResetUrl($notification, $user);
 
     expect($url)
-        ->toStartWith('http://my-coolify.local/')
+        ->toStartWith('http://my-xlaunch.local/')
         ->toContain('fallback-token')
         ->not->toContain('evil.com');
 });
@@ -170,7 +170,7 @@ it('uses APP_URL fallback when no FQDN or public IPs are configured', function (
 it('generates a valid route path in the reset URL', function () {
     InstanceSettings::updateOrCreate(
         ['id' => 0],
-        ['fqdn' => 'https://coolify.example.com']
+        ['fqdn' => 'https://xlaunch.example.com']
     );
     Once::flush();
 

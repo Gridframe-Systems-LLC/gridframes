@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Scheduled Jobs | Coolify
+        Scheduled Jobs | Xlaunch
     </x-slot>
 
     <x-settings.layout>
@@ -21,19 +21,19 @@
                     class="flex items-center gap-0.5 rounded-[10px] border border-neutral-200 bg-neutral-100 p-1 dark:border-white/[0.07] dark:bg-white/[0.035]">
                     <button type="button" class="app-tab"
                         :class="activeTab === 'executions' &&
-                            'bg-coollabs/10 text-coollabs ring-1 ring-coollabs/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
+                            'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
                         @click="select('executions')">
                         Failures <span class="ml-1 opacity-60">{{ $executions->count() }}</span>
                     </button>
                     <button type="button" class="app-tab"
                         :class="activeTab === 'scheduler-runs' &&
-                            'bg-coollabs/10 text-coollabs ring-1 ring-coollabs/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
+                            'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
                         @click="select('scheduler-runs')">
                         Scheduler runs <span class="ml-1 opacity-60">{{ $managerRuns->count() }}</span>
                     </button>
                     <button type="button" class="app-tab"
                         :class="activeTab === 'skipped-jobs' &&
-                            'bg-coollabs/10 text-coollabs ring-1 ring-coollabs/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
+                            'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'"
                         @click="select('skipped-jobs')">
                         Skipped <span class="ml-1 opacity-60">{{ $skipTotalCount }}</span>
                     </button>
@@ -185,7 +185,7 @@
                         </div>
                         <x-client-pagination
                             summary="`${firstVisibleRow}-${lastVisibleRow} of ${total}`"
-                            page-size-model="perPage" storage-key="coolify.page-size.scheduled-jobs"
+                            page-size-model="perPage" storage-key="xlaunch.page-size.scheduled-jobs"
                             previous-action="goToPage(page - 1)" next-action="goToPage(page + 1)"
                             next-disabled="page >= lastPage" />
                     </div>
@@ -239,7 +239,7 @@
                         </div>
                         <x-client-pagination
                             summary="`${firstVisibleRow}-${lastVisibleRow} of ${total}`"
-                            page-size-model="perPage" storage-key="coolify.page-size.scheduled-jobs"
+                            page-size-model="perPage" storage-key="xlaunch.page-size.scheduled-jobs"
                             previous-action="goToPage(page - 1)" next-action="goToPage(page + 1)"
                             next-disabled="page >= lastPage" />
                     </div>
@@ -286,7 +286,7 @@
                                 <div class="min-w-0 truncate text-[12px] text-black dark:text-fg">
                                     @if ($skip['link'] ?? null)
                                         <a href="{{ $skip['link'] }}"
-                                            class="font-medium text-coollabs hover:underline dark:text-warning">
+                                            class="font-medium text-northlatch hover:underline dark:text-warning">
                                             {{ $skip['resource_name'] }}
                                         </a>
                                     @else

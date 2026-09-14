@@ -1,10 +1,10 @@
 {
-    "name": "coollabsio/coolify",
-    "description": "The Coolify project.",
+    "name": "northlatch/xlaunch",
+    "description": "Xlaunch is an open-source deployment control plane to connect servers and deploy apps, databases, and one-click services.",
     "license": "Apache-2.0",
     "type": "project",
     "keywords": [
-        "coolify",
+        "xlaunch",
         "deployment",
         "docker",
         "self-hosted",

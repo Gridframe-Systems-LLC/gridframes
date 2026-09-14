@@ -21,7 +21,7 @@ class GetInfrastructureOverview extends Tool
 {
     protected string $name = 'get_infrastructure_overview';
 
-    protected string $description = 'High-level overview of the authenticated team: Coolify version, servers, projects with resource counts, open deployments, and SQL-based health_hints counts. Start here or with coolify_help / search_resources.';
+    protected string $description = 'High-level overview of the authenticated team: Xlaunch version, servers, projects with resource counts, open deployments, and SQL-based health_hints counts. Start here or with xlaunch_help / search_resources.';
 
     use BuildsResponse;
     use McpStatusFilters;
@@ -129,7 +129,7 @@ class GetInfrastructureOverview extends Tool
         $nonRunningDatabases = $this->countUnhealthyDatabases($projects->pluck('id'));
 
         return $this->mcpSuccess($request, $this->respond([
-            'coolify_version' => config('constants.coolify.version'),
+            'xlaunch_version' => config('constants.xlaunch.version'),
             'servers' => $serverSummaries,
             'projects' => $projectSummaries,
             'counts' => [

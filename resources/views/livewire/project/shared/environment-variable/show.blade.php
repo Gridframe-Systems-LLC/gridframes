@@ -168,7 +168,7 @@
                             <div x-cloak x-show="!isMultiline" wire:key="env-show-value-tip-{{ $env->id }}"
                                 class="mt-1.5 text-xs text-neutral-500 dark:text-fg-faint">
                                 Tip: Type <span
-                                    class="font-mono text-coollabs dark:text-warning">{{ '{{' }}</span> to reference
+                                    class="font-mono text-northlatch dark:text-warning">{{ '{{' }}</span> to reference
                                 a shared environment variable
                             </div>
                         @endif

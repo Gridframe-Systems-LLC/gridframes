@@ -15,7 +15,7 @@ use App\Models\EnvironmentVariable;
  *
  * The fix ensures that:
  * 1. User-defined environment variables with null or empty values are filtered out
- * 2. COOLIFY_* environment variables with null or empty values are filtered out
+ * 2. XLAUNCH_* environment variables with null or empty values are filtered out
  * 3. Only environment variables with valid non-empty values are passed to Nixpacks
  */
 it('filters out null environment variables from nixpacks build command', function () {
@@ -69,12 +69,12 @@ it('filters out null environment variables from nixpacks build command', functio
     $pullRequestProperty->setAccessible(true);
     $pullRequestProperty->setValue($job, 0);
 
-    // Mock generate_coolify_env_variables to return some values including null
-    $job->shouldReceive('generate_coolify_env_variables')
+    // Mock generate_xlaunch_env_variables to return some values including null
+    $job->shouldReceive('generate_xlaunch_env_variables')
         ->andReturn(collect([
-            'COOLIFY_FQDN' => 'example.com',
-            'COOLIFY_URL' => null,  // null value that should be filtered
-            'COOLIFY_BRANCH' => '',  // empty value that should be filtered
+            'XLAUNCH_FQDN' => 'example.com',
+            'XLAUNCH_URL' => null,  // null value that should be filtered
+            'XLAUNCH_BRANCH' => '',  // empty value that should be filtered
             'SOURCE_COMMIT' => 'abc123',
         ]));
 
@@ -91,14 +91,14 @@ it('filters out null environment variables from nixpacks build command', functio
     // Verify that only valid environment variables are included (values are now single-quote escaped)
     expect($envArgs)->toContain("--env 'VALID_VAR=valid_value'");
     expect($envArgs)->toContain("--env 'ANOTHER_VALID_VAR=another_value'");
-    expect($envArgs)->toContain("--env 'COOLIFY_FQDN=example.com'");
+    expect($envArgs)->toContain("--env 'XLAUNCH_FQDN=example.com'");
     expect($envArgs)->toContain("--env 'SOURCE_COMMIT=abc123'");
 
     // Verify that null and empty environment variables are filtered out
     expect($envArgs)->not->toContain('NULL_VAR');
     expect($envArgs)->not->toContain('EMPTY_VAR');
-    expect($envArgs)->not->toContain('COOLIFY_URL');
-    expect($envArgs)->not->toContain('COOLIFY_BRANCH');
+    expect($envArgs)->not->toContain('XLAUNCH_URL');
+    expect($envArgs)->not->toContain('XLAUNCH_BRANCH');
 
     // Verify no environment variables end with just '=' (which indicates null/empty value)
     expect($envArgs)->not->toMatch('/--env [A-Z_]+=$/');
@@ -148,10 +148,10 @@ it('filters out null environment variables from nixpacks preview deployments', f
     $pullRequestProperty->setAccessible(true);
     $pullRequestProperty->setValue($job, 123);  // Non-zero for preview deployment
 
-    // Mock generate_coolify_env_variables
-    $job->shouldReceive('generate_coolify_env_variables')
+    // Mock generate_xlaunch_env_variables
+    $job->shouldReceive('generate_xlaunch_env_variables')
         ->andReturn(collect([
-            'COOLIFY_FQDN' => 'preview.example.com',
+            'XLAUNCH_FQDN' => 'preview.example.com',
         ]));
 
     // Call the private method
@@ -166,7 +166,7 @@ it('filters out null environment variables from nixpacks preview deployments', f
 
     // Verify that only valid environment variables are included (values are now single-quote escaped)
     expect($envArgs)->toContain("--env 'PREVIEW_VAR=preview_value'");
-    expect($envArgs)->toContain("--env 'COOLIFY_FQDN=preview.example.com'");
+    expect($envArgs)->toContain("--env 'XLAUNCH_FQDN=preview.example.com'");
 
     // Verify that null environment variables are filtered out
     expect($envArgs)->not->toContain('NULL_PREVIEW_VAR');
@@ -215,11 +215,11 @@ it('handles all environment variables being null or empty', function () {
     $pullRequestProperty->setAccessible(true);
     $pullRequestProperty->setValue($job, 0);
 
-    // Mock generate_coolify_env_variables to return all null/empty values
-    $job->shouldReceive('generate_coolify_env_variables')
+    // Mock generate_xlaunch_env_variables to return all null/empty values
+    $job->shouldReceive('generate_xlaunch_env_variables')
         ->andReturn(collect([
-            'COOLIFY_URL' => null,
-            'COOLIFY_BRANCH' => '',
+            'XLAUNCH_URL' => null,
+            'XLAUNCH_BRANCH' => '',
         ]));
 
     // Call the private method
@@ -236,39 +236,39 @@ it('handles all environment variables being null or empty', function () {
     expect($envArgs)->toBe('');
 });
 
-it('filters out null coolify env variables from env_args used in nixpacks plan JSON', function () {
+it('filters out null xlaunch env variables from env_args used in nixpacks plan JSON', function () {
     // This test verifies the fix for GitHub issue #6830:
-    // When application->fqdn is null, COOLIFY_FQDN/COOLIFY_URL get set to null
-    // in generate_coolify_env_variables(). The generate_env_variables() method
+    // When application->fqdn is null, XLAUNCH_FQDN/XLAUNCH_URL get set to null
+    // in generate_xlaunch_env_variables(). The generate_env_variables() method
     // merges these into env_args which become the nixpacks plan JSON "variables".
     // Nixpacks requires all variable values to be strings, so null causes:
     // "Error: Failed to parse Nixpacks config file - invalid type: null, expected a string"
 
-    // Simulate the coolify env collection with null values (as produced when fqdn is null)
-    $coolify_envs = collect([
-        'COOLIFY_URL' => null,
-        'COOLIFY_FQDN' => null,
-        'COOLIFY_BRANCH' => 'main',
-        'COOLIFY_RESOURCE_UUID' => 'abc123',
-        'COOLIFY_CONTAINER_NAME' => '',
+    // Simulate the xlaunch env collection with null values (as produced when fqdn is null)
+    $xlaunch_envs = collect([
+        'XLAUNCH_URL' => null,
+        'XLAUNCH_FQDN' => null,
+        'XLAUNCH_BRANCH' => 'main',
+        'XLAUNCH_RESOURCE_UUID' => 'abc123',
+        'XLAUNCH_CONTAINER_NAME' => '',
     ]);
 
     // Apply the same filtering logic used in generate_env_variables()
     $env_args = collect([]);
-    $coolify_envs->each(function ($value, $key) use ($env_args) {
+    $xlaunch_envs->each(function ($value, $key) use ($env_args) {
         if (! is_null($value) && $value !== '') {
             $env_args->put($key, $value);
         }
     });
 
     // Null values must NOT be present — they cause nixpacks JSON parse errors
-    expect($env_args->has('COOLIFY_URL'))->toBeFalse();
-    expect($env_args->has('COOLIFY_FQDN'))->toBeFalse();
-    expect($env_args->has('COOLIFY_CONTAINER_NAME'))->toBeFalse();
+    expect($env_args->has('XLAUNCH_URL'))->toBeFalse();
+    expect($env_args->has('XLAUNCH_FQDN'))->toBeFalse();
+    expect($env_args->has('XLAUNCH_CONTAINER_NAME'))->toBeFalse();
 
     // Non-null values must be preserved
-    expect($env_args->get('COOLIFY_BRANCH'))->toBe('main');
-    expect($env_args->get('COOLIFY_RESOURCE_UUID'))->toBe('abc123');
+    expect($env_args->get('XLAUNCH_BRANCH'))->toBe('main');
+    expect($env_args->get('XLAUNCH_RESOURCE_UUID'))->toBe('abc123');
 
     // The resulting array must be safe for json_encode into nixpacks config
     $json = json_encode(['variables' => $env_args->toArray()], JSON_PRETTY_PRINT);
@@ -321,8 +321,8 @@ it('preserves environment variables with zero values', function () {
     $pullRequestProperty->setAccessible(true);
     $pullRequestProperty->setValue($job, 0);
 
-    // Mock generate_coolify_env_variables
-    $job->shouldReceive('generate_coolify_env_variables')
+    // Mock generate_xlaunch_env_variables
+    $job->shouldReceive('generate_xlaunch_env_variables')
         ->andReturn(collect([]));
 
     // Call the private method

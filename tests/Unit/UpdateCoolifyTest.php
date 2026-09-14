@@ -1,6 +1,6 @@
 <?php
 
-use App\Actions\Server\UpdateCoolify;
+use App\Actions\Server\UpdateXlaunch;
 use App\Livewire\Settings\Updates;
 use App\Models\InstanceSettings;
 use App\Models\Server;
@@ -19,7 +19,7 @@ use Tests\TestCase;
 
 uses(TestCase::class, RefreshDatabase::class);
 
-function updateCoolifyTestCreateRootServerAndSettings(array $settings = []): void
+function updateXlaunchTestCreateRootServerAndSettings(array $settings = []): void
 {
     Team::factory()->create(['id' => 0]);
     Server::forceCreate([
@@ -43,23 +43,23 @@ afterEach(function () {
     Mockery::close();
 });
 
-it('has UpdateCoolify action class', function () {
-    expect(class_exists(UpdateCoolify::class))->toBeTrue();
+it('has UpdateXlaunch action class', function () {
+    expect(class_exists(UpdateXlaunch::class))->toBeTrue();
 });
 
 it('validates cache against running version before fallback', function () {
-    updateCoolifyTestCreateRootServerAndSettings();
+    updateXlaunchTestCreateRootServerAndSettings();
 
     // CDN fails
     Http::fake(['*' => Http::response(null, 500)]);
 
     // Mock cache returning older version
     Cache::shouldReceive('remember')
-        ->andReturn(['coolify' => ['v4' => ['version' => '4.0.5']]]);
+        ->andReturn(['xlaunch' => ['v4' => ['version' => '4.0.5']]]);
 
-    config(['constants.coolify.version' => '4.0.10']);
+    config(['constants.xlaunch.version' => '4.0.10']);
 
-    $action = new UpdateCoolify;
+    $action = new UpdateXlaunch;
 
     // Should throw exception - cache is older than running
     try {
@@ -73,7 +73,7 @@ it('validates cache against running version before fallback', function () {
 });
 
 it('uses validated cache when CDN fails and cache is newer', function () {
-    updateCoolifyTestCreateRootServerAndSettings();
+    updateXlaunchTestCreateRootServerAndSettings();
     Queue::fake();
     config(['constants.ssh.mux_enabled' => false]);
 
@@ -82,11 +82,11 @@ it('uses validated cache when CDN fails and cache is newer', function () {
 
     // Cache has newer version than current
     Cache::shouldReceive('remember')
-        ->andReturn(['coolify' => ['v4' => ['version' => '4.0.10']]]);
+        ->andReturn(['xlaunch' => ['v4' => ['version' => '4.0.10']]]);
 
-    config(['constants.coolify.version' => '4.0.5']);
+    config(['constants.xlaunch.version' => '4.0.5']);
 
-    $action = new UpdateCoolify;
+    $action = new UpdateXlaunch;
 
     Log::shouldReceive('warning')
         ->once()
@@ -102,28 +102,28 @@ it('passes the saved registry URL to the upgrade script command', function () {
     Queue::fake();
     config([
         'app.env' => 'testing',
-        'constants.coolify.version' => '4.0.9',
-        'constants.coolify.helper_version' => '1.0.14',
-        'constants.coolify.upgrade_script_url' => 'https://cdn.example.com/upgrade.sh',
+        'constants.xlaunch.version' => '4.0.9',
+        'constants.xlaunch.helper_version' => '1.0.14',
+        'constants.xlaunch.upgrade_script_url' => 'https://cdn.example.com/upgrade.sh',
         'constants.ssh.mux_enabled' => false,
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'is_auto_update_enabled' => true,
         'docker_registry_url' => 'ghcr.io',
     ]);
 
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.10']],
+            'xlaunch' => ['v4' => ['version' => '4.0.10']],
         ], 200),
     ]);
 
-    (new UpdateCoolify)->handle();
+    (new UpdateXlaunch)->handle();
 
     expect(Activity::query()->latest('id')->first()?->getExtraProperty('command'))->toBe(
-        "curl -fsSL https://cdn.example.com/upgrade.sh -o /data/coolify/source/upgrade.sh\n".
-        "bash /data/coolify/source/upgrade.sh '4.0.10' '1.0.14' 'ghcr.io'"
+        "curl -fsSL https://cdn.example.com/upgrade.sh -o /data/xlaunch/source/upgrade.sh\n".
+        "bash /data/xlaunch/source/upgrade.sh '4.0.10' '1.0.14' 'ghcr.io'"
     );
 });
 
@@ -131,39 +131,39 @@ it('falls back to docker io for the upgrade script command when no registry is s
     Queue::fake();
     config([
         'app.env' => 'testing',
-        'constants.coolify.version' => '4.0.9',
-        'constants.coolify.helper_version' => '1.0.14',
-        'constants.coolify.registry_url' => 'ghcr.io',
-        'constants.coolify.upgrade_script_url' => 'https://cdn.example.com/upgrade.sh',
+        'constants.xlaunch.version' => '4.0.9',
+        'constants.xlaunch.helper_version' => '1.0.14',
+        'constants.xlaunch.registry_url' => 'ghcr.io',
+        'constants.xlaunch.upgrade_script_url' => 'https://cdn.example.com/upgrade.sh',
         'constants.ssh.mux_enabled' => false,
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'is_auto_update_enabled' => true,
     ]);
 
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.10']],
+            'xlaunch' => ['v4' => ['version' => '4.0.10']],
         ], 200),
     ]);
 
-    (new UpdateCoolify)->handle();
+    (new UpdateXlaunch)->handle();
 
     expect(Activity::query()->latest('id')->first()?->getExtraProperty('command'))->toBe(
-        "curl -fsSL https://cdn.example.com/upgrade.sh -o /data/coolify/source/upgrade.sh\n".
-        "bash /data/coolify/source/upgrade.sh '4.0.10' '1.0.14' 'docker.io'"
+        "curl -fsSL https://cdn.example.com/upgrade.sh -o /data/xlaunch/source/upgrade.sh\n".
+        "bash /data/xlaunch/source/upgrade.sh '4.0.10' '1.0.14' 'docker.io'"
     );
 });
 
 it('defaults the registry setting to docker io when no registry is saved', function () {
     config([
         'app.env' => 'testing',
-        'constants.coolify.registry_url' => 'ghcr.io',
-        'constants.coolify.self_hosted' => true,
+        'constants.xlaunch.registry_url' => 'ghcr.io',
+        'constants.xlaunch.self_hosted' => true,
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings();
+    updateXlaunchTestCreateRootServerAndSettings();
 
     $rootTeam = Team::findOrFail(0);
     $user = User::factory()->create();
@@ -178,45 +178,45 @@ it('defaults the registry setting to docker io when no registry is saved', funct
 
 it('uses the database registry for helper images when the configured helper image is default', function () {
     config([
-        'constants.coolify.registry_url' => 'ghcr.io',
-        'constants.coolify.helper_image' => 'ghcr.io/coollabsio/coolify-helper',
+        'constants.xlaunch.registry_url' => 'ghcr.io',
+        'constants.xlaunch.helper_image' => 'ghcr.io/northlatch/xlaunch-helper',
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'docker_registry_url' => 'docker.io',
     ]);
 
-    expect(coolifyRegistryUrl())->toBe('docker.io')
-        ->and(coolifyHelperImage())->toBe('docker.io/coollabsio/coolify-helper');
+    expect(xlaunchRegistryUrl())->toBe('docker.io')
+        ->and(xlaunchHelperImage())->toBe('docker.io/northlatch/xlaunch-helper');
 });
 
 it('preserves an explicit custom helper image override', function () {
     config([
-        'constants.coolify.registry_url' => 'docker.io',
-        'constants.coolify.helper_image' => 'registry.example.com/custom/helper',
+        'constants.xlaunch.registry_url' => 'docker.io',
+        'constants.xlaunch.helper_image' => 'registry.example.com/custom/helper',
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'docker_registry_url' => 'ghcr.io',
     ]);
 
-    expect(coolifyHelperImage())->toBe('registry.example.com/custom/helper');
+    expect(xlaunchHelperImage())->toBe('registry.example.com/custom/helper');
 });
 
 it('uses the database registry for sentinel images', function () {
     $action = file_get_contents(app_path('Actions/Server/StartSentinel.php'));
 
-    expect($action)->toContain("\$image = coolifyRegistryUrl().'/coollabsio/sentinel:'.\$version;");
+    expect($action)->toContain("\$image = xlaunchRegistryUrl().'/northlatch/sentinel:'.\$version;");
 });
 
 it('rejects invalid registry values and does not sync them', function () {
     Process::fake();
     config([
         'app.env' => 'testing',
-        'constants.coolify.registry_url' => 'docker.io',
+        'constants.xlaunch.registry_url' => 'docker.io',
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'is_auto_update_enabled' => true,
         'auto_update_frequency' => '0 0 * * *',
         'update_check_frequency' => '0 * * * *',
@@ -242,11 +242,11 @@ it('rejects invalid registry values and does not sync them', function () {
 it('does not save registry changes when syncing the env file fails', function () {
     config([
         'app.env' => 'testing',
-        'constants.coolify.registry_url' => 'docker.io',
-        'constants.coolify.self_hosted' => true,
+        'constants.xlaunch.registry_url' => 'docker.io',
+        'constants.xlaunch.self_hosted' => true,
     ]);
 
-    updateCoolifyTestCreateRootServerAndSettings([
+    updateXlaunchTestCreateRootServerAndSettings([
         'is_auto_update_enabled' => true,
         'auto_update_frequency' => '0 0 * * *',
         'update_check_frequency' => '0 * * * *',
@@ -283,25 +283,25 @@ it('appends registry url to env file when the key is missing', function () {
     $method = new ReflectionMethod(Updates::class, 'registryEnvSyncCommand');
 
     expect($method->invoke($component, 'ghcr.io'))
-        ->toContain("grep -q '^REGISTRY_URL=' /data/coolify/source/.env")
-        ->toContain("sed -i 's|^REGISTRY_URL=.*|REGISTRY_URL=ghcr.io|' /data/coolify/source/.env")
-        ->toContain("printf '%s\\n' 'REGISTRY_URL=ghcr.io' >> /data/coolify/source/.env");
+        ->toContain("grep -q '^REGISTRY_URL=' /data/xlaunch/source/.env")
+        ->toContain("sed -i 's|^REGISTRY_URL=.*|REGISTRY_URL=ghcr.io|' /data/xlaunch/source/.env")
+        ->toContain("printf '%s\\n' 'REGISTRY_URL=ghcr.io' >> /data/xlaunch/source/.env");
 });
 
 it('prevents downgrade even with manual update', function () {
-    updateCoolifyTestCreateRootServerAndSettings();
+    updateXlaunchTestCreateRootServerAndSettings();
 
     // CDN returns older version
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.0']],
+            'xlaunch' => ['v4' => ['version' => '4.0.0']],
         ], 200),
     ]);
 
     // Current version is newer
-    config(['constants.coolify.version' => '4.0.10']);
+    config(['constants.xlaunch.version' => '4.0.10']);
 
-    $action = new UpdateCoolify;
+    $action = new UpdateXlaunch;
 
     Log::shouldReceive('error')
         ->once()

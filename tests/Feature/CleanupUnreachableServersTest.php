@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 it('disables (non-destructively) self-hosted servers with unreachable_count >= 3 after 7 days', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
 
     $team = Team::factory()->create();
     $server = Server::factory()->create([
@@ -28,7 +28,7 @@ it('disables (non-destructively) self-hosted servers with unreachable_count >= 3
 });
 
 it('overwrites the IP with 1.2.3.4 on cloud for servers with unreachable_count >= 3 after 7 days', function () {
-    config(['constants.coolify.self_hosted' => false]);
+    config(['constants.xlaunch.self_hosted' => false]);
 
     $team = Team::factory()->create();
     $server = Server::factory()->create([

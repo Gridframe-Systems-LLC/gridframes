@@ -18,10 +18,10 @@ class InstanceSettingsSeeder extends Seeder
             'is_registration_enabled' => true,
             'is_api_enabled' => isDev(),
             'smtp_enabled' => true,
-            'smtp_host' => 'coolify-mail',
+            'smtp_host' => 'xlaunch-mail',
             'smtp_port' => 1025,
             'smtp_from_address' => 'hi@localhost.com',
-            'smtp_from_name' => 'Coolify',
+            'smtp_from_name' => 'Xlaunch',
         ]);
         if (! isDev()) {
             try {

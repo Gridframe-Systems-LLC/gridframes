@@ -1,7 +1,7 @@
 # Architecture Decision Records
 
-This directory records architecture decisions for the Coolify v5 ecosystem:
-Coolify Laravel, Flux, coold, and the contracts between them.
+This directory records architecture decisions for the Xlaunch v5 ecosystem:
+Xlaunch Laravel, Flux, coold, and the contracts between them.
 
 ADRs are for decisions that are hard to reverse, surprising without context, and
 made after a real trade-off. If a note is just reference material, put it in the
@@ -11,10 +11,10 @@ main architecture docs instead.
 
 | ADR | Decision |
 | --- | --- |
-| [0001](0001-control-plane-flux-coold-split.md) | Split v5 into Coolify control plane, Flux broker, and coold host agent. |
+| [0001](0001-control-plane-flux-coold-split.md) | Split v5 into Xlaunch control plane, Flux broker, and coold host agent. |
 | [0002](0002-coold-host-agent-boundary.md) | Keep coold as a narrow host agent with explicit primitives. |
-| [0003](0003-flux-connection-broker-boundary.md) | Keep Flux as the connection broker between Coolify and coold. |
-| [0004](0004-coolify-control-plane-boundary.md) | Keep Coolify Laravel as the product control plane. |
+| [0003](0003-flux-connection-broker-boundary.md) | Keep Flux as the connection broker between Xlaunch and coold. |
+| [0004](0004-xlaunch-control-plane-boundary.md) | Keep Xlaunch Laravel as the product control plane. |
 
 ## Format
 
@@ -29,7 +29,7 @@ Start small. A useful ADR can be one paragraph:
 ```md
 # ADR 0005: Short title of the decision
 
-Coolify v5 will ... because ... This trades ... for ...
+Xlaunch v5 will ... because ... This trades ... for ...
 ```
 
 Add optional sections only when they clarify the decision:
@@ -42,11 +42,11 @@ Add optional sections only when they clarify the decision:
 
 ## Scope guide
 
-- Coolify ADRs cover product/control-plane state, RBAC, deployments, billing,
+- Xlaunch ADRs cover product/control-plane state, RBAC, deployments, billing,
   APIs, UI-visible behavior, and durable audit/history.
 - Flux ADRs cover connection brokerage, host stream routing, request/response
   correlation, backpressure, and transport-level authentication.
 - coold ADRs cover host primitives, privileged execution, Podman/firewall/DNS,
   local safety rules, and agent lifecycle.
 - Cross-cutting ADRs belong here when the decision changes contracts between
-  Coolify, Flux, and coold.
+  Xlaunch, Flux, and coold.

@@ -268,7 +268,7 @@ class Domains extends Component
             $resolved = resolveServerIpAddress(is_string($configured) ? $configured : null);
             $this->serverIpConfigured = $resolved['configured'];
             // Prefer real IP so users know what DNS record to set even when the
-            // server address is stored as a hostname (e.g. coolify-testing-host).
+            // server address is stored as a hostname (e.g. xlaunch-testing-host).
             $this->serverIp = $resolved['ip'] ?? $resolved['configured'];
         } else {
             $this->serverIp = null;
@@ -419,7 +419,7 @@ class Domains extends Component
      *
      * Messaging depends on Direction:
      * - both: both hosts are first-class and need DNS to the server
-     * - www / non-www: the missing pair is for Coolify's redirect (still must resolve to
+     * - www / non-www: the missing pair is for Xlaunch's redirect (still must resolve to
      *   the server so the proxy can redirect; not framed as a separate primary site)
      *
      * @param  array<int, array<string, mixed>>  $configuredRows
@@ -2211,7 +2211,7 @@ class Domains extends Component
                 return;
             }
 
-            $customLabels = str(implode('|coolify|', generateLabelsApplication($this->application)))->replace('|coolify|', "\n");
+            $customLabels = str(implode('|xlaunch|', generateLabelsApplication($this->application)))->replace('|xlaunch|', "\n");
             $this->application->custom_labels = base64_encode($customLabels);
             $this->application->save();
             $this->dispatch('configurationChanged');

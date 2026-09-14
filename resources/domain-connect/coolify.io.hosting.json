@@ -1,13 +1,13 @@
 {
-    "providerId": "coolify.io",
-    "providerName": "Coolify",
+    "providerId": "northlatch.com",
+    "providerName": "Xlaunch",
     "serviceId": "hosting",
-    "serviceName": "Coolify Hosting",
+    "serviceName": "Xlaunch Hosting",
     "version": 1,
-    "logoUrl": "https://coolify.io/coolify-transparent.png",
-    "description": "Point your domain to a Coolify-managed server via an A record.",
-    "variableDescription": "ip is the Coolify server IP. host is the subdomain relative to the zone (empty for apex).",
-    "syncPubKeyDomain": "domainconnect.coolify.io",
+    "logoUrl": "https://northlatch.com/xlaunch-transparent.png",
+    "description": "Point your domain to a Xlaunch-managed server via an A record.",
+    "variableDescription": "ip is the Xlaunch server IP. host is the subdomain relative to the zone (empty for apex).",
+    "syncPubKeyDomain": "domainconnect.northlatch.com",
     "syncBlock": false,
     "records": [
         {

@@ -20,7 +20,7 @@ function service_logo_urls(mixed $logo): array
 
     return [
         'logo' => asset($logo),
-        'logo_cdn_url' => 'https://raw.githubusercontent.com/coollabsio/coolify/refs/heads/main/public/'.$logo,
+        'logo_cdn_url' => 'https://raw.githubusercontent.com/northlatch/xlaunch/refs/heads/main/public/'.$logo,
         'logo_default_url' => asset($defaultLogo),
     ];
 }
@@ -352,7 +352,7 @@ function updateCompose(ServiceApplication|ServiceDatabase $resource)
             $url = Url::fromString($firstFqdn);
             $port = $url->getPort();
 
-            // Same helpers as application/service parsers (COOLIFY_URL / COOLIFY_FQDN).
+            // Same helpers as application/service parsers (XLAUNCH_URL / XLAUNCH_FQDN).
             $urlValue = getFqdnWithoutPort($firstFqdn);
             $fqdnValue = getHostWithoutPort($firstFqdn);
 

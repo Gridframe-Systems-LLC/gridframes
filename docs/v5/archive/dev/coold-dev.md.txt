@@ -1,6 +1,6 @@
 # coold Dev Environment Notes
 
-This file documents the current local v5/coold dev setup in Coolify.
+This file documents the current local v5/coold dev setup in Xlaunch.
 
 ## Roles
 
@@ -14,18 +14,18 @@ This file documents the current local v5/coold dev setup in Coolify.
   operating an individual VM, for example `shell`, `status`, `logs-agent`, or
   `delete`.
 - Lima VMs act like real deployment servers.
-- `coolify init bootstrap` owns host wiring:
+- `xlaunch init bootstrap` owns host wiring:
   - WireGuard
   - Podman mesh networks
   - Corrosion config/schema/service
   - coold install/service
   - builder install/config
   - default-deny firewall service
-- Coolify/Laravel dev owns Flux-specific wiring:
-  - starts Flux inside the Coolify container
+- Xlaunch/Laravel dev owns Flux-specific wiring:
+  - starts Flux inside the Xlaunch container
   - mints dev host JWTs
-  - installs `/etc/coolify/host-jwt` into each VM
-  - adds a `coold.service` systemd drop-in with `COOLIFY_COOLD_FLUX_URL`
+  - installs `/etc/xlaunch/host-jwt` into each VM
+  - adds a `coold.service` systemd drop-in with `XLAUNCH_COOLD_FLUX_URL`
 
 ## Main commands
 
@@ -38,33 +38,33 @@ scripts/dev.sh list
 
 `clean-vms` deletes the Lima VM instances and VM-local state, including disks,
 containers, WireGuard keys, Corrosion DB, installed binaries, and firewall state.
-It does not delete the Coolify repo.
+It does not delete the Xlaunch repo.
 
-## coolify helper
+## xlaunch helper
 
 ```bash
-scripts/dev.sh coolify install
-scripts/dev.sh coolify path
-scripts/dev.sh coolify bootstrap-command
-scripts/dev.sh coolify run <args>
+scripts/dev.sh xlaunch install
+scripts/dev.sh xlaunch path
+scripts/dev.sh xlaunch bootstrap-command
+scripts/dev.sh xlaunch run <args>
 ```
 
-The helper runs the `coolify` CLI from the Coolify development container. Lima
+The helper runs the `xlaunch` CLI from the Xlaunch development container. Lima
 VMs are addressed by their bridged mDNS names (`<vm>.local`), so the same
 addresses are used by bootstrap and by the v5 dev server seeder.
 
 Because Docker Desktop does not reliably pass mDNS multicast into containers,
 `scripts/dev.sh up` resolves each `<vm>.local` name on the host and writes the
-resolved records into the Coolify container `/etc/hosts` before bootstrapping.
+resolved records into the Xlaunch container `/etc/hosts` before bootstrapping.
 
 The generated bootstrap command uses the container CLI, the repo-local copy of
 the Lima SSH key, and dev WireGuard endpoint overrides, for example:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify /usr/local/bin/coolify init bootstrap \
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch /usr/local/bin/xlaunch init bootstrap \
   --nodes "coold-dev.local,coold-dev-2.local" \
   --ssh-key "/var/www/html/.dev/lima/ssh_key" \
-  --ssh-user "coolify" \
+  --ssh-user "xlaunch" \
   --wg-listen-port-overrides "coold-dev.local=51821,coold-dev-2.local=51822" \
   --wg-endpoint-overrides "coold-dev.local=coold-dev.local:51821,coold-dev-2.local=coold-dev-2.local:51822" \
   --coold-version "nightly" \
@@ -73,12 +73,12 @@ docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify /
 ```
 
 Lima does not allow direct root SSH by default, so dev uses the normal Lima user
-with passwordless sudo. `coolify` wraps remote commands in `sudo -n bash -lc`
+with passwordless sudo. `xlaunch` wraps remote commands in `sudo -n bash -lc`
 when the SSH user is not `root`.
 
 ## Default dev topology
 
-After `coolify init bootstrap`, defaults are:
+After `xlaunch init bootstrap`, defaults are:
 
 | VM | WireGuard IP | WireGuard endpoint | Podman subnet | Gateway |
 | --- | --- | --- | --- | --- |
@@ -110,19 +110,19 @@ The example containers are started with coold DNS:
 
 ```bash
 --dns <local-mesh-gateway>
---dns-search default.coolify.internal
+--dns-search default.xlaunch.internal
 ```
 
 Expected service discovery format:
 
 ```text
-<container-name>.default.coolify.internal
+<container-name>.default.xlaunch.internal
 ```
 
 Example:
 
 ```text
-coolify-example-nginx-2.default.coolify.internal -> 10.210.1.x
+xlaunch-example-nginx-2.default.xlaunch.internal -> 10.210.1.x
 ```
 
 ## Firewall behavior
@@ -176,7 +176,7 @@ Before allow rule, this should time out:
 
 ```bash
 scripts/dev.sh shell 1
-sudo podman exec coolify-example-nginx wget -T 3 -qO- http://10.210.1.2
+sudo podman exec xlaunch-example-nginx wget -T 3 -qO- http://10.210.1.2
 ```
 
 After allow rule, this should return nginx HTML:
@@ -184,7 +184,7 @@ After allow rule, this should return nginx HTML:
 ```bash
 scripts/dev.sh firewall allow 10.210.0.2 10.210.1.2 tcp 80
 scripts/dev.sh shell 1
-sudo podman exec coolify-example-nginx wget -T 5 -qO- http://10.210.1.2 | head -n 1
+sudo podman exec xlaunch-example-nginx wget -T 5 -qO- http://10.210.1.2 | head -n 1
 ```
 
 Expected:

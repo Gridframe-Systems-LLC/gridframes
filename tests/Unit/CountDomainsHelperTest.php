@@ -7,12 +7,12 @@ it('returns zero for null or empty fqdn', function () {
 });
 
 it('counts a single domain', function () {
-    expect(countDomains('https://app.coolify.io'))->toBe(1)
-        ->and(countDomains(' https://app.coolify.io '))->toBe(1);
+    expect(countDomains('https://app.northlatch.com'))->toBe(1)
+        ->and(countDomains(' https://app.northlatch.com '))->toBe(1);
 });
 
 it('counts multiple comma-separated domains', function () {
-    expect(countDomains('https://app.coolify.io,https://cloud.coolify.io/dashboard'))->toBe(2)
+    expect(countDomains('https://app.northlatch.com,https://cloud.northlatch.com/dashboard'))->toBe(2)
         ->and(countDomains('https://a.com, https://b.com , https://c.com'))->toBe(3);
 });
 

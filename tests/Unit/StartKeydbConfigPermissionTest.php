@@ -5,7 +5,7 @@ use App\Models\StandaloneKeydb;
 
 test('keydb config chown command is added when keydb_conf is set', function () {
     $action = new StartKeydb;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneKeydb::class)->makePartial();
@@ -16,12 +16,12 @@ test('keydb config chown command is added when keydb_conf is set', function () {
         $action->commands[] = "chown 999:999 {$action->configuration_dir}/keydb.conf";
     }
 
-    expect($action->commands)->toContain('chown 999:999 /data/coolify/databases/test-uuid/keydb.conf');
+    expect($action->commands)->toContain('chown 999:999 /data/xlaunch/databases/test-uuid/keydb.conf');
 });
 
 test('keydb config chown command is not added when keydb_conf is null', function () {
     $action = new StartKeydb;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneKeydb::class)->makePartial();
@@ -37,7 +37,7 @@ test('keydb config chown command is not added when keydb_conf is null', function
 
 test('keydb config chown command is not added when keydb_conf is empty', function () {
     $action = new StartKeydb;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneKeydb::class)->makePartial();

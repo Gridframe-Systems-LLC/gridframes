@@ -119,7 +119,7 @@ function makeControlVarFilteringJob(Application $application, Server $server, ar
         'deployment_uuid' => 'deployment-uuid',
         'dockerfile_location' => '/Dockerfile',
         'container_name' => 'control-var-app',
-        'coolify_variables' => null,
+        'xlaunch_variables' => null,
         'dockerSecretsSupported' => false,
     ];
 
@@ -263,7 +263,7 @@ it('keeps persisted dotted user build-time variable keys', function () {
 });
 
 it('loads shell variables and passes dotted variables through the build-time environment launcher', function () {
-    $temporaryDirectory = sys_get_temp_dir().'/coolify-build-env-'.str()->random(8);
+    $temporaryDirectory = sys_get_temp_dir().'/xlaunch-build-env-'.str()->random(8);
     expect(mkdir($temporaryDirectory))->toBeTrue();
     $shellEnvironmentPath = $temporaryDirectory.'/build-time-shell.env';
     $launcherPath = $temporaryDirectory.'/run-with-build-time-env';
@@ -455,7 +455,7 @@ it('skips unsafe reserved Nixpacks plan variable keys before validation', functi
 
     expect($buildtimeEnvs->contains(fn (string $env) => str($env)->startsWith($key.'=')))->toBeFalse();
 })->with([
-    'Coolify key' => 'COOLIFY_$(id)',
+    'Xlaunch key' => 'XLAUNCH_$(id)',
     'service key' => 'SERVICE_$(id)',
 ]);
 
@@ -543,7 +543,7 @@ it('keeps shell-safe Nixpacks plan variables in the build-time env file', functi
     [$job, $reflection] = makeControlVarFilteringJob($application, $server, [
         'nixpacks_plan_json' => collect([
             'variables' => [
-                'APP_NAME' => 'coolify',
+                'APP_NAME' => 'xlaunch',
                 '_PRIVATE_VALUE' => 'secret',
                 'X.VALUE' => 'dotted',
             ],
@@ -553,7 +553,7 @@ it('keeps shell-safe Nixpacks plan variables in the build-time env file', functi
     /** @var Collection $buildtimeEnvs */
     $buildtimeEnvs = invokeDeploymentJobMethod($job, $reflection, 'generate_buildtime_environment_variables');
 
-    expect($buildtimeEnvs)->toContain("APP_NAME='coolify'")
+    expect($buildtimeEnvs)->toContain("APP_NAME='xlaunch'")
         ->toContain("_PRIVATE_VALUE='secret'")
         ->toContain("X.VALUE='dotted'");
 });
@@ -684,7 +684,7 @@ it('filters buildpack control vars from preview runtime env fallback', function 
 
     createApplicationEnvironmentVariable($application, [
         'key' => 'APP_NAME',
-        'value' => 'coolify',
+        'value' => 'xlaunch',
         'is_runtime' => true,
         'is_buildtime' => false,
     ]);
@@ -760,7 +760,7 @@ it('filters buildpack control vars from dockerfile arg injection', function () {
     expect($job->writtenDockerfile)->not->toContain('ARG RAILPACK_NODE_VERSION=');
 });
 
-it('builds railpack variables from generic buildtime vars railpack vars and coolify vars only', function () {
+it('builds railpack variables from generic buildtime vars railpack vars and xlaunch vars only', function () {
     [$application, $server] = makeDeploymentControlVarFixture([
         'build_pack' => 'railpack',
         'fqdn' => 'https://railpack.example.com',
@@ -804,7 +804,7 @@ it('builds railpack variables from generic buildtime vars railpack vars and cool
     expect($variables->get('RAILPACK_NODE_VERSION'))->toBe('20');
     expect($variables->get('RAILPACK_INSTALL_CMD'))->toBe('pnpm install --frozen-lockfile');
     expect($variables->get('RAILPACK_DEPLOY_APT_PACKAGES'))->toBe('curl wget');
-    expect($variables->get('COOLIFY_RESOURCE_UUID'))->toBe($application->uuid);
+    expect($variables->get('XLAUNCH_RESOURCE_UUID'))->toBe($application->uuid);
     expect($variables->has('NIXPACKS_NODE_VERSION'))->toBeFalse();
     expect($variables->has('RUNTIME_ONLY'))->toBeFalse();
 });
@@ -856,7 +856,7 @@ it('builds preview railpack variables without leaking stale nixpacks vars', func
     expect($variables->get('PREVIEW_BUILD_FLAG'))->toBe('enabled');
     expect($variables->get('RAILPACK_NODE_VERSION'))->toBe('20');
     expect($variables->get('RAILPACK_DEPLOY_APT_PACKAGES'))->toBe('curl wget');
-    expect($variables->get('COOLIFY_RESOURCE_UUID'))->toBe($application->uuid);
+    expect($variables->get('XLAUNCH_RESOURCE_UUID'))->toBe($application->uuid);
     expect($variables->has('NIXPACKS_NODE_VERSION'))->toBeFalse();
     expect($variables->has('PREVIEW_RUNTIME_ONLY'))->toBeFalse();
 });

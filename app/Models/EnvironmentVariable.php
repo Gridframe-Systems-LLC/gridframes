@@ -78,7 +78,7 @@ class EnvironmentVariable extends BaseModel
         'resourceable_id' => 'integer',
     ];
 
-    protected $appends = ['real_value', 'is_shared', 'is_really_required', 'is_buildpack_control', 'is_coolify'];
+    protected $appends = ['real_value', 'is_shared', 'is_really_required', 'is_buildpack_control', 'is_xlaunch'];
 
     /**
      * Sensitive fields hidden by default in serialized output (toArray/toJson).
@@ -119,7 +119,7 @@ class EnvironmentVariable extends BaseModel
                 }
             }
             $environment_variable->update([
-                'version' => config('constants.coolify.version'),
+                'version' => config('constants.xlaunch.version'),
             ]);
         });
 
@@ -233,7 +233,7 @@ class EnvironmentVariable extends BaseModel
         );
     }
 
-    protected function isCoolify(): Attribute
+    protected function isXlaunch(): Attribute
     {
         return Attribute::make(
             get: function () {

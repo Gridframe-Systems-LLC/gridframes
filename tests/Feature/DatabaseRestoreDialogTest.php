@@ -16,5 +16,5 @@ test('postgresql dump all restore warns that administrator passwords are overwri
         ->toContain('@if ($dumpAll)')
         ->toContain('Full restore overwrites administrator passwords')
         ->toContain('The backup replaces PostgreSQL administrator role passwords, including the destination administrator password.')
-        ->toContain("If the administrator password changes, update it in Coolify's database configuration after the restore.");
+        ->toContain("If the administrator password changes, update it in Xlaunch's database configuration after the restore.");
 });

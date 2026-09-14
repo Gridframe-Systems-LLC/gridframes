@@ -166,8 +166,8 @@ class StartDragonfly
                 [
                     [
                         'type' => 'bind',
-                        'source' => '/data/coolify/ssl/coolify-ca.crt',
-                        'target' => '/etc/dragonfly/certs/coolify-ca.crt',
+                        'source' => '/data/xlaunch/ssl/xlaunch-ca.crt',
+                        'target' => '/etc/dragonfly/certs/xlaunch-ca.crt',
                         'read_only' => true,
                     ],
                 ]
@@ -208,7 +208,7 @@ class StartDragonfly
                 '--tls',
                 '--tls_cert_file /etc/dragonfly/certs/server.crt',
                 '--tls_key_file /etc/dragonfly/certs/server.key',
-                '--tls_ca_cert_file /etc/dragonfly/certs/coolify-ca.crt',
+                '--tls_ca_cert_file /etc/dragonfly/certs/xlaunch-ca.crt',
             ];
             $command .= ' '.implode(' ', $sslArgs);
         }

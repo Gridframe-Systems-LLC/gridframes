@@ -273,14 +273,14 @@ describe('POST /api/v1/applications/{uuid}/envs RAILPACK_* handling', function (
         expect($buildtime)->not->toContain('RUNTIME_ARG');
     });
 
-    test('user-defined COOLIFY_FQDN takes precedence over auto-generated', function () {
-        // Documents generate_coolify_env_variables() override behavior:
+    test('user-defined XLAUNCH_FQDN takes precedence over auto-generated', function () {
+        // Documents generate_xlaunch_env_variables() override behavior:
         // it skips generation when application->environment_variables already has the key.
         $app = makeRailpackApp();
 
         $this->withHeaders(railpackApiHeaders($this->bearerToken))
             ->postJson("/api/v1/applications/{$app->uuid}/envs", [
-                'key' => 'COOLIFY_FQDN',
+                'key' => 'XLAUNCH_FQDN',
                 'value' => 'overridden.example.com',
                 'is_buildtime' => true,
                 'is_runtime' => true,
@@ -288,11 +288,11 @@ describe('POST /api/v1/applications/{uuid}/envs RAILPACK_* handling', function (
             ])->assertCreated();
 
         $app->refresh();
-        $env = $app->environment_variables()->where('key', 'COOLIFY_FQDN')->first();
+        $env = $app->environment_variables()->where('key', 'XLAUNCH_FQDN')->first();
         expect($env)->not->toBeNull();
         expect($env->value)->toBe('overridden.example.com');
         // Confirm the model relation used by override-skip logic finds it
-        expect($app->environment_variables->where('key', 'COOLIFY_FQDN')->isEmpty())->toBeFalse();
+        expect($app->environment_variables->where('key', 'XLAUNCH_FQDN')->isEmpty())->toBeFalse();
     });
 
     test('is_literal flag persists on create', function () {

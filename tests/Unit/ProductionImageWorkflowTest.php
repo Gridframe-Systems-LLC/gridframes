@@ -1,14 +1,14 @@
 <?php
 
 it('publishes v4 branch builds under the commit sha with a traceable internal version', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-sha-build.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-sha-build.yml');
     $dockerfile = file_get_contents(dirname(__DIR__, 2).'/docker/production/Dockerfile');
     $constants = file_get_contents(dirname(__DIR__, 2).'/config/constants.php');
     $versions = json_decode(file_get_contents(dirname(__DIR__, 2).'/versions.json'), true, flags: JSON_THROW_ON_ERROR);
     $nightlyVersions = json_decode(file_get_contents(dirname(__DIR__, 2).'/other/nightly/versions.json'), true, flags: JSON_THROW_ON_ERROR);
 
     expect($workflow)
-        ->toContain('name: Build Coolify (SHA)')
+        ->toContain('name: Build Xlaunch (SHA)')
         ->toContain('branches: ["main"]')
         ->not->toContain('v4.x')
         ->toContain('short_sha=${GITHUB_SHA::7}')
@@ -17,15 +17,15 @@ it('publishes v4 branch builds under the commit sha with a traceable internal ve
         ->not->toContain('sha-${{ github.sha }}')
         ->toContain('php bootstrap/getVersion.php')
         ->toContain('version=${BASE_VERSION}-dev.${GITHUB_SHA::9}')
-        ->toContain('COOLIFY_VERSION=${{ steps.version.outputs.version }}')
+        ->toContain('XLAUNCH_VERSION=${{ steps.version.outputs.version }}')
         ->not->toContain('IMAGE_NAME }}:latest')
         ->and($dockerfile)
-        ->toContain('ARG COOLIFY_VERSION')
-        ->toContain('ENV COOLIFY_VERSION=${COOLIFY_VERSION}')
+        ->toContain('ARG XLAUNCH_VERSION')
+        ->toContain('ENV XLAUNCH_VERSION=${XLAUNCH_VERSION}')
         ->and($constants)
-        ->toContain("'version' => env('COOLIFY_VERSION') ?: '4.3.19'")
-        ->and($versions['coolify']['v4']['version'])->toBe('4.3.19')
-        ->and($versions['coolify']['nightly']['version'])->toBe('4.4-rc.1')
+        ->toContain("'version' => env('XLAUNCH_VERSION') ?: '4.3.19'")
+        ->and($versions['xlaunch']['v4']['version'])->toBe('4.3.19')
+        ->and($versions['xlaunch']['nightly']['version'])->toBe('4.4-rc.1')
         ->and($nightlyVersions)->toBe($versions);
 });
 
@@ -41,10 +41,10 @@ it('orders rolling and exact release candidates before the stable release', func
 });
 
 it('requires a reviewed draft release before building a stable version', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-release.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-release.yml');
 
     expect($workflow)
-        ->toContain('name: Release Coolify Stable')
+        ->toContain('name: Release Xlaunch Stable')
         ->toContain('run-name: ${{ inputs.tag }}')
         ->toContain('workflow_dispatch:')
         ->toContain('tag:')
@@ -69,12 +69,12 @@ it('runs support image workflows from main', function (string $workflowFile) {
         ->toContain('branches: [ "main" ]')
         ->not->toContain('v4.x');
 })->with([
-    'helper' => 'coolify-helper.yml',
-    'realtime' => 'coolify-realtime.yml',
+    'helper' => 'xlaunch-helper.yml',
+    'realtime' => 'xlaunch-realtime.yml',
 ]);
 
 it('prevents the stable helper workflow from publishing an existing version', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-helper.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-helper.yml');
 
     expect($workflow)
         ->toContain('workflow_dispatch:')
@@ -89,7 +89,7 @@ it('prevents the stable helper workflow from publishing an existing version', fu
 });
 
 it('prevents the stable realtime workflow from publishing an existing version', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-realtime.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-realtime.yml');
 
     expect($workflow)
         ->toContain('check-version:')
@@ -112,15 +112,15 @@ it('generates the production changelog from main', function () {
 });
 
 it('publishes traceable rolling builds from next without creating an exact rc tag', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-next-build.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-next-build.yml');
 
     expect($workflow)
-        ->toContain('name: Build Coolify Next')
+        ->toContain('name: Build Xlaunch Next')
         ->toContain('branches: [next]')
-        ->toContain('group: coolify-next-build')
-        ->toContain("jq -r '.coolify.nightly.version' versions.json")
+        ->toContain('group: xlaunch-next-build')
+        ->toContain("jq -r '.xlaunch.nightly.version' versions.json")
         ->toContain('VERSION="${RC_VERSION}.${SHORT_SHA}"')
-        ->toContain('COOLIFY_VERSION=${{ needs.prepare.outputs.version }}')
+        ->toContain('XLAUNCH_VERSION=${{ needs.prepare.outputs.version }}')
         ->toContain('--tag "${IMAGE}:sha-${SHA}"')
         ->toContain('--tag "${IMAGE}:${VERSION}"')
         ->toContain('--tag "${IMAGE}:next"')
@@ -129,22 +129,22 @@ it('publishes traceable rolling builds from next without creating an exact rc ta
 });
 
 it('requires a reviewed draft prerelease before publishing an exact rc', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-rc-release.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-rc-release.yml');
 
     expect($workflow)
-        ->toContain('name: Release Coolify RC')
+        ->toContain('name: Release Xlaunch RC')
         ->toContain('run-name: ${{ inputs.tag }}')
         ->toContain("github.ref != 'refs/heads/next'")
-        ->toContain('group: coolify-rc-release')
+        ->toContain('group: xlaunch-rc-release')
         ->toContain('^v[0-9]+\\.[0-9]+-rc\\.[0-9]+$')
-        ->toContain("jq -r '.coolify.nightly.version' versions.json")
+        ->toContain("jq -r '.xlaunch.nightly.version' versions.json")
         ->toContain('release.draft')
         ->toContain('!release.prerelease')
         ->toContain('release.body?.trim()')
         ->toContain('revalidate:')
         ->toMatch('/revalidate:.*?permissions:\s+contents: write/s')
         ->toContain('needs: [validate, build, revalidate]')
-        ->toContain('COOLIFY_VERSION=${{ needs.validate.outputs.version }}')
+        ->toContain('XLAUNCH_VERSION=${{ needs.validate.outputs.version }}')
         ->toContain('--tag "${IMAGE}:${VERSION}"')
         ->toContain('--tag "${IMAGE}:next"')
         ->toContain('prerelease: true')
@@ -154,11 +154,11 @@ it('requires a reviewed draft prerelease before publishing an exact rc', functio
 });
 
 it('rebuilds stable images and publishes the reviewed draft after both architectures succeed', function () {
-    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/coolify-release.yml');
+    $workflow = file_get_contents(dirname(__DIR__, 2).'/.github/workflows/xlaunch-release.yml');
 
     expect($workflow)
         ->toContain('docker/build-push-action@v6')
-        ->toContain('COOLIFY_VERSION=${{ needs.validate.outputs.version }}')
+        ->toContain('XLAUNCH_VERSION=${{ needs.validate.outputs.version }}')
         ->toContain('release-${{ needs.validate.outputs.version }}-${{ github.sha }}-${{ matrix.arch }}')
         ->toContain('--tag "${IMAGE}:${VERSION}"')
         ->toContain('--tag "${IMAGE}:latest"')

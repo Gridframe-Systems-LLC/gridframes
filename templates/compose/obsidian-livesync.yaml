@@ -9,9 +9,9 @@ services:
   couchdb:
     image: couchdb:3.4.2
     environment:
-      # Tells Coolify to proxy this service on port 5984 at the assigned domain
+      # Tells Xlaunch to proxy this service on port 5984 at the assigned domain
       - SERVICE_FQDN_COUCHDB_5984
-      # Coolify auto-generates and persists these — find them under Environment Variables
+      # Xlaunch auto-generates and persists these — find them under Environment Variables
       - COUCHDB_USER=${SERVICE_USER_COUCHDB}
       - COUCHDB_PASSWORD=${SERVICE_PASSWORD_64_COUCHDB}
       # Max size of a single document (bytes). Default: 50MB.

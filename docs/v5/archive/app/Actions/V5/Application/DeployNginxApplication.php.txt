@@ -132,14 +132,14 @@ class DeployNginxApplication
     {
         $namespace = $application->mesh_namespace ?: 'default';
 
-        return "coolify-{$namespace}-mesh";
+        return "xlaunch-{$namespace}-mesh";
     }
 
     private function meshDnsSearchDomain(Application $application): string
     {
         $namespace = $application->mesh_namespace ?: 'default';
 
-        return "{$namespace}.coolify.internal";
+        return "{$namespace}.xlaunch.internal";
     }
 
     /**

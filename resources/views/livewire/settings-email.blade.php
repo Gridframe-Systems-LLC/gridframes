@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Transactional Email | Coolify
+        Transactional Email | Xlaunch
     </x-slot>
 
     <x-settings.layout>
@@ -48,7 +48,7 @@
                         autocomplete="new-password" />
                     <x-forms.input id="smtpTimeout" type="number"
                         helper="Maximum delivery time in seconds." label="Timeout" />
-                    <x-forms.input id="smtpEhloDomain" placeholder="coolify.example.com"
+                    <x-forms.input id="smtpEhloDomain" placeholder="xlaunch.example.com"
                         helper="Fully qualified domain sent in the SMTP EHLO command. Uses the system default when empty."
                         label="EHLO domain" />
                 </div>

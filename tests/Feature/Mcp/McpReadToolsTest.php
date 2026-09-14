@@ -56,7 +56,7 @@ beforeEach(function () {
     session(['currentTeam' => $this->team]);
 
     $this->server = Server::factory()->create(['team_id' => $this->team->id]);
-    // Server::created auto-provisions a default StandaloneDocker (network=coolify).
+    // Server::created auto-provisions a default StandaloneDocker (network=xlaunch).
     $this->destination = StandaloneDocker::query()->where('server_id', $this->server->id)->firstOrFail();
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
     // Project::created auto-creates a production environment.
@@ -162,7 +162,7 @@ test('tools/list includes new read tools and lifecycle tools', function () {
         'list_unhealthy_resources',
         'list_application_previews',
         'list_shared_env_keys',
-        'coolify_help',
+        'xlaunch_help',
         'control',
         'deploy',
         'cancel_deployment',
@@ -901,7 +901,7 @@ test('list_github_branches uses anonymous github api for public sources', functi
     ]);
 
     Http::fake([
-        'https://api.github.com/repos/coollabsio/coolify/branches*' => Http::response([
+        'https://api.github.com/repos/northlatch/xlaunch/branches*' => Http::response([
             ['name' => 'v4.x', 'protected' => true, 'commit' => ['sha' => 'abc123']],
             ['name' => 'next', 'protected' => false, 'commit' => ['sha' => 'def456']],
         ], 200),
@@ -909,8 +909,8 @@ test('list_github_branches uses anonymous github api for public sources', functi
 
     $response = mcpReadCall('list_github_branches', [
         'github_app_uuid' => $publicApp->uuid,
-        'owner' => 'coollabsio',
-        'repo' => 'coolify',
+        'owner' => 'northlatch',
+        'repo' => 'xlaunch',
     ]);
     $response->assertOk();
     expect($response->json('result.isError'))->toBeFalse();
@@ -939,8 +939,8 @@ test('list_github_branches rejects private apps missing installation credentials
 
     $response = mcpReadCall('list_github_branches', [
         'github_app_uuid' => $privateApp->uuid,
-        'owner' => 'coollabsio',
-        'repo' => 'coolify',
+        'owner' => 'northlatch',
+        'repo' => 'xlaunch',
     ]);
     $response->assertOk();
     expect($response->json('result.isError'))->toBeTrue();
@@ -968,7 +968,7 @@ test('list_github_branches rejects owner or repo path segment injection', functi
     $badOwner = mcpReadCall('list_github_branches', [
         'github_app_uuid' => $publicApp->uuid,
         'owner' => 'cool/../labs',
-        'repo' => 'coolify',
+        'repo' => 'xlaunch',
     ]);
     $badOwner->assertOk();
     expect($badOwner->json('result.isError'))->toBeTrue();
@@ -976,8 +976,8 @@ test('list_github_branches rejects owner or repo path segment injection', functi
 
     $badRepo = mcpReadCall('list_github_branches', [
         'github_app_uuid' => $publicApp->uuid,
-        'owner' => 'coollabsio',
-        'repo' => 'coolify/extra',
+        'owner' => 'northlatch',
+        'repo' => 'xlaunch/extra',
     ]);
     $badRepo->assertOk();
     expect($badRepo->json('result.isError'))->toBeTrue();
@@ -1649,8 +1649,8 @@ test('get_logs returns structured choices when service has multiple containers',
         ->and(json_encode($body['data']['message'] ?? ''))->not->toContain('"uuid"');
 });
 
-test('coolify_help returns catalog intents', function () {
-    $response = mcpReadCall('coolify_help', ['intent' => 'essentials']);
+test('xlaunch_help returns catalog intents', function () {
+    $response = mcpReadCall('xlaunch_help', ['intent' => 'essentials']);
     $response->assertOk();
     $body = mcpReadJson($response);
     expect($body['data']['catalog']['essentials']['tools'])->toContain('search_resources', 'control');
@@ -1986,7 +1986,7 @@ test('MCP resources list includes overview and application template', function (
 
     // Static resource may appear under resources; templates under list or templates/list depending on server.
     $all = collect($uris)->merge($templates)->implode(' ');
-    expect($all)->toContain('coolify://');
+    expect($all)->toContain('xlaunch://');
 });
 
 test('MCP overview resource returns batched project resource counts', function () {
@@ -2015,7 +2015,7 @@ test('MCP overview resource returns batched project resource counts', function (
         'id' => 1,
         'method' => 'resources/read',
         'params' => [
-            'uri' => 'coolify://overview',
+            'uri' => 'xlaunch://overview',
         ],
     ]);
 
@@ -2025,7 +2025,7 @@ test('MCP overview resource returns batched project resource counts', function (
     expect($text)->not->toBeNull();
 
     $body = json_decode($text, true);
-    expect($body)->toHaveKeys(['coolify_version', 'servers', 'projects', 'counts']);
+    expect($body)->toHaveKeys(['xlaunch_version', 'servers', 'projects', 'counts']);
     expect($body['counts']['projects'])->toBe(1);
 
     $project = collect($body['projects'])->firstWhere('uuid', $this->project->uuid);

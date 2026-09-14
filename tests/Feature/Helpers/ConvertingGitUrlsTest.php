@@ -4,9 +4,9 @@ use App\Models\GithubApp;
 
 test('convertGitUrlsForDeployKeyAndGithubAppAndHttpUrl', function () {
     $githubApp = GithubApp::find(0);
-    $result = convertGitUrl('andrasbacsai/coolify-examples.git', 'deploy_key', $githubApp);
+    $result = convertGitUrl('andrasbacsai/xlaunch-examples.git', 'deploy_key', $githubApp);
     expect($result)->toBe([
-        'repository' => 'git@github.com:andrasbacsai/coolify-examples.git',
+        'repository' => 'git@github.com:andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 
@@ -14,41 +14,41 @@ test('convertGitUrlsForDeployKeyAndGithubAppAndHttpUrl', function () {
 
 test('convertGitUrlsForDeployKeyAndGithubAppAndSshUrl', function () {
     $githubApp = GithubApp::find(0);
-    $result = convertGitUrl('git@github.com:andrasbacsai/coolify-examples.git', 'deploy_key', $githubApp);
+    $result = convertGitUrl('git@github.com:andrasbacsai/xlaunch-examples.git', 'deploy_key', $githubApp);
     expect($result)->toBe([
-        'repository' => 'git@github.com:andrasbacsai/coolify-examples.git',
+        'repository' => 'git@github.com:andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 });
 
 test('convertGitUrlsForDeployKeyAndHttpUrl', function () {
-    $result = convertGitUrl('andrasbacsai/coolify-examples.git', 'deploy_key', null);
+    $result = convertGitUrl('andrasbacsai/xlaunch-examples.git', 'deploy_key', null);
     expect($result)->toBe([
-        'repository' => 'andrasbacsai/coolify-examples.git',
+        'repository' => 'andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 });
 
 test('convertGitUrlsForDeployKeyAndSshUrl', function () {
-    $result = convertGitUrl('git@github.com:andrasbacsai/coolify-examples.git', 'deploy_key', null);
+    $result = convertGitUrl('git@github.com:andrasbacsai/xlaunch-examples.git', 'deploy_key', null);
     expect($result)->toBe([
-        'repository' => 'git@github.com:andrasbacsai/coolify-examples.git',
+        'repository' => 'git@github.com:andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 });
 
 test('convertGitUrlsForSourceAndSshUrl', function () {
-    $result = convertGitUrl('git@github.com:andrasbacsai/coolify-examples.git', 'source', null);
+    $result = convertGitUrl('git@github.com:andrasbacsai/xlaunch-examples.git', 'source', null);
     expect($result)->toBe([
-        'repository' => 'git@github.com:andrasbacsai/coolify-examples.git',
+        'repository' => 'git@github.com:andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 });
 
 test('convertGitUrlsForSourceAndHttpUrl', function () {
-    $result = convertGitUrl('andrasbacsai/coolify-examples.git', 'source', null);
+    $result = convertGitUrl('andrasbacsai/xlaunch-examples.git', 'source', null);
     expect($result)->toBe([
-        'repository' => 'andrasbacsai/coolify-examples.git',
+        'repository' => 'andrasbacsai/xlaunch-examples.git',
         'port' => 22,
     ]);
 });
@@ -92,9 +92,9 @@ test('convertGitUrlsForDeployKeyAndGithubAppWithCustomPort', function () {
         'custom_port' => 22222,
     ]);
 
-    $result = convertGitUrl('andrasbacsai/coolify-examples.git', 'deploy_key', $githubApp);
+    $result = convertGitUrl('andrasbacsai/xlaunch-examples.git', 'deploy_key', $githubApp);
     expect($result)->toBe([
-        'repository' => 'ssh://git@github.example.com:22222/andrasbacsai/coolify-examples.git',
+        'repository' => 'ssh://git@github.example.com:22222/andrasbacsai/xlaunch-examples.git',
         'port' => '22222',
     ]);
 });
@@ -106,9 +106,9 @@ test('convertGitUrlsForDeployKeyAndGithubAppWithCustomPortAndIpv6Host', function
         'custom_port' => 22222,
     ]);
 
-    $result = convertGitUrl('andrasbacsai/coolify-examples.git', 'deploy_key', $githubApp);
+    $result = convertGitUrl('andrasbacsai/xlaunch-examples.git', 'deploy_key', $githubApp);
     expect($result)->toBe([
-        'repository' => 'ssh://git@[2001:db8::10]:22222/andrasbacsai/coolify-examples.git',
+        'repository' => 'ssh://git@[2001:db8::10]:22222/andrasbacsai/xlaunch-examples.git',
         'port' => '22222',
     ]);
 });

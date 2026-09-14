@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Instance Backup | Coolify
+        Instance Backup | Xlaunch
     </x-slot>
 
     <x-settings.layout>
@@ -30,10 +30,10 @@
             @else
                 <x-application.settings-section title="Instance backup">
                     <x-empty title="Backup is not configured"
-                        description="Coolify needs an internal database resource to create automatic backups."
+                        description="Xlaunch needs an internal database resource to create automatic backups."
                         icon-name="database" size="sm">
                         <x-slot:actions>
-                            <x-forms.button wire:click="addCoolifyDatabase" isHighlighted>
+                            <x-forms.button wire:click="addXlaunchDatabase" isHighlighted>
                                 Configure backup
                             </x-forms.button>
                         </x-slot:actions>

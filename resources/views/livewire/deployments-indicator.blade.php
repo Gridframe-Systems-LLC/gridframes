@@ -25,7 +25,7 @@
                             href="{{ $deployment->deployment_url }}" {{ wireNavigate() }}
                             class="flex items-start gap-3 rounded-lg border border-transparent p-3 transition-colors hover:border-neutral-200 hover:bg-neutral-50 hover:no-underline dark:border-coolgray-300 dark:hover:border-coolgray-400 dark:hover:bg-raised">
                             <div
-                                class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-coollabs dark:border-coolgray-300 dark:bg-raised dark:text-warning">
+                                class="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg border border-neutral-200 bg-neutral-50 text-northlatch dark:border-coolgray-300 dark:bg-raised dark:text-warning">
                                 @if ($deployment->status === 'in_progress')
                                     <svg class="size-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none"
                                         viewBox="0 0 24 24" aria-hidden="true">

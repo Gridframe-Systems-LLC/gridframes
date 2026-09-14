@@ -39,7 +39,7 @@ function makeDeploymentJobForCommitCheck(string $pinnedSha, string $branchHeadSh
             return [
                 'commands' => collect([]),
                 'branch' => 'main',
-                'fullRepoUrl' => 'https://github.com/coollabsio/coolify.git',
+                'fullRepoUrl' => 'https://github.com/northlatch/xlaunch.git',
             ];
         }
     };

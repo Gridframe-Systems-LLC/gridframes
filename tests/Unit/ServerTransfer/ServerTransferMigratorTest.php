@@ -17,7 +17,7 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://coolify-a.test']);
+    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://xlaunch-a.test']);
 
     $this->team = Team::factory()->create();
     $this->privateKey = PrivateKey::factory()->create(['team_id' => $this->team->id]);

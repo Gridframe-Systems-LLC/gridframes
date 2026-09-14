@@ -10,7 +10,7 @@ use Symfony\Component\Yaml\Yaml;
  * - Empty string: Variable is set to "" (e.g., HTTP_PROXY="" means "no proxy")
  * - Null: Variable is unset/removed from container environment
  *
- * See: https://github.com/coollabsio/coolify/issues/7126
+ * See: https://github.com/northlatch/xlaunch/issues/7126
  */
 it('ensures parsers.php preserves empty strings in application parser', function () {
     $parsersFile = file_get_contents(__DIR__.'/../../bootstrap/helpers/parsers.php');

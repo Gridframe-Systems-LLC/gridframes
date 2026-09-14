@@ -13,7 +13,7 @@
                 <div class="lg:col-span-2">
                     <div class="mb-1.5 flex items-center justify-between gap-3">
                         <label class="text-[13px] font-medium">Private key <span class="text-helper">*</span></label>
-                        <button type="button" class="text-[11px] font-medium text-coollabs hover:underline dark:text-warning"
+                        <button type="button" class="text-[11px] font-medium text-northlatch hover:underline dark:text-warning"
                             x-on:click="showPrivateKey = !showPrivateKey" x-text="showPrivateKey ? 'Hide editor' : 'Edit key'"></button>
                     </div>
                     <div x-show="!showPrivateKey">
@@ -43,7 +43,7 @@
         </div>
     @else
     <x-slot:title>
-        {{ $private_key->name }} | Private Keys | Coolify
+        {{ $private_key->name }} | Private Keys | Xlaunch
     </x-slot>
 
     <x-security.settings-layout>
@@ -84,7 +84,7 @@
                     <div class="mb-1.5 flex items-center justify-between gap-3">
                         <label class="text-[13px] font-medium">Private key <span class="text-helper">*</span></label>
                         <button type="button"
-                            class="text-[11px] font-medium text-coollabs hover:underline dark:text-warning"
+                            class="text-[11px] font-medium text-northlatch hover:underline dark:text-warning"
                             x-on:click="showPrivateKey = !showPrivateKey"
                             x-text="showPrivateKey ? 'Hide editor' : 'Edit key'"></button>
                     </div>

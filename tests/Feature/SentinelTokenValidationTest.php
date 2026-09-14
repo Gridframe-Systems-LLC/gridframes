@@ -88,7 +88,7 @@ describe('ServerSetting::isValidSentinelToken', function () {
     });
 
     it('rejects the reported PoC payload', function () {
-        expect(ServerSetting::isValidSentinelToken('abc" ; id >/tmp/coolify_poc_sentinel ; echo "'))->toBeFalse();
+        expect(ServerSetting::isValidSentinelToken('abc" ; id >/tmp/xlaunch_poc_sentinel ; echo "'))->toBeFalse();
     });
 });
 
@@ -178,7 +178,7 @@ describe('ServerSetting::ensureSentinelUrl', function () {
         app()->instance('request', Request::create('http://localhost:8000/server'));
 
         expect(fn () => $this->server->settings->fresh()->ensureSentinelUrl())
-            ->toThrow(RuntimeException::class, 'Set an instance FQDN, public IP, or reachable Coolify URL before enabling Sentinel.');
+            ->toThrow(RuntimeException::class, 'Set an instance FQDN, public IP, or reachable Xlaunch URL before enabling Sentinel.');
     });
 });
 

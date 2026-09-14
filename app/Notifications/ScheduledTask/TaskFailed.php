@@ -32,7 +32,7 @@ class TaskFailed extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject("Coolify: [ACTION REQUIRED] Scheduled task ({$this->task->name}) failed.");
+        $mail->subject("Xlaunch: [ACTION REQUIRED] Scheduled task ({$this->task->name}) failed.");
         $mail->view('emails.scheduled-task-failed', [
             'task' => $this->task,
             'url' => $this->url,
@@ -59,10 +59,10 @@ class TaskFailed extends CustomEmailNotification
 
     public function toTelegram(): array
     {
-        $message = "Coolify: Scheduled task ({$this->task->name}) failed with output: {$this->output}";
+        $message = "Xlaunch: Scheduled task ({$this->task->name}) failed with output: {$this->output}";
         if ($this->url) {
             $buttons[] = [
-                'text' => 'Open task in Coolify',
+                'text' => 'Open task in Xlaunch',
                 'url' => (string) $this->url,
             ];
         }
@@ -83,7 +83,7 @@ class TaskFailed extends CustomEmailNotification
         $buttons = [];
         if ($this->url) {
             $buttons[] = [
-                'text' => 'Open task in Coolify',
+                'text' => 'Open task in Xlaunch',
                 'url' => (string) $this->url,
             ];
         }

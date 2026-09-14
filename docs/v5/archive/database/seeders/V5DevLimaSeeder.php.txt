@@ -30,7 +30,7 @@ class V5DevLimaSeeder extends Seeder
             ->orderBy('id')
             ->first();
 
-        $sshUser = (string) config('coold.dev_ssh_user', 'coolify');
+        $sshUser = (string) config('coold.dev_ssh_user', 'xlaunch');
         $servers = collect($this->servers())
             ->map(fn (array $server): array => [
                 ...$server,

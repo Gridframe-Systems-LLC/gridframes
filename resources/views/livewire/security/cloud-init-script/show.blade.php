@@ -17,7 +17,7 @@
         </form>
     @else
     <x-slot:title>
-        {{ $cloudInitScript->name }} | Cloud-Init Scripts | Coolify
+        {{ $cloudInitScript->name }} | Cloud-Init Scripts | Xlaunch
     </x-slot>
 
     <x-security.settings-layout>

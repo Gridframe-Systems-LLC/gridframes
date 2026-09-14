@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Team Admin | Coolify
+        Team Admin | Xlaunch
     </x-slot>
 
     <x-team.settings-layout>
@@ -91,7 +91,7 @@
                     previous-action="previousPage" next-action="nextPage"
                     last-action="setPage({{ $users->lastPage() }})">
                     <x-slot:pageSize>
-                        <x-page-size-select model="perPage" livewire storage-key="coolify.page-size.team-admin" />
+                        <x-page-size-select model="perPage" livewire storage-key="xlaunch.page-size.team-admin" />
                     </x-slot:pageSize>
                 </x-table-pagination>
             @else

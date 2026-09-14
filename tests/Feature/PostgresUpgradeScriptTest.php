@@ -5,7 +5,7 @@ use Illuminate\Support\Str;
 function runPostgresUpgradeScriptCommand(string $script): array
 {
     $root = base_path();
-    $workingDirectory = sys_get_temp_dir().'/coolify-postgres-upgrade-test-'.Str::random(12);
+    $workingDirectory = sys_get_temp_dir().'/xlaunch-postgres-upgrade-test-'.Str::random(12);
     $binDirectory = $workingDirectory.'/bin';
 
     mkdir($binDirectory, 0777, true);
@@ -28,7 +28,7 @@ BASH);
 
     $outputFile = $workingDirectory.'/latest-image.txt';
     $command = sprintf(
-        'PATH=%s:$PATH MOCK_LATEST_IMAGE_OUTPUT=%s COOLIFY_POSTGRES_UPGRADE_SOURCE_ONLY=true bash -c %s 2>&1',
+        'PATH=%s:$PATH MOCK_LATEST_IMAGE_OUTPUT=%s XLAUNCH_POSTGRES_UPGRADE_SOURCE_ONLY=true bash -c %s 2>&1',
         escapeshellarg($binDirectory),
         escapeshellarg($outputFile),
         escapeshellarg('cd '.escapeshellarg($root).'; '.$script),
@@ -39,9 +39,9 @@ BASH);
     return [$exitCode, implode("\n", $output), is_file($outputFile) ? trim(file_get_contents($outputFile)) : null];
 }
 
-it('detects the current Coolify image tag from the running container image', function (string $scriptPath, string $image, string $expectedTag) {
+it('detects the current Xlaunch image tag from the running container image', function (string $scriptPath, string $image, string $expectedTag) {
     [$exitCode, $output] = runPostgresUpgradeScriptCommand(sprintf(
-        'MOCK_DOCKER_IMAGE=%s; export MOCK_DOCKER_IMAGE; source %s; current_coolify_image_tag',
+        'MOCK_DOCKER_IMAGE=%s; export MOCK_DOCKER_IMAGE; source %s; current_xlaunch_image_tag',
         escapeshellarg($image),
         escapeshellarg($scriptPath),
     ));
@@ -49,15 +49,15 @@ it('detects the current Coolify image tag from the running container image', fun
     expect($exitCode)->toBe(0)
         ->and($output)->toBe($expectedTag);
 })->with([
-    'nightly standard registry image' => ['other/nightly/upgrade-postgres.sh', 'ghcr.io/coollabsio/coolify:4.0.0-beta.420', '4.0.0-beta.420'],
-    'nightly registry with port' => ['other/nightly/upgrade-postgres.sh', 'registry.example.com:5000/coollabsio/coolify:4.0.1', '4.0.1'],
-    'nightly digest suffix' => ['other/nightly/upgrade-postgres.sh', 'ghcr.io/coollabsio/coolify:4.0.2@sha256:abcdef', '4.0.2'],
-    'scripts standard registry image' => ['scripts/upgrade-postgres.sh', 'ghcr.io/coollabsio/coolify:4.0.0-beta.420', '4.0.0-beta.420'],
-    'scripts registry with port' => ['scripts/upgrade-postgres.sh', 'registry.example.com:5000/coollabsio/coolify:4.0.1', '4.0.1'],
-    'scripts digest suffix' => ['scripts/upgrade-postgres.sh', 'ghcr.io/coollabsio/coolify:4.0.2@sha256:abcdef', '4.0.2'],
+    'nightly standard registry image' => ['other/nightly/upgrade-postgres.sh', 'ghcr.io/northlatch/xlaunch:4.0.0-beta.420', '4.0.0-beta.420'],
+    'nightly registry with port' => ['other/nightly/upgrade-postgres.sh', 'registry.example.com:5000/northlatch/xlaunch:4.0.1', '4.0.1'],
+    'nightly digest suffix' => ['other/nightly/upgrade-postgres.sh', 'ghcr.io/northlatch/xlaunch:4.0.2@sha256:abcdef', '4.0.2'],
+    'scripts standard registry image' => ['scripts/upgrade-postgres.sh', 'ghcr.io/northlatch/xlaunch:4.0.0-beta.420', '4.0.0-beta.420'],
+    'scripts registry with port' => ['scripts/upgrade-postgres.sh', 'registry.example.com:5000/northlatch/xlaunch:4.0.1', '4.0.1'],
+    'scripts digest suffix' => ['scripts/upgrade-postgres.sh', 'ghcr.io/northlatch/xlaunch:4.0.2@sha256:abcdef', '4.0.2'],
 ]);
 
-it('passes the preserved Coolify image tag to docker compose when starting the stack', function (string $scriptPath) {
+it('passes the preserved Xlaunch image tag to docker compose when starting the stack', function (string $scriptPath) {
     [$exitCode, $output, $latestImage] = runPostgresUpgradeScriptCommand(
         sprintf('source %s; start_stack 4.0.0-beta.420', escapeshellarg($scriptPath)),
     );

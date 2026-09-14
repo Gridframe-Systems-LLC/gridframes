@@ -124,7 +124,7 @@
                             @if ($addDomainDnsFailed)
                                 <x-callout type="danger" title="DNS is not pointing to the right IP">
                                     This domain does not currently resolve to this server.
-                                    Traffic may not reach Coolify until you update DNS.
+                                    Traffic may not reach Xlaunch until you update DNS.
                                     Are you sure you want to add it anyway?
                                     @if (filled($addDomainDnsMessage))
                                         <div class="pt-2">{{ $addDomainDnsMessage }}</div>
@@ -188,7 +188,7 @@
                         @if ($hasHttpsDomains)
                             <div class="flex w-full items-center gap-2 sm:w-auto service-domains-https">
                                 <label for="service-force-https-{{ $appId }}-trigger" class="mb-0! whitespace-nowrap text-[12px]!">Redirect HTTP to HTTPS</label>
-                                <x-helper helper="Disable only when Cloudflare Tunnel or another proxy connects to Coolify over HTTP. Keep enabled when Cloudflare uses Full or Full (Strict) SSL." />
+                                <x-helper helper="Disable only when Cloudflare Tunnel or another proxy connects to Xlaunch over HTTP. Keep enabled when Cloudflare uses Full or Full (Strict) SSL." />
                                 <x-forms.listbox canGate="update" :canResource="$service" id="forceHttpsRedirects.{{ $appId }}"
                                     htmlId="service-force-https-{{ $appId }}" preserveValue
                                     onChange="updateForceHttps"
@@ -241,7 +241,7 @@
                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                         x-transition:leave-end="opacity-0 -translate-y-2 sm:scale-95"
                         class="application-settings-form application-settings-section relative flex max-h-[calc(100dvh-2rem)] w-full flex-col overflow-hidden lg:w-auto lg:min-w-2xl lg:max-w-4xl"
-                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                         <header class="flex-nowrap!">
                             <h3 class="min-w-0 flex-1 truncate">Domain settings</h3>
                             <button type="button" @click="closeEditDomain()" class="icon-button shrink-0"
@@ -267,7 +267,7 @@
                                 @if ($editDomainDnsFailed)
                                     <x-callout type="danger" title="DNS is not pointing to the right IP">
                                         This domain does not currently resolve to this server.
-                                        Traffic may not reach Coolify until you update DNS.
+                                        Traffic may not reach Xlaunch until you update DNS.
                                         Are you sure you want to save it anyway?
                                         @if (filled($editDomainDnsMessage))
                                             <div class="pt-2">{{ $editDomainDnsMessage }}</div>
@@ -330,7 +330,7 @@
                     <div class="absolute inset-0 bg-black/50 backdrop-blur-[2px]"></div>
                     <div x-show="modalOpen" x-trap.inert.noscroll="modalOpen"
                         class="application-settings-form application-settings-section relative w-full lg:min-w-[36rem] lg:max-w-2xl"
-                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                         <header>
                             <h3>Use a different port?</h3>
                             <button type="button"

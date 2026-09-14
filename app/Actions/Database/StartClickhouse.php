@@ -163,7 +163,7 @@ class StartClickhouse
             $environment_variables->push("CLICKHOUSE_DB={$this->database->clickhouse_db}");
         }
 
-        add_coolify_default_environment_variables($this->database, $environment_variables, $environment_variables);
+        add_xlaunch_default_environment_variables($this->database, $environment_variables, $environment_variables);
 
         return $environment_variables->all();
     }

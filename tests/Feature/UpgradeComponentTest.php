@@ -9,7 +9,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 it('initializes latest version during mount from cached versions data', function () {
-    config(['constants.coolify.version' => '4.0.0-beta.998']);
+    config(['constants.xlaunch.version' => '4.0.0-beta.998']);
     InstanceSettings::forceCreate([
         'id' => 0,
         'new_version_available' => true,
@@ -17,9 +17,9 @@ it('initializes latest version during mount from cached versions data', function
 
     Cache::shouldReceive('remember')
         ->once()
-        ->with('coolify:versions:all', 3600, Mockery::type(Closure::class))
+        ->with('xlaunch:versions:all', 3600, Mockery::type(Closure::class))
         ->andReturn([
-            'coolify' => [
+            'xlaunch' => [
                 'v4' => [
                     'version' => '4.0.0-beta.999',
                 ],
@@ -61,7 +61,7 @@ it('treats a brief upgrade poll miss as a reconnect, not a lost-contact failure'
 
     expect($upgradeView)
         ->toContain('Reconnecting. This is expected during an upgrade...')
-        ->not->toContain('Lost contact with Coolify');
+        ->not->toContain('Lost contact with Xlaunch');
 });
 
 it('renders the upgrade control in the mobile top bar', function () {
@@ -80,7 +80,7 @@ it('supports a full size update button for settings', function () {
         ->toContain('$fullButton')
         ->toContain('Upgrade now')
         ->and($settingsView)
-        ->toContain('Update Coolify')
+        ->toContain('Update Xlaunch')
         ->toContain(':full-button="true"')
         ->toContain('key="settings-upgrade"');
 });
@@ -102,7 +102,7 @@ it('falls back to 0.0.0 during mount when cached versions data is unavailable', 
 
     Cache::shouldReceive('remember')
         ->once()
-        ->with('coolify:versions:all', 3600, Mockery::type(Closure::class))
+        ->with('xlaunch:versions:all', 3600, Mockery::type(Closure::class))
         ->andReturn(null);
 
     Livewire::test(Upgrade::class)
@@ -110,7 +110,7 @@ it('falls back to 0.0.0 during mount when cached versions data is unavailable', 
 });
 
 it('clears stale upgrade availability when current version already matches latest version', function () {
-    config(['constants.coolify.version' => '4.0.0-beta.999']);
+    config(['constants.xlaunch.version' => '4.0.0-beta.999']);
     InstanceSettings::forceCreate([
         'id' => 0,
         'new_version_available' => true,
@@ -118,9 +118,9 @@ it('clears stale upgrade availability when current version already matches lates
 
     Cache::shouldReceive('remember')
         ->once()
-        ->with('coolify:versions:all', 3600, Mockery::type(Closure::class))
+        ->with('xlaunch:versions:all', 3600, Mockery::type(Closure::class))
         ->andReturn([
-            'coolify' => [
+            'xlaunch' => [
                 'v4' => [
                     'version' => '4.0.0-beta.999',
                 ],
@@ -135,7 +135,7 @@ it('clears stale upgrade availability when current version already matches lates
 });
 
 it('clears stale upgrade availability when current version is newer than cached latest version', function () {
-    config(['constants.coolify.version' => '4.0.0-beta.1000']);
+    config(['constants.xlaunch.version' => '4.0.0-beta.1000']);
     InstanceSettings::forceCreate([
         'id' => 0,
         'new_version_available' => true,
@@ -143,9 +143,9 @@ it('clears stale upgrade availability when current version is newer than cached 
 
     Cache::shouldReceive('remember')
         ->once()
-        ->with('coolify:versions:all', 3600, Mockery::type(Closure::class))
+        ->with('xlaunch:versions:all', 3600, Mockery::type(Closure::class))
         ->andReturn([
-            'coolify' => [
+            'xlaunch' => [
                 'v4' => [
                     'version' => '4.0.0-beta.999',
                 ],

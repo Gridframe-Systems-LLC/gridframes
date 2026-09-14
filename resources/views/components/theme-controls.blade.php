@@ -21,7 +21,7 @@
                                 :style="`background: ${themeColor}`"></span>
                             Custom
                         </span>
-                        <svg x-show="theme === 'custom'" class="size-3.5 text-coollabs dark:text-warning"
+                        <svg x-show="theme === 'custom'" class="size-3.5 text-northlatch dark:text-warning"
                             viewBox="0 0 12 12" fill="none" aria-hidden="true">
                             <path d="{{ $checkPath }}" stroke="currentColor" stroke-width="1.4"
                                 stroke-linecap="round" stroke-linejoin="round" />
@@ -34,7 +34,7 @@
                     class="flex h-8 w-full items-center justify-between rounded-md px-2 text-left text-xs text-neutral-600 transition-colors hover:bg-neutral-200 hover:text-neutral-950 dark:text-fg-dim dark:hover:bg-white/[0.06] dark:hover:text-fg">
                     <span>{{ $option['label'] }}</span>
                     <svg x-show="theme === '{{ $option['value'] }}'"
-                        class="size-3.5 text-coollabs dark:text-warning" viewBox="0 0 12 12" fill="none"
+                        class="size-3.5 text-northlatch dark:text-warning" viewBox="0 0 12 12" fill="none"
                         aria-hidden="true">
                         <path d="{{ $checkPath }}" stroke="currentColor" stroke-width="1.4"
                             stroke-linecap="round" stroke-linejoin="round" />
@@ -54,7 +54,7 @@
                 class="flex h-8 w-full items-center justify-between rounded-md px-2 text-left text-xs text-neutral-600 transition-colors hover:bg-neutral-200 hover:text-neutral-950 dark:text-fg-dim dark:hover:bg-white/[0.06] dark:hover:text-fg">
                 <span>{{ $option['label'] }}</span>
                 <svg x-show="pageWidth === '{{ $option['value'] }}'"
-                    class="size-3.5 text-coollabs dark:text-warning" viewBox="0 0 12 12" fill="none"
+                    class="size-3.5 text-northlatch dark:text-warning" viewBox="0 0 12 12" fill="none"
                     aria-hidden="true">
                     <path d="{{ $checkPath }}" stroke="currentColor" stroke-width="1.4"
                         stroke-linecap="round" stroke-linejoin="round" />
@@ -86,7 +86,7 @@
                                 aria-haspopup="dialog" :aria-expanded="pickerOpen"
                                 class="group block w-full overflow-hidden rounded-[10px] border border-neutral-200 bg-white text-left transition-[border-color,box-shadow] hover:border-neutral-300 hover:shadow-sm dark:border-white/[0.07] dark:bg-white/[0.05] dark:hover:border-white/[0.12]"
                                 :class="theme === 'custom'
-                                    ? 'ring-1 ring-coollabs/30 border-coollabs/40 dark:ring-warning/30 dark:border-warning/40'
+                                    ? 'ring-1 ring-northlatch/30 border-northlatch/40 dark:ring-warning/30 dark:border-warning/40'
                                     : ''">
                                 <div class="h-20 border-b border-neutral-200 dark:border-white/[0.07]"
                                     :style="`background: color-mix(in oklab, ${themeColor} 28%, ${customMode === 'light' ? 'oklch(97% 0 0)' : 'oklch(17.35% 0.0020 286.18)'})`">
@@ -99,7 +99,7 @@
                                 <div class="p-3">
                                     <div class="flex items-center justify-between gap-2">
                                         <span class="text-sm font-semibold text-black dark:text-fg">{{ $option['label'] }}</span>
-                                        <x-reicon name="check-circle" class="size-4 text-coollabs dark:text-warning"
+                                        <x-reicon name="check-circle" class="size-4 text-northlatch dark:text-warning"
                                             x-show="theme === 'custom'" x-cloak />
                                     </div>
                                     <p class="mt-1 text-xs leading-5 text-neutral-500 dark:text-fg-dim">
@@ -115,7 +115,7 @@
                             @keydown.enter.prevent="setTheme('{{ $option['value'] }}')"
                             class="group relative overflow-hidden rounded-[10px] border border-neutral-200 bg-white text-left transition-[border-color,box-shadow] hover:border-neutral-300 hover:shadow-sm dark:border-white/[0.07] dark:bg-white/[0.05] dark:hover:border-white/[0.12]"
                             :class="theme === '{{ $option['value'] }}'
-                                ? 'ring-1 ring-coollabs/30 border-coollabs/40 dark:ring-warning/30 dark:border-warning/40'
+                                ? 'ring-1 ring-northlatch/30 border-northlatch/40 dark:ring-warning/30 dark:border-warning/40'
                                 : ''">
                             <div class="h-20 {{ $option['preview'] }} border-b border-neutral-200 dark:border-white/[0.07]">
                                 <div class="flex h-full items-center justify-center">
@@ -129,7 +129,7 @@
                                     <span class="text-sm font-semibold text-black dark:text-fg">
                                         {{ $option['label'] }}
                                     </span>
-                                    <x-reicon name="check-circle" class="size-4 text-coollabs dark:text-warning"
+                                    <x-reicon name="check-circle" class="size-4 text-northlatch dark:text-warning"
                                         x-show="theme === '{{ $option['value'] }}'" x-cloak />
                                 </div>
                                 <p class="mt-1 text-xs leading-5 text-neutral-500 dark:text-fg-dim">
@@ -157,7 +157,7 @@
                     <button type="button" @click="setWidth('{{ $option['value'] }}')"
                         class="group overflow-hidden rounded-[10px] border border-neutral-200 bg-white text-left transition-[border-color,box-shadow] hover:border-neutral-300 hover:shadow-sm dark:border-white/[0.07] dark:bg-white/[0.05] dark:hover:border-white/[0.12]"
                         :class="pageWidth === '{{ $option['value'] }}'
-                            ? 'ring-1 ring-coollabs/30 border-coollabs/40 dark:ring-warning/30 dark:border-warning/40'
+                            ? 'ring-1 ring-northlatch/30 border-northlatch/40 dark:ring-warning/30 dark:border-warning/40'
                             : ''">
                         <div class="flex h-20 items-center border-b border-neutral-200 bg-neutral-50 px-4 dark:border-white/[0.07] dark:bg-black/15">
                             <div class="flex h-11 w-full gap-1.5 rounded-md border border-neutral-300 bg-white p-1.5 dark:border-white/15 dark:bg-[#181818]">
@@ -172,7 +172,7 @@
                         <div class="p-3">
                             <div class="flex items-center justify-between gap-2">
                                 <span class="text-sm font-semibold text-black dark:text-fg">{{ $option['label'] }}</span>
-                                <x-reicon name="check-circle" class="size-4 text-coollabs dark:text-warning"
+                                <x-reicon name="check-circle" class="size-4 text-northlatch dark:text-warning"
                                     x-show="pageWidth === '{{ $option['value'] }}'" x-cloak />
                             </div>
                             <p class="mt-1 text-xs leading-5 text-neutral-500 dark:text-fg-dim">{{ $option['description'] }}</p>

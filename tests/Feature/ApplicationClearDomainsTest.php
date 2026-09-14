@@ -44,7 +44,7 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
         'private_key_id' => $this->privateKey->id,
     ]);
     $this->destination = StandaloneDocker::where('server_id', $this->server->id)->first()
-        ?? StandaloneDocker::factory()->create(['server_id' => $this->server->id, 'network' => 'coolify-test']);
+        ?? StandaloneDocker::factory()->create(['server_id' => $this->server->id, 'network' => 'xlaunch-test']);
 });
 
 /**

@@ -113,7 +113,7 @@ use Symfony\Component\Yaml\Yaml;
         'created_at' => ['type' => 'string', 'format' => 'date-time', 'description' => 'The date and time when the application was created.'],
         'updated_at' => ['type' => 'string', 'format' => 'date-time', 'description' => 'The date and time when the application was last updated.'],
         'deleted_at' => ['type' => 'string', 'format' => 'date-time', 'nullable' => true, 'description' => 'The date and time when the application was deleted.'],
-        'compose_parsing_version' => ['type' => 'string', 'description' => 'How Coolify parse the compose file.'],
+        'compose_parsing_version' => ['type' => 'string', 'description' => 'How Xlaunch parse the compose file.'],
         'custom_nginx_configuration' => ['type' => 'string', 'nullable' => true, 'description' => 'Custom Nginx configuration base64 encoded.'],
         'is_http_basic_auth_enabled' => ['type' => 'boolean', 'description' => 'HTTP Basic Authentication enabled.'],
         'http_basic_auth_username' => ['type' => 'string', 'nullable' => true, 'description' => 'Username for HTTP Basic Authentication'],
@@ -557,7 +557,7 @@ class Application extends BaseModel
     {
         $uuid = $this->uuid;
         $server = data_get($this, 'destination.server');
-        instant_remote_process(["docker network disconnect {$uuid} coolify-proxy"], $server, false);
+        instant_remote_process(["docker network disconnect {$uuid} xlaunch-proxy"], $server, false);
         instant_remote_process(["docker network rm {$uuid}"], $server, false);
     }
 
@@ -1521,7 +1521,7 @@ class Application extends BaseModel
         $branch = $this->git_branch;
         ['repository' => $customRepository, 'port' => $customPort] = $this->customRepository();
         $commands = collect([]);
-        $customSshKeyLocation = "/root/.ssh/id_rsa_coolify_{$deployment_uuid}";
+        $customSshKeyLocation = "/root/.ssh/id_rsa_xlaunch_{$deployment_uuid}";
         $base_command = 'git ls-remote';
 
         if ($this->deploymentType() === 'source') {
@@ -1703,7 +1703,7 @@ class Application extends BaseModel
 
     private function gitSshKeySetupCommands(string $deploymentUuid, string $privateKey, bool $execInDocker): Collection
     {
-        $customSshKeyLocation = "/root/.ssh/id_rsa_coolify_{$deploymentUuid}";
+        $customSshKeyLocation = "/root/.ssh/id_rsa_xlaunch_{$deploymentUuid}";
         $commands = collect([]);
 
         if (! $execInDocker) {
@@ -1750,7 +1750,7 @@ class Application extends BaseModel
         $branch = $this->git_branch;
         ['repository' => $customRepository, 'port' => $customPort] = $this->customRepository();
         $baseDir = $custom_base_dir ?? $this->generateBaseDir($deployment_uuid);
-        $customSshKeyLocation = "/root/.ssh/id_rsa_coolify_{$deployment_uuid}";
+        $customSshKeyLocation = "/root/.ssh/id_rsa_xlaunch_{$deployment_uuid}";
 
         // Escape shell arguments for safety to prevent command injection
         $escapedBranch = escapeshellarg($branch);
@@ -1775,7 +1775,7 @@ class Application extends BaseModel
             $git_clone_command = "git clone{$depthFlag}{$submoduleFlags} --no-checkout -b {$escapedBranch}";
         }
         if ($pull_request_id !== 0) {
-            $pr_branch_name = "pr-{$pull_request_id}-coolify";
+            $pr_branch_name = "pr-{$pull_request_id}-xlaunch";
         }
         if ($this->deploymentType() === 'source') {
             $source_html_url = data_get($this, 'source.html_url');
@@ -2112,14 +2112,14 @@ class Application extends BaseModel
                 }
             }
             $labels = collect(data_get($service, 'labels', []));
-            if (! $labels->contains('coolify.managed')) {
-                $labels->push('coolify.managed=true');
+            if (! $labels->contains('xlaunch.managed')) {
+                $labels->push('xlaunch.managed=true');
             }
-            if (! $labels->contains('coolify.applicationId')) {
-                $labels->push('coolify.applicationId='.$this->id);
+            if (! $labels->contains('xlaunch.applicationId')) {
+                $labels->push('xlaunch.applicationId='.$this->id);
             }
-            if (! $labels->contains('coolify.type')) {
-                $labels->push('coolify.type=application');
+            if (! $labels->contains('xlaunch.type')) {
+                $labels->push('xlaunch.type=application');
             }
             data_set($service, 'labels', $labels->toArray());
 
@@ -2159,7 +2159,7 @@ class Application extends BaseModel
         $fileList = collect([".$workdir$composeFile"]);
         $composeFilePath = escapeshellarg(".$workdir$composeFile");
         $composeReadLimit = self::MAX_DOCKER_COMPOSE_SIZE_BYTES + 1;
-        $readComposeFile = "if [ \"$(wc -c < {$composeFilePath})\" -gt ".self::MAX_DOCKER_COMPOSE_SIZE_BYTES." ]; then echo '__COOLIFY_COMPOSE_TOO_LARGE__'; else head -c {$composeReadLimit} {$composeFilePath}; fi";
+        $readComposeFile = "if [ \"$(wc -c < {$composeFilePath})\" -gt ".self::MAX_DOCKER_COMPOSE_SIZE_BYTES." ]; then echo '__XLAUNCH_COMPOSE_TOO_LARGE__'; else head -c {$composeReadLimit} {$composeFilePath}; fi";
         $gitRemoteStatus = $this->getGitRemoteStatus(deployment_uuid: $uuid);
         if (! $gitRemoteStatus['is_accessible']) {
             throw new RuntimeException('Failed to read Git source. Please verify repository access and try again.');
@@ -2207,7 +2207,7 @@ class Application extends BaseModel
         }
         try {
             $composeFileContent = instant_remote_process($commands, $this->destination->server);
-            if ($composeFileContent === '__COOLIFY_COMPOSE_TOO_LARGE__' || strlen($composeFileContent) > self::MAX_DOCKER_COMPOSE_SIZE_BYTES) {
+            if ($composeFileContent === '__XLAUNCH_COMPOSE_TOO_LARGE__' || strlen($composeFileContent) > self::MAX_DOCKER_COMPOSE_SIZE_BYTES) {
                 throw new RuntimeException('Docker Compose file exceeds the 5 MiB size limit.');
             }
         } catch (\Exception $e) {
@@ -2295,7 +2295,7 @@ class Application extends BaseModel
         }
         $customLabels = base64_decode($this->custom_labels);
         if (mb_detect_encoding($customLabels, 'UTF-8', true) === false) {
-            $customLabels = str(implode('|coolify|', generateLabelsApplication($this, $preview)))->replace('|coolify|', "\n");
+            $customLabels = str(implode('|xlaunch|', generateLabelsApplication($this, $preview)))->replace('|xlaunch|', "\n");
         }
         $this->custom_labels = base64_encode($customLabels);
         $this->save();

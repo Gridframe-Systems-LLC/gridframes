@@ -1,37 +1,37 @@
 services:
-    coolify:
-        container_name: coolify
+    xlaunch:
+        container_name: xlaunch
         restart: always
         working_dir: /var/www/html
         extra_hosts:
             - host.docker.internal:host-gateway
         networks:
-            - coolify
+            - xlaunch
         depends_on:
             - postgres
             - redis
             - soketi
     postgres:
         image: postgres:15-alpine
-        container_name: coolify-db
+        container_name: xlaunch-db
         restart: always
         networks:
-            - coolify
+            - xlaunch
     redis:
         image: redis:7-alpine
-        container_name: coolify-redis
+        container_name: xlaunch-redis
         restart: always
         networks:
-            - coolify
+            - xlaunch
     soketi:
-        container_name: coolify-realtime
+        container_name: xlaunch-realtime
         extra_hosts:
             - host.docker.internal:host-gateway
         restart: always
         networks:
-            - coolify
+            - xlaunch
 networks:
-    coolify:
-        name: coolify
+    xlaunch:
+        name: xlaunch
         driver: bridge
         external: false

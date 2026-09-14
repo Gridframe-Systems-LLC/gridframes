@@ -209,7 +209,7 @@ test('new server chooser uses compact mobile provider cards', function () {
         ->assertSee('xl:grid-cols-4', false)
         ->assertSee('gap-3 sm:gap-6', false)
         ->assertSee('dark:hover:border-warning', false)
-        ->assertSee('focus-visible:border-coollabs', false)
+        ->assertSee('focus-visible:border-northlatch', false)
         ->assertSee('aria-label="Choose Hetzner"', false)
         ->assertSee('p-3 sm:p-6', false)
         ->assertDontSee('sm:min-h-80', false)

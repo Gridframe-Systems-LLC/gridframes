@@ -18,12 +18,12 @@ it('keeps containers with the same name on different servers as distinct termina
     $component = new Index;
     $component->servers = new Collection([
         terminalServer('pulse-uuid', 'Pulse', [
-            ['Names' => 'coolify-proxy', 'State' => 'running'],
-            ['Names' => 'coolify-sentinel', 'State' => 'running'],
+            ['Names' => 'xlaunch-proxy', 'State' => 'running'],
+            ['Names' => 'xlaunch-sentinel', 'State' => 'running'],
         ]),
         terminalServer('forge-uuid', 'Forge', [
-            ['Names' => 'coolify-proxy', 'State' => 'running'],
-            ['Names' => 'coolify-sentinel', 'State' => 'running'],
+            ['Names' => 'xlaunch-proxy', 'State' => 'running'],
+            ['Names' => 'xlaunch-sentinel', 'State' => 'running'],
         ]),
     ]);
 
@@ -31,9 +31,9 @@ it('keeps containers with the same name on different servers as distinct termina
 
     expect($component->containers)->toHaveCount(4)
         ->and(collect($component->containers)->pluck('uuid')->all())->toBe([
-            'pulse-uuid:coolify-proxy',
-            'forge-uuid:coolify-proxy',
-            'pulse-uuid:coolify-sentinel',
-            'forge-uuid:coolify-sentinel',
+            'pulse-uuid:xlaunch-proxy',
+            'forge-uuid:xlaunch-proxy',
+            'pulse-uuid:xlaunch-sentinel',
+            'forge-uuid:xlaunch-sentinel',
         ]);
 });

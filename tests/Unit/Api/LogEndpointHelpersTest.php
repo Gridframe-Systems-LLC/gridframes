@@ -128,9 +128,9 @@ it('filters service sub containers in PHP instead of using user input in shell f
     }
 
     $containers = collect([
-        ['ID' => 'first', 'Labels' => 'coolify.serviceId=10,coolify.name=app-service-uuid,coolify.type=service'],
-        ['ID' => 'second', 'Labels' => 'coolify.serviceId=10,coolify.name=db-service-uuid,coolify.type=service'],
-        ['ID' => 'third', 'Labels' => ['coolify.name' => 'app-service-uuid']],
+        ['ID' => 'first', 'Labels' => 'xlaunch.serviceId=10,xlaunch.name=app-service-uuid,xlaunch.type=service'],
+        ['ID' => 'second', 'Labels' => 'xlaunch.serviceId=10,xlaunch.name=db-service-uuid,xlaunch.type=service'],
+        ['ID' => 'third', 'Labels' => ['xlaunch.name' => 'app-service-uuid']],
     ]);
 
     expect(filterServiceSubContainersByName($containers, 'app-service-uuid')->pluck('ID')->all())
@@ -141,7 +141,7 @@ it('filters service containers when another Docker label contains commas', funct
     $containers = collect([
         [
             'ID' => 'app',
-            'Labels' => 'traefik.http.routers.app.rule=Host(`one.example.com`,`two.example.com`),coolify.name=app-service-uuid',
+            'Labels' => 'traefik.http.routers.app.rule=Host(`one.example.com`,`two.example.com`),xlaunch.name=app-service-uuid',
         ],
     ]);
 
@@ -152,5 +152,5 @@ it('filters service containers when another Docker label contains commas', funct
 it('does not interpolate the requested service name into the docker ps shell command', function () {
     $source = file_get_contents(__DIR__.'/../../../bootstrap/helpers/docker.php');
 
-    expect($source)->not->toContain('coolify.name={$name}');
+    expect($source)->not->toContain('xlaunch.name={$name}');
 });

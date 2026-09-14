@@ -1,10 +1,10 @@
 #!/bin/bash
 ## Do not modify this file. You will lose the ability to autoupdate!
 
-CDN="https://cdn.coollabs.io/coolify"
+CDN="https://cdn.northlatch.com/xlaunch"
 LATEST_IMAGE=${1:-latest}
 LATEST_HELPER_VERSION=${2:-latest}
-ENV_FILE="/data/coolify/source/.env"
+ENV_FILE="/data/xlaunch/source/.env"
 if [ -n "${3+x}" ]; then
     REGISTRY_URL="$3"
 elif [ -f "$ENV_FILE" ] && grep -q "^REGISTRY_URL=" "$ENV_FILE"; then
@@ -13,10 +13,10 @@ else
     REGISTRY_URL="docker.io"
 fi
 SKIP_BACKUP=${4:-false}
-STATUS_FILE="/data/coolify/source/.upgrade-status"
+STATUS_FILE="/data/xlaunch/source/.upgrade-status"
 
 DATE=$(date +%Y-%m-%d-%H-%M-%S)
-LOGFILE="/data/coolify/source/upgrade-${DATE}.log"
+LOGFILE="/data/xlaunch/source/upgrade-${DATE}.log"
 
 # Helper function to log with timestamp
 log() {
@@ -40,13 +40,13 @@ write_status() {
 
 echo ""
 echo "=========================================="
-echo "   Coolify Upgrade - ${DATE}"
+echo "   Xlaunch Upgrade - ${DATE}"
 echo "=========================================="
 echo ""
 
 # Initialize log file with header
 echo "============================================================" >>"$LOGFILE"
-echo "Coolify Upgrade Log" >>"$LOGFILE"
+echo "Xlaunch Upgrade Log" >>"$LOGFILE"
 echo "Started: $(date '+%Y-%m-%d %H:%M:%S')" >>"$LOGFILE"
 echo "Target Version: ${LATEST_IMAGE}" >>"$LOGFILE"
 echo "Helper Version: ${LATEST_HELPER_VERSION}" >>"$LOGFILE"
@@ -57,30 +57,30 @@ log_section "Step 1/6: Downloading configuration files"
 write_status "1" "Downloading configuration files"
 echo "1/6 Downloading latest configuration files..."
 log "Downloading docker-compose.yml from ${CDN}/docker-compose.yml"
-curl -fsSL -L $CDN/docker-compose.yml -o /data/coolify/source/docker-compose.yml
+curl -fsSL -L $CDN/docker-compose.yml -o /data/xlaunch/source/docker-compose.yml
 log "Downloading docker-compose.prod.yml from ${CDN}/docker-compose.prod.yml"
-curl -fsSL -L $CDN/docker-compose.prod.yml -o /data/coolify/source/docker-compose.prod.yml
+curl -fsSL -L $CDN/docker-compose.prod.yml -o /data/xlaunch/source/docker-compose.prod.yml
 log "Downloading .env.production from ${CDN}/.env.production"
-curl -fsSL -L $CDN/.env.production -o /data/coolify/source/.env.production
+curl -fsSL -L $CDN/.env.production -o /data/xlaunch/source/.env.production
 log "Downloading upgrade-postgres.sh from ${CDN}/upgrade-postgres.sh"
-curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/coolify/source/upgrade-postgres.sh
-chmod +x /data/coolify/source/upgrade-postgres.sh
+curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/xlaunch/source/upgrade-postgres.sh
+chmod +x /data/xlaunch/source/upgrade-postgres.sh
 log "Configuration files downloaded successfully"
 echo "     Done."
 
 # Extract all images from docker-compose configuration
 log "Extracting all images from docker-compose configuration..."
-COMPOSE_FILES="-f /data/coolify/source/docker-compose.yml -f /data/coolify/source/docker-compose.prod.yml"
+COMPOSE_FILES="-f /data/xlaunch/source/docker-compose.yml -f /data/xlaunch/source/docker-compose.prod.yml"
 
 # Check if custom compose file exists
-if [ -f /data/coolify/source/docker-compose.custom.yml ]; then
-    COMPOSE_FILES="$COMPOSE_FILES -f /data/coolify/source/docker-compose.custom.yml"
+if [ -f /data/xlaunch/source/docker-compose.custom.yml ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f /data/xlaunch/source/docker-compose.custom.yml"
     log "Including custom docker-compose.yml in image extraction"
 fi
 
 # Check if PostgreSQL upgrade override exists
-if [ -f /data/coolify/source/docker-compose.postgres-upgrade.yml ]; then
-    COMPOSE_FILES="$COMPOSE_FILES -f /data/coolify/source/docker-compose.postgres-upgrade.yml"
+if [ -f /data/xlaunch/source/docker-compose.postgres-upgrade.yml ]; then
+    COMPOSE_FILES="$COMPOSE_FILES -f /data/xlaunch/source/docker-compose.postgres-upgrade.yml"
     log "Including PostgreSQL upgrade compose override in image extraction"
 fi
 
@@ -115,7 +115,7 @@ write_status "2" "Updating environment configuration"
 echo ""
 echo "2/6 Updating environment configuration..."
 log "Merging .env.production values into .env"
-awk -F '=' '!seen[$1]++' "$ENV_FILE" /data/coolify/source/.env.production > "$ENV_FILE.tmp" && mv "$ENV_FILE.tmp" "$ENV_FILE"
+awk -F '=' '!seen[$1]++' "$ENV_FILE" /data/xlaunch/source/.env.production > "$ENV_FILE.tmp" && mv "$ENV_FILE.tmp" "$ENV_FILE"
 log "Environment file merged successfully"
 
 update_env_var() {
@@ -154,33 +154,33 @@ update_env_var "PUSHER_APP_SECRET" "$(openssl rand -hex 32)"
 log "Environment variables check complete"
 echo "     Done."
 
-# Make sure coolify network exists
-# It is created when starting Coolify with docker compose
-log "Checking Docker network 'coolify'..."
-if ! docker network inspect coolify >/dev/null 2>&1; then
-    log "Network 'coolify' does not exist, creating..."
-    if ! docker network create --attachable --ipv6 coolify 2>/dev/null; then
+# Make sure xlaunch network exists
+# It is created when starting Xlaunch with docker compose
+log "Checking Docker network 'xlaunch'..."
+if ! docker network inspect xlaunch >/dev/null 2>&1; then
+    log "Network 'xlaunch' does not exist, creating..."
+    if ! docker network create --attachable --ipv6 xlaunch 2>/dev/null; then
         log "Failed to create network with IPv6, trying without IPv6..."
-        docker network create --attachable coolify 2>/dev/null
-        log "Network 'coolify' created without IPv6"
+        docker network create --attachable xlaunch 2>/dev/null
+        log "Network 'xlaunch' created without IPv6"
     else
-        log "Network 'coolify' created with IPv6 support"
+        log "Network 'xlaunch' created with IPv6 support"
     fi
 else
-    log "Network 'coolify' already exists"
+    log "Network 'xlaunch' already exists"
 fi
 
-mkdir -p /data/coolify/images/{avatars,project-icons}
-chown -R 9999:root /data/coolify/images
-chmod -R 700 /data/coolify/images
+mkdir -p /data/xlaunch/images/{avatars,project-icons}
+chown -R 9999:root /data/xlaunch/images
+chmod -R 700 /data/xlaunch/images
 
 # Fix SSH directory ownership if not owned by container user UID 9999 (fixes #6621)
 # Only changes owner — preserves existing group to respect custom setups
-SSH_OWNER=$(stat -c '%u' /data/coolify/ssh 2>/dev/null || echo "unknown")
+SSH_OWNER=$(stat -c '%u' /data/xlaunch/ssh 2>/dev/null || echo "unknown")
 if [ "$SSH_OWNER" != "9999" ]; then
     log "Fixing SSH directory ownership (was owned by UID $SSH_OWNER)"
-    chown -R 9999 /data/coolify/ssh
-    chmod -R 700 /data/coolify/ssh
+    chown -R 9999 /data/xlaunch/ssh
+    chmod -R 700 /data/xlaunch/ssh
 fi
 
 # Check if Docker config file exists
@@ -197,7 +197,7 @@ echo "3/6 Pulling Docker images..."
 echo "     This may take a few minutes depending on your connection."
 
 # Also pull the helper image (not in compose files but needed for upgrade)
-HELPER_IMAGE="${REGISTRY_URL:-docker.io}/coollabsio/coolify-helper:${LATEST_HELPER_VERSION}"
+HELPER_IMAGE="${REGISTRY_URL:-docker.io}/northlatch/xlaunch-helper:${LATEST_HELPER_VERSION}"
 echo "     - Pulling $HELPER_IMAGE..."
 log "Pulling image: $HELPER_IMAGE"
 if docker pull "$HELPER_IMAGE" >>"$LOGFILE" 2>&1; then
@@ -230,17 +230,17 @@ log "All images pulled successfully"
 echo "     All images pulled successfully."
 
 set_env_var "LATEST_IMAGE" "$LATEST_IMAGE"
-set_env_var "COOLIFY_VERSION" "$LATEST_IMAGE"
+set_env_var "XLAUNCH_VERSION" "$LATEST_IMAGE"
 
 log_section "Step 4/6: Stopping and restarting containers"
 write_status "4" "Stopping containers"
 echo ""
 echo "4/6 Stopping containers and starting new ones..."
-echo "     This step will restart all Coolify containers."
+echo "     This step will restart all Xlaunch containers."
 echo "     Check the log file for details: ${LOGFILE}"
 
 # From this point forward, we need to ensure the script continues even if
-# the SSH connection is lost (which happens when coolify container stops)
+# the SSH connection is lost (which happens when xlaunch container stops)
 # We use a subshell with nohup to ensure completion
 log "Starting container restart sequence (detached)..."
 
@@ -261,7 +261,7 @@ nohup bash -c "
     }
 
     # Stop and remove containers
-    for container in coolify coolify-db coolify-redis coolify-realtime; do
+    for container in xlaunch xlaunch-db xlaunch-redis xlaunch-realtime; do
         if docker ps -a --format '{{.Names}}' | grep -q \"^\${container}\$\"; then
             log \"Stopping container: \${container}\"
             docker stop \"\$container\" >>\"\$LOGFILE\" 2>&1 || true
@@ -281,18 +281,18 @@ nohup bash -c "
     echo '============================================================' >>\"\$LOGFILE\"
     write_status '5' 'Starting new containers'
 
-    COMPOSE_FILES='-f /data/coolify/source/docker-compose.yml -f /data/coolify/source/docker-compose.prod.yml'
-    if [ -f /data/coolify/source/docker-compose.custom.yml ]; then
+    COMPOSE_FILES='-f /data/xlaunch/source/docker-compose.yml -f /data/xlaunch/source/docker-compose.prod.yml'
+    if [ -f /data/xlaunch/source/docker-compose.custom.yml ]; then
         log 'Using custom docker-compose.yml'
-        COMPOSE_FILES=\"\$COMPOSE_FILES -f /data/coolify/source/docker-compose.custom.yml\"
+        COMPOSE_FILES=\"\$COMPOSE_FILES -f /data/xlaunch/source/docker-compose.custom.yml\"
     fi
-    if [ -f /data/coolify/source/docker-compose.postgres-upgrade.yml ]; then
+    if [ -f /data/xlaunch/source/docker-compose.postgres-upgrade.yml ]; then
         log 'Using PostgreSQL upgrade compose override'
-        COMPOSE_FILES=\"\$COMPOSE_FILES -f /data/coolify/source/docker-compose.postgres-upgrade.yml\"
+        COMPOSE_FILES=\"\$COMPOSE_FILES -f /data/xlaunch/source/docker-compose.postgres-upgrade.yml\"
     fi
 
     log 'Running docker compose up...'
-    docker run -v /data/coolify/source:/data/coolify/source -v /var/run/docker.sock:/var/run/docker.sock \${DOCKER_CONFIG_MOUNT} --rm \${REGISTRY_URL:-docker.io}/coollabsio/coolify-helper:\${LATEST_HELPER_VERSION} bash -c \"LATEST_IMAGE=\${LATEST_IMAGE} docker compose --env-file /data/coolify/source/.env \${COMPOSE_FILES} up -d --remove-orphans --wait --wait-timeout 60\" >>\"\$LOGFILE\" 2>&1
+    docker run -v /data/xlaunch/source:/data/xlaunch/source -v /var/run/docker.sock:/var/run/docker.sock \${DOCKER_CONFIG_MOUNT} --rm \${REGISTRY_URL:-docker.io}/northlatch/xlaunch-helper:\${LATEST_HELPER_VERSION} bash -c \"LATEST_IMAGE=\${LATEST_IMAGE} docker compose --env-file /data/xlaunch/source/.env \${COMPOSE_FILES} up -d --remove-orphans --wait --wait-timeout 60\" >>\"\$LOGFILE\" 2>&1
     log 'Docker compose up completed'
 
     # Final log entry
@@ -301,7 +301,7 @@ nohup bash -c "
     log 'Step 6/6: Upgrade complete'
     echo '============================================================' >>\"\$LOGFILE\"
     write_status '6' 'Upgrade complete'
-    log 'Coolify upgrade completed successfully'
+    log 'Xlaunch upgrade completed successfully'
     log \"Version: \${LATEST_IMAGE}\"
     echo '' >>\"\$LOGFILE\"
     echo '============================================================' >>\"\$LOGFILE\"
@@ -322,9 +322,9 @@ echo "5/6 Containers are being restarted in the background..."
 echo "6/6 Upgrade process initiated!"
 echo ""
 echo "=========================================="
-echo "   Coolify upgrade to ${LATEST_IMAGE} in progress"
+echo "   Xlaunch upgrade to ${LATEST_IMAGE} in progress"
 echo "=========================================="
 echo ""
 echo "   The upgrade will continue in the background."
-echo "   Coolify will be available again shortly."
+echo "   Xlaunch will be available again shortly."
 echo "   Log file: ${LOGFILE}"

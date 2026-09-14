@@ -33,7 +33,7 @@ beforeEach(function () {
     $this->destinationA = StandaloneDocker::factory()->create([
         'server_id' => $this->serverA->id,
         'name' => 'dest-a-'.fake()->unique()->word(),
-        'network' => 'coolify-a-'.fake()->unique()->word(),
+        'network' => 'xlaunch-a-'.fake()->unique()->word(),
     ]);
 
     $this->applicationA = Application::factory()->create([
@@ -47,7 +47,7 @@ beforeEach(function () {
     $this->destinationA2 = StandaloneDocker::factory()->create([
         'server_id' => $this->serverA2->id,
         'name' => 'dest-a2-'.fake()->unique()->word(),
-        'network' => 'coolify-a2-'.fake()->unique()->word(),
+        'network' => 'xlaunch-a2-'.fake()->unique()->word(),
     ]);
 
     // Victim: Team B
@@ -59,7 +59,7 @@ beforeEach(function () {
     $this->destinationB = StandaloneDocker::factory()->create([
         'server_id' => $this->serverB->id,
         'name' => 'dest-b-'.fake()->unique()->word(),
-        'network' => 'coolify-b-'.fake()->unique()->word(),
+        'network' => 'xlaunch-b-'.fake()->unique()->word(),
     ]);
 
     // Act as attacker (Team A)

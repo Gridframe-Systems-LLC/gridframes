@@ -172,7 +172,7 @@ describe('PATCH /api/v1/notifications/*', function () {
                 'smtp_enabled' => true,
                 'smtp_from_address' => 'alerts@example.com',
                 'smtp_host' => 'smtp.example.com',
-                'smtp_ehlo_domain' => 'coolify.example.com',
+                'smtp_ehlo_domain' => 'xlaunch.example.com',
                 'smtp_port' => 587,
                 'smtp_encryption' => 'starttls',
                 'deployment_failure_email_notifications' => false,
@@ -180,14 +180,14 @@ describe('PATCH /api/v1/notifications/*', function () {
 
         $response->assertSuccessful();
         $response->assertJsonPath('smtp_enabled', true);
-        $response->assertJsonPath('smtp_ehlo_domain', 'coolify.example.com');
+        $response->assertJsonPath('smtp_ehlo_domain', 'xlaunch.example.com');
         $response->assertJsonPath('deployment_failure_email_notifications', false);
 
         $settings = EmailNotificationSettings::query()->where('team_id', $this->team->id)->first();
         expect($settings->smtp_enabled)->toBeTrue()
             ->and($settings->smtp_from_address)->toBe('alerts@example.com')
             ->and($settings->smtp_host)->toBe('smtp.example.com')
-            ->and($settings->smtp_ehlo_domain)->toBe('coolify.example.com')
+            ->and($settings->smtp_ehlo_domain)->toBe('xlaunch.example.com')
             ->and($settings->smtp_port)->toBe(587)
             ->and($settings->deployment_failure_email_notifications)->toBeFalse();
     });
@@ -203,7 +203,7 @@ describe('PATCH /api/v1/notifications/*', function () {
 
     test('clears the smtp ehlo domain', function () {
         $this->team->emailNotificationSettings->update([
-            'smtp_ehlo_domain' => 'coolify.example.com',
+            'smtp_ehlo_domain' => 'xlaunch.example.com',
         ]);
 
         $this->withHeaders(authHeaders($this->bearerToken))
@@ -282,7 +282,7 @@ describe('PATCH /api/v1/notifications/*', function () {
             'webhook',
             [
                 'webhook_enabled' => true,
-                'webhook_url' => 'https://example.com/hooks/coolify',
+                'webhook_url' => 'https://example.com/hooks/xlaunch',
                 'deployment_failure_webhook_notifications' => true,
             ],
             WebhookNotificationSettings::class,

@@ -3,7 +3,7 @@
         <x-unsaved-bar action="submit" />
 
         <x-application.settings-section title="Repository"
-            description="Configure the Git repository, branch, and commit Coolify deploys.">
+            description="Configure the Git repository, branch, and commit Xlaunch deploys.">
             <x-slot:actions>
                 <div class="flex flex-wrap items-center gap-2">
                     <a target="_blank" class="button" href="{{ $application?->gitBranchLocation }}">
@@ -34,7 +34,7 @@
             @endif
 
             <div class="grid gap-4 lg:grid-cols-2">
-                <x-forms.input placeholder="coollabsio/coolify-example" id="gitRepository" label="Repository"
+                <x-forms.input placeholder="northlatch/xlaunch-example" id="gitRepository" label="Repository"
                     canGate="update" :canResource="$application" />
                 <x-forms.input placeholder="main" id="gitBranch" label="Branch" canGate="update"
                     :canResource="$application" />
@@ -46,7 +46,7 @@
 
     @if (filled($privateKeyId))
         <x-application.settings-section title="Deploy key"
-            description="The SSH key Coolify uses to clone this private repository.">
+            description="The SSH key Xlaunch uses to clone this private repository.">
             <div
                 class="mb-4 flex items-center justify-between gap-3 rounded-lg bg-neutral-50 px-3 py-2.5 ring-1 ring-neutral-200 dark:bg-white/[0.05] dark:ring-white/[0.07]">
                 <span class="text-[12px] text-neutral-500 dark:text-fg-dim">Attached private key</span>
@@ -83,14 +83,14 @@
                 };
             @endphp
             <x-application.settings-section title="Git source"
-                description="Switch the Git provider App Coolify uses to clone this repository.">
+                description="Switch the Git provider App Xlaunch uses to clone this repository.">
                 <div class="grid gap-2 sm:grid-cols-2">
                     @if ($currentSource)
                         <div
-                            class="relative flex min-h-16 items-center gap-3 rounded-xl border border-coollabs/30 bg-coollabs/[0.06] p-3 ring-1 ring-coollabs/20 dark:border-warning/30 dark:bg-warning/[0.08] dark:ring-warning/15"
+                            class="relative flex min-h-16 items-center gap-3 rounded-xl border border-northlatch/30 bg-northlatch/[0.06] p-3 ring-1 ring-northlatch/20 dark:border-warning/30 dark:bg-warning/[0.08] dark:ring-warning/15"
                             aria-current="true">
                             <div
-                                class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-coollabs/20 bg-white text-coollabs dark:border-warning/20 dark:bg-white/[0.04] dark:text-warning">
+                                class="flex size-9 shrink-0 items-center justify-center rounded-lg border border-northlatch/20 bg-white text-northlatch dark:border-warning/20 dark:bg-white/[0.04] dark:text-warning">
                                 <x-git-icon class="size-4" :git="$currentSourceMorph" />
                             </div>
                             <div class="min-w-0 flex-1">
@@ -104,7 +104,7 @@
                                 </p>
                             </div>
                             <x-reicon name="check"
-                                class="size-4 shrink-0 text-coollabs dark:text-warning" />
+                                class="size-4 shrink-0 text-northlatch dark:text-warning" />
                         </div>
                     @endif
 
@@ -165,7 +165,7 @@
                     <p class="mt-3 text-[12px] leading-5 text-neutral-500 dark:text-fg-dim">
                         No other sources available.
                         <a href="{{ route('source.all') }}" {{ wireNavigate() }}
-                            class="font-medium text-coollabs underline-offset-2 hover:underline dark:text-warning">Connect
+                            class="font-medium text-northlatch underline-offset-2 hover:underline dark:text-warning">Connect
                             another source</a>
                         to switch providers.
                     </p>

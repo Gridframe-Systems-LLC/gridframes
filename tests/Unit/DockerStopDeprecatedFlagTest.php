@@ -5,8 +5,8 @@
  * Call sites must go through dockerStopCommand() so the flag is chosen from
  * the stored engine version (`--timeout` on 28+, `--time` before that or if unknown).
  *
- * @see https://github.com/coollabsio/coolify/issues/11244
- * @see https://github.com/coollabsio/coolify/issues/10791
+ * @see https://github.com/northlatch/xlaunch/issues/11244
+ * @see https://github.com/northlatch/xlaunch/issues/10791
  */
 it('does not hardcode docker --time outside the version-aware helper', function () {
     $projectRoot = dockerStopDeprecatedFlagProjectRoot();

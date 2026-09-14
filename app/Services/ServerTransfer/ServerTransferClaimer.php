@@ -11,7 +11,7 @@ use Throwable;
 class ServerTransferClaimer
 {
     /**
-     * Claim a managed host for this Coolify instance.
+     * Claim a managed host for this Xlaunch instance.
      *
      * Database ownership (metadata + Sentinel settings) is committed in one transaction so a
      * mid-flight failure rolls back. Remote SSH claim-file writes happen after commit and are
@@ -28,7 +28,7 @@ class ServerTransferClaimer
     public function claim(Server $server, bool $writeRemote = true, bool $rebindSentinel = true): array
     {
         if ($server->id === 0) {
-            throw new RuntimeException('Cannot claim the Coolify host itself.');
+            throw new RuntimeException('Cannot claim the Xlaunch host itself.');
         }
 
         $instanceUrl = rtrim((string) (instanceSettings()->fqdn ?: config('app.url')), '/');
@@ -90,7 +90,7 @@ class ServerTransferClaimer
         $result['claim_written'] = $claimWritten;
         $result['message'] = $claimWritten
             ? 'Server claimed. Ownership file written and Sentinel rebound to this instance.'
-            : 'Server claimed in Coolify. Remote ownership file was not written (SSH unavailable or skipped).';
+            : 'Server claimed in Xlaunch. Remote ownership file was not written (SSH unavailable or skipped).';
 
         return $result;
     }
@@ -107,7 +107,7 @@ class ServerTransferClaimer
     public function markTransferred(Server $server, ?string $exportId = null, ?string $targetInstanceUrl = null): array
     {
         if ($server->id === 0) {
-            throw new RuntimeException('Cannot transfer the Coolify host itself.');
+            throw new RuntimeException('Cannot transfer the Xlaunch host itself.');
         }
 
         $result = DB::transaction(function () use ($server, $exportId, $targetInstanceUrl) {
@@ -183,7 +183,7 @@ class ServerTransferClaimer
         ServerTransferBundle::assertValid($bundle);
 
         $exportId = (string) data_get($bundle, 'export_id', new_public_id());
-        $filename = "server-transfer-{$exportId}.coolify.json";
+        $filename = "server-transfer-{$exportId}.xlaunch.json";
         $path = ServerTransferBundle::MAILBOX_DIR.'/'.$filename;
 
         $payload = $passphrase
@@ -229,7 +229,7 @@ class ServerTransferClaimer
 
         try {
             instant_remote_process([
-                'mkdir -p /data/coolify',
+                'mkdir -p /data/xlaunch',
                 'echo '.escapeshellarg($b64).' | base64 -d > '.escapeshellarg($path),
                 'chmod 600 '.escapeshellarg($path),
                 'chown 9999:root '.escapeshellarg($path).' || true',

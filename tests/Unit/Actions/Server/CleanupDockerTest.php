@@ -255,32 +255,32 @@ it('correctly excludes Docker Compose images from general prune', function () {
     }
 });
 
-it('excludes current version of Coolify infrastructure images from any registry', function () {
+it('excludes current version of Xlaunch infrastructure images from any registry', function () {
     // Test the regex pattern used to protect the current version of infrastructure images
     // regardless of which registry they come from (ghcr.io, docker.io, or no prefix)
     $helperVersion = '1.0.12';
     $realtimeVersion = '1.0.10';
 
     // Build the exclusion pattern the same way CleanupDocker does
-    // Pattern: (^|/)coollabsio/coolify-helper:VERSION$|(^|/)coollabsio/coolify-realtime:VERSION$
+    // Pattern: (^|/)northlatch/xlaunch-helper:VERSION$|(^|/)northlatch/xlaunch-realtime:VERSION$
     $escapedHelperVersion = preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $helperVersion);
     $escapedRealtimeVersion = preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $realtimeVersion);
 
     // For PHP preg_match, escape forward slashes
-    $infraPattern = "(^|\\/)coollabsio\\/coolify-helper:{$escapedHelperVersion}$|(^|\\/)coollabsio\\/coolify-realtime:{$escapedRealtimeVersion}$";
+    $infraPattern = "(^|\\/)northlatch\\/xlaunch-helper:{$escapedHelperVersion}$|(^|\\/)northlatch\\/xlaunch-realtime:{$escapedRealtimeVersion}$";
     $pattern = "/{$infraPattern}/";
 
     // Current versioned infrastructure images from ANY registry should be PROTECTED
     $protectedImages = [
         // ghcr.io registry
-        "ghcr.io/coollabsio/coolify-helper:{$helperVersion}",
-        "ghcr.io/coollabsio/coolify-realtime:{$realtimeVersion}",
+        "ghcr.io/northlatch/xlaunch-helper:{$helperVersion}",
+        "ghcr.io/northlatch/xlaunch-realtime:{$realtimeVersion}",
         // docker.io registry (explicit)
-        "docker.io/coollabsio/coolify-helper:{$helperVersion}",
-        "docker.io/coollabsio/coolify-realtime:{$realtimeVersion}",
+        "docker.io/northlatch/xlaunch-helper:{$helperVersion}",
+        "docker.io/northlatch/xlaunch-realtime:{$realtimeVersion}",
         // No registry prefix (Docker Hub implicit)
-        "coollabsio/coolify-helper:{$helperVersion}",
-        "coollabsio/coolify-realtime:{$realtimeVersion}",
+        "northlatch/xlaunch-helper:{$helperVersion}",
+        "northlatch/xlaunch-realtime:{$realtimeVersion}",
     ];
 
     // Verify current infrastructure images ARE protected from any registry
@@ -290,12 +290,12 @@ it('excludes current version of Coolify infrastructure images from any registry'
 
     // Verify OLD versions of infrastructure images are NOT protected (can be deleted)
     $oldVersionImages = [
-        'ghcr.io/coollabsio/coolify-helper:1.0.11',
-        'docker.io/coollabsio/coolify-helper:1.0.10',
-        'coollabsio/coolify-helper:1.0.9',
-        'ghcr.io/coollabsio/coolify-realtime:1.0.9',
-        'ghcr.io/coollabsio/coolify-helper:latest',
-        'coollabsio/coolify-realtime:latest',
+        'ghcr.io/northlatch/xlaunch-helper:1.0.11',
+        'docker.io/northlatch/xlaunch-helper:1.0.10',
+        'northlatch/xlaunch-helper:1.0.9',
+        'ghcr.io/northlatch/xlaunch-realtime:1.0.9',
+        'ghcr.io/northlatch/xlaunch-helper:latest',
+        'northlatch/xlaunch-realtime:latest',
     ];
 
     foreach ($oldVersionImages as $image) {
@@ -327,18 +327,18 @@ it('protects current infrastructure images from any registry even when no applic
     $escapedRealtimeVersion = preg_replace('/([.\\\\+*?\[\]^$(){}|])/', '\\\\$1', $realtimeVersion);
 
     // For PHP preg_match, escape forward slashes
-    $infraPattern = "(^|\\/)coollabsio\\/coolify-helper:{$escapedHelperVersion}$|(^|\\/)coollabsio\\/coolify-realtime:{$escapedRealtimeVersion}$";
+    $infraPattern = "(^|\\/)northlatch\\/xlaunch-helper:{$escapedHelperVersion}$|(^|\\/)northlatch\\/xlaunch-realtime:{$escapedRealtimeVersion}$";
     $pattern = "/{$infraPattern}/";
 
     // Verify current infrastructure images from any registry are protected
-    expect(preg_match($pattern, "ghcr.io/coollabsio/coolify-helper:{$helperVersion}"))->toBe(1);
-    expect(preg_match($pattern, "docker.io/coollabsio/coolify-helper:{$helperVersion}"))->toBe(1);
-    expect(preg_match($pattern, "coollabsio/coolify-helper:{$helperVersion}"))->toBe(1);
-    expect(preg_match($pattern, "ghcr.io/coollabsio/coolify-realtime:{$realtimeVersion}"))->toBe(1);
+    expect(preg_match($pattern, "ghcr.io/northlatch/xlaunch-helper:{$helperVersion}"))->toBe(1);
+    expect(preg_match($pattern, "docker.io/northlatch/xlaunch-helper:{$helperVersion}"))->toBe(1);
+    expect(preg_match($pattern, "northlatch/xlaunch-helper:{$helperVersion}"))->toBe(1);
+    expect(preg_match($pattern, "ghcr.io/northlatch/xlaunch-realtime:{$realtimeVersion}"))->toBe(1);
 
     // Old versions should NOT be protected
-    expect(preg_match($pattern, 'ghcr.io/coollabsio/coolify-helper:1.0.11'))->toBe(0);
-    expect(preg_match($pattern, 'docker.io/coollabsio/coolify-helper:1.0.11'))->toBe(0);
+    expect(preg_match($pattern, 'ghcr.io/northlatch/xlaunch-helper:1.0.11'))->toBe(0);
+    expect(preg_match($pattern, 'docker.io/northlatch/xlaunch-helper:1.0.11'))->toBe(0);
 
     // Other images should not be protected
     expect(preg_match($pattern, 'nginx:alpine'))->toBe(0);
@@ -440,11 +440,11 @@ it('deletes all build images when retention is disabled', function () {
 it('container prune excludes persistent resource types', function () {
     $sourceFile = file_get_contents(__DIR__.'/../../../../app/Actions/Server/CleanupDocker.php');
 
-    expect($sourceFile)->toContain('label!=coolify.type=database');
-    expect($sourceFile)->toContain('label!=coolify.type=application');
-    expect($sourceFile)->toContain('label!=coolify.type=service');
-    expect($sourceFile)->toContain('label!=coolify.proxy=true');
-    expect($sourceFile)->toContain('label=coolify.managed=true');
+    expect($sourceFile)->toContain('label!=xlaunch.type=database');
+    expect($sourceFile)->toContain('label!=xlaunch.type=application');
+    expect($sourceFile)->toContain('label!=xlaunch.type=service');
+    expect($sourceFile)->toContain('label!=xlaunch.proxy=true');
+    expect($sourceFile)->toContain('label=xlaunch.managed=true');
 });
 
 it('uses persisted buildx metadata when pruning the railpack builder', function () {
@@ -452,7 +452,7 @@ it('uses persisted buildx metadata when pruning the railpack builder', function 
 
     expect($sourceFile)
         ->toContain('docker run --rm -v \\$HOME/.docker/buildx:/root/.docker/buildx')
-        ->toContain('docker buildx prune --builder coolify-railpack -af')
+        ->toContain('docker buildx prune --builder xlaunch-railpack -af')
         ->not->toContain('--buildkitd-flags');
 });
 

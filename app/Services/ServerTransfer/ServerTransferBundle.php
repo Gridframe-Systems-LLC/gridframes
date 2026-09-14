@@ -10,9 +10,9 @@ class ServerTransferBundle
 {
     public const SCHEMA_VERSION = 1;
 
-    public const CLAIM_PATH = '/data/coolify/instance-claim.json';
+    public const CLAIM_PATH = '/data/xlaunch/instance-claim.json';
 
-    public const MAILBOX_DIR = '/data/coolify/exports';
+    public const MAILBOX_DIR = '/data/xlaunch/exports';
 
     /**
      * @param  array<string, mixed>  $payload

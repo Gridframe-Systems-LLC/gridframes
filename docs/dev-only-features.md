@@ -22,7 +22,7 @@ Resource migration is under development and is not available in production.
 Before promoting this feature, remove all three runtime gates together and
 update the tests and this document in the same change.
 
-## Server transfer between Coolify instances
+## Server transfer between Xlaunch instances
 
 Server transfer is under development and is not available in production.
 

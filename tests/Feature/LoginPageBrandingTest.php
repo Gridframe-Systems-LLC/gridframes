@@ -1,23 +1,23 @@
 <?php
 
 /**
- * Auth shell headers should brand the product so users know they are on Coolify.
+ * Auth shell headers should brand the product so users know they are on Xlaunch.
  */
-test('login register and forgot password headers are Coolify', function () {
+test('login register and forgot password headers are Xlaunch', function () {
     $login = file_get_contents(resource_path('views/auth/login.blade.php'));
     $register = file_get_contents(resource_path('views/auth/register.blade.php'));
     $forgot = file_get_contents(resource_path('views/auth/forgot-password.blade.php'));
 
     expect($login)
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->not->toContain('title="Welcome back"');
 
     expect($register)
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->not->toContain(":title=\"\$isFirstUser ? 'Create the root account' : 'Create your account'\"");
 
     expect($forgot)
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->not->toContain("title=\"{{ __('auth.forgot_password_heading') }}\"");
 });
 
@@ -29,19 +29,19 @@ test('page body uses the dynamic viewport height on mobile', function () {
         ->not->toMatch('/body\s*\{[^}]*@apply[^;]*min-h-screen/s');
 });
 
-test('auth pages use the Coollabs purple background glow', function () {
+test('auth pages use the Northlatch purple background glow', function () {
     $styles = file_get_contents(resource_path('css/app.css'));
 
     expect($styles)
-        ->toMatch('/\.auth-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-coollabs\) 9%, transparent\)/s')
+        ->toMatch('/\.auth-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-northlatch\) 9%, transparent\)/s')
         ->not->toMatch('/\.auth-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-accent\) 9%, transparent\)/s');
 });
 
-test('error pages use the Coollabs purple background glow', function () {
+test('error pages use the Northlatch purple background glow', function () {
     $styles = file_get_contents(resource_path('css/app.css'));
 
     expect($styles)
-        ->toMatch('/\.error-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-coollabs\) 9%, transparent\)/s')
+        ->toMatch('/\.error-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-northlatch\) 9%, transparent\)/s')
         ->not->toMatch('/\.error-shell\s*\{[^}]*color-mix\(in oklab, var\(--color-accent\) 9%, transparent\)/s');
 });
 
@@ -50,7 +50,7 @@ test('confirm password page uses the shared auth shell', function () {
 
     expect($confirm)
         ->toContain('x-auth.shell')
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->toContain('x-auth.alert')
         ->toContain('auth-guidance')
         ->not->toContain('bg-gray-50 dark:bg-base')
@@ -62,7 +62,7 @@ test('two factor challenge page uses the shared auth shell', function () {
 
     expect($challenge)
         ->toContain('x-auth.shell')
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->toContain('x-auth.alert')
         ->toContain('auth-guidance')
         ->toContain('Verify and continue')
@@ -76,7 +76,7 @@ test('email verification page uses the shared auth shell', function () {
     expect($verification)
         ->toContain('x-layout-simple')
         ->toContain('x-auth.shell')
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->toContain('auth-guidance')
         ->toContain('block sm:inline')
         ->not->toContain('<x-layout>')
@@ -88,7 +88,7 @@ test('team invitation page uses the shared auth shell', function () {
 
     expect($invitation)
         ->toContain('x-auth.shell')
-        ->toContain('title="Coolify"')
+        ->toContain('title="Xlaunch"')
         ->toContain('x-auth.alert')
         ->toContain('Accept invitation')
         ->not->toContain('bg-gray-50 dark:bg-base')

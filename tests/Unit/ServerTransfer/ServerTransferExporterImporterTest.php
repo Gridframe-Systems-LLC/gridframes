@@ -34,7 +34,7 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://coolify-a.test']);
+    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://xlaunch-a.test']);
 
     $this->team = Team::factory()->create();
     $this->privateKey = PrivateKey::factory()->create(['team_id' => $this->team->id, 'name' => 'transfer-key']);
@@ -48,7 +48,7 @@ beforeEach(function () {
         'user' => 'root',
     ]);
     $this->destination = StandaloneDocker::where('server_id', $this->server->id)->firstOrFail();
-    $this->destination->update(['name' => 'coolify', 'network' => 'coolify']);
+    $this->destination->update(['name' => 'xlaunch', 'network' => 'xlaunch']);
 
     $this->project = Project::factory()->create(['team_id' => $this->team->id, 'name' => 'Transfer Project']);
     $this->environment = $this->project->environments()->first()
@@ -219,7 +219,7 @@ test('export includes server applications databases and secrets in plaintext', f
         ->and($service['scheduled_tasks'][0]['name'])->toBe('service-ping');
 });
 
-test('export refuses localhost coolify host', function () {
+test('export refuses localhost xlaunch host', function () {
     $localhost = Server::factory()->create([
         'id' => 0,
         'team_id' => $this->team->id,

@@ -16,12 +16,12 @@
             @else
             <button type="button" title="Upgrade in progress" aria-label="Upgrade in progress"
                 @click="modalOpen=true" x-show="showProgress" x-cloak
-                class="inline-flex h-[18px] cursor-pointer items-center rounded-full bg-coollabs/10 px-1.5 text-[9.5px] font-semibold leading-none text-coollabs ring-1 ring-inset ring-coollabs/25 transition-colors hover:bg-coollabs/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20">
+                class="inline-flex h-[18px] cursor-pointer items-center rounded-full bg-northlatch/10 px-1.5 text-[9.5px] font-semibold leading-none text-northlatch ring-1 ring-inset ring-northlatch/25 transition-colors hover:bg-northlatch/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20">
                 Updating
             </button>
             <button type="button" title="Update available" aria-label="Update available"
                 @click="modalOpen=true" x-show="!showProgress" x-cloak
-                class="inline-flex h-[18px] cursor-pointer items-center rounded-full bg-coollabs/10 px-1.5 text-[9.5px] font-semibold leading-none text-coollabs ring-1 ring-inset ring-coollabs/25 transition-colors hover:bg-coollabs/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20">
+                class="inline-flex h-[18px] cursor-pointer items-center rounded-full bg-northlatch/10 px-1.5 text-[9.5px] font-semibold leading-none text-northlatch ring-1 ring-inset ring-northlatch/25 transition-colors hover:bg-northlatch/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20">
                 Update available
             </button>
             @endif
@@ -42,7 +42,7 @@
                         x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                         x-transition:leave-end="opacity-0 -translate-y-2 sm:scale-95"
                         class="application-settings-form application-settings-section relative flex max-h-[calc(100dvh-2rem)] w-full flex-col lg:min-w-[36rem] lg:max-w-2xl"
-                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
 
                         <header class="flex-nowrap!">
                             <div class="min-w-0 flex-1">
@@ -50,7 +50,7 @@
                                     x-text="upgradeComplete ? 'Upgrade complete' : (showProgress ? 'Upgrading…' : 'Upgrade available')">
                                 </h3>
                                 <p class="mt-0.5 text-[12px] leading-4"
-                                    style="color: var(--coollabs-subtle)">
+                                    style="color: var(--northlatch-subtle)">
                                     {{ $currentVersion }} <span class="mx-0.5">&rarr;</span>
                                     {{ $latestVersion }}
                                 </p>
@@ -71,7 +71,7 @@
                                     <x-upgrade-progress />
 
                                     <div class="flex items-center justify-center gap-1.5 text-[12px]"
-                                        style="color: var(--coollabs-subtle)">
+                                        style="color: var(--northlatch-subtle)">
                                         <span>Elapsed time</span>
                                         <span class="font-mono text-neutral-700 dark:text-fg"
                                             x-text="formatElapsedTime()"></span>
@@ -104,14 +104,14 @@
 
                                     <template x-if="upgradeComplete">
                                         <div class="flex flex-col items-center gap-3">
-                                            <p class="text-[12px]" style="color: var(--coollabs-subtle)">
+                                            <p class="text-[12px]" style="color: var(--northlatch-subtle)">
                                                 Reloading in
                                                 <span x-text="successCountdown"
-                                                    class="font-semibold text-coollabs dark:text-warning"></span>
+                                                    class="font-semibold text-northlatch dark:text-warning"></span>
                                                 seconds…
                                             </p>
                                             <p class="text-center text-[11px] leading-4"
-                                                style="color: var(--coollabs-subtle)">
+                                                style="color: var(--northlatch-subtle)">
                                                 If the page does not reload automatically, reload it manually.
                                             </p>
                                             <x-forms.button @click="reloadNow()" type="button" isHighlighted>
@@ -122,9 +122,9 @@
 
                                     <template x-if="upgradeError">
                                         <div class="flex flex-col gap-3">
-                                            <p class="text-[12px] leading-5" style="color: var(--coollabs-subtle)">
+                                            <p class="text-[12px] leading-5" style="color: var(--northlatch-subtle)">
                                                 Check the logs on the server at
-                                                <span class="font-mono text-neutral-700 dark:text-fg">/data/coolify/source/upgrade*</span>.
+                                                <span class="font-mono text-neutral-700 dark:text-fg">/data/xlaunch/source/upgrade*</span>.
                                             </p>
                                             <div
                                                 class="flex flex-wrap justify-end gap-2 border-t border-neutral-200 pt-4 dark:border-white/[0.08]">
@@ -144,13 +144,13 @@
                                         <p>Any deployments running during the update process will fail.</p>
                                     </x-callout>
 
-                                    <p class="text-[12px] leading-5" style="color: var(--coollabs-subtle)">
+                                    <p class="text-[12px] leading-5" style="color: var(--northlatch-subtle)">
                                         If something goes wrong, check the
-                                        <a class="font-medium text-coollabs underline decoration-coollabs/30 underline-offset-2 hover:decoration-coollabs dark:text-warning dark:decoration-warning/30 dark:hover:decoration-warning"
-                                            href="https://coolify.io/docs/upgrade" target="_blank"
+                                        <a class="font-medium text-northlatch underline decoration-northlatch/30 underline-offset-2 hover:decoration-northlatch dark:text-warning dark:decoration-warning/30 dark:hover:decoration-warning"
+                                            href="https://northlatch.com/docs/upgrade" target="_blank"
                                             rel="noopener noreferrer">upgrade guide</a>
                                         or the logs on the server at
-                                        <span class="font-mono text-neutral-700 dark:text-fg">/data/coolify/source/upgrade*</span>.
+                                        <span class="font-mono text-neutral-700 dark:text-fg">/data/xlaunch/source/upgrade*</span>.
                                     </p>
 
                                     <div
@@ -172,7 +172,7 @@
             </template>
         </div>
     @elseif ($fullButton)
-        <p class="text-sm text-neutral-600 dark:text-fg-dim">Coolify is up to date.</p>
+        <p class="text-sm text-neutral-600 dark:text-fg-dim">Xlaunch is up to date.</p>
     @endif
 </div>
 
@@ -213,7 +213,7 @@
                 const steps = [
                     { step: 1, status: '[DEV] Preparing upgrade environment...' },
                     { step: 2, status: '[DEV] Pulling helper image...' },
-                    { step: 3, status: '[DEV] Pulling Coolify image...' },
+                    { step: 3, status: '[DEV] Pulling Xlaunch image...' },
                     { step: 4, status: '[DEV] Restarting services...' },
                 ];
 
@@ -264,7 +264,7 @@
             mapStepToUI(apiStep) {
                 // Map backend steps (1-6) to UI steps (1-4)
                 // Backend: 1=config, 2=env, 3=pull, 4=stop, 5=start, 6=complete
-                // UI: 1=prepare, 2=pull images, 3=pull coolify, 4=restart
+                // UI: 1=prepare, 2=pull images, 3=pull xlaunch, 4=restart
                 if (apiStep <= 2) return 1;
                 if (apiStep === 3) return 2;
                 if (apiStep <= 5) return 3;
@@ -337,9 +337,9 @@
 
             getReviveStatusMessage(elapsedMinutes, attempts) {
                 if (elapsedMinutes === 0) {
-                    return `Waiting for Coolify to come back online... (attempt ${attempts})`;
+                    return `Waiting for Xlaunch to come back online... (attempt ${attempts})`;
                 } else if (elapsedMinutes < 2) {
-                    return `Waiting for Coolify to come back online... (${elapsedMinutes} minute${elapsedMinutes !== 1 ? 's' : ''} elapsed)`;
+                    return `Waiting for Xlaunch to come back online... (${elapsedMinutes} minute${elapsedMinutes !== 1 ? 's' : ''} elapsed)`;
                 } else if (elapsedMinutes < 5) {
                     return `Update in progress, this may take several minutes... (${elapsedMinutes} minutes elapsed)`;
                 } else if (elapsedMinutes < 10) {
@@ -461,7 +461,7 @@
                             this.serviceDown = true;
                             this.instanceWentDown = true;
                             this.currentStep = 4;
-                            this.currentStatus = 'Coolify is restarting with the new version...';
+                            this.currentStatus = 'Xlaunch is restarting with the new version...';
                             if (this.checkUpgradeStatusInterval) {
                                 clearInterval(this.checkUpgradeStatusInterval);
                                 this.checkUpgradeStatusInterval = null;

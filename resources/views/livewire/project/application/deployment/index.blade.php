@@ -1,6 +1,6 @@
 <div>
     @unless ($embedded)
-        <x-slot:title>{{ data_get_str($application, 'name')->limit(10) }} > Deployments | Coolify</x-slot>
+        <x-slot:title>{{ data_get_str($application, 'name')->limit(10) }} > Deployments | Xlaunch</x-slot>
         <livewire:project.shared.configuration-checker :resource="$application" />
         <livewire:project.application.heading :application="$application" wire:key="application-heading-deployment-index" />
     @endunless
@@ -50,7 +50,7 @@
                                         @endphp
                                         <span @class([
                                             'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                            'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
+                                            'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
                                             'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => ! $selected,
                                         ])>
                                             @if ($selected)
@@ -77,7 +77,7 @@
                                         @endphp
                                         <span @class([
                                             'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                            'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
+                                            'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
                                             'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => ! $selected,
                                         ])>
                                             @if ($selected)
@@ -104,7 +104,7 @@
                                         @endphp
                                         <span @class([
                                             'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                            'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
+                                            'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
                                             'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => ! $selected,
                                         ])>
                                             @if ($selected)
@@ -260,7 +260,7 @@
                         last-action="goToPage({{ $lastPage }})">
                         @unless ($embedded)
                             <x-slot:pageSize>
-                                <x-page-size-select model="defaultTake" livewire storage-key="coolify.page-size.deployments" />
+                                <x-page-size-select model="defaultTake" livewire storage-key="xlaunch.page-size.deployments" />
                             </x-slot:pageSize>
                         @endunless
                     </x-table-pagination>

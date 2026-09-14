@@ -24,7 +24,7 @@ test('server revalidation uses the full mobile viewport', function () {
         ->toContain('@media (max-width: 639px)')
         ->toContain('.process-dialog-mobile-fullscreen')
         ->toContain('height: 100dvh !important')
-        ->toContain('box-shadow: inset 0 0 0 1px var(--coollabs-hairline) !important');
+        ->toContain('box-shadow: inset 0 0 0 1px var(--northlatch-hairline) !important');
 });
 
 test('completed server validation shows a close action instead of empty logs', function () {
@@ -52,7 +52,7 @@ test('installation logs are only shown after an installation starts', function (
         ->toContain('$this->isInstalling = true;')
         ->and($styles)
         ->toContain('.validation-installation-logs')
-        ->toContain('border: 1px solid var(--coollabs-fill)');
+        ->toContain('border: 1px solid var(--northlatch-fill)');
 });
 
 test('server validation content scrolls within the dialog', function () {

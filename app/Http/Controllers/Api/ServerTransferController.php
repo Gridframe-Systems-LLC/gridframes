@@ -27,7 +27,7 @@ class ServerTransferController extends Controller
     }
 
     #[OA\Post(
-        summary: 'Migrate server to another Coolify instance',
+        summary: 'Migrate server to another Xlaunch instance',
         description: 'One-shot handoff: export this server, import+claim on the target instance (using the provided token), then disable automations here. Requires read:sensitive and write.',
         path: '/servers/{uuid}/migrate',
         operationId: 'migrate-server-between-instances',
@@ -41,7 +41,7 @@ class ServerTransferController extends Controller
             content: new OA\JsonContent(
                 required: ['target_url', 'target_token'],
                 properties: [
-                    new OA\Property(property: 'target_url', type: 'string', example: 'https://coolify-b.example.com'),
+                    new OA\Property(property: 'target_url', type: 'string', example: 'https://xlaunch-b.example.com'),
                     new OA\Property(property: 'target_token', type: 'string', description: 'API token on the target instance (root or write)'),
                     new OA\Property(property: 'write_remote', type: 'boolean', default: false),
                     new OA\Property(property: 'rebind_sentinel', type: 'boolean', default: true),
@@ -130,7 +130,7 @@ class ServerTransferController extends Controller
 
     #[OA\Get(
         summary: 'Export server transfer bundle',
-        description: 'Export a server and all resources hosted on it as a versioned transfer bundle for moving between Coolify instances. Requires read:sensitive.',
+        description: 'Export a server and all resources hosted on it as a versioned transfer bundle for moving between Xlaunch instances. Requires read:sensitive.',
         path: '/servers/{uuid}/export',
         operationId: 'export-server-transfer-bundle',
         security: [['bearerAuth' => []]],
@@ -190,7 +190,7 @@ class ServerTransferController extends Controller
 
     #[OA\Post(
         summary: 'Import server transfer bundle',
-        description: 'Import a server transfer bundle into this Coolify instance (adopt mode by default).',
+        description: 'Import a server transfer bundle into this Xlaunch instance (adopt mode by default).',
         path: '/servers/import',
         operationId: 'import-server-transfer-bundle',
         security: [['bearerAuth' => []]],
@@ -434,7 +434,7 @@ class ServerTransferController extends Controller
 
     #[OA\Post(
         summary: 'Write transfer bundle to server mailbox',
-        description: 'Write an export bundle to /data/coolify/exports on the managed host for air-gapped import.',
+        description: 'Write an export bundle to /data/xlaunch/exports on the managed host for air-gapped import.',
         path: '/servers/{uuid}/export/mailbox',
         operationId: 'export-server-transfer-mailbox',
         security: [['bearerAuth' => []]],

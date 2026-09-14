@@ -174,7 +174,7 @@ Route::group([
     Route::post('/servers/{uuid}/cloudflare-tunnel/enable', [ServerCloudflareTunnelController::class, 'enable'])->middleware(['api.ability:write']);
     Route::post('/servers/{uuid}/cloudflare-tunnel/disable', [ServerCloudflareTunnelController::class, 'disable'])->middleware(['api.ability:write']);
 
-    // Destinations — REST surface for the Coolify "Destinations" UI section (added).
+    // Destinations — REST surface for the Xlaunch "Destinations" UI section (added).
     Route::get('/destinations', [DestinationsController::class, 'index'])->middleware(['api.ability:read']);
     Route::get('/destinations/{uuid}', [DestinationsController::class, 'show'])->middleware(['api.ability:read']);
     Route::patch('/destinations/{uuid}', [DestinationsController::class, 'update'])->middleware(['api.ability:write']);
@@ -430,5 +430,5 @@ Route::group([
 });
 
 Route::any('/{any}', function () {
-    return response()->json(['message' => 'Not found.', 'docs' => 'https://coolify.io/docs'], 404);
+    return response()->json(['message' => 'Not found.', 'docs' => 'https://northlatch.com/docs'], 404);
 })->where('any', '.*');

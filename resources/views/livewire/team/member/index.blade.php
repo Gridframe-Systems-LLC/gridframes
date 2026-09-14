@@ -53,7 +53,7 @@
     }
 }">
     <x-slot:title>
-        Team Members | Coolify
+        Team Members | Xlaunch
     </x-slot>
 
     <x-team.settings-layout>
@@ -131,7 +131,7 @@
 
             <x-client-pagination x-cloak x-show="filteredMembers.length > 0"
                 summary="`${firstVisibleRow}-${lastVisibleRow} of ${filteredMembers.length}`"
-                page-size-model="perPage" storage-key="coolify.page-size.team-members"
+                page-size-model="perPage" storage-key="xlaunch.page-size.team-members"
                 previous-action="goToPage(page - 1)" next-action="goToPage(page + 1)"
                 next-disabled="page >= lastPage" />
         </x-application.settings-section>

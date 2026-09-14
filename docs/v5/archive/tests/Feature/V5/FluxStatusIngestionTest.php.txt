@@ -66,7 +66,7 @@ function createFluxIngestionApplication(V5Server $server, array $overrides = [])
         'created_by_user_id' => 1,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => ApplicationStatus::Running->value,
         'status_message' => 'Container started.',
         'runtime_container_id' => 'nginx-container-id',
@@ -84,7 +84,7 @@ it('maps unknown flux application status values to unknown and logs a warning', 
     ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'Exploded',
     ]);
@@ -130,7 +130,7 @@ it('still applies known statuses case insensitively without warnings', function 
     ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'EXITED',
     ]);
@@ -152,7 +152,7 @@ it('drops flux application status updates that are older than the persisted obse
     $resource = ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'exited',
         'observed_at' => '2026-07-05T11:00:00Z',
@@ -180,7 +180,7 @@ it('applies flux application status updates with a newer observation and persist
     ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'exited',
         'status_message' => 'Container exited.',
@@ -205,7 +205,7 @@ it('keeps applying flux application status updates that carry no observation tim
     ApplyFluxResourceStatusUpdate::run([
         'resource_type' => 'application',
         'host_id' => '100.64.0.5',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'container_id' => 'nginx-container-id',
         'status' => 'exited',
     ]);
@@ -314,7 +314,7 @@ it('accepts flux resource status http payloads with a valid observed_at timestam
         ->postJson('/api/v1/internal/flux/resource-status', [
             'resource_type' => 'application',
             'host_id' => '100.64.0.5',
-            'container_name' => 'coolify-v5-nginx-1',
+            'container_name' => 'xlaunch-v5-nginx-1',
             'container_id' => 'nginx-container-id',
             'status' => 'exited',
             'observed_at' => '2026-07-05T12:00:00Z',

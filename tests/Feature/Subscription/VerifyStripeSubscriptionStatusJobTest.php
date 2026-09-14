@@ -12,7 +12,7 @@ use Stripe\StripeClient;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
     config()->set('subscription.provider', 'stripe');
     config()->set('subscription.stripe_api_key', 'sk_test_fake');
 

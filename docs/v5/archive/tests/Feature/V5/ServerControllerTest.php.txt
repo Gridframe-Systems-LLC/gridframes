@@ -89,7 +89,7 @@ it('restarts v5 server coold over ssh with a freshly minted host jwt', function 
     });
 
     Process::fake([
-        '*' => Process::result(output: "active\n● coold.service - Coolify host agent\n"),
+        '*' => Process::result(output: "active\n● coold.service - Xlaunch host agent\n"),
     ]);
 
     $this
@@ -98,7 +98,7 @@ it('restarts v5 server coold over ssh with a freshly minted host jwt', function 
         ->postJson("/v5/clusters/{$cluster->uuid}/servers/{$server->uuid}/restart-coold")
         ->assertSuccessful()
         ->assertJsonPath('connected', true)
-        ->assertJsonPath('output', "active\n● coold.service - Coolify host agent")
+        ->assertJsonPath('output', "active\n● coold.service - Xlaunch host agent")
         ->assertJsonStructure(['cluster', 'output', 'connected', 'restartedAt']);
 
     expect($server->refresh()->status)->toBe('installed')
@@ -110,7 +110,7 @@ it('restarts v5 server coold over ssh with a freshly minted host jwt', function 
 
         return str_contains($command, '203.0.113.10')
             && str_contains($command, base64_encode('fresh-host-jwt'))
-            && str_contains($command, '/etc/coolify/host-jwt')
+            && str_contains($command, '/etc/xlaunch/host-jwt')
             && str_contains($command, 'systemctl restart coold.service');
     });
 });
@@ -323,7 +323,7 @@ it('fetches v5 server corrosion tables through flux', function () {
         $mock->shouldReceive('corrosionTables')
             ->once()
             ->with(Mockery::type('string'), 200)
-            ->andReturn('{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["coolify-v5-nginx"]]}]}');
+            ->andReturn('{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["xlaunch-v5-nginx"]]}]}');
     });
 
     $this
@@ -331,7 +331,7 @@ it('fetches v5 server corrosion tables through flux', function () {
         ->withSession(['currentTeam' => $team])
         ->getJson("/v5/clusters/{$cluster->uuid}/servers/{$server->uuid}/corrosion-tables?limit=200")
         ->assertSuccessful()
-        ->assertJsonPath('output', '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["coolify-v5-nginx"]]}]}')
+        ->assertJsonPath('output', '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["xlaunch-v5-nginx"]]}]}')
         ->assertJsonStructure(['output', 'fetchedAt']);
 });
 
@@ -370,7 +370,7 @@ it('falls back to ssh for v5 server corrosion tables when flux fails', function 
     });
 
     Process::fake([
-        '*' => Process::result(output: '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["coolify-v5-nginx"]]}]}'),
+        '*' => Process::result(output: '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["xlaunch-v5-nginx"]]}]}'),
     ]);
 
     $this
@@ -378,7 +378,7 @@ it('falls back to ssh for v5 server corrosion tables when flux fails', function 
         ->withSession(['currentTeam' => $team])
         ->getJson("/v5/clusters/{$cluster->uuid}/servers/{$server->uuid}/corrosion-tables?limit=200")
         ->assertSuccessful()
-        ->assertJsonPath('output', '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["coolify-v5-nginx"]]}]}')
+        ->assertJsonPath('output', '{"limit":200,"tables":[{"name":"service_endpoints","columns":["container_name"],"rows":[["xlaunch-v5-nginx"]]}]}')
         ->assertJsonPath('source', 'ssh');
 
     Process::assertRan(function ($process): bool {
@@ -423,8 +423,8 @@ it('fetches v5 server firewall rules through flux', function () {
             ->andReturn([[
                 'id' => 'v5-resource-connection:1:1:2:tcp:5432',
                 'namespace' => 'default',
-                'src' => 'coolify-v5-api',
-                'dst' => 'coolify-v5-postgres',
+                'src' => 'xlaunch-v5-api',
+                'dst' => 'xlaunch-v5-postgres',
                 'proto' => 'tcp',
                 'port' => 5432,
             ]]);
@@ -475,7 +475,7 @@ it('falls back to ssh for v5 server firewall rules when flux fails', function ()
     });
 
     Process::fake([
-        '*' => Process::result(output: '[{"id":"v5-resource-connection:1:1:2:tcp:5432","namespace":"default","src":"coolify-v5-api","dst":"coolify-v5-postgres","proto":"tcp","port":5432}]'),
+        '*' => Process::result(output: '[{"id":"v5-resource-connection:1:1:2:tcp:5432","namespace":"default","src":"xlaunch-v5-api","dst":"xlaunch-v5-postgres","proto":"tcp","port":5432}]'),
     ]);
 
     $this
@@ -490,7 +490,7 @@ it('falls back to ssh for v5 server firewall rules when flux fails', function ()
     Process::assertRan(function ($process): bool {
         $command = implode(' ', array_map(fn ($part) => is_string($part) ? $part : json_encode($part), $process->command));
 
-        return str_contains($command, '/etc/coolify/firewall-rules.tsv')
+        return str_contains($command, '/etc/xlaunch/firewall-rules.tsv')
             && str_contains($command, '203.0.113.10')
             && in_array('LogLevel=ERROR', $process->command, true);
     });
@@ -685,7 +685,7 @@ it('defaults dev Lima wireguard overrides for host docker internal servers', fun
         ->actingAs($user)
         ->withSession(['currentTeam' => $team])
         ->postJson("/v5/clusters/{$cluster->uuid}/servers", [
-            'name' => 'coolify-naked-test',
+            'name' => 'xlaunch-naked-test',
             'host' => 'host.docker.internal',
             'ssh_user' => 'root',
             'ssh_port' => 60003,
@@ -1058,7 +1058,7 @@ it('removes the bootstrap marker over ssh when deleting a bootstrapped v5 server
     Process::assertRan(function ($process): bool {
         $command = implode(' ', array_map(fn ($part) => is_string($part) ? $part : json_encode($part), $process->command));
 
-        return str_contains($command, 'rm -f /etc/coolify/v5-node.json /etc/coolify/host-jwt');
+        return str_contains($command, 'rm -f /etc/xlaunch/v5-node.json /etc/xlaunch/host-jwt');
     });
 
     expect(V5Server::query()->whereKey($server->id)->exists())->toBeFalse();
@@ -1096,7 +1096,7 @@ it('still deletes a bootstrapped v5 server when the ssh cleanup fails', function
         ->withSession(['currentTeam' => $team])
         ->deleteJson("/v5/clusters/{$cluster->uuid}/servers/{$server->uuid}")
         ->assertSuccessful()
-        ->assertJsonPath('warning', 'Could not clean up the server over SSH. Remove /etc/coolify/v5-node.json manually before re-adding this server.');
+        ->assertJsonPath('warning', 'Could not clean up the server over SSH. Remove /etc/xlaunch/v5-node.json manually before re-adding this server.');
 
     expect(V5Server::query()->whereKey($server->id)->exists())->toBeFalse();
 });
@@ -1214,7 +1214,7 @@ it('blocks deleting a v5 server that still has applications', function () {
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'status' => 'running',
     ]);
 
@@ -1377,7 +1377,7 @@ it('syncs caddy ingress routes through flux when enabling ingress on an installe
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
@@ -1403,7 +1403,7 @@ it('syncs caddy ingress routes through flux when enabling ingress on an installe
             Mockery::on(fn (array $apps): bool => count($apps) === 1
                 && str_contains($apps[0]['config'], 'http://nginx.example.com {')
                 && str_contains($apps[0]['config'], 'http://www.nginx.example.com {')
-                && str_contains($apps[0]['config'], 'reverse_proxy coolify-v5-nginx-test.default.coolify.internal:8080'))
+                && str_contains($apps[0]['config'], 'reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:8080'))
         )
         ->andReturn('Caddy ingress applied.');
     expectCaddyIngressFirewallRule($fluxClient);
@@ -1462,7 +1462,7 @@ it('returns flux error details when server ingress activation fails', function (
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,

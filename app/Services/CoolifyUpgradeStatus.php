@@ -4,7 +4,7 @@ namespace App\Services;
 
 use DateTimeInterface;
 
-class CoolifyUpgradeStatus
+class XlaunchUpgradeStatus
 {
     public const STALE_AFTER_MINUTES = 10;
 
@@ -62,7 +62,7 @@ class CoolifyUpgradeStatus
             return [
                 'status' => 'in_progress',
                 'step' => $stepInt,
-                'message' => "Waiting for Coolify {$targetVersion} to come online...",
+                'message' => "Waiting for Xlaunch {$targetVersion} to come online...",
                 ...$base,
             ];
         }

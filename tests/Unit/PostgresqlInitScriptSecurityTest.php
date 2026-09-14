@@ -131,7 +131,7 @@ test('basename() strips path traversal from legacy filenames at write site', fun
 
 test('escapeshellarg() neutralises shell metacharacters in tee target', function () {
     // Simulates how StartPostgresql::generate_init_scripts() builds the tee argument
-    $configuration_dir = '/data/coolify/databases/abc123';
+    $configuration_dir = '/data/xlaunch/databases/abc123';
     $legacy_filename = basename('foo bar*.sql;rm -rf /');
     $target = "$configuration_dir/docker-entrypoint-initdb.d/{$legacy_filename}";
     $escaped = escapeshellarg($target);

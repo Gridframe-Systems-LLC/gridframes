@@ -17,7 +17,7 @@ uses(TestCase::class);
 it('generates a caddy ingress compose file with health endpoint and application routes', function () {
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -33,26 +33,26 @@ it('generates a caddy ingress compose file with health endpoint and application 
 
     $configuration = GenerateCaddyIngressConfiguration::run(new Collection([$application]));
 
-    expect($configuration['compose'])->toContain('container_name: coolify-v5-caddy')
+    expect($configuration['compose'])->toContain('container_name: xlaunch-v5-caddy')
         ->and($configuration['compose'])->toContain("image: 'docker.io/library/caddy:2-alpine'")
         ->and($configuration['compose'])->toContain('80:80')
         ->and($configuration['compose'])->not->toContain('443:443')
         ->and($configuration['compose'])->toContain('./Caddyfile:/etc/caddy/Caddyfile:ro')
         ->and($configuration['compose'])->toContain('./apps:/etc/caddy/apps:ro')
-        ->and($configuration['caddyfile'])->toContain('respond /coolify-health 200')
+        ->and($configuration['caddyfile'])->toContain('respond /xlaunch-health 200')
         ->and($configuration['caddyfile'])->toContain('respond 404')
         ->and($configuration['caddyfile'])->toContain('import apps/*.caddy')
         ->and($configuration['apps'])->toHaveCount(1)
         ->and($configuration['apps'][0]['caddyfile'])->toContain('http://nginx.example.com {')
         ->and($configuration['apps'][0]['caddyfile'])->toContain('http://www.nginx.example.com {')
         ->and($configuration['apps'][0]['caddyfile'])->not->toContain('https://')
-        ->and($configuration['apps'][0]['caddyfile'])->toContain('reverse_proxy coolify-v5-nginx-test.default.coolify.internal:8080');
+        ->and($configuration['apps'][0]['caddyfile'])->toContain('reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:8080');
 });
 
 it('generates byte-identical caddy routes for valid domains', function () {
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -66,11 +66,11 @@ it('generates byte-identical caddy routes for valid domains', function () {
 
     expect($configuration['apps'][0]['caddyfile'])->toBe(implode("\n", [
         'http://nginx.example.com {',
-        '    reverse_proxy coolify-v5-nginx-test.default.coolify.internal:8080',
+        '    reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:8080',
         '}',
         '',
         'http://www.nginx.example.com {',
-        '    reverse_proxy coolify-v5-nginx-test.default.coolify.internal:8080',
+        '    reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:8080',
         '}',
     ]));
 });
@@ -80,7 +80,7 @@ it('never emits domains with caddyfile injection payloads into the configuration
 
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -97,7 +97,7 @@ it('never emits domains with caddyfile injection payloads into the configuration
         ->and($configuration['apps'][0]['caddyfile'])->not->toContain('evil')
         ->and($configuration['apps'][0]['caddyfile'])->toBe(implode("\n", [
             'http://safe.example.com {',
-            '    reverse_proxy coolify-v5-nginx-test.default.coolify.internal:8080',
+            '    reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:8080',
             '}',
         ]));
 
@@ -111,7 +111,7 @@ it('skips whole applications when every domain is malicious', function () {
 
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -134,7 +134,7 @@ it('never emits unsafe container names or namespaces into the configuration', fu
 
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => "coolify {\n} injected",
+        'container_name' => "xlaunch {\n} injected",
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -145,7 +145,7 @@ it('never emits unsafe container names or namespaces into the configuration', fu
 
     $namespaceApplication = new Application([
         'name' => 'nginx-test-2',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => "default {\n}",
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -168,7 +168,7 @@ it('never emits out-of-range internal ports into the configuration', function ()
 
     $application = new Application([
         'name' => 'nginx-test',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
     ]);
@@ -189,7 +189,7 @@ it('never emits out-of-range internal ports into the configuration', function ()
 it('does not generate app routes for applications without domains', function () {
     $application = new Application([
         'name' => 'private-app',
-        'container_name' => 'coolify-v5-private',
+        'container_name' => 'xlaunch-v5-private',
         'mesh_namespace' => 'default',
     ]);
     $application->setRelation('domains', new Collection);
@@ -197,14 +197,14 @@ it('does not generate app routes for applications without domains', function () 
     $configuration = GenerateCaddyIngressConfiguration::run(new Collection([$application]));
 
     expect($configuration['caddyfile'])
-        ->toContain('respond /coolify-health 200')
+        ->toContain('respond /xlaunch-health 200')
         ->and($configuration['apps'])->toBe([]);
 });
 
 it('does not generate app routes when ingress is disabled even with domains', function () {
     $application = new Application([
         'name' => 'private-app',
-        'container_name' => 'coolify-v5-private',
+        'container_name' => 'xlaunch-v5-private',
         'mesh_namespace' => 'default',
         'ingress_enabled' => false,
         'internal_port' => 8080,
@@ -223,7 +223,7 @@ it('does not generate app routes when ingress is disabled even with domains', fu
 it('does not generate app routes when the internal port is missing', function () {
     $application = new Application([
         'name' => 'needs-port',
-        'container_name' => 'coolify-v5-needs-port',
+        'container_name' => 'xlaunch-v5-needs-port',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
         'internal_port' => null,
@@ -254,7 +254,7 @@ it('applies caddy ingress configuration through flux instead of ssh', function (
         ->with(
             Mockery::type('string'),
             'caddy',
-            Mockery::on(fn (string $caddyfile): bool => str_contains($caddyfile, 'respond /coolify-health 200')),
+            Mockery::on(fn (string $caddyfile): bool => str_contains($caddyfile, 'respond /xlaunch-health 200')),
             []
         )
         ->andReturn('Caddy ingress applied.');
@@ -265,7 +265,7 @@ it('applies caddy ingress configuration through flux instead of ssh', function (
             'id' => 'v5-caddy-ingress:80',
             'namespace' => 'default',
             'src' => '0.0.0.0/0',
-            'dst' => 'coolify-v5-caddy',
+            'dst' => 'xlaunch-v5-caddy',
             'proto' => 'tcp',
             'port' => 80,
         ])
@@ -526,12 +526,12 @@ it('dispatches image pull and container lifecycle primitives for v5 apps', funct
 
         expect($fluxClient->pullImage('100.64.0.10', 'docker.io/library/nginx:alpine'))->toBe('Image pulled.')
             ->and($fluxClient->createContainer('100.64.0.10', [
-                'name' => 'coolify-v5-nginx-test',
+                'name' => 'xlaunch-v5-nginx-test',
                 'image' => 'docker.io/library/nginx:alpine',
-                'networks' => ['coolify-default-mesh'],
-                'network_aliases' => ['coolify-v5-nginx-test'],
+                'networks' => ['xlaunch-default-mesh'],
+                'network_aliases' => ['xlaunch-v5-nginx-test'],
                 'dns' => ['10.210.0.1'],
-                'dns_search' => ['default.coolify.internal'],
+                'dns_search' => ['default.xlaunch.internal'],
                 'restart_policy' => 'unless-stopped',
             ]))->toBe('container-123')
             ->and($fluxClient->startContainer('100.64.0.10', 'container-123'))->toBe('Container started.')
@@ -545,8 +545,8 @@ it('dispatches image pull and container lifecycle primitives for v5 apps', funct
 
     expect($request)->toContain('"type":"images.pull"')
         ->toContain('"type":"containers.create"')
-        ->toContain('"network_aliases":["coolify-v5-nginx-test"]')
-        ->toContain('"dns_search":["default.coolify.internal"]')
+        ->toContain('"network_aliases":["xlaunch-v5-nginx-test"]')
+        ->toContain('"dns_search":["default.xlaunch.internal"]')
         ->toContain('"type":"containers.start"')
         ->toContain('"type":"containers.inspect"')
         ->toContain('"type":"containers.stop"')
@@ -576,8 +576,8 @@ it('dispatches firewall allow through the firewall allow primitive', function ()
         fn () => (new FluxClient)->applyFirewallRule('100.64.0.10', [
             'id' => 'rule-123',
             'namespace' => 'default',
-            'src' => 'coolify-v5-api',
-            'dst' => 'coolify-v5-postgres',
+            'src' => 'xlaunch-v5-api',
+            'dst' => 'xlaunch-v5-postgres',
             'proto' => 'tcp',
             'port' => 5432,
         ])
@@ -588,8 +588,8 @@ it('dispatches firewall allow through the firewall allow primitive', function ()
 
     expect($request)->toContain('"type":"firewall.allow"')
         ->toContain('"id":"rule-123"')
-        ->toContain('"src":"coolify-v5-api"')
-        ->toContain('"dst":"coolify-v5-postgres"')
+        ->toContain('"src":"xlaunch-v5-api"')
+        ->toContain('"dst":"xlaunch-v5-postgres"')
         ->toContain('"port":5432');
 });
 

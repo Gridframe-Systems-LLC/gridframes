@@ -196,46 +196,46 @@ it('respects user-provided -f and --env-file flags', function () {
 
 it('injects -f and --env-file flags into custom start command', function () {
     $customCommand = 'docker compose up -d';
-    $serverWorkdir = '/var/lib/docker/volumes/coolify-data/_data/applications/app-uuid';
+    $serverWorkdir = '/var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid';
     $composeLocation = '/docker-compose.yaml';
 
     // Use the helper function
     $customCommand = injectDockerComposeFlags($customCommand, "{$serverWorkdir}{$composeLocation}", "{$serverWorkdir}/.env");
 
-    expect($customCommand)->toBe('docker compose -f /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/docker-compose.yaml --env-file /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/.env up -d');
-    expect($customCommand)->toContain('-f /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/docker-compose.yaml');
-    expect($customCommand)->toContain('--env-file /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/.env');
+    expect($customCommand)->toBe('docker compose -f /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/docker-compose.yaml --env-file /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/.env up -d');
+    expect($customCommand)->toContain('-f /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/docker-compose.yaml');
+    expect($customCommand)->toContain('--env-file /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/.env');
 });
 
 it('does not duplicate -f flag in start command when already present', function () {
     $customCommand = 'docker compose -f ./custom-compose.yaml up -d';
-    $serverWorkdir = '/var/lib/docker/volumes/coolify-data/_data/applications/app-uuid';
+    $serverWorkdir = '/var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid';
     $composeLocation = '/docker-compose.yaml';
 
     // Use the helper function
     $customCommand = injectDockerComposeFlags($customCommand, "{$serverWorkdir}{$composeLocation}", "{$serverWorkdir}/.env");
 
-    expect($customCommand)->toBe('docker compose --env-file /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/.env -f ./custom-compose.yaml up -d');
+    expect($customCommand)->toBe('docker compose --env-file /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/.env -f ./custom-compose.yaml up -d');
     expect(substr_count($customCommand, ' -f '))->toBe(1);
     expect($customCommand)->toContain('--env-file');
 });
 
 it('does not duplicate --env-file flag in start command when already present', function () {
     $customCommand = 'docker compose --env-file ./my.env up -d';
-    $serverWorkdir = '/var/lib/docker/volumes/coolify-data/_data/applications/app-uuid';
+    $serverWorkdir = '/var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid';
     $composeLocation = '/docker-compose.yaml';
 
     // Use the helper function
     $customCommand = injectDockerComposeFlags($customCommand, "{$serverWorkdir}{$composeLocation}", "{$serverWorkdir}/.env");
 
-    expect($customCommand)->toBe('docker compose -f /var/lib/docker/volumes/coolify-data/_data/applications/app-uuid/docker-compose.yaml --env-file ./my.env up -d');
+    expect($customCommand)->toBe('docker compose -f /var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid/docker-compose.yaml --env-file ./my.env up -d');
     expect(substr_count($customCommand, '--env-file'))->toBe(1);
     expect($customCommand)->toContain('-f');
 });
 
 it('respects both user-provided flags in start command', function () {
     $customCommand = 'docker compose -f ./my-compose.yaml --env-file ./.env up -d';
-    $serverWorkdir = '/var/lib/docker/volumes/coolify-data/_data/applications/app-uuid';
+    $serverWorkdir = '/var/lib/docker/volumes/xlaunch-data/_data/applications/app-uuid';
     $composeLocation = '/docker-compose.yaml';
 
     // Use the helper function - should not inject anything since both flags are already present

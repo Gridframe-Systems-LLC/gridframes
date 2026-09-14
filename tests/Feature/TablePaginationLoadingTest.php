@@ -146,7 +146,7 @@ it('offers page size selection on client-side paginated tables', function (strin
     $contents = file_get_contents(resource_path("views/{$view}"));
 
     expect($contents)
-        ->toContain('storage-key="coolify.page-size.')
+        ->toContain('storage-key="xlaunch.page-size.')
         ->toMatch('/<x-(page-size-select|client-pagination)/');
 })->with([
     'team members' => 'livewire/team/member/index.blade.php',

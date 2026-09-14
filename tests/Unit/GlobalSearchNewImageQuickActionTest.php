@@ -67,7 +67,7 @@ it('uses neutral hover styling for GlobalSearch quick action rows', function () 
         expect($quickActionButton)
             ->toContain('hover:bg-neutral-100 dark:hover:bg-coolgray-200')
             ->toContain('focus:bg-neutral-100 dark:focus:bg-coolgray-200')
-            ->toContain('focus-visible:ring-coollabs dark:focus-visible:ring-warning')
+            ->toContain('focus-visible:ring-northlatch dark:focus-visible:ring-warning')
             ->not->toContain('hover:bg-warning-50')
             ->not->toContain('hover:border-warning-500');
     }
@@ -110,10 +110,10 @@ it('uses neutral hover styling for GlobalSearch existing resource rows', functio
         expect($existingResourceLink)
             ->toContain('hover:bg-neutral-100 dark:hover:bg-coolgray-200')
             ->toContain('focus:bg-neutral-100 dark:focus:bg-coolgray-200')
-            ->toContain('focus-visible:ring-coollabs dark:focus-visible:ring-warning')
+            ->toContain('focus-visible:ring-northlatch dark:focus-visible:ring-warning')
             ->not->toContain('hover:bg-neutral-50')
             ->not->toContain('focus:bg-warning')
-            ->not->toContain('hover:border-coollabs')
+            ->not->toContain('hover:border-northlatch')
             ->not->toContain('focus:border-warning');
     }
 });

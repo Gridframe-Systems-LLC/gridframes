@@ -51,7 +51,7 @@ function makeDeploymentActionApplication(Environment $environment, StandaloneDoc
         'environment_id' => $environment->id,
         'destination_id' => $destination->id,
         'destination_type' => $destination->getMorphClass(),
-        'git_repository' => 'https://github.com/coollabsio/coolify',
+        'git_repository' => 'https://github.com/northlatch/xlaunch',
         'git_branch' => 'main',
         'git_commit_sha' => 'HEAD',
     ]);

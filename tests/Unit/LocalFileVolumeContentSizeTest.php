@@ -4,7 +4,7 @@
  * Unit tests for LocalFileVolume content size handling.
  *
  * Related Issue: #4701 - Storages page becomes unusable when Docker volumes
- * mount large host files. Coolify previously stored full file content in the
+ * mount large host files. Xlaunch previously stored full file content in the
  * encrypted `content` mediumText column, then serialized it to the Livewire
  * payload, crashing the browser.
  */

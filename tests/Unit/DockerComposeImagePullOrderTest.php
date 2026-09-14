@@ -54,7 +54,7 @@ function makeDockerComposeImagePullJob(bool $useBuildServer = false): array
         'workdir' => '/artifacts/application',
         'deployment_uuid' => 'deployment-uuid',
         'docker_compose_location' => '/docker-compose.yaml',
-        'coolify_variables' => '',
+        'xlaunch_variables' => '',
     ] as $property => $value) {
         $reflection->getProperty($property)->setValue($job, $value);
     }

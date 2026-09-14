@@ -12,7 +12,7 @@ it('accepts valid docker registry image names', function (string $imageName) {
 })->with([
     'single component' => 'nginx',
     'namespace image' => 'library/nginx',
-    'ghcr image' => 'ghcr.io/coollabsio/coolify',
+    'ghcr image' => 'ghcr.io/northlatch/xlaunch',
     'repository component with repeated hyphens' => 'ghcr.io/acme/my--service',
     'registry with port' => 'registry.example.com:5000/team/app',
     'digest marker used by existing dockerimage records' => 'nginx@sha256',
@@ -21,14 +21,14 @@ it('accepts valid docker registry image names', function (string $imageName) {
 it('rejects docker registry image names with shell metacharacters', function (string $imageName) {
     expect(ValidationPatterns::isValidDockerImageName($imageName))->toBeFalse();
 })->with([
-    'command substitution' => 'coolify/poc$(touch /tmp/pwned)',
-    'semicolon' => 'coolify/poc;id',
-    'backticks' => 'coolify/poc`id`',
-    'pipe' => 'coolify/poc|id',
-    'logical and' => 'coolify/poc&&id',
-    'newline' => "coolify/poc\nid",
-    'space' => 'coolify/poc image',
-    'tag in image-name-only field' => 'coolify/poc:latest',
+    'command substitution' => 'xlaunch/poc$(touch /tmp/pwned)',
+    'semicolon' => 'xlaunch/poc;id',
+    'backticks' => 'xlaunch/poc`id`',
+    'pipe' => 'xlaunch/poc|id',
+    'logical and' => 'xlaunch/poc&&id',
+    'newline' => "xlaunch/poc\nid",
+    'space' => 'xlaunch/poc image',
+    'tag in image-name-only field' => 'xlaunch/poc:latest',
 ]);
 
 it('accepts valid docker registry image tags', function (string $tag) {
@@ -86,7 +86,7 @@ it('stops deployments when a stored docker registry image value is unsafe', func
     $job = (new ReflectionClass(ApplicationDeploymentJob::class))->newInstanceWithoutConstructor();
 
     $application = new Application([
-        'docker_registry_image_name' => 'coolify/poc$(touch /tmp/pwned)',
+        'docker_registry_image_name' => 'xlaunch/poc$(touch /tmp/pwned)',
         'docker_registry_image_tag' => 'latest',
     ]);
     $deploymentQueue = new ApplicationDeploymentQueue([

@@ -62,7 +62,7 @@ test('the danger zone resource list can be refreshed', function () {
 test('unused private keys do not block team deletion', function () {
     $privateKey = PrivateKey::factory()->create([
         'team_id' => $this->teamToDelete->id,
-        'description' => 'Created by Coolify',
+        'description' => 'Created by Xlaunch',
     ]);
 
     expect($this->teamToDelete->isEmpty())->toBeTrue();

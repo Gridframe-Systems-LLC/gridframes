@@ -65,7 +65,7 @@ class Select extends Component
         try {
             $this->parameters = get_route_parameters();
             if (isDev()) {
-                $this->existingPostgresqlUrl = 'postgres://coolify:password@coolify-db:5432';
+                $this->existingPostgresqlUrl = 'postgres://xlaunch:password@xlaunch-db:5432';
             }
             $projectUuid = data_get($this->parameters, 'project_uuid');
             $project = Project::ownedByCurrentTeam()->whereUuid($projectUuid)->firstOrFail();
@@ -154,22 +154,22 @@ class Select extends Component
             [
                 'id' => 'public',
                 'name' => 'Public Git Repository',
-                'description' => 'Deploy any public Git repository. Coolify builds it from source, no credentials required.',
-                'documentation' => 'https://coolify.io/docs/applications/ci-cd',
+                'description' => 'Deploy any public Git repository. Xlaunch builds it from source, no credentials required.',
+                'documentation' => 'https://northlatch.com/docs/applications/ci-cd',
                 'logo' => asset('svgs/resources/public-repo.svg'),
             ],
             [
                 'id' => 'private-deploy-key',
                 'name' => 'Private Git Repository (with Deploy Key)',
                 'description' => 'Deploy a private repository over SSH with a repository-scoped deploy key. Set the URL and branch manually, no automatic deploys.',
-                'documentation' => 'https://coolify.io/docs/applications/ci-cd/github/deploy-key',
+                'documentation' => 'https://northlatch.com/docs/applications/ci-cd/github/deploy-key',
                 'logo' => asset('svgs/resources/deploy-key.svg'),
             ],
             [
                 'id' => 'private-gh-app',
                 'name' => 'Git Repository (with GitHub App)',
                 'description' => 'Deploy public or private GitHub repositories through a GitHub App, with automatic webhooks and pull request previews.',
-                'documentation' => 'https://coolify.io/docs/applications/ci-cd/github/setup-app',
+                'documentation' => 'https://northlatch.com/docs/applications/ci-cd/github/setup-app',
                 'logo' => asset('svgs/resources/github-app.svg'),
                 'logoDark' => asset('svgs/resources/github-app-dark.svg'),
             ],
@@ -185,21 +185,21 @@ class Select extends Component
                 'id' => 'dockerfile',
                 'name' => 'Dockerfile',
                 'description' => 'Deploy an application using a Dockerfile, without a Git repository.',
-                'documentation' => 'https://coolify.io/docs/applications/build-packs/dockerfile',
+                'documentation' => 'https://northlatch.com/docs/applications/build-packs/dockerfile',
                 'logo' => asset('svgs/resources/dockerfile.svg'),
             ],
             [
                 'id' => 'docker-compose-empty',
                 'name' => 'Docker Compose',
                 'description' => 'Deploy a multi-container application using a Docker Compose file, without a Git repository.',
-                'documentation' => 'https://coolify.io/docs/applications/build-packs/docker-compose',
+                'documentation' => 'https://northlatch.com/docs/applications/build-packs/docker-compose',
                 'logo' => asset('svgs/resources/docker-compose.svg'),
             ],
             [
                 'id' => 'docker-image',
                 'name' => 'Docker Image',
                 'description' => 'Deploy an application using a prebuilt image from any Docker registry, without a Git repository.',
-                'documentation' => 'https://coolify.io/docs/applications',
+                'documentation' => 'https://northlatch.com/docs/applications',
                 'logo' => asset('svgs/resources/docker-image.svg'),
             ],
         ];

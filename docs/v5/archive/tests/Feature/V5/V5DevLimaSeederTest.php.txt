@@ -85,8 +85,8 @@ it('seeds dev Lima VMs into v5 clusters and servers idempotently', function () {
         ->and($cluster->created_by_user_id)->toBe($user->id)
         ->and($cluster->description)->toBe('Local Lima development cluster managed by scripts/dev.sh.')
         ->and(V5Server::query()->count())->toBe(2)
-        ->and(V5Server::query()->where('name', 'coold-dev')->where('host', 'coold-dev.local')->where('ssh_user', 'coolify')->where('ssh_port', 22)->exists())->toBeTrue()
-        ->and(V5Server::query()->where('name', 'coold-dev-2')->where('host', 'coold-dev-2.local')->where('ssh_user', 'coolify')->where('ssh_port', 22)->exists())->toBeTrue()
+        ->and(V5Server::query()->where('name', 'coold-dev')->where('host', 'coold-dev.local')->where('ssh_user', 'xlaunch')->where('ssh_port', 22)->exists())->toBeTrue()
+        ->and(V5Server::query()->where('name', 'coold-dev-2')->where('host', 'coold-dev-2.local')->where('ssh_user', 'xlaunch')->where('ssh_port', 22)->exists())->toBeTrue()
         ->and(V5Server::query()->where('name', 'coold-dev')->where('node_address', '100.64.0.1')->where('wireguard_management_ip', '100.64.0.1')->exists())->toBeTrue()
         ->and(V5Server::query()->where('name', 'coold-dev-2')->where('node_address', '100.64.0.2')->where('wireguard_management_ip', '100.64.0.2')->exists())->toBeTrue()
         ->and(V5Server::query()->where('status', 'installed')->count())->toBe(2)
@@ -126,14 +126,14 @@ it('seeds dev Lima VMs by updating existing named servers', function () {
         ->and(V5Server::query()->count())->toBe(2);
 });
 
-it('configures v5 dev lima host resolver for coolify internal dns', function () {
+it('configures v5 dev lima host resolver for xlaunch internal dns', function () {
     $script = file_get_contents(base_path('scripts/coold-vm.sh'));
 
     expect($script)
         ->toContain('configure_system_resolved')
         ->toContain('ensure_mesh_dns_anchor')
-        ->toContain('coolify-v5-mesh-dns-anchor')
+        ->toContain('xlaunch-v5-mesh-dns-anchor')
         ->toContain('resolvectl dns podman1 "$CONTAINER_GATEWAY"')
-        ->toContain("resolvectl domain podman1 '~coolify.internal'")
+        ->toContain("resolvectl domain podman1 '~xlaunch.internal'")
         ->toContain('resolvectl default-route podman1 false');
 });

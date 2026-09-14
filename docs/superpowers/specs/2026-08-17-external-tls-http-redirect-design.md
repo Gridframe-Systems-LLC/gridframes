@@ -2,7 +2,7 @@
 
 ## Problem
 
-The Cloudflare Tunnel all-resource setup sends public HTTPS requests to Coolify's proxy through `http://localhost:80`. When a resource domain is stored as `https://` and Coolify redirects HTTP traffic to HTTPS, the tunneled request repeatedly returns to the HTTP entrypoint and causes `TOO_MANY_REDIRECTS`.
+The Cloudflare Tunnel all-resource setup sends public HTTPS requests to Xlaunch's proxy through `http://localhost:80`. When a resource domain is stored as `https://` and Xlaunch redirects HTTP traffic to HTTPS, the tunneled request repeatedly returns to the HTTP entrypoint and causes `TOO_MANY_REDIRECTS`.
 
 The current documentation avoids the loop by telling users to store the public domain as `http://`. That misrepresents the public URL and can produce incorrect secure cookies, OAuth callback URLs, and canonical links. Applications can already disable forced HTTPS in advanced settings, but the control is not near domain configuration. Service applications always enable the redirect in generated proxy configuration.
 
@@ -28,7 +28,7 @@ The Domains page shows a boolean control named **Redirect HTTP to HTTPS** when a
 
 The control defaults to enabled. Its help text explains:
 
-> Disable this when HTTPS and redirects are handled by Cloudflare Tunnel or another reverse proxy that connects to Coolify over HTTP.
+> Disable this when HTTPS and redirects are handled by Cloudflare Tunnel or another reverse proxy that connects to Xlaunch over HTTP.
 
 A Cloudflare Tunnel user configures `https://app.example.com` and disables the control. A directly exposed resource leaves it enabled.
 
@@ -69,7 +69,7 @@ Update the Cloudflare all-resource guide to instruct users to:
 2. Disable **Redirect HTTP to HTTPS** for that resource.
 3. Let Cloudflare perform the public redirect and TLS termination.
 
-The guide should retain the full TLS guide as the alternative for users who want TLS between cloudflared and Coolify's HTTPS entrypoint.
+The guide should retain the full TLS guide as the alternative for users who want TLS between cloudflared and Xlaunch's HTTPS entrypoint.
 
 ## Testing
 
@@ -83,7 +83,7 @@ Automated tests must cover:
 - HTTP-only resources do not show an irrelevant control.
 - The Domains UI persists changes with existing authorization rules.
 
-A manual smoke test should route a Cloudflare Tunnel hostname to `http://localhost:80`, save the Coolify resource as `https://`, disable the redirect, and verify the public HTTPS URL loads without a redirect loop.
+A manual smoke test should route a Cloudflare Tunnel hostname to `http://localhost:80`, save the Xlaunch resource as `https://`, disable the redirect, and verify the public HTTPS URL loads without a redirect loop.
 
 ## Compatibility
 

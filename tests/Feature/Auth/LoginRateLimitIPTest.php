@@ -70,7 +70,7 @@ test('successful login is still possible within rate limit', function () {
 });
 
 test('cloud login rate limits use the Cloudflare client ip', function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 
     foreach (range(1, 5) as $attempt) {
         $this->withHeader('CF-Connecting-IP', '2001:db8::10')

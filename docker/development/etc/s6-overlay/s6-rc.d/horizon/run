@@ -3,9 +3,9 @@
 cd /var/www/html
 
 . /etc/s6-overlay/scripts/container-role
-role="$(coolify_container_role_value)"
+role="$(xlaunch_container_role_value)"
 
-if ! coolify_container_has_role worker && ! coolify_container_has_role horizon; then
+if ! xlaunch_container_has_role worker && ! xlaunch_container_has_role horizon; then
     echo "   INFO  Horizon is disabled for role '$role', sleeping."
     exec sleep infinity
 fi

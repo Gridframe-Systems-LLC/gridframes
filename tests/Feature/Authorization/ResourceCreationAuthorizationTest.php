@@ -60,7 +60,7 @@ beforeEach(function () {
 
     StandaloneDocker::withoutEvents(function () {
         $this->destination = StandaloneDocker::firstOrCreate(
-            ['server_id' => $this->server->id, 'network' => 'coolify'],
+            ['server_id' => $this->server->id, 'network' => 'xlaunch'],
             ['uuid' => (string) Str::uuid(), 'name' => 'test-docker']
         );
     });
@@ -121,8 +121,8 @@ test('public git docker compose creates an application in local mode', function 
             'environment_uuid' => $this->environment->uuid,
         ])
         ->set('query', ['destination' => $this->destination->uuid])
-        ->set('repository_url', 'https://github.com/coollabsio/coolify')
-        ->set('git_repository', 'https://github.com/coollabsio/coolify')
+        ->set('repository_url', 'https://github.com/northlatch/xlaunch')
+        ->set('git_repository', 'https://github.com/northlatch/xlaunch')
         ->set('git_branch', 'main')
         ->set('build_pack', 'dockercompose')
         ->set('new_compose_services', true)

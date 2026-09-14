@@ -11,11 +11,11 @@ import { FitAddon } from '@xterm/addon-fit';
 const terminalDebugParameter = new URLSearchParams(window.location.search).get('terminal-debug');
 
 if (terminalDebugParameter === '1' || terminalDebugParameter === '0') {
-    localStorage.setItem('coolify-terminal-debug', terminalDebugParameter);
+    localStorage.setItem('xlaunch-terminal-debug', terminalDebugParameter);
 }
 
 const terminalDebugEnabled = import.meta.env.DEV
-    || localStorage.getItem('coolify-terminal-debug') === '1';
+    || localStorage.getItem('xlaunch-terminal-debug') === '1';
 
 const baseApplicationTerminalTheme = {
     black: '#675f70',
@@ -214,8 +214,8 @@ export function initializeTerminalComponent() {
             terminalSessionStartedAt: null,
             terminalSessionRemainingSeconds: null,
             terminalSessionCountdownInterval: null,
-            selectedTheme: applicationTerminalThemes[localStorage.getItem('coolify-console-theme')]
-                ? localStorage.getItem('coolify-console-theme')
+            selectedTheme: applicationTerminalThemes[localStorage.getItem('xlaunch-console-theme')]
+                ? localStorage.getItem('xlaunch-console-theme')
                 : 'system',
 
             init() {
@@ -476,7 +476,7 @@ export function initializeTerminalComponent() {
                 }
 
                 this.selectedTheme = themeName;
-                localStorage.setItem('coolify-console-theme', themeName);
+                localStorage.setItem('xlaunch-console-theme', themeName);
 
                 if (this.term) {
                     const cursorBlink = this.term.options.cursorBlink;

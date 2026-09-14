@@ -414,7 +414,7 @@ class ApplicationConfigurationSnapshot
 
     private function sensitiveHash(mixed $value): string
     {
-        return hash_hmac('sha256', json_encode($value, JSON_THROW_ON_ERROR), (string) config('app.key', 'coolify'));
+        return hash_hmac('sha256', json_encode($value, JSON_THROW_ON_ERROR), (string) config('app.key', 'xlaunch'));
     }
 
     private function normalizeValue(mixed $value): mixed

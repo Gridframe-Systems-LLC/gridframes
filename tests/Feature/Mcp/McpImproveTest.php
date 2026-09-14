@@ -82,11 +82,11 @@ test('get_logs returns structured next_tools when not running', function () {
         ->toContain('list_deployments', 'list_unhealthy_resources');
 });
 
-test('coolify_help returns essentials catalog', function () {
-    $response = mcpImproveCall('coolify_help', ['intent' => 'essentials']);
+test('xlaunch_help returns essentials catalog', function () {
+    $response = mcpImproveCall('xlaunch_help', ['intent' => 'essentials']);
     $response->assertOk();
     $body = mcpImproveJson($response);
-    expect($body['data']['catalog']['essentials']['tools'])->toContain('coolify_help', 'control', 'search_resources');
+    expect($body['data']['catalog']['essentials']['tools'])->toContain('xlaunch_help', 'control', 'search_resources');
 });
 
 test('list_unhealthy_resources sample_only returns summary', function () {
@@ -121,7 +121,7 @@ test('control requires deploy ability and stop requires confirm', function () {
     expect((string) $stop->json('result.content.0.text'))->toContain('confirm=true');
 });
 
-test('tools list includes coolify_help and control', function () {
+test('tools list includes xlaunch_help and control', function () {
     $token = mcpImproveToken();
     $response = test()->withHeaders([
         'Content-Type' => 'application/json',
@@ -135,5 +135,5 @@ test('tools list includes coolify_help and control', function () {
     ]);
     $response->assertOk();
     $names = collect($response->json('result.tools'))->pluck('name')->all();
-    expect($names)->toContain('coolify_help', 'control', 'deploy', 'cancel_deployment');
+    expect($names)->toContain('xlaunch_help', 'control', 'deploy', 'cancel_deployment');
 });

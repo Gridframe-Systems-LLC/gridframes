@@ -33,7 +33,7 @@ beforeEach(function () {
     $this->server = Server::factory()->create(['team_id' => $this->team->id]);
     $this->destination = StandaloneDocker::factory()->create([
         'server_id' => $this->server->id,
-        'network' => 'coolify-'.Str::lower(Str::random(8)),
+        'network' => 'xlaunch-'.Str::lower(Str::random(8)),
     ]);
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
     $this->environment = Environment::factory()->create(['project_id' => $this->project->id]);
@@ -47,7 +47,7 @@ function createDockerImageApplication(Environment $environment, StandaloneDocker
         'destination_id' => $destination->id,
         'destination_type' => StandaloneDocker::class,
         'build_pack' => 'dockerimage',
-        'docker_registry_image_name' => 'ghcr.io/coollabsio/example',
+        'docker_registry_image_name' => 'ghcr.io/northlatch/example',
         'docker_registry_image_tag' => 'latest',
     ]);
 }

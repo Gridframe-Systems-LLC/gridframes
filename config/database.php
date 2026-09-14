@@ -3,7 +3,7 @@
 use Illuminate\Support\Str;
 use Pdo\Pgsql;
 
-$parseDatabaseHosts = function (mixed $hosts, mixed $fallback = 'coolify-db'): array {
+$parseDatabaseHosts = function (mixed $hosts, mixed $fallback = 'xlaunch-db'): array {
     $parsedHosts = array_values(array_filter(
         array_map('trim', explode(',', (string) $hosts)),
         'strlen',
@@ -18,16 +18,16 @@ $parseDatabaseHosts = function (mixed $hosts, mixed $fallback = 'coolify-db'): a
         'strlen',
     ));
 
-    return $fallbackHosts === [] ? ['coolify-db'] : $fallbackHosts;
+    return $fallbackHosts === [] ? ['xlaunch-db'] : $fallbackHosts;
 };
 
 $pgsql = [
     'driver' => 'pgsql',
     'url' => env('DATABASE_URL'),
-    'host' => env('DB_HOST', 'coolify-db'),
+    'host' => env('DB_HOST', 'xlaunch-db'),
     'port' => env('DB_PORT', '5432'),
-    'database' => env('DB_DATABASE', 'coolify'),
-    'username' => env('DB_USERNAME', 'coolify'),
+    'database' => env('DB_DATABASE', 'xlaunch'),
+    'username' => env('DB_USERNAME', 'xlaunch'),
     'password' => env('DB_PASSWORD', ''),
     'charset' => 'utf8',
     'prefix' => '',
@@ -46,15 +46,15 @@ $pgsql = [
  */
 if (env('DB_READ_HOST')) {
     $pgsql['read'] = [
-        'host' => $parseDatabaseHosts(env('DB_READ_HOST'), env('DB_HOST', 'coolify-db')),
+        'host' => $parseDatabaseHosts(env('DB_READ_HOST'), env('DB_HOST', 'xlaunch-db')),
         'port' => env('DB_READ_PORT', env('DB_PORT', '5432')),
-        'username' => env('DB_READ_USERNAME', env('DB_USERNAME', 'coolify')),
+        'username' => env('DB_READ_USERNAME', env('DB_USERNAME', 'xlaunch')),
         'password' => env('DB_READ_PASSWORD', env('DB_PASSWORD', '')),
     ];
     $pgsql['write'] = [
-        'host' => $parseDatabaseHosts(env('DB_WRITE_HOST'), env('DB_HOST', 'coolify-db')),
+        'host' => $parseDatabaseHosts(env('DB_WRITE_HOST'), env('DB_HOST', 'xlaunch-db')),
         'port' => env('DB_WRITE_PORT', env('DB_PORT', '5432')),
-        'username' => env('DB_WRITE_USERNAME', env('DB_USERNAME', 'coolify')),
+        'username' => env('DB_WRITE_USERNAME', env('DB_USERNAME', 'xlaunch')),
         'password' => env('DB_WRITE_PASSWORD', env('DB_PASSWORD', '')),
     ];
     $pgsql['sticky'] = (bool) env('DB_STICKY', true);
@@ -139,7 +139,7 @@ return [
 
         'default' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', 'coolify-redis'),
+            'host' => env('REDIS_HOST', 'xlaunch-redis'),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),
@@ -148,7 +148,7 @@ return [
 
         'cache' => [
             'url' => env('REDIS_URL'),
-            'host' => env('REDIS_HOST', 'coolify-redis'),
+            'host' => env('REDIS_HOST', 'xlaunch-redis'),
             'username' => env('REDIS_USERNAME'),
             'password' => env('REDIS_PASSWORD'),
             'port' => env('REDIS_PORT', '6379'),

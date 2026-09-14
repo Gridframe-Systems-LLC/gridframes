@@ -44,8 +44,8 @@ it('uses card-style git source triggers instead of plain form buttons', function
 
 it('renders the current source as a selected card and alternatives as switchable cards', function () {
     $current = GithubApp::create([
-        'name' => 'coolify-laravel-dev-public',
-        'organization' => 'coollabsio',
+        'name' => 'xlaunch-laravel-dev-public',
+        'organization' => 'northlatch',
         'team_id' => $this->team->id,
         'api_url' => 'https://api.github.com',
         'html_url' => 'https://github.com',
@@ -58,8 +58,8 @@ it('renders the current source as a selected card and alternatives as switchable
     ]);
 
     $other = GithubApp::create([
-        'name' => 'coolify-examples-app',
-        'organization' => 'coollabsio',
+        'name' => 'xlaunch-examples-app',
+        'organization' => 'northlatch',
         'team_id' => $this->team->id,
         'api_url' => 'https://api.github.com',
         'html_url' => 'https://github.com',
@@ -76,16 +76,16 @@ it('renders the current source as a selected card and alternatives as switchable
         'private_key_id' => null,
         'source_id' => $current->id,
         'source_type' => GithubApp::class,
-        'git_repository' => 'coollabsio/coolify-examples',
+        'git_repository' => 'northlatch/xlaunch-examples',
         'git_branch' => 'v4.x',
     ]);
 
     Livewire::test(Source::class, ['application' => $application])
         ->assertOk()
         ->assertSee('Git source', false)
-        ->assertSee('coolify-laravel-dev-public', false)
+        ->assertSee('xlaunch-laravel-dev-public', false)
         ->assertSee('Current', false)
-        ->assertSee('GitHub · coollabsio', false)
-        ->assertSee('coolify-examples-app', false)
+        ->assertSee('GitHub · northlatch', false)
+        ->assertSee('xlaunch-examples-app', false)
         ->assertSee('Change Git source?', false);
 });

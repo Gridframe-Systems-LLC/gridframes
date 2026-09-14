@@ -94,7 +94,7 @@ class Show extends Component
         try {
             $this->authorize('manageCaCertificate', $this->server);
             SslHelper::generateSslCertificate(
-                commonName: 'Coolify CA Certificate',
+                commonName: 'Xlaunch CA Certificate',
                 serverId: $this->server->id,
                 isCaCertificate: true,
                 validityDays: 10 * 365
@@ -118,7 +118,7 @@ class Show extends Component
 
     private function writeCertificateToServer()
     {
-        $caCertPath = config('constants.coolify.base_config_path').'/ssl/';
+        $caCertPath = config('constants.xlaunch.base_config_path').'/ssl/';
 
         $base64Cert = base64_encode($this->certificateContent);
 
@@ -126,9 +126,9 @@ class Show extends Component
             "mkdir -p $caCertPath",
             "chown -R 9999:root $caCertPath",
             "chmod -R 700 $caCertPath",
-            "rm -rf $caCertPath/coolify-ca.crt",
-            "echo '{$base64Cert}' | base64 -d | tee $caCertPath/coolify-ca.crt > /dev/null",
-            "chmod 644 $caCertPath/coolify-ca.crt",
+            "rm -rf $caCertPath/xlaunch-ca.crt",
+            "echo '{$base64Cert}' | base64 -d | tee $caCertPath/xlaunch-ca.crt > /dev/null",
+            "chmod 644 $caCertPath/xlaunch-ca.crt",
         ]);
 
         remote_process($commands, $this->server);

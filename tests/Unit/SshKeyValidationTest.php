@@ -16,7 +16,7 @@ use Tests\TestCase;
  * When a key was rotated in the DB but the old file persisted on disk,
  * SSH would use the stale key and fail with "Permission denied (publickey)".
  *
- * @see https://github.com/coollabsio/coolify/issues/7724
+ * @see https://github.com/northlatch/xlaunch/issues/7724
  */
 class SshKeyValidationTest extends TestCase
 {
@@ -26,7 +26,7 @@ class SshKeyValidationTest extends TestCase
     {
         parent::setUp();
 
-        $this->diskRoot = sys_get_temp_dir().'/coolify-ssh-test-'.Str::uuid();
+        $this->diskRoot = sys_get_temp_dir().'/xlaunch-ssh-test-'.Str::uuid();
         File::ensureDirectoryExists($this->diskRoot);
         config(['filesystems.disks.ssh-keys.root' => $this->diskRoot]);
         app('filesystem')->forgetDisk('ssh-keys');

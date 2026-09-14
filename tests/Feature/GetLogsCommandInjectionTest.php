@@ -197,7 +197,7 @@ describe('GetLogs stream polling', function () {
         Livewire::test(GetLogs::class, [
             'server' => $this->server,
             'resource' => $this->application,
-            'container' => 'coolify-sentinel',
+            'container' => 'xlaunch-sentinel',
             'collapsible' => false,
         ])
             ->assertDontSeeHtml('wire:poll.2000ms="getLogs(true)"')
@@ -233,6 +233,6 @@ describe('GetLogs container name injection payloads are blocked by validation', 
         expect(ValidationPatterns::isValidContainerName('postgresql'))->toBeTrue();
         expect(ValidationPatterns::isValidContainerName('my-app-container'))->toBeTrue();
         expect(ValidationPatterns::isValidContainerName('service_db.v2'))->toBeTrue();
-        expect(ValidationPatterns::isValidContainerName('coolify-proxy'))->toBeTrue();
+        expect(ValidationPatterns::isValidContainerName('xlaunch-proxy'))->toBeTrue();
     });
 });

@@ -7,7 +7,7 @@ use Spatie\Url\Url;
  *
  * Fragile str()->after('://')->before(':') stripping corrupts URLs that contain
  * credentials, IPv6, or other non-trivial structure. getFqdnWithoutPort() must
- * strip only the port and keep a usable base URL for COOLIFY_URL / SERVICE_URL.
+ * strip only the port and keep a usable base URL for XLAUNCH_URL / SERVICE_URL.
  */
 test('getFqdnWithoutPort strips port from simple http urls without trailing slash', function () {
     expect(getFqdnWithoutPort('http://git.example.com:80'))->toBe('http://git.example.com')

@@ -10,7 +10,7 @@ function applicationWithGitSettings(bool $shallow = true): Application
     $application = new Application;
     $application->forceFill([
         'uuid' => 'test-app-uuid',
-        'git_repository' => 'coollabsio/private-app',
+        'git_repository' => 'northlatch/private-app',
         'git_branch' => 'main',
         'git_commit_sha' => 'HEAD',
     ]);
@@ -41,7 +41,7 @@ it('uses http 1 transport for public https source clones', function () {
     );
 
     expect($result['commands'])
-        ->toContain("git -c http.version=HTTP/1.1 clone --depth=1 -b 'main' 'https://github.com/coollabsio/private-app' '/artifacts/test-deployment'")
+        ->toContain("git -c http.version=HTTP/1.1 clone --depth=1 -b 'main' 'https://github.com/northlatch/private-app' '/artifacts/test-deployment'")
         ->not->toContain('Primary repository import failed, retrying with HTTP/1.1')
         ->not->toContain('mktemp')
         ->not->toContain('git_retry_dir');
@@ -105,7 +105,7 @@ it('does not add http transport config to ssh deploy key clones', function () {
             return parent::getAttribute($key);
         }
     });
-    $application->git_repository = 'git@github.com:coollabsio/private-app.git';
+    $application->git_repository = 'git@github.com:northlatch/private-app.git';
 
     $result = $application->generateGitImportCommands(
         deployment_uuid: 'test-deployment',
@@ -136,14 +136,14 @@ it('supports dedicated checkout directories for compose file loading', function 
     );
 
     expect($result['commands'])
-        ->toContain("git -c http.version=HTTP/1.1 clone --depth=1 --no-checkout -b 'main' 'https://github.com/coollabsio/private-app' 'checkout'")
+        ->toContain("git -c http.version=HTTP/1.1 clone --depth=1 --no-checkout -b 'main' 'https://github.com/northlatch/private-app' 'checkout'")
         ->not->toContain('mktemp')
         ->not->toContain('git_retry_dir');
 });
 
 it('applies http 1 transport to custom bitbucket pull request checkout', function () {
     $application = applicationWithGitSettings();
-    $application->git_repository = 'https://bitbucket.org/coollabsio/private-app.git';
+    $application->git_repository = 'https://bitbucket.org/northlatch/private-app.git';
 
     $result = $application->generateGitImportCommands(
         deployment_uuid: 'test-deployment',

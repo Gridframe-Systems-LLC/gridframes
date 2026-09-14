@@ -37,7 +37,7 @@ class SyncBunny extends Command
             return;
         }
 
-        $expectedPrefix = rtrim($temporaryRoot, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'coollabs-cdn-';
+        $expectedPrefix = rtrim($temporaryRoot, DIRECTORY_SEPARATOR).DIRECTORY_SEPARATOR.'northlatch-cdn-';
         if (! str_starts_with($temporaryDirectory, $expectedPrefix)) {
             return;
         }
@@ -53,7 +53,7 @@ class SyncBunny extends Command
         $this->info('Fetching releases from GitHub...');
         try {
             $response = Http::timeout(30)
-                ->get('https://api.github.com/repos/coollabsio/coolify/releases', [
+                ->get('https://api.github.com/repos/northlatch/xlaunch/releases', [
                     'per_page' => 30,  // Fetch more releases for better changelog
                 ]);
 
@@ -63,14 +63,14 @@ class SyncBunny extends Command
                 return false;
             }
 
-            $releasesFile = tempnam(sys_get_temp_dir(), 'coolify-releases-');
+            $releasesFile = tempnam(sys_get_temp_dir(), 'xlaunch-releases-');
             if ($releasesFile === false || file_put_contents($releasesFile, json_encode($response->json(), JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES)) === false) {
                 $this->error('Failed to create temporary releases.json.');
 
                 return false;
             }
 
-            $files[$releasesFile] = $nightly ? 'json/coolify/nightly/releases.json' : 'json/coolify/releases.json';
+            $files[$releasesFile] = $nightly ? 'json/xlaunch/nightly/releases.json' : 'json/xlaunch/releases.json';
 
             try {
                 return $this->syncFilesToGitHubRepo($files, $nightly);
@@ -93,13 +93,13 @@ class SyncBunny extends Command
         $this->info("Syncing $envLabel files to GitHub repository...");
         try {
             $timestamp = time();
-            $tmpDir = sys_get_temp_dir().'/coollabs-cdn-files-'.$timestamp;
+            $tmpDir = sys_get_temp_dir().'/northlatch-cdn-files-'.$timestamp;
             $branchName = 'update-files-'.$timestamp;
 
             // Clone the repository
-            $this->info('Cloning coollabs-cdn repository...');
+            $this->info('Cloning northlatch-cdn repository...');
             $output = [];
-            exec('gh repo clone coollabsio/coollabs-cdn '.escapeshellarg($tmpDir).' 2>&1', $output, $returnCode);
+            exec('gh repo clone northlatch/northlatch-cdn '.escapeshellarg($tmpDir).' 2>&1', $output, $returnCode);
             if ($returnCode !== 0) {
                 $this->error('Failed to clone repository: '.implode("\n", $output));
 
@@ -214,7 +214,7 @@ class SyncBunny extends Command
             $prTitle = "Update $envLabel files - ".date('Y-m-d H:i:s');
             $fileList = implode("\n- ", $changedFiles);
             $prBody = "Automated update of $envLabel files:\n- $fileList";
-            $prCommand = 'gh pr create --repo coollabsio/coollabs-cdn --title '.escapeshellarg($prTitle).' --body '.escapeshellarg($prBody).' --base main --head '.escapeshellarg($branchName).' 2>&1';
+            $prCommand = 'gh pr create --repo northlatch/northlatch-cdn --title '.escapeshellarg($prTitle).' --body '.escapeshellarg($prBody).' --base main --head '.escapeshellarg($branchName).' 2>&1';
             $output = [];
             exec($prCommand, $output, $returnCode);
 
@@ -256,8 +256,8 @@ class SyncBunny extends Command
             ],
             default: 'production',
         ) === 'nightly';
-        $bunny_cdn = 'https://cdn.coollabs.io';
-        $bunny_cdn_path = 'coolify';
+        $bunny_cdn = 'https://cdn.northlatch.com';
+        $bunny_cdn_path = 'xlaunch';
         $bunny_cdn_storage_name = 'coolcdn';
 
         $parent_dir = realpath(dirname(__FILE__).'/../../..');
@@ -306,7 +306,7 @@ class SyncBunny extends Command
         });
         try {
             if ($nightly) {
-                $bunny_cdn_path = 'coolify-nightly';
+                $bunny_cdn_path = 'xlaunch-nightly';
 
                 $compose_file_location = "$parent_dir/other/nightly/$compose_file";
                 $compose_file_prod_location = "$parent_dir/other/nightly/$compose_file_prod";
@@ -331,7 +331,7 @@ class SyncBunny extends Command
                     $install_script_location => "$bunny_cdn/$bunny_cdn_path/$install_script",
                 ];
 
-                $diffTmpDir = sys_get_temp_dir().'/coollabs-cdn-diff-'.time();
+                $diffTmpDir = sys_get_temp_dir().'/northlatch-cdn-diff-'.time();
                 @mkdir($diffTmpDir, 0755, true);
                 $hasChanges = false;
 
@@ -396,29 +396,29 @@ class SyncBunny extends Command
 
                 if ($nightly) {
                     $files = [
-                        $versions_location => 'json/coolify/nightly/versions.json',
-                        $compose_file_location => 'json/coolify/nightly/docker-compose.yml',
-                        $compose_file_prod_location => 'json/coolify/nightly/docker-compose.prod.yml',
-                        $production_env_location => 'json/coolify/nightly/.env.production',
-                        $install_script_location => 'json/coolify/nightly/install.sh',
-                        $upgrade_script_location => 'json/coolify/nightly/upgrade.sh',
-                        $upgrade_postgres_script_location => 'json/coolify/nightly/upgrade-postgres.sh',
-                        $service_template_location => 'json/coolify/nightly/service-templates-latest.json',
+                        $versions_location => 'json/xlaunch/nightly/versions.json',
+                        $compose_file_location => 'json/xlaunch/nightly/docker-compose.yml',
+                        $compose_file_prod_location => 'json/xlaunch/nightly/docker-compose.prod.yml',
+                        $production_env_location => 'json/xlaunch/nightly/.env.production',
+                        $install_script_location => 'json/xlaunch/nightly/install.sh',
+                        $upgrade_script_location => 'json/xlaunch/nightly/upgrade.sh',
+                        $upgrade_postgres_script_location => 'json/xlaunch/nightly/upgrade-postgres.sh',
+                        $service_template_location => 'json/xlaunch/nightly/service-templates-latest.json',
                     ];
                 } else {
                     $files = [
-                        $versions_location => 'json/coolify/versions.json',
-                        $compose_file_location => 'json/coolify/docker-compose.yml',
-                        $compose_file_prod_location => 'json/coolify/docker-compose.prod.yml',
-                        $production_env_location => 'json/coolify/.env.production',
-                        $install_script_location => 'json/coolify/install.sh',
-                        $upgrade_script_location => 'json/coolify/upgrade.sh',
-                        $upgrade_postgres_script_location => 'json/coolify/upgrade-postgres.sh',
-                        $service_template_location => 'json/coolify/service-templates-latest.json',
+                        $versions_location => 'json/xlaunch/versions.json',
+                        $compose_file_location => 'json/xlaunch/docker-compose.yml',
+                        $compose_file_prod_location => 'json/xlaunch/docker-compose.prod.yml',
+                        $production_env_location => 'json/xlaunch/.env.production',
+                        $install_script_location => 'json/xlaunch/install.sh',
+                        $upgrade_script_location => 'json/xlaunch/upgrade.sh',
+                        $upgrade_postgres_script_location => 'json/xlaunch/upgrade-postgres.sh',
+                        $service_template_location => 'json/xlaunch/service-templates-latest.json',
                     ];
                 }
 
-                $releasesTarget = $nightly ? 'json/coolify/nightly/releases.json' : 'json/coolify/releases.json';
+                $releasesTarget = $nightly ? 'json/xlaunch/nightly/releases.json' : 'json/xlaunch/releases.json';
                 $options = [$releasesTarget, ...array_values($files)];
                 $selectedFiles = multiselect(
                     label: 'Which files would you like to sync?',

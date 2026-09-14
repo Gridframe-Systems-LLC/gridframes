@@ -40,7 +40,7 @@ class GenerateCaddyIngressConfiguration
             'services' => [
                 'caddy' => [
                     'image' => 'docker.io/library/caddy:2-alpine',
-                    'container_name' => 'coolify-v5-caddy',
+                    'container_name' => 'xlaunch-v5-caddy',
                     'restart' => 'unless-stopped',
                     'ports' => [
                         '80:80',
@@ -60,7 +60,7 @@ class GenerateCaddyIngressConfiguration
     {
         return <<<'CADDY'
 :80 {
-    respond /coolify-health 200
+    respond /xlaunch-health 200
     respond 404
 }
 
@@ -136,7 +136,7 @@ CADDY;
             return null;
         }
 
-        $upstream = "{$application->container_name}.{$namespace}.coolify.internal:{$internalPort}";
+        $upstream = "{$application->container_name}.{$namespace}.xlaunch.internal:{$internalPort}";
 
         return implode("\n", [
             "http://{$domain->domain} {",

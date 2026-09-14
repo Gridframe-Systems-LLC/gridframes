@@ -3,7 +3,7 @@
 @endphp
 
 <div id="terminal-container" x-data="terminalData()" data-auto-start="{{ $autoStart ? 'true' : 'false' }}"
-    x-on:terminal-starting.window="starting = true; setTerminalTheme(localStorage.getItem('coolify-console-theme') ?? 'system')"
+    x-on:terminal-starting.window="starting = true; setTerminalTheme(localStorage.getItem('xlaunch-console-theme') ?? 'system')"
     x-on:terminal-theme-change.window="setTerminalTheme($event.detail.theme)"
     @class([
         'group/terminal relative h-full min-h-0 bg-transparent' => $isApplicationConsole,

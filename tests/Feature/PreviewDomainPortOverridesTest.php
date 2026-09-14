@@ -71,7 +71,7 @@ beforeEach(function () {
 
     StandaloneDocker::withoutEvents(function () {
         $this->destination = StandaloneDocker::firstOrCreate(
-            ['server_id' => $this->server->id, 'network' => 'coolify'],
+            ['server_id' => $this->server->id, 'network' => 'xlaunch'],
             ['uuid' => (string) Str::uuid(), 'name' => 'test-docker']
         );
     });
@@ -98,7 +98,7 @@ function createPreviewForPortTests(Application $application, int $pullRequestId,
     return ApplicationPreview::create(array_merge([
         'application_id' => $application->id,
         'pull_request_id' => $pullRequestId,
-        'pull_request_html_url' => "https://github.com/coollabsio/coolify/pull/{$pullRequestId}",
+        'pull_request_html_url' => "https://github.com/northlatch/xlaunch/pull/{$pullRequestId}",
     ], $attributes));
 }
 

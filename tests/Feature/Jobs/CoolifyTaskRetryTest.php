@@ -1,7 +1,7 @@
 <?php
 
 use App\Enums\ProcessStatus;
-use App\Jobs\CoolifyTask;
+use App\Jobs\XlaunchTask;
 use App\Models\Server;
 use App\Models\Team;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,7 +22,7 @@ beforeEach(function () {
         ->event('inline')
         ->log('[]');
 
-    $this->job = new CoolifyTask(
+    $this->job = new XlaunchTask(
         activity: $this->activity,
         ignore_errors: false,
         call_event_on_finish: null,

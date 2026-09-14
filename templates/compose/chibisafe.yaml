@@ -5,7 +5,7 @@
 # logo: svgs/chibisafe.svg
 # port: 80
 
-## This service includes its own reverse proxy because the application routing is broken, also it needs caddy for serving static files https://github.com/coollabsio/coolify/pull/5808#pullrequestreview-3340419006
+## This service includes its own reverse proxy because the application routing is broken, also it needs caddy for serving static files https://github.com/northlatch/xlaunch/pull/5808#pullrequestreview-3340419006
 
 services:
   chibisafe:

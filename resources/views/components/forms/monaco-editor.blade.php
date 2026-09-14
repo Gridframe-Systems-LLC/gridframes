@@ -1,4 +1,4 @@
-<div wire:key="{{ random_int(0, PHP_INT_MAX) }}" class="coolify-monaco-editor flex-1">
+<div wire:key="{{ random_int(0, PHP_INT_MAX) }}" class="xlaunch-monaco-editor flex-1">
     <div x-ref="monacoRef" x-data="{
         monacoVersion: '0.52.2',
         monacoContent: @entangle($id),
@@ -16,21 +16,21 @@
         },
         monacoEditorAddLoaderScriptToHead() {
             // Use a global flag to prevent duplicate script loading
-            if (!window.__coolifyMonacoLoaderAdding && typeof _amdLoaderGlobal === 'undefined') {
-                window.__coolifyMonacoLoaderAdding = true;
+            if (!window.__xlaunchMonacoLoaderAdding && typeof _amdLoaderGlobal === 'undefined') {
+                window.__xlaunchMonacoLoaderAdding = true;
                 let script = document.createElement('script');
                 script.src = `/js/monaco-editor-${this.monacoVersion}/min/vs/loader.js`;
                 script.onload = () => {
-                    window.__coolifyMonacoLoaderAdding = false;
+                    window.__xlaunchMonacoLoaderAdding = false;
                 };
                 script.onerror = () => {
-                    window.__coolifyMonacoLoaderAdding = false;
+                    window.__xlaunchMonacoLoaderAdding = false;
                 };
                 document.head.appendChild(script);
             }
         }
     }" x-modelable="monacoContent">
-        <div x-cloak x-init="if (typeof _amdLoaderGlobal == 'undefined' && !window.__coolifyMonacoLoaderAdding) {
+        <div x-cloak x-init="if (typeof _amdLoaderGlobal == 'undefined' && !window.__xlaunchMonacoLoaderAdding) {
             monacoEditorAddLoaderScriptToHead();
         }
         checkTheme();
@@ -40,8 +40,8 @@
                 let proxy = URL.createObjectURL(new Blob([`self.MonacoEnvironment={baseUrl:'${window.location.origin}/js/monaco-editor-${monacoVersion}/min'};importScripts('${window.location.origin}/js/monaco-editor-${monacoVersion}/min/vs/base/worker/workerMain.js');`], { type: 'text/javascript' }));
                 window.MonacoEnvironment = { getWorkerUrl: () => proxy };
                 require(['vs/editor/editor.main'], () => {
-                    if (!window.__coolifyMonacoThemeDefined) {
-                        monaco.editor.defineTheme('coolify-dark', {
+                    if (!window.__xlaunchMonacoThemeDefined) {
+                        monaco.editor.defineTheme('xlaunch-dark', {
                             base: 'vs-dark',
                             inherit: true,
                             rules: [],
@@ -56,7 +56,7 @@
                                 'scrollbar.shadow': '#00000000'
                             }
                         });
-                        window.__coolifyMonacoThemeDefined = true;
+                        window.__xlaunchMonacoThemeDefined = true;
                     }
                     @if ($language === 'nginx')
                     if (!monaco.languages.getLanguages().some((registered) => registered.id === 'nginx')) {
@@ -88,7 +88,7 @@
                     @endif
                     const editor = monaco.editor.create($refs.monacoEditorElement, {
                         value: monacoContent,
-                        theme: document.documentElement.classList.contains('dark') ? 'coolify-dark' : 'vs',
+                        theme: document.documentElement.classList.contains('dark') ? 'xlaunch-dark' : 'vs',
                         wordWrap: 'on',
                         readOnly: '{{ $readonly ?? false }}',
                         minimap: { enabled: false },
@@ -118,7 +118,7 @@
                         mutations.forEach((mutation) => {
                             if (mutation.attributeName === 'class') {
                                 const isDark = document.documentElement.classList.contains('dark');
-                                monaco.editor.setTheme(isDark ? 'coolify-dark' : 'vs');
+                                monaco.editor.setTheme(isDark ? 'xlaunch-dark' : 'vs');
                             }
                         });
                     });

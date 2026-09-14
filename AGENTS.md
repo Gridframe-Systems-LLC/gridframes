@@ -4,7 +4,7 @@ This file provides guidance to agentic coding tools when working with code in th
 
 ## Project Overview
 
-Coolify is an open-source, self-hostable PaaS (alternative to Heroku/Netlify/Vercel). It manages servers, applications, databases, and services via SSH. Built with Laravel 12 (using Laravel 10 file structure), Livewire 3, and Tailwind CSS v4.
+Xlaunch is an open-source, self-hostable PaaS (alternative to Heroku/Netlify/Vercel). It manages servers, applications, databases, and services via SSH. Built with Laravel 12 (using Laravel 10 file structure), Livewire 3, and Tailwind CSS v4.
 
 ## Design Reference
 
@@ -12,14 +12,14 @@ For UI/UX design specifications, principles, and visual standards, consult the l
 
 ## Development Environment
 
-Docker Compose-based dev setup with services: coolify (app), postgres, redis, soketi (WebSockets), vite, testing-host, mailpit, minio.
+Docker Compose-based dev setup with services: xlaunch (app), postgres, redis, soketi (WebSockets), vite, testing-host, mailpit, minio.
 
 ```bash
 # Start dev environment (uses docker-compose.dev.yml)
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 docker compose -f docker-compose.yml -f docker-compose.dev.yml down                        # stop services
 
-# Two local Coolify instances (isolated stacks; server transfer / multi-control-plane)
+# Two local Xlaunch instances (isolated stacks; server transfer / multi-control-plane)
 ./scripts/dev-instances up                   # a:8000 + b:8001 (uses npm run build for CSS/JS)
 ./scripts/dev-instances up a --with vite     # HMR only when starting a single instance
 ./scripts/dev-instances urls
@@ -40,13 +40,13 @@ Use the following workflow to test a self-hosted upgrade:
    bash upgrade.sh sha-6492d081362c009519481ac70e50873e39ba1861
    ```
 
-2. Set the current Coolify version and rebuild the cached configuration:
+2. Set the current Xlaunch version and rebuild the cached configuration:
 
    ```bash
-   docker exec -e COOLIFY_VERSION=4.3.0 coolify php artisan config:cache
+   docker exec -e XLAUNCH_VERSION=4.3.0 xlaunch php artisan config:cache
    ```
 
-3. In the Coolify UI, click **Check for Updates**.
+3. In the Xlaunch UI, click **Check for Updates**.
 4. Confirm that an upgrade is available, then click **Upgrade** and verify that the upgrade completes successfully.
 
 ## Common Commands
@@ -116,7 +116,7 @@ Because the "server" and the test share one PHP process, they share the phpunit 
 
 - **`Class "Redis" not found` thrown by the HTTP server**: host PHP has no phpredis, and the maintenance-mode store is hard-wired to redis (`config/app.php` → `'maintenance' => ['store' => 'redis']`). Add `config()->set('app.maintenance.store', 'array');` in `beforeEach`.
 - **Every path redirects to onboarding** for a fresh user (`DecideWhatToDoWithUser` + `showBoarding()`). Finish boarding before navigating: `Team::query()->update(['show_boarding' => false]); Cache::flush();` — the `Cache::flush()` is required because `User::currentTeam()` caches the Team for an hour and the in-process server shares that cache.
-- **`->navigate('/path')` races form-submit redirects.** After `->click('Login')`, assert something on the destination page (e.g. `->assertSee('Welcome to Coolify')`) before calling `navigate()`.
+- **`->navigate('/path')` races form-submit redirects.** After `->click('Login')`, assert something on the destination page (e.g. `->assertSee('Welcome to Xlaunch')`) before calling `navigate()`.
 - **Failure messages print the *initial* `visit()` URL**, not the current URL. Read the auto-saved screenshot in `tests/Browser/Screenshots/` to see where the browser actually ended up.
 - **Runs hang forever**: stale Playwright servers from a previously killed run. Fix: `pkill -f "playwright run-server"` and rerun. Healthy runs take seconds.
 - **Guest pages miss `DOMPurify`** (`public/js/purify.min.js` loads only `@auth` in `layouts/base.blade.php`), so toast descriptions fail on unauthenticated pages — log in first for toast-related assertions.
@@ -126,7 +126,7 @@ Because the "server" and the test share one PHP process, they share the phpunit 
 ## Architecture
 
 ### Backend Structure (app/)
-- **Actions/** — Domain actions organized by area (Application, Database, Docker, Proxy, Server, Service, Shared, Stripe, User, CoolifyTask, Fortify). Uses `lorisleiva/laravel-actions` with `AsAction` trait — actions can be called as objects, dispatched as jobs, or used as controllers.
+- **Actions/** — Domain actions organized by area (Application, Database, Docker, Proxy, Server, Service, Shared, Stripe, User, XlaunchTask, Fortify). Uses `lorisleiva/laravel-actions` with `AsAction` trait — actions can be called as objects, dispatched as jobs, or used as controllers.
 - **Livewire/** — All UI components (Livewire 3). Pages organized by domain: Server, Project, Settings, Security, Notifications, Terminal, Subscription, SharedVariables. This is the primary UI layer — no traditional Blade controllers. Components listen to private team channels for real-time status updates via Soketi.
 - **Jobs/** — Queue jobs for deployments (`ApplicationDeploymentJob`), backups, Docker cleanup, server management, proxy configuration. Uses Redis queue with Horizon for monitoring.
 - **Models/** — Eloquent models extending `BaseModel` which provides auto-CUID2 UUID generation. Key models: `Server`, `Application`, `Service`, `Project`, `Environment`, `Team`, plus standalone database models (`StandalonePostgresql`, `StandaloneMysql`, etc.). Common traits: `HasConfiguration`, `HasMetrics`, `HasSafeStringAttribute`, `ClearsGlobalSearchCache`.
@@ -169,18 +169,18 @@ Because the "server" and the test share one PHP process, they share the phpunit 
 
 ### Instance sentinels (`id = 0`)
 
-Coolify seeds **instance-owned** rows at primary key `0`. That value is a sentinel meaning “this is the Coolify instance itself”, not a normal autoincrement id. Do not migrate, resequence, or “fix” these to a positive id.
+Xlaunch seeds **instance-owned** rows at primary key `0`. That value is a sentinel meaning “this is the Xlaunch instance itself”, not a normal autoincrement id. Do not migrate, resequence, or “fix” these to a positive id.
 
 | Record | Model / lookup | Meaning |
 |---|---|---|
 | Root team | `Team::find(0)`, `team_id === 0` | Instance / root team. Cloud billing and many skip-checks exempt `team_id === 0`. |
-| Localhost server | `Server::find(0)` / `findOrFail(0)` | The machine running Coolify. Upgrades, instance backups, and docker inspect target this server. |
+| Localhost server | `Server::find(0)` / `findOrFail(0)` | The machine running Xlaunch. Upgrades, instance backups, and docker inspect target this server. |
 | Instance settings | `InstanceSettings` with `id = 0` | Singleton settings row. Tests must seed `InstanceSettings::create(['id' => 0])` (or `forceCreate`). |
-| Instance Postgres | `StandalonePostgresql` `id = 0`, name `coolify-db` | Coolify’s own database. UI treats `database_id === 0` as the instance DB (e.g. hide delete on backup screens). |
+| Instance Postgres | `StandalonePostgresql` `id = 0`, name `xlaunch-db` | Xlaunch’s own database. UI treats `database_id === 0` as the instance DB (e.g. hide delete on backup screens). |
 | Local docker dest | `StandaloneDocker` `id = 0` | Destination on the localhost server (`destination_id = 0`). |
 | Root user / default GitHub App | seeders | First-install defaults. |
 
-**Do not assign `id = 0` to new or non-instance rows.** In particular, `ScheduledDatabaseBackup` and `ScheduledTask` are ordinary schedules. Legacy installs may still have a `coolify-db` backup at `id = 0`; resolve that backup via the `coolify-db` relation / uuid, not `ScheduledDatabaseBackup::find(0)`.
+**Do not assign `id = 0` to new or non-instance rows.** In particular, `ScheduledDatabaseBackup` and `ScheduledTask` are ordinary schedules. Legacy installs may still have a `xlaunch-db` backup at `id = 0`; resolve that backup via the `xlaunch-db` relation / uuid, not `ScheduledDatabaseBackup::find(0)`.
 
 `0` is a PHP/Eloquent landmine (`empty(0)` is true; keyset pagination `where('id', '>', $cursor)` starting at `0` skips the row). Queries that page by id must include `id = 0` on the first page (no lower bound, or cursor `< 0`). Prefer `chunkById()` over a hand-rolled `id > 0` cursor.
 

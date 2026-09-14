@@ -150,7 +150,7 @@ describe('Log drains API', function () {
     test('GET returns log drain settings and hides secrets without read:sensitive', function () {
         $this->server->settings->update([
             'is_logdrain_axiom_enabled' => false,
-            'logdrain_axiom_dataset_name' => 'coolify-logs',
+            'logdrain_axiom_dataset_name' => 'xlaunch-logs',
             'logdrain_axiom_api_key' => 'secret-axiom-key',
             'logdrain_newrelic_license_key' => 'secret-nr-key',
         ]);
@@ -163,7 +163,7 @@ describe('Log drains API', function () {
         ])
             ->getJson("/api/v1/servers/{$this->server->uuid}/log-drains")
             ->assertOk()
-            ->assertJsonPath('logdrain_axiom_dataset_name', 'coolify-logs')
+            ->assertJsonPath('logdrain_axiom_dataset_name', 'xlaunch-logs')
             ->assertJsonPath('is_logdrain_axiom_enabled', false);
 
         expect($response->json())->not->toHaveKey('logdrain_axiom_api_key')

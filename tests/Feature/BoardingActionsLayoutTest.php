@@ -45,7 +45,7 @@ test('server type cards use the standard card hover treatment', function () {
 
     expect($matches[0])->toHaveCount(5)
         ->and(substr_count($view, 'group relative cursor-pointer'))->toBe(5)
-        ->and($view)->not->toContain('hover:border-coollabs/35 hover:bg-coollabs/[0.03]')
+        ->and($view)->not->toContain('hover:border-northlatch/35 hover:bg-northlatch/[0.03]')
         ->and($view)->not->toContain('dark:hover:border-warning/25 dark:hover:bg-warning/[0.04]');
 });
 

@@ -132,16 +132,16 @@ it('replaces the seeded qemu server with the selected non-root equivalent', func
     $server = SeedDevelopmentQemuServer::run('ubuntu-non-root');
 
     expect($server->ip)->toBe('192.168.122.11')
-        ->and($server->user)->toBe('coolify')
+        ->and($server->user)->toBe('xlaunch')
         ->and(Server::query()->where('uuid', 'like', 'development-qemu-%')->count())->toBe(1);
 });
 
 it('deletes managed vm data and freshly creates only the selected vm', function () {
-    $storagePath = sys_get_temp_dir().'/coolify-qemu-reset-test-'.uniqid();
+    $storagePath = sys_get_temp_dir().'/xlaunch-qemu-reset-test-'.uniqid();
     config(['development-qemu.storage_path' => $storagePath]);
     File::ensureDirectoryExists($storagePath);
-    File::put("{$storagePath}/coolify-dev-ubuntu-root.qcow2", 'old data');
-    File::put("{$storagePath}/coolify-dev-ubuntu-non-root.qcow2", 'old data');
+    File::put("{$storagePath}/xlaunch-dev-ubuntu-root.qcow2", 'old data');
+    File::put("{$storagePath}/xlaunch-dev-ubuntu-non-root.qcow2", 'old data');
 
     Process::fake([
         '* net-dumpxml *' => Process::result(output: '<network></network>'),
@@ -153,17 +153,17 @@ it('deletes managed vm data and freshly creates only the selected vm', function 
 
     StartDevelopmentQemuVm::run('ubuntu-non-root');
 
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh destroy') && str_contains($process->command, 'coolify-dev-ubuntu-root'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh destroy') && str_contains($process->command, 'coolify-dev-ubuntu-non-root'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh undefine') && str_contains($process->command, 'coolify-dev-ubuntu-root'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh undefine') && str_contains($process->command, 'coolify-dev-ubuntu-non-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh destroy') && str_contains($process->command, 'xlaunch-dev-ubuntu-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh destroy') && str_contains($process->command, 'xlaunch-dev-ubuntu-non-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh undefine') && str_contains($process->command, 'xlaunch-dev-ubuntu-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virsh undefine') && str_contains($process->command, 'xlaunch-dev-ubuntu-non-root'));
     Process::assertNotRan(fn ($process) => str_contains($process->command, 'virsh start'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'coolify-dev-ubuntu-non-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'xlaunch-dev-ubuntu-non-root'));
     Process::assertRan(fn ($process) => str_contains($process->command, 'net-update') && str_contains($process->command, 'ip-dhcp-host') && str_contains($process->command, '192.168.122.11'));
     Process::assertRan(fn ($process) => str_contains($process->command, 'iptables -D LIBVIRT_FWI'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'docker exec') && str_contains($process->command, 'coolify'));
-    expect(File::exists("{$storagePath}/coolify-dev-ubuntu-root.qcow2"))->toBeFalse()
-        ->and(File::exists("{$storagePath}/coolify-dev-ubuntu-non-root.qcow2"))->toBeFalse();
+    Process::assertRan(fn ($process) => str_contains($process->command, 'docker exec') && str_contains($process->command, 'xlaunch'));
+    expect(File::exists("{$storagePath}/xlaunch-dev-ubuntu-root.qcow2"))->toBeFalse()
+        ->and(File::exists("{$storagePath}/xlaunch-dev-ubuntu-non-root.qcow2"))->toBeFalse();
 });
 
 it('rejects qemu vm management outside development', function () {
@@ -175,7 +175,7 @@ it('rejects qemu vm management outside development', function () {
 
 it('can create a vm without a host database connection', function () {
     config([
-        'development-qemu.storage_path' => sys_get_temp_dir().'/coolify-qemu-test-'.uniqid(),
+        'development-qemu.storage_path' => sys_get_temp_dir().'/xlaunch-qemu-test-'.uniqid(),
     ]);
     DB::enableQueryLog();
     Process::fake(function ($process) {
@@ -205,8 +205,8 @@ it('can create a vm without a host database connection', function () {
     Process::assertRan(fn ($process) => str_contains($process->command, 'iptables -I LIBVIRT_FWI'));
 });
 
-it('seeds through the coolify container when the host database is unavailable', function () {
-    config(['development-qemu.storage_path' => sys_get_temp_dir().'/coolify-qemu-fallback-test-'.uniqid()]);
+it('seeds through the xlaunch container when the host database is unavailable', function () {
+    config(['development-qemu.storage_path' => sys_get_temp_dir().'/xlaunch-qemu-fallback-test-'.uniqid()]);
     SeedDevelopmentQemuServer::mock()
         ->shouldReceive('handle')
         ->once()
@@ -220,11 +220,11 @@ it('seeds through the coolify container when the host database is unavailable', 
 
     ManageDevelopmentQemuVm::run('ubuntu-root');
 
-    Process::assertRan(fn ($process) => str_contains($process->command, 'docker exec coolify php artisan dev:qemu:seed') && str_contains($process->command, 'ubuntu-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'docker exec xlaunch php artisan dev:qemu:seed') && str_contains($process->command, 'ubuntu-root'));
 });
 
 it('starts and seeds root and non-root profiles together', function () {
-    config(['development-qemu.storage_path' => sys_get_temp_dir().'/coolify-qemu-multi-test-'.uniqid()]);
+    config(['development-qemu.storage_path' => sys_get_temp_dir().'/xlaunch-qemu-multi-test-'.uniqid()]);
     Process::fake([
         '* net-dumpxml *' => Process::result(output: '<network></network>'),
         '* network inspect *' => Process::result(output: "172.18.0.0/16\n"),
@@ -237,6 +237,6 @@ it('starts and seeds root and non-root profiles together', function () {
         'development-qemu-ubuntu-root',
         'development-qemu-ubuntu-non-root',
     ])->count())->toBe(2);
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'coolify-dev-ubuntu-root'));
-    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'coolify-dev-ubuntu-non-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'xlaunch-dev-ubuntu-root'));
+    Process::assertRan(fn ($process) => str_contains($process->command, 'virt-install') && str_contains($process->command, 'xlaunch-dev-ubuntu-non-root'));
 });

@@ -1,4 +1,4 @@
-# ADR 0001: Split v5 into Coolify control plane, Flux broker, and coold host agent
+# ADR 0001: Split v5 into Xlaunch control plane, Flux broker, and coold host agent
 
 ## Status
 
@@ -6,7 +6,7 @@ Accepted.
 
 ## Context
 
-Coolify v5 needs to manage many user resources across many user-owned hosts,
+Xlaunch v5 needs to manage many user resources across many user-owned hosts,
 including hosts behind NAT or restrictive firewalls. The Laravel application
 must own product behavior and durable state, but it should not hold thousands of
 long-lived agent streams or directly expose host runtime sockets.
@@ -19,9 +19,9 @@ decision.
 
 ## Decision
 
-Coolify v5 uses three distinct building blocks:
+Xlaunch v5 uses three distinct building blocks:
 
-1. **Coolify Laravel control plane** owns user intent, durable product state,
+1. **Xlaunch Laravel control plane** owns user intent, durable product state,
    RBAC, deployment state machines, placement decisions, secrets, proxy config
    rendering, notifications, and audit.
 2. **Flux** owns long-lived agent connectivity. Laravel talks to Flux over a
@@ -38,26 +38,26 @@ an explicit primitive with validation and a stable protocol shape.
 
 ### Positive
 
-- Coolify keeps product complexity in one durable control plane.
+- Xlaunch keeps product complexity in one durable control plane.
 - Hosts can live behind NAT because coold dials out to Flux.
 - Privileged host access is isolated to coold.
 - Flux can scale connection handling separately from Laravel request workers.
-- The primitive surface can be tested independently from Coolify's app model.
+- The primitive surface can be tested independently from Xlaunch's app model.
 
 ### Negative
 
 - More moving parts than a direct SSH/Docker model.
-- Protocol changes require coordination across Coolify, Flux, and coold.
+- Protocol changes require coordination across Xlaunch, Flux, and coold.
 - Some deploy features require new primitives before the v5 path is complete.
 
 ## Boundary rules
 
-- Coolify may say: "deploy this nginx resource for this team to host H1." coold
+- Xlaunch may say: "deploy this nginx resource for this team to host H1." coold
   may not.
-- Coolify may send: `images.pull`, `containers.create`, `containers.start`,
+- Xlaunch may send: `images.pull`, `containers.create`, `containers.start`,
   `services.register`, `firewall.allow`. coold may execute those.
 - Flux may route requests but may not make product decisions.
-- coold may reject dangerous host operations even when Coolify requested them.
+- coold may reject dangerous host operations even when Xlaunch requested them.
 
 ## First reference flow
 
@@ -65,13 +65,13 @@ The first validation flow is deploying a Docker image app using `nginx:alpine`.
 That flow requires no builder and exercises the minimum runtime path:
 
 ```text
-Coolify state machine
+Xlaunch state machine
   → Flux dispatch
   → coold image pull
   → coold container create/start
   → coold status
   → coold service registration
   → coold firewall
-  → Coolify proxy config/reload
-  → Coolify marks deployment running
+  → Xlaunch proxy config/reload
+  → Xlaunch marks deployment running
 ```

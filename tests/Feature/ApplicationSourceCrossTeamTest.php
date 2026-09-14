@@ -129,7 +129,7 @@ test('changeSource dispatches configuration changed for an owned source', functi
         'html_url' => 'https://github.com',
         'is_public' => true,
     ]);
-    $this->applicationA->update(['git_repository' => 'coollabsio/coolify']);
+    $this->applicationA->update(['git_repository' => 'northlatch/xlaunch']);
 
     Livewire::test(Source::class, ['application' => $this->applicationA->fresh()])
         ->call('changeSource', $source->id, GithubApp::class)
@@ -151,7 +151,7 @@ test('changeSource dispatches configuration changed when repository metadata loo
         'html_url' => 'https://github.com',
         'is_public' => true,
     ]);
-    $this->applicationA->update(['git_repository' => 'coollabsio/coolify']);
+    $this->applicationA->update(['git_repository' => 'northlatch/xlaunch']);
 
     Livewire::test(Source::class, ['application' => $this->applicationA->fresh()])
         ->call('changeSource', $source->id, GithubApp::class)

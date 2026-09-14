@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Event;
 uses(RefreshDatabase::class);
 
 it('ignores stale minor upgrade information for the detected Traefik version', function () {
-    Cache::put('coolify:versions:all', [
+    Cache::put('xlaunch:versions:all', [
         'traefik' => [
             'v3.7' => '3.7.8',
             'v3.6' => '3.6.23',
@@ -40,7 +40,7 @@ it('ignores stale minor upgrade information for the detected Traefik version', f
 });
 
 it('does not offer the Traefik branch already configured on a running proxy', function () {
-    Cache::put('coolify:versions:all', [
+    Cache::put('xlaunch:versions:all', [
         'traefik' => [
             'v3.7' => '3.7.8',
             'v3.6' => '3.6.23',
@@ -73,7 +73,7 @@ YAML;
 });
 
 it('still offers a newer Traefik branch than the configured image', function () {
-    Cache::put('coolify:versions:all', [
+    Cache::put('xlaunch:versions:all', [
         'traefik' => [
             'v3.7' => '3.7.8',
             'v3.6' => '3.6.23',
@@ -236,7 +236,7 @@ it('clears Traefik version state when the proxy changes', function () {
 
 it('cleans stale Traefik version state while selecting servers to check', function () {
     Bus::fake();
-    Cache::put('coolify:versions:all', [
+    Cache::put('xlaunch:versions:all', [
         'traefik' => ['v3.7' => '3.7.8'],
     ]);
 

@@ -290,6 +290,6 @@ function createModelHygieneApplication(string $name): V5Application
         'created_by_user_id' => 1,
         'name' => $name,
         'image' => "docker.io/library/{$name}:latest",
-        'container_name' => "coolify-v5-{$name}",
+        'container_name' => "xlaunch-v5-{$name}",
     ]);
 }

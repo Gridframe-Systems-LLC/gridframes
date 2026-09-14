@@ -138,7 +138,7 @@ it('keeps distinct dotted and plus-addressed mailboxes in separate rate limit bu
 });
 
 it('queues the verification email for cloud registrations', function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
     Queue::fake();
 
     $this->withHeader('CF-Connecting-IP', '2001:db8::30')

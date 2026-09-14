@@ -48,7 +48,7 @@ it('uses v5 resource uuids at http boundaries while keeping database ids interna
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -129,7 +129,7 @@ it('generates http-only caddy routes for application ingress', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -145,7 +145,7 @@ it('generates http-only caddy routes for application ingress', function () {
             Mockery::on(fn (array $apps): bool => count($apps) === 1
                 && str_contains($apps[0]['config'], 'http://app.example.com {')
                 && ! str_contains($apps[0]['config'], 'https://')
-                && str_contains($apps[0]['config'], 'reverse_proxy coolify-v5-nginx-test.default.coolify.internal:3000'))
+                && str_contains($apps[0]['config'], 'reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:3000'))
         )
         ->andReturn('Caddy ingress applied.');
     expectCaddyIngressFirewallRule($fluxClient);
@@ -190,7 +190,7 @@ it('rejects malformed ingress domains before they reach the caddy configuration'
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -387,7 +387,7 @@ it('places a new nginx v5 application next to existing canvas nodes', function (
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-existing',
+        'container_name' => 'xlaunch-v5-nginx-existing',
         'status' => 'running',
         'status_message' => 'Running.',
         'mesh_namespace' => 'default',
@@ -594,7 +594,7 @@ it('deletes a v5 application for the current team', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
     ]);
 
@@ -632,7 +632,7 @@ it('stops and deletes the nginx container before deleting a v5 application', fun
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'runtime_container_id' => 'nginx-container-id',
     ]);
@@ -653,7 +653,7 @@ it('stops and deletes the nginx container before deleting a v5 application', fun
         return is_string($command)
             && str_contains($command, '203.0.113.10')
             && str_contains($command, 'podman rm -f')
-            && str_contains($command, 'coolify-v5-nginx-1');
+            && str_contains($command, 'xlaunch-v5-nginx-1');
     });
     expect(V5Application::query()->whereKey($application->id)->exists())->toBeFalse();
 });
@@ -682,7 +682,7 @@ it('cleans v5 application ingress routes and firewall connections before deletin
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'status' => 'running',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
@@ -700,7 +700,7 @@ it('cleans v5 application ingress routes and firewall connections before deletin
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -779,7 +779,7 @@ it('deletes a v5 application locally when remote cleanup is explicitly skipped',
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'unknown',
         'runtime_container_id' => 'nginx-container-id',
     ]);
@@ -825,7 +825,7 @@ it('restores v5 application ingress and firewall rules when application runtime 
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'status' => 'running',
         'mesh_namespace' => 'default',
         'ingress_enabled' => true,
@@ -843,7 +843,7 @@ it('restores v5 application ingress and firewall rules when application runtime 
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -940,7 +940,7 @@ it('does not delete another teams v5 application', function () {
         'created_by_user_id' => $otherUser->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
     ]);
 
@@ -976,7 +976,7 @@ it('updates v5 application canvas position for the current team', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'canvas_x' => 0,
         'canvas_y' => 0,
@@ -1021,7 +1021,7 @@ it('refreshes v5 application state from flux container inventory', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'nginx-container-id',
@@ -1036,10 +1036,10 @@ it('refreshes v5 application state from flux container inventory', function () {
             ->andReturn([
                 [
                     'id' => 'nginx-container-id',
-                    'name' => 'coolify-v5-nginx-1',
+                    'name' => 'xlaunch-v5-nginx-1',
                     'image' => 'docker.io/library/nginx:alpine',
                     'state' => 'exited',
-                    'networks' => ['coolify-default-mesh'],
+                    'networks' => ['xlaunch-default-mesh'],
                 ],
             ]);
     });
@@ -1088,7 +1088,7 @@ it('refreshes v5 caddy ingress state from flux container inventory', function ()
             ->andReturn([
                 [
                     'id' => 'caddy-container-id',
-                    'name' => 'coolify-v5-caddy',
+                    'name' => 'xlaunch-v5-caddy',
                     'image' => 'docker.io/library/caddy:2-alpine',
                     'state' => 'exited',
                 ],
@@ -1153,7 +1153,7 @@ it('rejects application ingress when server ingress is disabled', function () {
         'created_by_user_id' => $user->id,
         'name' => 'private-app',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-private-app',
+        'container_name' => 'xlaunch-v5-private-app',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -1212,7 +1212,7 @@ it('enables application ingress without publishing domains by default', function
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -1285,7 +1285,7 @@ it('validates application ingress domains', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -1343,7 +1343,7 @@ it('enables application ingress with explicit domains and port', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -1358,7 +1358,7 @@ it('enables application ingress with explicit domains and port', function () {
             Mockery::on(fn (string $caddyfile): bool => str_contains($caddyfile, 'import apps/*.caddy')),
             Mockery::on(fn (array $apps): bool => count($apps) === 1
                 && str_contains($apps[0]['config'], 'http://app.example.com {')
-                && str_contains($apps[0]['config'], 'reverse_proxy coolify-v5-nginx-test.default.coolify.internal:3000'))
+                && str_contains($apps[0]['config'], 'reverse_proxy xlaunch-v5-nginx-test.default.xlaunch.internal:3000'))
         )
         ->andReturn('Caddy ingress applied.');
     expectCaddyIngressFirewallRule($fluxClient);
@@ -1417,7 +1417,7 @@ it('returns flux error details when application ingress sync fails', function ()
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'mesh_namespace' => 'default',
     ]);
@@ -1481,7 +1481,7 @@ it('rejects a domain already claimed by another application on the same ingress 
         'created_by_user_id' => $user->id,
         'name' => 'owner-app',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-owner',
+        'container_name' => 'xlaunch-v5-owner',
         'status' => 'running',
         'ingress_enabled' => true,
         'internal_port' => 8080,
@@ -1498,7 +1498,7 @@ it('rejects a domain already claimed by another application on the same ingress 
         'created_by_user_id' => $user->id,
         'name' => 'challenger-app',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-challenger',
+        'container_name' => 'xlaunch-v5-challenger',
         'status' => 'running',
     ]);
     $otherServerApp = V5Application::query()->create([
@@ -1509,7 +1509,7 @@ it('rejects a domain already claimed by another application on the same ingress 
         'created_by_user_id' => $user->id,
         'name' => 'elsewhere-app',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-elsewhere',
+        'container_name' => 'xlaunch-v5-elsewhere',
         'status' => 'running',
     ]);
 
@@ -1565,7 +1565,7 @@ it('does not mark creating v5 applications as exited during a refresh', function
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'creating',
         'status_message' => 'Starting nginx container.',
     ]);
@@ -1613,7 +1613,7 @@ it('returns deploy status without logs for a failed v5 application that has no c
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'failed',
         'status_message' => 'host not connected',
     ]);
@@ -1661,7 +1661,7 @@ it('returns container logs for a v5 application through flux', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container running.',
         'runtime_container_id' => 'container-abc',
@@ -1711,7 +1711,7 @@ it('reports a friendly error when the node coold does not support container logs
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container running.',
         'runtime_container_id' => 'container-abc',
@@ -1759,7 +1759,7 @@ it('hides another team v5 application logs as a not found', function () {
         'created_by_user_id' => $otherUser->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-9',
+        'container_name' => 'xlaunch-v5-nginx-9',
         'status' => 'running',
     ]);
 

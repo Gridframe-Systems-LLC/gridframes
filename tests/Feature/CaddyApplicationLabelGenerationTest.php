@@ -33,6 +33,6 @@ test('generates exact Caddy labels for an application with a domain', function (
     $labels = generateLabelsApplication($application);
 
     expect($labels)
-        ->toContain('caddy_ingress_network=coolify')
+        ->toContain('caddy_ingress_network=xlaunch')
         ->not->toContain('traefik.enable=true');
 });

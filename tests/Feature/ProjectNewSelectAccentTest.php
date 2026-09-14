@@ -1,6 +1,6 @@
 <?php
 
-it('uses the Coollabs gradient button treatment for deploy actions', function () {
+it('uses the Northlatch gradient button treatment for deploy actions', function () {
     $view = file_get_contents(resource_path('views/livewire/project/new/select.blade.php'));
 
     expect($view)

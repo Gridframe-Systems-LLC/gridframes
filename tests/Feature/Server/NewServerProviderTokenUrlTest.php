@@ -119,7 +119,7 @@ test('provider token pages defer provider api data loading until wire init', fun
         ->assertSet('loading_data', true)
         ->assertSee($loadingText)
         ->assertSee($wireInitCall, false)
-        ->assertSee('text-coollabs dark:text-warning animate-spin', false)
+        ->assertSee('text-northlatch dark:text-warning animate-spin', false)
         ->assertDontSee('border-b-2 border-primary', false);
 
     Http::assertNothingSent();

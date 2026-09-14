@@ -117,7 +117,7 @@ it('persists generic v5 resource connections and direction-specific ports', func
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-source',
+        'container_name' => 'xlaunch-v5-nginx-source',
         'status' => 'running',
     ]);
     $target = V5Application::query()->create([
@@ -128,7 +128,7 @@ it('persists generic v5 resource connections and direction-specific ports', func
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-target',
+        'container_name' => 'xlaunch-v5-nginx-target',
         'status' => 'running',
     ]);
 
@@ -218,7 +218,7 @@ it('reports flux failures when syncing v5 resource connection firewall rules', f
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -230,7 +230,7 @@ it('reports flux failures when syncing v5 resource connection firewall rules', f
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -251,7 +251,7 @@ it('reports flux failures when syncing v5 resource connection firewall rules', f
     $fluxClient
         ->shouldReceive('applyFirewallRule')
         ->once()
-        ->andThrow(new RuntimeException('resolve firewall endpoint coolify-v5-api on coolify-default-mesh'));
+        ->andThrow(new RuntimeException('resolve firewall endpoint xlaunch-v5-api on xlaunch-default-mesh'));
     // The compensation pass rolls the node back by revoking the attempted rule.
     $fluxClient
         ->shouldReceive('revokeFirewallRule')
@@ -276,7 +276,7 @@ it('reports flux failures when syncing v5 resource connection firewall rules', f
     expect($connection->rules()->count())->toBe(0);
 
     // The raw Flux/coold error is never leaked to the client, only reported server-side.
-    Exceptions::assertReported(fn (RuntimeException $exception): bool => $exception->getMessage() === 'resolve firewall endpoint coolify-v5-api on coolify-default-mesh');
+    Exceptions::assertReported(fn (RuntimeException $exception): bool => $exception->getMessage() === 'resolve firewall endpoint xlaunch-v5-api on xlaunch-default-mesh');
 });
 
 it('syncs cross-server v5 resource connection ports on both endpoint hosts', function () {
@@ -324,7 +324,7 @@ it('syncs cross-server v5 resource connection ports on both endpoint hosts', fun
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -336,7 +336,7 @@ it('syncs cross-server v5 resource connection ports on both endpoint hosts', fun
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -357,8 +357,8 @@ it('syncs cross-server v5 resource connection ports on both endpoint hosts', fun
     $expectedRule = [
         'id' => $firewallRuleId,
         'namespace' => 'default',
-        'src' => 'coolify-v5-api',
-        'dst' => 'coolify-v5-postgres',
+        'src' => 'xlaunch-v5-api',
+        'dst' => 'xlaunch-v5-postgres',
         'proto' => 'tcp',
         'port' => 5432,
     ];
@@ -422,7 +422,7 @@ it('syncs v5 resource connection ports through flux firewall primitives', functi
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -434,7 +434,7 @@ it('syncs v5 resource connection ports through flux firewall primitives', functi
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -460,8 +460,8 @@ it('syncs v5 resource connection ports through flux firewall primitives', functi
         ->with(Mockery::type('string'), [
             'id' => $firewallRuleId,
             'namespace' => 'default',
-            'src' => 'coolify-v5-api',
-            'dst' => 'coolify-v5-postgres',
+            'src' => 'xlaunch-v5-api',
+            'dst' => 'xlaunch-v5-postgres',
             'proto' => 'tcp',
             'port' => 5432,
         ])
@@ -516,7 +516,7 @@ it('rejects firewall sync when a connected application has no server host id', f
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'status' => 'running',
     ]);
     $target = V5Application::query()->create([
@@ -527,7 +527,7 @@ it('rejects firewall sync when a connected application has no server host id', f
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'status' => 'running',
     ]);
     $connection = ResourceConnection::query()->create([
@@ -581,7 +581,7 @@ it('still deletes a v5 resource connection whose endpoint lost its server host i
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-api',
+        'container_name' => 'xlaunch-v5-api',
         'status' => 'running',
     ]);
     $target = V5Application::query()->create([
@@ -592,7 +592,7 @@ it('still deletes a v5 resource connection whose endpoint lost its server host i
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-postgres',
+        'container_name' => 'xlaunch-v5-postgres',
         'status' => 'running',
     ]);
     $connection = ResourceConnection::query()->create([

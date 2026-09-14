@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Advanced Settings | Coolify
+        Advanced Settings | Xlaunch
     </x-slot>
 
     <x-settings.layout>
@@ -43,11 +43,11 @@
 
             @if (isCloud())
                 <x-application.settings-section id="domain-connect-section" title="Domain Connect"
-                    helper="Optional RSA private key used to sign Cloudflare Domain Connect apply URLs on Coolify Cloud. Leave blank to keep the existing key.">
+                    helper="Optional RSA private key used to sign Cloudflare Domain Connect apply URLs on Xlaunch Cloud. Leave blank to keep the existing key.">
                     <div class="grid gap-4">
                         <x-forms.input id="domain_connect_private_key" type="password" allowToPeak
                             label="Domain Connect private key (PEM)"
-                            helper="Paste a PEM private key to set or rotate. Public key must be published at domainconnect.coolify.io. Env DOMAIN_CONNECT_PRIVATE_KEY is used as a fallback when this is empty."
+                            helper="Paste a PEM private key to set or rotate. Public key must be published at domainconnect.northlatch.com. Env DOMAIN_CONNECT_PRIVATE_KEY is used as a fallback when this is empty."
                             placeholder="-----BEGIN PRIVATE KEY-----" />
                         @if (filled(data_get($settings, 'domain_connect_private_key')))
                             <div class="flex flex-wrap items-center gap-2">
@@ -70,7 +70,7 @@
             <x-application.settings-section id="api-section" title="API and MCP">
                 <div class="grid gap-4 lg:grid-cols-2">
                     <x-forms.listbox id="is_api_enabled" label="API access"
-                        helper="Allow authenticated requests to the Coolify REST API." onChange="instantSave"
+                        helper="Allow authenticated requests to the Xlaunch REST API." onChange="instantSave"
                         :options="[
                             ['value' => true, 'label' => 'Enabled'],
                             ['value' => false, 'label' => 'Disabled'],

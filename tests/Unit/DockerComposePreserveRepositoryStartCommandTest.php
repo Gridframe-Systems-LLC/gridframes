@@ -5,7 +5,7 @@
  * execution context based on the preserveRepository setting.
  *
  * When preserveRepository is enabled, the compose file and .env file are
- * written to the host at /data/coolify/applications/{uuid}/. The start
+ * written to the host at /data/xlaunch/applications/{uuid}/. The start
  * command must run on the host (not inside the helper container) so it
  * can access these files.
  *
@@ -13,15 +13,15 @@
  * container at /artifacts/{uuid}/, so the command must run inside the
  * container via executeInDocker().
  *
- * @see https://github.com/coollabsio/coolify/issues/8417
+ * @see https://github.com/northlatch/xlaunch/issues/8417
  */
 it('generates host command (not executeInDocker) when preserveRepository is true', function () {
     $deploymentUuid = 'test-deployment-uuid';
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
     $basedir = '/artifacts/test-deployment-uuid';
     $preserveRepository = true;
 
-    $startCommand = 'docker compose -f /data/coolify/applications/app-uuid/compose.yml --env-file /data/coolify/applications/app-uuid/.env --profile all up -d';
+    $startCommand = 'docker compose -f /data/xlaunch/applications/app-uuid/compose.yml --env-file /data/xlaunch/applications/app-uuid/.env --profile all up -d';
 
     // Simulate the logic from ApplicationDeploymentJob::deploy_docker_compose_buildpack()
     if ($preserveRepository) {
@@ -38,7 +38,7 @@ it('generates host command (not executeInDocker) when preserveRepository is true
 
 it('generates executeInDocker command when preserveRepository is false', function () {
     $deploymentUuid = 'test-deployment-uuid';
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
     $basedir = '/artifacts/test-deployment-uuid';
     $workdir = '/artifacts/test-deployment-uuid/backend';
     $preserveRepository = false;
@@ -59,7 +59,7 @@ it('generates executeInDocker command when preserveRepository is false', functio
 });
 
 it('uses host paths for env-file when preserveRepository is true', function () {
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
     $composeLocation = '/compose.yml';
     $preserveRepository = true;
 
@@ -76,7 +76,7 @@ it('uses host paths for env-file when preserveRepository is true', function () {
 });
 
 it('injects --project-directory with host path when preserveRepository is true', function () {
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
     $containerWorkdir = '/artifacts/deployment-uuid';
     $preserveRepository = true;
 
@@ -94,7 +94,7 @@ it('injects --project-directory with host path when preserveRepository is true',
 });
 
 it('injects --project-directory with container path when preserveRepository is false', function () {
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
     $containerWorkdir = '/artifacts/deployment-uuid';
     $preserveRepository = false;
 
@@ -108,7 +108,7 @@ it('injects --project-directory with container path when preserveRepository is f
 
     // When preserveRepository is false, --project-directory must point to container path
     expect($customStartCommand)->toContain("--project-directory {$containerWorkdir}");
-    expect($customStartCommand)->not->toContain('/data/coolify/applications/');
+    expect($customStartCommand)->not->toContain('/data/xlaunch/applications/');
 });
 
 it('does not override explicit --project-directory in custom start command', function () {
@@ -128,7 +128,7 @@ it('uses container paths for env-file when preserveRepository is false', functio
     $workdir = '/artifacts/deployment-uuid/backend';
     $composeLocation = '/compose.yml';
     $preserveRepository = false;
-    $serverWorkdir = '/data/coolify/applications/app-uuid';
+    $serverWorkdir = '/data/xlaunch/applications/app-uuid';
 
     $workdirPath = $preserveRepository ? $serverWorkdir : $workdir;
     $startCommand = injectDockerComposeFlags(
@@ -140,5 +140,5 @@ it('uses container paths for env-file when preserveRepository is false', functio
     // Verify the injected paths point to the container filesystem
     expect($startCommand)->toContain("--env-file {$workdir}/.env");
     expect($startCommand)->toContain("-f {$workdir}{$composeLocation}");
-    expect($startCommand)->not->toContain('/data/coolify/applications/');
+    expect($startCommand)->not->toContain('/data/xlaunch/applications/');
 });

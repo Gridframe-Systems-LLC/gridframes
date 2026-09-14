@@ -248,7 +248,7 @@ class SafeWebhookUrl implements ValidationRule
         if ($customDnsServers !== []) {
             $customResolvedIps = $this->resolveHostWithCustomDnsServers($host, $customDnsServers);
             // Fall back to the system resolver when custom DNS has no answer so
-            // docker/internal hostnames (e.g. coolify-minio) still work with an
+            // docker/internal hostnames (e.g. xlaunch-minio) still work with an
             // instance-level public DNS server configured.
             if ($customResolvedIps !== []) {
                 return $customResolvedIps;

@@ -22,7 +22,7 @@
     <env name="QUEUE_CONNECTION" value="sync" force="true"/>
     <env name="SESSION_DRIVER" value="array" force="true"/>
     <env name="NIGHTWATCH_ENABLED" value="false"/>
-    <!-- Host-side Pest browser runs cannot resolve docker DNS (coolify-realtime). -->
+    <!-- Host-side Pest browser runs cannot resolve docker DNS (xlaunch-realtime). -->
     <env name="BROADCAST_DRIVER" value="null" force="true"/>
   </php>
   <source>

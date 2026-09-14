@@ -49,17 +49,17 @@
 }
 
 @utility input-sticky-active {
-    @apply text-black border-2 border-coollabs dark:border-warning dark:text-white focus:bg-neutral-200 dark:focus:bg-coolgray-400 focus:border-coollabs dark:focus:border-warning;
+    @apply text-black border-2 border-northlatch dark:border-warning dark:text-white focus:bg-neutral-200 dark:focus:bg-coolgray-400 focus:border-northlatch dark:focus:border-warning;
 }
 
 /* Focus */
 @utility input-focus {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-coollabs dark:focus-visible:ring-warning focus-visible:ring-offset-2 dark:focus-visible:ring-offset-base;
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-northlatch dark:focus-visible:ring-warning focus-visible:ring-offset-2 dark:focus-visible:ring-offset-base;
 }
 
 /*  input, select before */
 @utility input-select {
-    @apply block h-9 px-3 py-1.5 w-full text-sm text-black rounded-md border border-neutral-200 bg-[var(--coollabs-recessed)] dark:text-fg dark:border-white/[0.08] transition-colors disabled:bg-neutral-100 disabled:text-neutral-400 dark:disabled:bg-white/[0.03] dark:disabled:text-fg-faint;
+    @apply block h-9 px-3 py-1.5 w-full text-sm text-black rounded-md border border-neutral-200 bg-[var(--northlatch-recessed)] dark:text-fg dark:border-white/[0.08] transition-colors disabled:bg-neutral-100 disabled:text-neutral-400 dark:disabled:bg-white/[0.03] dark:disabled:text-fg-faint;
     box-shadow: none;
 
     &:where(.dark, .dark *) {
@@ -130,11 +130,11 @@
 }
 
 @utility button-highlighted {
-    @apply border-coollabs-200 bg-linear-to-b from-coollabs-100 to-coollabs-200 text-accent-foreground! hover:from-coollabs-100 hover:to-coollabs hover:text-accent-foreground!;
+    @apply border-northlatch-200 bg-linear-to-b from-northlatch-100 to-northlatch-200 text-accent-foreground! hover:from-northlatch-100 hover:to-northlatch hover:text-accent-foreground!;
 }
 
 @utility control-selected {
-    @apply bg-linear-to-b from-coollabs-100 to-coollabs-200 text-white;
+    @apply bg-linear-to-b from-northlatch-100 to-northlatch-200 text-white;
 }
 
 @utility view-toggle {
@@ -142,7 +142,7 @@
 }
 
 @utility loading-indicator {
-    @apply text-coollabs dark:text-warning;
+    @apply text-northlatch dark:text-warning;
 }
 
 /* Compact icon-only control (gear, chevrons, etc.) */
@@ -162,7 +162,7 @@
 
 /* Active resource tab (used with aria-current="page") */
 @utility app-tab-active {
-    @apply bg-coollabs/10 text-coollabs shadow-sm ring-1 ring-coollabs/25 hover:bg-coollabs/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20;
+    @apply bg-northlatch/10 text-northlatch shadow-sm ring-1 ring-northlatch/25 hover:bg-northlatch/15 dark:bg-warning/15 dark:text-warning dark:ring-warning/25 dark:hover:bg-warning/20;
 }
 
 @utility auth-tooltip {
@@ -190,7 +190,7 @@
 }
 
 @utility dropdown-item {
-    @apply flex relative gap-2 justify-start items-center py-1 pr-4 pl-2 w-full text-xs transition-colors cursor-pointer select-none dark:text-white hover:bg-neutral-100 dark:hover:bg-coollabs outline-none data-disabled:pointer-events-none data-disabled:opacity-50 focus-visible:bg-neutral-100 dark:focus-visible:bg-coollabs;
+    @apply flex relative gap-2 justify-start items-center py-1 pr-4 pl-2 w-full text-xs transition-colors cursor-pointer select-none dark:text-white hover:bg-neutral-100 dark:hover:bg-northlatch outline-none data-disabled:pointer-events-none data-disabled:opacity-50 focus-visible:bg-neutral-100 dark:focus-visible:bg-northlatch;
 }
 
 @utility dropdown-item-touch {
@@ -198,7 +198,7 @@
 }
 
 @utility dropdown-item-no-padding {
-    @apply flex relative gap-2 justify-start items-center py-1 w-full text-xs transition-colors cursor-pointer select-none dark:text-white hover:bg-neutral-100 dark:hover:bg-coollabs outline-none data-disabled:pointer-events-none data-disabled:opacity-50 focus-visible:bg-neutral-100 dark:focus-visible:bg-coollabs;
+    @apply flex relative gap-2 justify-start items-center py-1 w-full text-xs transition-colors cursor-pointer select-none dark:text-white hover:bg-neutral-100 dark:hover:bg-northlatch outline-none data-disabled:pointer-events-none data-disabled:opacity-50 focus-visible:bg-neutral-100 dark:focus-visible:bg-northlatch;
 }
 
 @utility badge {
@@ -279,7 +279,7 @@
 }
 
 @utility scrollbar {
-    @apply scrollbar-thumb-coollabs-100 scrollbar-track-neutral-200 dark:scrollbar-thumb-coollabs-100 dark:scrollbar-track-coolgray-200 scrollbar-thin;
+    @apply scrollbar-thumb-northlatch-100 scrollbar-track-neutral-200 dark:scrollbar-thumb-northlatch-100 dark:scrollbar-track-coolgray-200 scrollbar-thin;
 }
 
 @utility main {
@@ -295,7 +295,7 @@
 }
 
 @utility loading {
-    @apply w-4 dark:text-warning text-coollabs;
+    @apply w-4 dark:text-warning text-northlatch;
 }
 
 @utility kbd-custom {
@@ -307,7 +307,7 @@
 }
 
 @utility box-boarding {
-    @apply flex lg:flex-row flex-col p-2 transition-colors cursor-pointer min-h-[4rem] dark:bg-coolgray-100 dark:text-white bg-neutral-50 border border-neutral-200 dark:border-coolgray-300 hover:bg-neutral-100 dark:hover:bg-coollabs-100 dark:hover:text-white hover:text-black hover:no-underline text-black rounded-sm;
+    @apply flex lg:flex-row flex-col p-2 transition-colors cursor-pointer min-h-[4rem] dark:bg-coolgray-100 dark:text-white bg-neutral-50 border border-neutral-200 dark:border-coolgray-300 hover:bg-neutral-100 dark:hover:bg-northlatch-100 dark:hover:text-white hover:text-black hover:no-underline text-black rounded-sm;
 }
 
 @utility box-without-bg {
@@ -338,12 +338,12 @@
     @apply text-xs font-bold text-neutral-500 dark:group-hover:text-white group-hover:text-black;
 }
 
-@utility bg-coollabs-gradient {
+@utility bg-northlatch-gradient {
     @apply from-purple-500 via-pink-500 to-red-500 bg-linear-to-r;
 }
 
 @utility text-helper {
-    @apply inline-block font-semibold text-coollabs dark:text-warning;
+    @apply inline-block font-semibold text-northlatch dark:text-warning;
 }
 
 @utility info-helper {
@@ -378,8 +378,8 @@
    shared dropdown lift. Toasts, change-pending popovers and the deployments
    list share this so they match menus/dropdowns instead of the heavier modal. */
 @utility surface-popover {
-    background: var(--coollabs-elevated);
-    box-shadow: 0 0 0 1px var(--coollabs-line), var(--shadow-dropdown);
+    background: var(--northlatch-elevated);
+    box-shadow: 0 0 0 1px var(--northlatch-line), var(--shadow-dropdown);
 }
 
 @utility dz-button {

@@ -25,7 +25,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    private const BOOTSTRAP_MARKER_PATH = '/etc/coolify/v5-node.json';
+    private const BOOTSTRAP_MARKER_PATH = '/etc/xlaunch/v5-node.json';
 
     public const TIMEOUT_SECONDS = 7200;
 
@@ -72,7 +72,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
             ->update([
                 'last_bootstrap_action' => $action,
                 'last_bootstrap_status' => 'running',
-                'last_bootstrap_output' => "Starting Coolify CLI {$action} for {$server->name}...",
+                'last_bootstrap_output' => "Starting Xlaunch CLI {$action} for {$server->name}...",
                 'last_bootstrap_ran_at' => now(),
             ]);
 
@@ -206,7 +206,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
     private function bootstrapCommand(V5Cluster $cluster, Collection $servers, V5Server $newServer, string $sshConfigLocation, string $action): array
     {
         $command = [
-            $this->coolifyCliBin(),
+            $this->xlaunchCliBin(),
             'init',
             $action,
             '--format',
@@ -262,12 +262,12 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
         return $command;
     }
 
-    private function coolifyCliBin(): string
+    private function xlaunchCliBin(): string
     {
-        $configuredBinary = (string) config('coold.coolify_cli_bin', '/usr/local/bin/coolify');
-        $devBinary = base_path('.dev/bin/coolify');
+        $configuredBinary = (string) config('coold.xlaunch_cli_bin', '/usr/local/bin/xlaunch');
+        $devBinary = base_path('.dev/bin/xlaunch');
 
-        if ($configuredBinary === '/usr/local/bin/coolify' && $this->isRunnableDevelopmentCliBinary($devBinary)) {
+        if ($configuredBinary === '/usr/local/bin/xlaunch' && $this->isRunnableDevelopmentCliBinary($devBinary)) {
             return $devBinary;
         }
 
@@ -349,7 +349,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
             'has_coold' => true,
             'status' => ServerStatus::Installed->value,
             'last_bootstrap_status' => 'succeeded',
-            'last_bootstrap_output' => 'Adopted existing Coolify bootstrap state for this cluster.',
+            'last_bootstrap_output' => 'Adopted existing Xlaunch bootstrap state for this cluster.',
             'last_bootstrap_ran_at' => now(),
             'last_bootstrapped_at' => now(),
         ];
@@ -548,7 +548,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
     }
 
     /**
-     * The container subnets are allocated by the coolify CLI on the host; the podman
+     * The container subnets are allocated by the xlaunch CLI on the host; the podman
      * networks it creates are the source of truth, so read them back instead of
      * re-deriving the allocation locally.
      *
@@ -571,7 +571,7 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
             'if [ "$(id -u)" != "0" ]; then SUDO=\'sudo\'; fi',
             "for ns in {$namespaceArguments}; do",
             '  printf \'%s=\' "$ns"',
-            '  $SUDO podman network inspect "coolify-${ns}-mesh" --format \'{{range .Subnets}}{{.Subnet}}{{end}}\' 2>/dev/null || true',
+            '  $SUDO podman network inspect "xlaunch-${ns}-mesh" --format \'{{range .Subnets}}{{.Subnet}}{{end}}\' 2>/dev/null || true',
             '  printf \'\n\'',
             'done',
         ]);
@@ -627,13 +627,13 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
         $fluxUrl = trim((string) config('coold.flux_url', ''));
 
         if ($fluxUrl === '') {
-            throw new \RuntimeException('COOLIFY_COOLD_FLUX_URL is not configured, so the server cannot be enrolled into Flux. Set it and retry the bootstrap.');
+            throw new \RuntimeException('XLAUNCH_COOLD_FLUX_URL is not configured, so the server cannot be enrolled into Flux. Set it and retry the bootstrap.');
         }
 
-        $jwtPath = trim((string) config('coold.flux_host_jwt_path', '/etc/coolify/host-jwt'));
+        $jwtPath = trim((string) config('coold.flux_host_jwt_path', '/etc/xlaunch/host-jwt'));
 
         if ($jwtPath === '') {
-            $jwtPath = '/etc/coolify/host-jwt';
+            $jwtPath = '/etc/xlaunch/host-jwt';
         }
 
         $fluxUrl = str_replace(["\r", "\n"], '', $fluxUrl);
@@ -649,15 +649,15 @@ class V5BootstrapServerJob implements ShouldBeEncrypted, ShouldBeUnique, ShouldQ
 set -e
 SUDO=''
 if [ "\$(id -u)" != "0" ]; then SUDO='sudo'; fi
-\$SUDO mkdir -p /etc/coolify {$dropInDirectory}
+\$SUDO mkdir -p /etc/xlaunch {$dropInDirectory}
 printf %s {$tokenArgument} | \$SUDO tee {$jwtPathArgument} >/dev/null
 \$SUDO chmod 600 {$jwtPathArgument}
-cat <<'COOLIFY_FLUX_ENV' | \$SUDO tee {$dropInPath} >/dev/null
+cat <<'XLAUNCH_FLUX_ENV' | \$SUDO tee {$dropInPath} >/dev/null
 [Service]
-Environment=COOLIFY_COOLD_FLUX_URL={$fluxUrl}
-Environment=COOLIFY_COOLD_HOST_ID={$hostId}
-Environment=COOLIFY_COOLD_HOST_JWT_PATH={$jwtPath}
-COOLIFY_FLUX_ENV
+Environment=XLAUNCH_COOLD_FLUX_URL={$fluxUrl}
+Environment=XLAUNCH_COOLD_HOST_ID={$hostId}
+Environment=XLAUNCH_COOLD_HOST_JWT_PATH={$jwtPath}
+XLAUNCH_FLUX_ENV
 \$SUDO systemctl daemon-reload
 \$SUDO systemctl restart coold.service
 SH;
@@ -746,7 +746,7 @@ SH;
             '-F',
             $sshConfigLocation,
             $this->bootstrapNode($server),
-            "payload='{$payload}'; if [ \"$(id -u)\" = \"0\" ]; then mkdir -p /etc/coolify && printf %s \"$payload\" | base64 -d > ".escapeshellarg(self::BOOTSTRAP_MARKER_PATH)."; else sudo mkdir -p /etc/coolify && printf %s \"$payload\" | base64 -d | sudo tee ".escapeshellarg(self::BOOTSTRAP_MARKER_PATH).' >/dev/null; fi',
+            "payload='{$payload}'; if [ \"$(id -u)\" = \"0\" ]; then mkdir -p /etc/xlaunch && printf %s \"$payload\" | base64 -d > ".escapeshellarg(self::BOOTSTRAP_MARKER_PATH)."; else sudo mkdir -p /etc/xlaunch && printf %s \"$payload\" | base64 -d | sudo tee ".escapeshellarg(self::BOOTSTRAP_MARKER_PATH).' >/dev/null; fi',
         ]);
 
         if (! $result->successful()) {

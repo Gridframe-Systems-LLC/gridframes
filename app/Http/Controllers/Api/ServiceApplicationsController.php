@@ -258,7 +258,7 @@ class ServiceApplicationsController extends Controller
                         'is_gzip_enabled' => new OA\Property(property: 'is_gzip_enabled', type: 'boolean', nullable: true),
                         'is_stripprefix_enabled' => new OA\Property(property: 'is_stripprefix_enabled', type: 'boolean', nullable: true),
                         'is_force_https_enabled' => new OA\Property(property: 'is_force_https_enabled', type: 'boolean', nullable: true),
-                        'max_restart_count' => new OA\Property(property: 'max_restart_count', type: 'integer', minimum: 0, nullable: true, description: 'Maximum Docker restart count before Coolify stops the container. Set to 0 to disable the limit.'),
+                        'max_restart_count' => new OA\Property(property: 'max_restart_count', type: 'integer', minimum: 0, nullable: true, description: 'Maximum Docker restart count before Xlaunch stops the container. Set to 0 to disable the limit.'),
                     ]
                 )
             )

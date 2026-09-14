@@ -595,7 +595,7 @@ YAML,
     $preview = $isPreview ? ApplicationPreview::create([
         'application_id' => $application->id,
         'pull_request_id' => 1,
-        'pull_request_html_url' => 'https://github.com/coollabsio/coolify/pull/1',
+        'pull_request_html_url' => 'https://github.com/northlatch/xlaunch/pull/1',
         'docker_compose_domains' => $application->docker_compose_domains,
     ]) : null;
 

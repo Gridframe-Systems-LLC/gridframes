@@ -94,7 +94,7 @@ class Updates extends Component
 
     private function registryEnvSyncCommand(string $registryUrl): string
     {
-        $envFile = '/data/coolify/source/.env';
+        $envFile = '/data/xlaunch/source/.env';
         $sedExpression = escapeshellarg("s|^REGISTRY_URL=.*|REGISTRY_URL={$registryUrl}|");
         $registryLine = escapeshellarg("REGISTRY_URL={$registryUrl}");
 

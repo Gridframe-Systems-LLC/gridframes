@@ -35,7 +35,7 @@ it('generates correct install paths for github cloud ghe cloud and ghes', functi
     $githubApp = new GithubApp;
     $githubApp->forceFill(array_merge([
         'id' => 123,
-        'name' => 'Coolify Test App',
+        'name' => 'Xlaunch Test App',
         'team_id' => 456,
     ], $attributes));
 
@@ -54,26 +54,26 @@ it('generates correct install paths for github cloud ghe cloud and ghes', functi
 })->with([
     'github.com' => [
         ['html_url' => 'https://github.com'],
-        'https://github.com/apps/coolify-test-app/installations/new?',
+        'https://github.com/apps/xlaunch-test-app/installations/new?',
     ],
     'ghe.com organization' => [
         ['html_url' => 'https://octocorp.ghe.com', 'organization' => 'octo-corp'],
-        'https://octocorp.ghe.com/apps/octo-corp/coolify-test-app/installations/new?',
+        'https://octocorp.ghe.com/apps/octo-corp/xlaunch-test-app/installations/new?',
     ],
     'ghe.com blank organization fallback' => [
         ['html_url' => 'https://octocorp.ghe.com', 'organization' => null],
-        'https://octocorp.ghe.com/apps/coolify-test-app/installations/new?',
+        'https://octocorp.ghe.com/apps/xlaunch-test-app/installations/new?',
     ],
     'github enterprise server' => [
         ['html_url' => 'https://github.company.internal', 'organization' => 'octo-corp'],
-        'https://github.company.internal/github-apps/coolify-test-app/installations/new?',
+        'https://github.company.internal/github-apps/xlaunch-test-app/installations/new?',
     ],
 ]);
 
 it('encodes organization path segments in settings links', function () {
     $githubApp = new GithubApp;
     $githubApp->forceFill([
-        'name' => 'coolify-app',
+        'name' => 'xlaunch-app',
         'organization' => 'octo+corp',
         'api_url' => 'https://api.octocorp.ghe.com',
         'html_url' => 'https://octocorp.ghe.com',
@@ -82,5 +82,5 @@ it('encodes organization path segments in settings links', function () {
         'team_id' => 123,
     ]);
 
-    expect(getPermissionsPath($githubApp))->toBe('https://octocorp.ghe.com/organizations/octo%2Bcorp/settings/apps/coolify-app/permissions');
+    expect(getPermissionsPath($githubApp))->toBe('https://octocorp.ghe.com/organizations/octo%2Bcorp/settings/apps/xlaunch-app/permissions');
 });

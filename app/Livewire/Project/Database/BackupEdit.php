@@ -265,7 +265,7 @@ class BackupEdit extends Component
                 ]);
             }
 
-            // Instance databases (e.g. coolify-db) have no project/environment.
+            // Instance databases (e.g. xlaunch-db) have no project/environment.
             // Stay on the current page (settings.backup) instead of redirecting.
             $project = $database->project();
             $environment = $database->environment;

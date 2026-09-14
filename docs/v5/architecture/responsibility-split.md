@@ -6,14 +6,14 @@ Use this as the first check when deciding where a new feature belongs.
 
 | Question | Owner |
 | --- | --- |
-| What should happen for this user, team, app, database, or deployment? | Coolify |
-| Which connected host should receive this request? | Coolify chooses, Flux routes |
+| What should happen for this user, team, app, database, or deployment? | Xlaunch |
+| Which connected host should receive this request? | Xlaunch chooses, Flux routes |
 | How do we get a command to a NATed host? | Flux |
 | Do this concrete operation on this host. | coold |
-| Is this allowed for this Coolify user/team? | Coolify |
-| Is this host operation dangerous even if Coolify asked for it? | coold deny filter |
+| Is this allowed for this Xlaunch user/team? | Xlaunch |
+| Is this host operation dangerous even if Xlaunch asked for it? | coold deny filter |
 
-## Coolify owns
+## Xlaunch owns
 
 - Users, teams, roles, RBAC, API tokens, sessions, SSO/OAuth.
 - Projects, environments, applications, services, databases, servers.
@@ -50,11 +50,11 @@ host; Flux does not know it is part of an nginx deployment.
 - Builder subprocess supervision when the host advertises builder capability.
 - Host-level safety checks such as container-create deny filters.
 
-coold does not store Coolify secrets, users, teams, app ownership, deployment
+coold does not store Xlaunch secrets, users, teams, app ownership, deployment
 history, billing data, or business audit.
 
 ## Boundary test
 
 If a different orchestrator could reuse the same operation with its own app
 model, it probably belongs in coold. If the operation only makes sense because
-of Coolify's product model, it belongs in Coolify.
+of Xlaunch's product model, it belongs in Xlaunch.

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Proxy Dynamic Configuration | Coolify
+        Proxy Dynamic Configuration | Xlaunch
     </x-slot>
 
     <livewire:server.navbar :server="$server" />
@@ -44,9 +44,9 @@
                             @php
                                 $displayName = str_replace('|', '.', $fileName);
                                 $isManagedConfiguration = in_array($displayName, [
-                                    'coolify.yaml',
+                                    'xlaunch.yaml',
                                     'Caddyfile',
-                                    'coolify.caddy',
+                                    'xlaunch.caddy',
                                     'default_redirect_503.yaml',
                                     'default_redirect_503.caddy',
                                 ]);

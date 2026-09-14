@@ -27,8 +27,8 @@ test('database last_online_at is not updated when status is unchanged', function
                 'state' => 'running',
                 'health_status' => 'healthy',
                 'labels' => [
-                    'coolify.managed' => 'true',
-                    'coolify.type' => 'database',
+                    'xlaunch.managed' => 'true',
+                    'xlaunch.type' => 'database',
                     'com.docker.compose.service' => $database->uuid,
                 ],
             ],
@@ -61,8 +61,8 @@ test('database status is updated when container status changes', function () {
                 'state' => 'running',
                 'health_status' => 'healthy',
                 'labels' => [
-                    'coolify.managed' => 'true',
-                    'coolify.type' => 'database',
+                    'xlaunch.managed' => 'true',
+                    'xlaunch.type' => 'database',
                     'com.docker.compose.service' => $database->uuid,
                 ],
             ],
@@ -165,7 +165,7 @@ test('partial sentinel snapshots do not mark missing databases as exited', funct
                 'state' => 'running',
                 'health_status' => 'healthy',
                 'labels' => [
-                    'coolify.managed' => 'true',
+                    'xlaunch.managed' => 'true',
                 ],
             ],
         ],
@@ -199,8 +199,8 @@ test('partial sentinel snapshots apply directly observed database status updates
                 'state' => 'running',
                 'health_status' => 'healthy',
                 'labels' => [
-                    'coolify.managed' => 'true',
-                    'coolify.type' => 'database',
+                    'xlaunch.managed' => 'true',
+                    'xlaunch.type' => 'database',
                     'com.docker.compose.service' => $database->uuid,
                 ],
             ],
@@ -236,8 +236,8 @@ test('partial sentinel snapshots do not trigger missing tcp proxy recovery', fun
                 'state' => 'running',
                 'health_status' => 'healthy',
                 'labels' => [
-                    'coolify.managed' => 'true',
-                    'coolify.type' => 'database',
+                    'xlaunch.managed' => 'true',
+                    'xlaunch.type' => 'database',
                     'com.docker.compose.service' => $database->uuid,
                 ],
             ],

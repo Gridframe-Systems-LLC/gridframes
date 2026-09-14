@@ -1,6 +1,6 @@
 <div class="application-settings-form w-full">
     <x-slot:title>
-        Servers | Coolify
+        Servers | Xlaunch
     </x-slot>
 
     <div class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -65,7 +65,7 @@
 
     <div x-data="{
         search: '',
-        viewMode: localStorage.getItem('coolify-servers-view') || 'table',
+        viewMode: localStorage.getItem('xlaunch-servers-view') || 'table',
         servers: @js($serverRows),
         get filteredServers() {
             const query = this.search.trim().toLowerCase();
@@ -77,7 +77,7 @@
         },
         setViewMode(mode) {
             this.viewMode = mode;
-            localStorage.setItem('coolify-servers-view', mode);
+            localStorage.setItem('xlaunch-servers-view', mode);
         }
     }">
         @if ($servers->isEmpty())

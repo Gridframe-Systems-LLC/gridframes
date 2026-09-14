@@ -67,7 +67,7 @@ test('Team A can create Application in Team B environment via unscoped lookups',
     $application = Application::create([
         'name' => 'team-scope-test-canary',
         'repository_project_id' => 0,
-        'git_repository' => 'coollabsio/coolify',
+        'git_repository' => 'northlatch/xlaunch',
         'git_branch' => 'main',
         'build_pack' => 'dockerfile',
         'dockerfile' => "FROM alpine\nCMD echo hello",

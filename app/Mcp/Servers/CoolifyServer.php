@@ -8,7 +8,7 @@ use App\Mcp\Resources\ApplicationResource;
 use App\Mcp\Resources\InfrastructureOverviewResource;
 use App\Mcp\Tools\CancelDeployment;
 use App\Mcp\Tools\Control;
-use App\Mcp\Tools\CoolifyHelp;
+use App\Mcp\Tools\XlaunchHelp;
 use App\Mcp\Tools\Deploy;
 use App\Mcp\Tools\GetApplication;
 use App\Mcp\Tools\GetCurrentTeam;
@@ -53,9 +53,9 @@ use App\Mcp\Tools\ListUnhealthyResources;
 use App\Mcp\Tools\SearchResources;
 use Laravel\Mcp\Server;
 
-class CoolifyServer extends Server
+class XlaunchServer extends Server
 {
-    protected string $name = 'Coolify';
+    protected string $name = 'Xlaunch';
 
     protected string $version = '0.2.0';
 
@@ -67,10 +67,10 @@ class CoolifyServer extends Server
     public int $defaultPaginationLength = 100;
 
     protected string $instructions = <<<'MD'
-Coolify MCP for the authenticated team token. Every tool enforces team ownership.
+Xlaunch MCP for the authenticated team token. Every tool enforces team ownership.
 
 Start here (prefer these before deep get_*):
-1. coolify_help — tool catalog by intent (overview|search|debug|deploy|essentials).
+1. xlaunch_help — tool catalog by intent (overview|search|debug|deploy|essentials).
 2. get_infrastructure_overview — counts + health_hints.
 3. search_resources — fuzzy name/UUID/domain when type is unknown.
 4. list_unhealthy_resources sample_only=true — cheap "what's broken?" sample + counts.
@@ -85,13 +85,13 @@ Lifecycle (requires token ability **deploy**):
 - deploy, cancel_deployment
 
 Prompts: troubleshoot_application, explain_failed_deploy.
-Resources: coolify://overview, coolify://application/{uuid}.
+Resources: xlaunch://overview, xlaunch://application/{uuid}.
 
 Responses: `{ data, _actions?, _pagination? }`. Env values, configuration snapshots, and full deploy logs are never returned. Optional deploy log summaries are best-effort redacted only.
 MD;
 
     protected array $tools = [
-        CoolifyHelp::class,
+        XlaunchHelp::class,
         GetInfrastructureOverview::class,
         SearchResources::class,
         ListUnhealthyResources::class,

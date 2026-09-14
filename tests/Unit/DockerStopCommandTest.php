@@ -2,10 +2,10 @@
 
 /**
  * Docker 28.0 deprecated `--time` on `docker stop` / `docker restart` in favor of `--timeout`.
- * `--timeout` is rejected by Docker < 28, so Coolify picks the flag from the stored engine version.
+ * `--timeout` is rejected by Docker < 28, so Xlaunch picks the flag from the stored engine version.
  * Unknown versions keep the historical `--time` flag.
  *
- * @see https://github.com/coollabsio/coolify/issues/11244
+ * @see https://github.com/northlatch/xlaunch/issues/11244
  */
 it('parses docker engine versions', function (?string $raw, ?string $expected) {
     expect(parseDockerEngineVersion($raw))->toBe($expected);

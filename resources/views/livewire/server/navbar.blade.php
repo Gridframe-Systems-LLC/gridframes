@@ -5,7 +5,7 @@
             <div class="flex h-full min-h-0 flex-col gap-3">
                 @if ($server->id === 0)
                     <div class="shrink-0 rounded-lg border border-warning/30 bg-warning/10 p-3 text-sm text-warning">
-                        <span class="font-semibold">Note:</span> This is the localhost server where Coolify runs.
+                        <span class="font-semibold">Note:</span> This is the localhost server where Xlaunch runs.
                         During proxy restart, the connection may be temporarily lost.
                         If logs stop updating, please refresh the browser after a few minutes.
                     </div>
@@ -136,7 +136,7 @@
                                 :class="option.functional ? 'bg-success' : 'bg-error'"></span>
                             <span class="min-w-0 flex-1 truncate" x-text="option.name"></span>
                             <x-reicon name="check-circle"
-                                class="size-3.5 shrink-0 text-coollabs dark:text-warning"
+                                class="size-3.5 shrink-0 text-northlatch dark:text-warning"
                                 x-show="option.uuid === '{{ $server->uuid }}'" />
                         </a>
                     </template>
@@ -232,7 +232,7 @@
                         <x-modal-confirmation title="Confirm Proxy Restart?" buttonTitle="Restart Proxy"
                             submitAction="restart" :actions="[
                                 'This proxy will be stopped and started again.',
-                                'All resources hosted on Coolify will be unavailable during the restart.',
+                                'All resources hosted on Xlaunch will be unavailable during the restart.',
                             ]" :confirmWithText="false" :confirmWithPassword="false" step2ButtonText="Restart Proxy"
                             :dispatchEvent="true" dispatchEventType="restartEvent">
                             <x-slot:trigger>
@@ -243,8 +243,8 @@
                         </x-modal-confirmation>
                         <x-modal-confirmation title="Confirm Proxy Stopping?" buttonTitle="Stop Proxy"
                             submitAction="stop(true)" :actions="[
-                                'The Coolify proxy will be stopped.',
-                                'All resources hosted on Coolify will be unavailable.',
+                                'The Xlaunch proxy will be stopped.',
+                                'All resources hosted on Xlaunch will be unavailable.',
                             ]" :confirmWithText="false" :confirmWithPassword="false" step2ButtonText="Stop Proxy"
                             :dispatchEvent="true" dispatchEventType="stopEvent">
                             <x-slot:trigger>

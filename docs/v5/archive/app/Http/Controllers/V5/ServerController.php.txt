@@ -334,9 +334,9 @@ class ServerController extends Controller
             'set -e',
             "SUDO=''",
             'if [ "$(id -u)" != "0" ]; then SUDO="sudo -n"; fi',
-            '$SUDO mkdir -p /etc/coolify',
-            'printf %s '.escapeshellarg($encodedToken).' | base64 -d | $SUDO tee /etc/coolify/host-jwt >/dev/null',
-            '$SUDO chmod 600 /etc/coolify/host-jwt',
+            '$SUDO mkdir -p /etc/xlaunch',
+            'printf %s '.escapeshellarg($encodedToken).' | base64 -d | $SUDO tee /etc/xlaunch/host-jwt >/dev/null',
+            '$SUDO chmod 600 /etc/xlaunch/host-jwt',
             '$SUDO systemctl reset-failed coold.service || true',
             '$SUDO systemctl restart coold.service',
             '$SUDO systemctl is-active coold.service',
@@ -616,7 +616,7 @@ import json
 from pathlib import Path
 
 namespace = __NAMESPACE__
-path = Path("/etc/coolify/firewall-rules.tsv")
+path = Path("/etc/xlaunch/firewall-rules.tsv")
 rules = []
 
 if path.exists():
@@ -666,7 +666,7 @@ PYTHON);
         // the WireGuard mesh is already built) when no Flux URL is configured.
         if (trim((string) config('coold.flux_url', '')) === '') {
             return response()->json([
-                'message' => 'COOLIFY_COOLD_FLUX_URL is not configured, so bootstrapped servers cannot be enrolled into Flux. Set it and retry the bootstrap.',
+                'message' => 'XLAUNCH_COOLD_FLUX_URL is not configured, so bootstrapped servers cannot be enrolled into Flux. Set it and retry the bootstrap.',
             ], 422);
         }
 
@@ -713,7 +713,7 @@ PYTHON);
             $server->update([
                 'last_bootstrap_action' => $installedServers->isEmpty() ? 'bootstrap' : 'extend',
                 'last_bootstrap_status' => 'queued',
-                'last_bootstrap_output' => "Queued Coolify bootstrap for {$server->name}.",
+                'last_bootstrap_output' => "Queued Xlaunch bootstrap for {$server->name}.",
                 'last_bootstrap_ran_at' => now(),
             ]);
 
@@ -762,7 +762,7 @@ PYTHON);
             }
 
             if (! RemoveBootstrapMarker::run($server)) {
-                $warning = 'Could not clean up the server over SSH. Remove /etc/coolify/v5-node.json manually before re-adding this server.';
+                $warning = 'Could not clean up the server over SSH. Remove /etc/xlaunch/v5-node.json manually before re-adding this server.';
             }
         }
 

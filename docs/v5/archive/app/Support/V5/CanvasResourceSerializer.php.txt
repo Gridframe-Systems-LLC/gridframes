@@ -48,7 +48,7 @@ class CanvasResourceSerializer
             'ingressEnabled' => $application->ingress_enabled,
             'internalPort' => $application->internal_port,
             'domains' => $application->domains->pluck('domain')->values()->all(),
-            'meshFqdn' => $application->container_name.'.'.($application->mesh_namespace ?: 'default').'.coolify.internal',
+            'meshFqdn' => $application->container_name.'.'.($application->mesh_namespace ?: 'default').'.xlaunch.internal',
             'projectUuid' => $application->project?->uuid,
             'environmentUuid' => $application->environment?->uuid,
             'canvasX' => $application->canvas_x,

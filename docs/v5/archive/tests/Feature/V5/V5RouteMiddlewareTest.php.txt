@@ -39,8 +39,8 @@ it('registers the v5 dashboard route', function () {
         ->and(Route::has('v5.resource-connections.destroy'))->toBeTrue()
         ->and(Route::has('v5.realtime-test'))->toBeTrue()
         ->and(Route::has('v5.realtime-test.broadcast'))->toBeTrue()
-        ->and(Route::has('v5.coolify.version'))->toBeFalse()
-        ->and(Route::has('v5.coolify.bootstrap'))->toBeFalse();
+        ->and(Route::has('v5.xlaunch.version'))->toBeFalse()
+        ->and(Route::has('v5.xlaunch.bootstrap'))->toBeFalse();
 });
 
 it('uses separated v5 middleware groups', function () {

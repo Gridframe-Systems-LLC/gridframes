@@ -238,8 +238,8 @@ function connectionFirewallConsistencyRule(string $ruleId, int $port): array
     return [
         'id' => $ruleId,
         'namespace' => 'default',
-        'src' => 'coolify-v5-consistency-api',
-        'dst' => 'coolify-v5-consistency-postgres',
+        'src' => 'xlaunch-v5-consistency-api',
+        'dst' => 'xlaunch-v5-consistency-postgres',
         'proto' => 'tcp',
         'port' => $port,
     ];
@@ -283,7 +283,7 @@ function createConnectionFirewallConsistencyContext(bool $sourceServerless = fal
         'created_by_user_id' => $user->id,
         'name' => 'api',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-consistency-api',
+        'container_name' => 'xlaunch-v5-consistency-api',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);
@@ -295,7 +295,7 @@ function createConnectionFirewallConsistencyContext(bool $sourceServerless = fal
         'created_by_user_id' => $user->id,
         'name' => 'postgres',
         'image' => 'docker.io/library/postgres:16',
-        'container_name' => 'coolify-v5-consistency-postgres',
+        'container_name' => 'xlaunch-v5-consistency-postgres',
         'mesh_namespace' => 'default',
         'status' => 'running',
     ]);

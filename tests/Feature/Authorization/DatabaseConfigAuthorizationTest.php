@@ -42,7 +42,7 @@ beforeEach(function () {
 
     StandaloneDocker::withoutEvents(function () {
         $this->destination = StandaloneDocker::firstOrCreate(
-            ['server_id' => $this->server->id, 'network' => 'coolify'],
+            ['server_id' => $this->server->id, 'network' => 'xlaunch'],
             ['uuid' => (string) Str::uuid(), 'name' => 'test-docker']
         );
     });

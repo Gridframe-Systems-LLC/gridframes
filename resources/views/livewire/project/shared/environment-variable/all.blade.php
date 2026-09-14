@@ -95,7 +95,7 @@
                                 @endphp
                                 <span @class([
                                     'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                    'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
+                                    'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $selected,
                                     'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => ! $selected,
                                 ])>
                                     @if ($selected)
@@ -113,7 +113,7 @@
                                     <span>{{ $label }}</span>
                                     <span @class([
                                         'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                        'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $environmentFilter === $value,
+                                        'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $environmentFilter === $value,
                                         'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => $environmentFilter !== $value,
                                     ])>
                                         @if ($environmentFilter === $value)
@@ -136,7 +136,7 @@
                                     @endphp
                                     <span @class([
                                         'flex size-4 shrink-0 items-center justify-center rounded-[5px] border',
-                                        'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $serviceSelected,
+                                        'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $serviceSelected,
                                         'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]' => ! $serviceSelected,
                                     ])>
                                         @if ($serviceSelected)
@@ -235,7 +235,7 @@
                             next-action="nextEnvironmentVariablePage"
                             last-action="setEnvironmentVariablePage({{ $lastPage }})">
                             <x-slot:pageSize>
-                                <x-page-size-select model="perPage" livewire storage-key="coolify.page-size.environment-variables" />
+                                <x-page-size-select model="perPage" livewire storage-key="xlaunch.page-size.environment-variables" />
                             </x-slot:pageSize>
                         </x-table-pagination>
                     </div>

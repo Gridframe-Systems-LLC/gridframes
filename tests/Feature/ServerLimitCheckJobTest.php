@@ -9,7 +9,7 @@ use Illuminate\Support\Facades\Notification;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 
     Notification::fake();
 

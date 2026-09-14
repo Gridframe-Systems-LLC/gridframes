@@ -27,19 +27,19 @@ function parseBranchFromUrl(string $url): array
 }
 
 test('parses simple branch from GitHub URL', function () {
-    $result = parseBranchFromUrl('https://github.com/andrasbacsai/coolify-examples/tree/main');
+    $result = parseBranchFromUrl('https://github.com/andrasbacsai/xlaunch-examples/tree/main');
 
     expect($result['branch'])->toBe('main');
     expect($result['base_directory'])->toBe('/');
-    expect($result['repository'])->toBe('andrasbacsai/coolify-examples');
+    expect($result['repository'])->toBe('andrasbacsai/xlaunch-examples');
 });
 
 test('parses branch with slash from GitHub URL', function () {
-    $result = parseBranchFromUrl('https://github.com/andrasbacsai/coolify-examples-1/tree/fix/8854-env-var-fallback-volume');
+    $result = parseBranchFromUrl('https://github.com/andrasbacsai/xlaunch-examples-1/tree/fix/8854-env-var-fallback-volume');
 
     expect($result['branch'])->toBe('fix/8854-env-var-fallback-volume');
     expect($result['base_directory'])->toBe('/');
-    expect($result['repository'])->toBe('andrasbacsai/coolify-examples-1');
+    expect($result['repository'])->toBe('andrasbacsai/xlaunch-examples-1');
 });
 
 test('parses branch with multiple slashes from GitHub URL', function () {
@@ -50,14 +50,14 @@ test('parses branch with multiple slashes from GitHub URL', function () {
 });
 
 test('defaults to main branch when no tree segment in URL', function () {
-    $result = parseBranchFromUrl('https://github.com/andrasbacsai/coolify-examples');
+    $result = parseBranchFromUrl('https://github.com/andrasbacsai/xlaunch-examples');
 
     expect($result['branch'])->toBe('main');
     expect($result['base_directory'])->toBe('/');
 });
 
 test('parses version-style branch with slash from GitHub URL', function () {
-    $result = parseBranchFromUrl('https://github.com/coollabsio/coolify-examples/tree/release/v2.0');
+    $result = parseBranchFromUrl('https://github.com/northlatch/xlaunch-examples/tree/release/v2.0');
 
     expect($result['branch'])->toBe('release/v2.0');
     expect($result['base_directory'])->toBe('/');

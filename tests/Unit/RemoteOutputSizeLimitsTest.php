@@ -97,7 +97,7 @@ it('rejects oversized docker compose files loaded from git before parsing', func
         }
 
         if (str_contains($process->command, 'wc -c')) {
-            return Process::result(output: '__COOLIFY_COMPOSE_TOO_LARGE__');
+            return Process::result(output: '__XLAUNCH_COMPOSE_TOO_LARGE__');
         }
 
         return Process::result();
@@ -173,7 +173,7 @@ it('rejects oversized proxy configuration backfill before persistence', function
     $server->shouldReceive('getAttribute')->with('proxy')->andReturn($proxy);
     $server->shouldNotReceive('save');
 
-    Process::fake(['*' => Process::result(output: '__COOLIFY_PROXY_CONFIG_TOO_LARGE__')]);
+    Process::fake(['*' => Process::result(output: '__XLAUNCH_PROXY_CONFIG_TOO_LARGE__')]);
 
     $method = new ReflectionMethod(GetProxyConfiguration::class, 'backfillFromDisk');
 

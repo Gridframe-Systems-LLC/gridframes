@@ -8,7 +8,7 @@
  * had their paths duplicated (e.g., /v1/realtime/v1/realtime) after FQDN updates.
  *
  * IMPORTANT: These tests require database access and must be run inside Docker:
- * docker exec coolify php artisan test --filter ServiceFqdnUpdatePathTest
+ * docker exec xlaunch php artisan test --filter ServiceFqdnUpdatePathTest
  */
 
 use App\Models\Server;

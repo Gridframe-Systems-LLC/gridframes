@@ -307,7 +307,7 @@ describe('deployment git command escaping', function () {
             ->not->toContain('repo.git; curl');
     });
 
-    test('coolify branch shell assignment is quoted', function () {
+    test('xlaunch branch shell assignment is quoted', function () {
         $job = new ReflectionClass(ApplicationDeploymentJob::class);
         $instance = $job->newInstanceWithoutConstructor();
 
@@ -331,19 +331,19 @@ describe('deployment git command escaping', function () {
             $reflectionProperty->setValue($instance, $value);
         }
 
-        $method = $job->getMethod('set_coolify_variables');
+        $method = $job->getMethod('set_xlaunch_variables');
         $method->setAccessible(true);
         $method->invoke($instance);
 
-        $coolifyVariables = $job->getProperty('coolify_variables');
-        $coolifyVariables->setAccessible(true);
+        $xlaunchVariables = $job->getProperty('xlaunch_variables');
+        $xlaunchVariables->setAccessible(true);
 
-        expect($coolifyVariables->getValue($instance))
-            ->toContain("COOLIFY_BRANCH='main`id`' ")
-            ->toContain("COOLIFY_RESOURCE_UUID='app-uuid' ");
+        expect($xlaunchVariables->getValue($instance))
+            ->toContain("XLAUNCH_BRANCH='main`id`' ")
+            ->toContain("XLAUNCH_RESOURCE_UUID='app-uuid' ");
     });
 
-    test('coolify url and fqdn shell assignments are quoted', function () {
+    test('xlaunch url and fqdn shell assignments are quoted', function () {
         $job = new ReflectionClass(ApplicationDeploymentJob::class);
         $instance = $job->newInstanceWithoutConstructor();
 
@@ -367,18 +367,18 @@ describe('deployment git command escaping', function () {
             $reflectionProperty->setValue($instance, $value);
         }
 
-        $method = $job->getMethod('set_coolify_variables');
+        $method = $job->getMethod('set_xlaunch_variables');
         $method->setAccessible(true);
         $method->invoke($instance);
 
-        $coolifyVariables = $job->getProperty('coolify_variables');
-        $coolifyVariables->setAccessible(true);
+        $xlaunchVariables = $job->getProperty('xlaunch_variables');
+        $xlaunchVariables->setAccessible(true);
 
-        expect($coolifyVariables->getValue($instance))
+        expect($xlaunchVariables->getValue($instance))
             ->toContain("SOURCE_COMMIT='HEAD$(id)' ")
-            ->toContain("COOLIFY_URL='https://app.example.com/path' ")
-            ->toContain("COOLIFY_FQDN='app.example.com' ")
-            ->toContain("COOLIFY_RESOURCE_UUID='app-uuid' ");
+            ->toContain("XLAUNCH_URL='https://app.example.com/path' ")
+            ->toContain("XLAUNCH_FQDN='app.example.com' ")
+            ->toContain("XLAUNCH_RESOURCE_UUID='app-uuid' ");
     });
 });
 

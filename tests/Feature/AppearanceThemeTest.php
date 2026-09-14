@@ -41,7 +41,7 @@ test('custom color theme is available and applied across theme controls', functi
         ->toContain('--theme-base-color: oklch(49.65% 0.2709 289.33);')
         ->toContain('--theme-bright-color: color-mix(in srgb, var(--theme-base-color) 85%, oklch(100% 0 0));')
         ->toContain('--color-accent: var(--theme-bright-color);')
-        ->toContain('--color-coollabs: var(--theme-bright-color);')
+        ->toContain('--color-northlatch: var(--theme-bright-color);')
         ->toContain('--color-warning: var(--theme-bright-color);')
         ->toContain('--color-accent-foreground: var(--theme-accent-foreground);')
         ->toContain('--color-fg-dim: oklch(91.08% 0.0157 306.4);')
@@ -58,11 +58,11 @@ test('custom color theme is available and applied across theme controls', functi
         ->toContain('scrollbar-gutter: stable;')
         ->toContain('--color-panel: color-mix(in oklab, var(--theme-base-color) 14%, oklch(15.48% 0.0021 286.15));')
         ->toContain('--color-surface: color-mix(in oklab, var(--theme-base-color) 18%, oklch(17.35% 0.0020 286.18));')
-        ->toContain('--coollabs-elevated: var(--color-surface);')
-        ->toContain('--coollabs-recessed: var(--color-raised);')
-        ->toContain('--coollabs-base: color-mix(in oklab, var(--theme-base-color) 22%, oklch(17.81% 0.0020 286.19));')
-        ->toContain('--color-content-surface: var(--coollabs-base);')
-        ->toContain('--coollabs-fill: color-mix(in oklab, var(--theme-base-color) 32%, oklch(20.99% 0.0039 286.06));')
+        ->toContain('--northlatch-elevated: var(--color-surface);')
+        ->toContain('--northlatch-recessed: var(--color-raised);')
+        ->toContain('--northlatch-base: color-mix(in oklab, var(--theme-base-color) 22%, oklch(17.81% 0.0020 286.19));')
+        ->toContain('--color-content-surface: var(--northlatch-base);')
+        ->toContain('--northlatch-fill: color-mix(in oklab, var(--theme-base-color) 32%, oklch(20.99% 0.0039 286.06));')
         ->toContain('--color-nav-text: oklch(91.08% 0.0157 306.4);')
         ->toContain('--color-nav-muted: oklch(87.24% 0.0188 306.63);')
         ->toContain('--color-log: color-mix(in oklab, var(--theme-base-color) 20%, oklch(13.49% 0.0024 286.07));')
@@ -79,7 +79,7 @@ test('custom color theme is available and applied across theme controls', functi
         ->toContain('background-color: var(--color-content-surface) !important;')
         ->toContain('.dark [class~="dark:border-white/[0.08]"]')
         ->toContain('.dark [class~="dark:border-white/[0.06]"]')
-        ->toContain('border-color: var(--coollabs-hairline) !important;')
+        ->toContain('border-color: var(--northlatch-hairline) !important;')
         ->toContain('html[data-theme="custom"] input::placeholder')
         ->toContain('color: var(--theme-placeholder-color) !important;')
         ->toMatch('/html\[data-theme="custom"\] input::placeholder,[^{]+\{[^}]*opacity: 1;/s')
@@ -102,7 +102,7 @@ test('custom color theme is available and applied across theme controls', functi
         ->and($styles)
         ->toContain('html[data-theme="custom"] .application-console-shell[data-console-theme="system"]')
         ->toContain('--console-theme-background: var(--color-log);')
-        ->toContain('--console-theme-border: var(--coollabs-line);');
+        ->toContain('--console-theme-border: var(--northlatch-line);');
 });
 
 test('navigation colors meet WCAG AA contrast requirements', function () {

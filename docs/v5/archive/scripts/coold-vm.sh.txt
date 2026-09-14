@@ -3,7 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
-read_coolify_env() {
+read_xlaunch_env() {
   key="$1"
   default_value="$2"
   current_value="${!key:-}"
@@ -24,19 +24,19 @@ read_coolify_env() {
   printf '%s\n' "$default_value"
 }
 
-INSTANCE="$(read_coolify_env COOLIFY_COOLD_LIMA_INSTANCE coold-dev)"
-VERSION="$(read_coolify_env COOLIFY_COOLD_VERSION nightly)"
-CORROSION_VERSION="$(read_coolify_env COOLIFY_CORROSION_VERSION v1.0.0)"
-FLUX_URL="$(read_coolify_env COOLIFY_COOLD_VM_FLUX_URL http://host.lima.internal:6443)"
-START_TIMEOUT="$(read_coolify_env COOLIFY_COOLD_VM_START_TIMEOUT 300)"
-WG_IP="$(read_coolify_env COOLIFY_COOLD_VM_WG_IP "")"
-WG_PEER_IP="$(read_coolify_env COOLIFY_COOLD_VM_WG_PEER_IP "")"
-WG_PEER_ENDPOINT="$(read_coolify_env COOLIFY_COOLD_VM_WG_PEER_ENDPOINT "")"
-WG_PEER_PUBLIC_KEY="$(read_coolify_env COOLIFY_COOLD_VM_WG_PEER_PUBLIC_KEY "")"
-CONTAINER_SUBNET="$(read_coolify_env COOLIFY_COOLD_VM_CONTAINER_SUBNET 10.210.0.0/24)"
-CONTAINER_GATEWAY="$(read_coolify_env COOLIFY_COOLD_VM_CONTAINER_GATEWAY 10.210.0.1)"
+INSTANCE="$(read_xlaunch_env XLAUNCH_COOLD_LIMA_INSTANCE coold-dev)"
+VERSION="$(read_xlaunch_env XLAUNCH_COOLD_VERSION nightly)"
+CORROSION_VERSION="$(read_xlaunch_env XLAUNCH_CORROSION_VERSION v1.0.0)"
+FLUX_URL="$(read_xlaunch_env XLAUNCH_COOLD_VM_FLUX_URL http://host.lima.internal:6443)"
+START_TIMEOUT="$(read_xlaunch_env XLAUNCH_COOLD_VM_START_TIMEOUT 300)"
+WG_IP="$(read_xlaunch_env XLAUNCH_COOLD_VM_WG_IP "")"
+WG_PEER_IP="$(read_xlaunch_env XLAUNCH_COOLD_VM_WG_PEER_IP "")"
+WG_PEER_ENDPOINT="$(read_xlaunch_env XLAUNCH_COOLD_VM_WG_PEER_ENDPOINT "")"
+WG_PEER_PUBLIC_KEY="$(read_xlaunch_env XLAUNCH_COOLD_VM_WG_PEER_PUBLIC_KEY "")"
+CONTAINER_SUBNET="$(read_xlaunch_env XLAUNCH_COOLD_VM_CONTAINER_SUBNET 10.210.0.0/24)"
+CONTAINER_GATEWAY="$(read_xlaunch_env XLAUNCH_COOLD_VM_CONTAINER_GATEWAY 10.210.0.1)"
 TEMPLATE="$ROOT/dev/lima/coold.yaml"
-GUEST_COOLIFY_ROOT="/workspace/coolify"
+GUEST_XLAUNCH_ROOT="/workspace/xlaunch"
 
 usage() {
   cat <<USAGE
@@ -52,27 +52,27 @@ Commands:
   logs-agent
            Follow the VM coold.service + corrosion.service logs
   install-host-jwt [token]
-           Install a Flux host JWT into the VM at /etc/coolify/host-jwt
+           Install a Flux host JWT into the VM at /etc/xlaunch/host-jwt
   shell    Open a shell inside the VM
   status   Show Lima instance status
   stop     Stop the VM
   delete   Delete the VM and all VM-local runtime state
 
 Environment:
-  COOLIFY_COOLD_LIMA_INSTANCE  Override Lima instance name (default: coold-dev)
-  COOLIFY_COOLD_VERSION        coold release tag to install (default: nightly)
-  COOLIFY_CORROSION_VERSION    corrosion release tag to install (default: v1.0.0)
-  COOLIFY_COOLD_VM_FLUX_URL    Flux gRPC URL visible from the VM (default: http://host.lima.internal:6443)
-  COOLIFY_COOLD_VM_START_TIMEOUT Seconds to wait for Lima SSH/provisioning (default: 300)
-  COOLIFY_COOLD_VM_WG_IP       Optional WireGuard mgmt IP for this host
-  COOLIFY_COOLD_VM_CONTAINER_SUBNET Podman mesh subnet for this host
-  COOLIFY_COOLD_VM_CONTAINER_GATEWAY Podman mesh gateway for this host
+  XLAUNCH_COOLD_LIMA_INSTANCE  Override Lima instance name (default: coold-dev)
+  XLAUNCH_COOLD_VERSION        coold release tag to install (default: nightly)
+  XLAUNCH_CORROSION_VERSION    corrosion release tag to install (default: v1.0.0)
+  XLAUNCH_COOLD_VM_FLUX_URL    Flux gRPC URL visible from the VM (default: http://host.lima.internal:6443)
+  XLAUNCH_COOLD_VM_START_TIMEOUT Seconds to wait for Lima SSH/provisioning (default: 300)
+  XLAUNCH_COOLD_VM_WG_IP       Optional WireGuard mgmt IP for this host
+  XLAUNCH_COOLD_VM_CONTAINER_SUBNET Podman mesh subnet for this host
+  XLAUNCH_COOLD_VM_CONTAINER_GATEWAY Podman mesh gateway for this host
 
 Guest mounts:
-  $ROOT -> $GUEST_COOLIFY_ROOT
+  $ROOT -> $GUEST_XLAUNCH_ROOT
 
 Installed from:
-  https://github.com/coollabsio/coold/releases/tag/$VERSION
+  https://github.com/northlatch/coold/releases/tag/$VERSION
   https://github.com/superfly/corrosion/releases/tag/$CORROSION_VERSION
 USAGE
 }
@@ -211,7 +211,7 @@ install_host_jwt() {
     exit 1
   fi
 
-  printf '%s\n' "$token" | lima_shell sudo sh -c 'install -d -m 0755 /etc/coolify && cat > /tmp/coolify-host-jwt && install -m 0600 /tmp/coolify-host-jwt /etc/coolify/host-jwt && rm -f /tmp/coolify-host-jwt'
+  printf '%s\n' "$token" | lima_shell sudo sh -c 'install -d -m 0755 /etc/xlaunch && cat > /tmp/xlaunch-host-jwt && install -m 0600 /tmp/xlaunch-host-jwt /etc/xlaunch/host-jwt && rm -f /tmp/xlaunch-host-jwt'
 }
 
 
@@ -223,15 +223,15 @@ stop_agent_processes() {
 
 ensure_podman_networks() {
   local current_subnet
-  current_subnet="$(lima_shell sudo podman network inspect coolify-default-mesh --format '{{range .Subnets}}{{.Subnet}}{{end}}' 2>/dev/null || true)"
+  current_subnet="$(lima_shell sudo podman network inspect xlaunch-default-mesh --format '{{range .Subnets}}{{.Subnet}}{{end}}' 2>/dev/null || true)"
 
   if [ -n "$current_subnet" ] && [ "$current_subnet" != "$CONTAINER_SUBNET" ]; then
-    lima_shell sudo podman network rm coolify-default-mesh >/dev/null
+    lima_shell sudo podman network rm xlaunch-default-mesh >/dev/null
     current_subnet=""
   fi
 
   if [ -z "$current_subnet" ]; then
-    lima_shell sudo podman network create --subnet "$CONTAINER_SUBNET" --gateway "$CONTAINER_GATEWAY" coolify-default-mesh >/dev/null
+    lima_shell sudo podman network create --subnet "$CONTAINER_SUBNET" --gateway "$CONTAINER_GATEWAY" xlaunch-default-mesh >/dev/null
   fi
 }
 
@@ -239,17 +239,17 @@ ensure_podman_networks() {
 
 ensure_mesh_dns_anchor() {
   lima_shell sudo podman run -d --replace \
-    --name coolify-v5-mesh-dns-anchor \
-    --network coolify-default-mesh \
+    --name xlaunch-v5-mesh-dns-anchor \
+    --network xlaunch-default-mesh \
     docker.io/library/alpine:3.20 \
     sleep infinity >/dev/null
 }
 
 configure_system_resolved() {
-  lima_shell sudo rm -f /etc/systemd/resolved.conf.d/coolify-internal.conf
+  lima_shell sudo rm -f /etc/systemd/resolved.conf.d/xlaunch-internal.conf
   lima_shell sudo systemctl restart systemd-resolved.service
   lima_shell sudo resolvectl dns podman1 "$CONTAINER_GATEWAY"
-  lima_shell sudo resolvectl domain podman1 '~coolify.internal'
+  lima_shell sudo resolvectl domain podman1 '~xlaunch.internal'
   lima_shell sudo resolvectl default-route podman1 false
 }
 write_runtime_config() {
@@ -264,9 +264,9 @@ write_runtime_config() {
     bootstrap="\"$WG_PEER_IP:8787\""
   fi
 
-  lima_shell sudo install -d -m 0755 /etc/corrosion/schemas /etc/coolify /run/coolify /var/lib/corrosion /var/run/corrosion /var/lib/coolify-dev
+  lima_shell sudo install -d -m 0755 /etc/corrosion/schemas /etc/xlaunch /run/xlaunch /var/lib/corrosion /var/run/corrosion /var/lib/xlaunch-dev
 
-  lima_shell sudo tee /etc/corrosion/schemas/coolify.sql >/dev/null <<'SQL'
+  lima_shell sudo tee /etc/corrosion/schemas/xlaunch.sql >/dev/null <<'SQL'
 CREATE TABLE service_endpoints (
     container_id    TEXT NOT NULL DEFAULT '' PRIMARY KEY,
     container_name  TEXT NOT NULL DEFAULT '',
@@ -307,8 +307,8 @@ run_foreground() {
   install_mesh_firewall
 
   (cd /tmp && limactl shell "$INSTANCE" -- sudo \
-    env COOLIFY_COOLD_HOST_MGMT_IP="${WG_IP:-127.0.0.1}" \
-    COOLIFY_COOLD_FLUX_URL="$FLUX_URL" \
+    env XLAUNCH_COOLD_HOST_MGMT_IP="${WG_IP:-127.0.0.1}" \
+    XLAUNCH_COOLD_FLUX_URL="$FLUX_URL" \
     CONTAINER_GATEWAY="$CONTAINER_GATEWAY" \
     bash -s) <<'RUNNER'
 set -euo pipefail
@@ -324,13 +324,13 @@ trap cleanup EXIT INT TERM
 
 /usr/local/bin/corrosion agent --config /etc/corrosion/config.toml &
 
-COOLIFY_COOLD_HOST_MGMT_IP="${COOLIFY_COOLD_HOST_MGMT_IP:-127.0.0.1}" \
-COOLIFY_COOLD_PODMAN_SOCKET="${COOLIFY_COOLD_PODMAN_SOCKET:-/run/podman/podman.sock}" \
-COOLIFY_COOLD_CORROSION_URL="${COOLIFY_COOLD_CORROSION_URL:-http://127.0.0.1:8080}" \
-COOLIFY_COOLD_NAMESPACES="${COOLIFY_COOLD_NAMESPACES:-default:coolify-default-mesh:$CONTAINER_GATEWAY}" \
-COOLIFY_COOLD_DNS_ZONE="${COOLIFY_COOLD_DNS_ZONE:-coolify.internal}" \
-COOLIFY_COOLD_FLUX_URL="${COOLIFY_COOLD_FLUX_URL:-http://host.lima.internal:6443}" \
-COOLIFY_COOLD_HOST_JWT_PATH="${COOLIFY_COOLD_HOST_JWT_PATH:-/etc/coolify/host-jwt}" \
+XLAUNCH_COOLD_HOST_MGMT_IP="${XLAUNCH_COOLD_HOST_MGMT_IP:-127.0.0.1}" \
+XLAUNCH_COOLD_PODMAN_SOCKET="${XLAUNCH_COOLD_PODMAN_SOCKET:-/run/podman/podman.sock}" \
+XLAUNCH_COOLD_CORROSION_URL="${XLAUNCH_COOLD_CORROSION_URL:-http://127.0.0.1:8080}" \
+XLAUNCH_COOLD_NAMESPACES="${XLAUNCH_COOLD_NAMESPACES:-default:xlaunch-default-mesh:$CONTAINER_GATEWAY}" \
+XLAUNCH_COOLD_DNS_ZONE="${XLAUNCH_COOLD_DNS_ZONE:-xlaunch.internal}" \
+XLAUNCH_COOLD_FLUX_URL="${XLAUNCH_COOLD_FLUX_URL:-http://host.lima.internal:6443}" \
+XLAUNCH_COOLD_HOST_JWT_PATH="${XLAUNCH_COOLD_HOST_JWT_PATH:-/etc/xlaunch/host-jwt}" \
 /usr/local/bin/coold &
 
 wait
@@ -338,28 +338,28 @@ RUNNER
 }
 
 install_mesh_firewall() {
-  lima_shell sudo install -d -m 0755 /etc/coolify
-  lima_shell sudo touch /etc/coolify/allow.rules /etc/coolify/allow.nft
+  lima_shell sudo install -d -m 0755 /etc/xlaunch
+  lima_shell sudo touch /etc/xlaunch/allow.rules /etc/xlaunch/allow.nft
 
-  lima_shell sudo tee /etc/coolify/bridge-fw.nft >/dev/null <<NFT
-add table bridge coolify_bridge
-add chain bridge coolify_bridge coolify_allow
-flush chain bridge coolify_bridge coolify_allow
-add chain bridge coolify_bridge coolify_intra
-flush chain bridge coolify_bridge coolify_intra
-add rule bridge coolify_bridge coolify_intra jump coolify_allow
-add rule bridge coolify_bridge coolify_intra drop
-add chain bridge coolify_bridge forward { type filter hook forward priority -200; policy accept; }
-flush chain bridge coolify_bridge forward
-add rule bridge coolify_bridge forward meta protocol != ip accept
-add rule bridge coolify_bridge forward ct state established,related accept
-add rule bridge coolify_bridge forward ip saddr { $CONTAINER_SUBNET } jump coolify_intra
-add rule bridge coolify_bridge forward ip daddr { $CONTAINER_SUBNET } jump coolify_intra
+  lima_shell sudo tee /etc/xlaunch/bridge-fw.nft >/dev/null <<NFT
+add table bridge xlaunch_bridge
+add chain bridge xlaunch_bridge xlaunch_allow
+flush chain bridge xlaunch_bridge xlaunch_allow
+add chain bridge xlaunch_bridge xlaunch_intra
+flush chain bridge xlaunch_bridge xlaunch_intra
+add rule bridge xlaunch_bridge xlaunch_intra jump xlaunch_allow
+add rule bridge xlaunch_bridge xlaunch_intra drop
+add chain bridge xlaunch_bridge forward { type filter hook forward priority -200; policy accept; }
+flush chain bridge xlaunch_bridge forward
+add rule bridge xlaunch_bridge forward meta protocol != ip accept
+add rule bridge xlaunch_bridge forward ct state established,related accept
+add rule bridge xlaunch_bridge forward ip saddr { $CONTAINER_SUBNET } jump xlaunch_intra
+add rule bridge xlaunch_bridge forward ip daddr { $CONTAINER_SUBNET } jump xlaunch_intra
 NFT
 
-  lima_shell sudo tee /etc/systemd/system/coolify-mesh-fw.service >/dev/null <<UNIT
+  lima_shell sudo tee /etc/systemd/system/xlaunch-mesh-fw.service >/dev/null <<UNIT
 [Unit]
-Description=Coolify mesh firewall rules
+Description=Xlaunch mesh firewall rules
 After=network-online.target
 Wants=network-online.target
 
@@ -370,26 +370,26 @@ ExecStart=/usr/sbin/sysctl -w net.ipv4.ip_forward=1
 ExecStart=/bin/sh -c "/usr/sbin/iptables -t nat -C POSTROUTING -s $CONTAINER_SUBNET -o wg0 -j RETURN 2>/dev/null || /usr/sbin/iptables -t nat -I POSTROUTING -s $CONTAINER_SUBNET -o wg0 -j RETURN"
 ExecStart=/bin/sh -c "/usr/sbin/iptables -D FORWARD -s $CONTAINER_SUBNET -j ACCEPT 2>/dev/null || true"
 ExecStart=/bin/sh -c "/usr/sbin/iptables -D FORWARD -d $CONTAINER_SUBNET -j ACCEPT 2>/dev/null || true"
-ExecStart=/bin/sh -c "/usr/sbin/iptables -N COOLIFY-ALLOW 2>/dev/null || true"
-ExecStart=/bin/sh -c "/usr/sbin/iptables -N COOLIFY-INTRA 2>/dev/null || true"
-ExecStart=/usr/sbin/iptables -F COOLIFY-ALLOW
-ExecStart=/usr/sbin/iptables -F COOLIFY-INTRA
-ExecStart=/usr/sbin/iptables -A COOLIFY-INTRA -j COOLIFY-ALLOW
-ExecStart=/usr/sbin/iptables -A COOLIFY-INTRA -j DROP
+ExecStart=/bin/sh -c "/usr/sbin/iptables -N XLAUNCH-ALLOW 2>/dev/null || true"
+ExecStart=/bin/sh -c "/usr/sbin/iptables -N XLAUNCH-INTRA 2>/dev/null || true"
+ExecStart=/usr/sbin/iptables -F XLAUNCH-ALLOW
+ExecStart=/usr/sbin/iptables -F XLAUNCH-INTRA
+ExecStart=/usr/sbin/iptables -A XLAUNCH-INTRA -j XLAUNCH-ALLOW
+ExecStart=/usr/sbin/iptables -A XLAUNCH-INTRA -j DROP
 ExecStart=/bin/sh -c "/usr/sbin/iptables -C FORWARD -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT 2>/dev/null || /usr/sbin/iptables -I FORWARD 1 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT"
-ExecStart=/bin/sh -c "/usr/sbin/iptables -C FORWARD -d $CONTAINER_SUBNET -j COOLIFY-INTRA 2>/dev/null || /usr/sbin/iptables -A FORWARD -d $CONTAINER_SUBNET -j COOLIFY-INTRA"
-ExecStart=/bin/sh -c "/usr/sbin/iptables -C FORWARD -s $CONTAINER_SUBNET -j COOLIFY-INTRA 2>/dev/null || /usr/sbin/iptables -A FORWARD -s $CONTAINER_SUBNET -j COOLIFY-INTRA"
-ExecStart=/bin/sh -c "nft delete table bridge coolify_bridge 2>/dev/null || true"
-ExecStart=/bin/sh -c "nft -f /etc/coolify/bridge-fw.nft"
-ExecStart=/bin/sh -c "[ -s /etc/coolify/allow.nft ] && nft -f /etc/coolify/allow.nft || true"
+ExecStart=/bin/sh -c "/usr/sbin/iptables -C FORWARD -d $CONTAINER_SUBNET -j XLAUNCH-INTRA 2>/dev/null || /usr/sbin/iptables -A FORWARD -d $CONTAINER_SUBNET -j XLAUNCH-INTRA"
+ExecStart=/bin/sh -c "/usr/sbin/iptables -C FORWARD -s $CONTAINER_SUBNET -j XLAUNCH-INTRA 2>/dev/null || /usr/sbin/iptables -A FORWARD -s $CONTAINER_SUBNET -j XLAUNCH-INTRA"
+ExecStart=/bin/sh -c "nft delete table bridge xlaunch_bridge 2>/dev/null || true"
+ExecStart=/bin/sh -c "nft -f /etc/xlaunch/bridge-fw.nft"
+ExecStart=/bin/sh -c "[ -s /etc/xlaunch/allow.nft ] && nft -f /etc/xlaunch/allow.nft || true"
 
 [Install]
 WantedBy=multi-user.target
 UNIT
 
   lima_shell sudo systemctl daemon-reload
-  lima_shell sudo systemctl enable --now coolify-mesh-fw.service
-  lima_shell sudo systemctl restart coolify-mesh-fw.service
+  lima_shell sudo systemctl enable --now xlaunch-mesh-fw.service
+  lima_shell sudo systemctl restart xlaunch-mesh-fw.service
 }
 
 start_agent() {
@@ -417,18 +417,18 @@ UNIT
 
   lima_shell sudo tee /etc/systemd/system/coold.service >/dev/null <<UNIT
 [Unit]
-Description=Coolify host agent
+Description=Xlaunch host agent
 Wants=corrosion.service
-After=corrosion.service network-online.target podman.socket coolify-mesh-fw.service
+After=corrosion.service network-online.target podman.socket xlaunch-mesh-fw.service
 
 [Service]
-Environment=COOLIFY_COOLD_HOST_MGMT_IP=${WG_IP:-127.0.0.1}
-Environment=COOLIFY_COOLD_PODMAN_SOCKET=/run/podman/podman.sock
-Environment=COOLIFY_COOLD_CORROSION_URL=http://127.0.0.1:8080
-Environment=COOLIFY_COOLD_NAMESPACES=default:coolify-default-mesh:$CONTAINER_GATEWAY
-Environment=COOLIFY_COOLD_DNS_ZONE=coolify.internal
-Environment=COOLIFY_COOLD_FLUX_URL=$FLUX_URL
-Environment=COOLIFY_COOLD_HOST_JWT_PATH=/etc/coolify/host-jwt
+Environment=XLAUNCH_COOLD_HOST_MGMT_IP=${WG_IP:-127.0.0.1}
+Environment=XLAUNCH_COOLD_PODMAN_SOCKET=/run/podman/podman.sock
+Environment=XLAUNCH_COOLD_CORROSION_URL=http://127.0.0.1:8080
+Environment=XLAUNCH_COOLD_NAMESPACES=default:xlaunch-default-mesh:$CONTAINER_GATEWAY
+Environment=XLAUNCH_COOLD_DNS_ZONE=xlaunch.internal
+Environment=XLAUNCH_COOLD_FLUX_URL=$FLUX_URL
+Environment=XLAUNCH_COOLD_HOST_JWT_PATH=/etc/xlaunch/host-jwt
 ExecStart=/usr/local/bin/coold
 AmbientCapabilities=CAP_NET_BIND_SERVICE CAP_NET_ADMIN CAP_NET_RAW
 Restart=on-failure
@@ -580,7 +580,7 @@ ensure_mdns_hostname() {
 }
 
 up_with_logs() {
-  echo "==> Coolify coold VM: $INSTANCE"
+  echo "==> Xlaunch coold VM: $INSTANCE"
   echo "==> coold package tag: $VERSION"
   echo "==> corrosion package tag: $CORROSION_VERSION"
   echo "==> Lima config: $TEMPLATE"
@@ -589,7 +589,7 @@ up_with_logs() {
   wait_for_guest_provisioning
   ensure_mdns_hostname
 
-  echo "==> VM is ready. Run coolify bootstrap via: scripts/dev.sh up"
+  echo "==> VM is ready. Run xlaunch bootstrap via: scripts/dev.sh up"
 }
 
 cmd="${1:-}"

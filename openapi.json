@@ -1,13 +1,13 @@
 {
     "openapi": "3.1.0",
     "info": {
-        "title": "Coolify",
+        "title": "Xlaunch",
         "version": "0.1"
     },
     "servers": [
         {
-            "url": "https:\/\/app.coolify.io\/api\/v1",
-            "description": "Coolify Cloud API. Change the host to your own instance if you are self-hosting."
+            "url": "https:\/\/app.northlatch.com\/api\/v1",
+            "description": "Xlaunch Cloud API. Change the host to your own instance if you are self-hosting."
         }
     ],
     "paths": {
@@ -372,7 +372,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -958,7 +958,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -1544,7 +1544,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -3193,7 +3193,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -4180,7 +4180,7 @@
                     "Applications"
                 ],
                 "summary": "Migrate to Server",
-                "description": "Migrate an application to another destination\/server owned by the authenticated team. Stops the application, optionally transfers persistent volume data when both servers are managed by Coolify, and updates database records. Redeploy after migration completes.",
+                "description": "Migrate an application to another destination\/server owned by the authenticated team. Stops the application, optionally transfers persistent volume data when both servers are managed by Xlaunch, and updates database records. Redeploy after migration completes.",
                 "operationId": "migrate-application-by-uuid",
                 "parameters": [
                     {
@@ -8055,7 +8055,7 @@
                     "Databases"
                 ],
                 "summary": "Migrate to Server",
-                "description": "Migrate a database to another destination\/server owned by the authenticated team. Stops the database, optionally transfers persistent volume data when both servers are managed by Coolify, and updates database records. Redeploy after migration completes.",
+                "description": "Migrate a database to another destination\/server owned by the authenticated team. Stops the database, optionally transfers persistent volume data when both servers are managed by Xlaunch, and updates database records. Redeploy after migration completes.",
                 "operationId": "migrate-database-by-uuid",
                 "parameters": [
                     {
@@ -10080,7 +10080,7 @@
                 "operationId": "create-digitalocean-server",
                 "responses": {
                     "201": {
-                        "description": "DigitalOcean droplet created and linked to a Coolify server."
+                        "description": "DigitalOcean droplet created and linked to a Xlaunch server."
                     },
                     "401": {
                         "$ref": "#\/components\/responses\/401"
@@ -11538,7 +11538,7 @@
                     "Hetzner"
                 ],
                 "summary": "Create Hetzner Server",
-                "description": "Create a new server on Hetzner and register it in Coolify.",
+                "description": "Create a new server on Hetzner and register it in Xlaunch.",
                 "operationId": "create-hetzner-server",
                 "requestBody": {
                     "description": "Hetzner server creation parameters",
@@ -12028,7 +12028,7 @@
         "\/version": {
             "get": {
                 "summary": "Version",
-                "description": "Get Coolify version.",
+                "description": "Get Xlaunch version.",
                 "operationId": "version",
                 "responses": {
                     "200": {
@@ -15675,7 +15675,7 @@
                 "tags": [
                     "Servers"
                 ],
-                "summary": "Migrate server to another Coolify instance",
+                "summary": "Migrate server to another Xlaunch instance",
                 "description": "One-shot handoff: export this server, import+claim on the target instance (using the provided token), then disable automations here. Requires read:sensitive and write.",
                 "operationId": "migrate-server-between-instances",
                 "parameters": [
@@ -15700,7 +15700,7 @@
                                 "properties": {
                                     "target_url": {
                                         "type": "string",
-                                        "example": "https:\/\/coolify-b.example.com"
+                                        "example": "https:\/\/xlaunch-b.example.com"
                                     },
                                     "target_token": {
                                         "description": "API token on the target instance (root or write)",
@@ -15755,7 +15755,7 @@
                     "Servers"
                 ],
                 "summary": "Export server transfer bundle",
-                "description": "Export a server and all resources hosted on it as a versioned transfer bundle for moving between Coolify instances. Requires read:sensitive.",
+                "description": "Export a server and all resources hosted on it as a versioned transfer bundle for moving between Xlaunch instances. Requires read:sensitive.",
                 "operationId": "export-server-transfer-bundle",
                 "parameters": [
                     {
@@ -15812,7 +15812,7 @@
                     "Servers"
                 ],
                 "summary": "Import server transfer bundle",
-                "description": "Import a server transfer bundle into this Coolify instance (adopt mode by default).",
+                "description": "Import a server transfer bundle into this Xlaunch instance (adopt mode by default).",
                 "operationId": "import-server-transfer-bundle",
                 "requestBody": {
                     "required": true,
@@ -15999,7 +15999,7 @@
                     "Servers"
                 ],
                 "summary": "Write transfer bundle to server mailbox",
-                "description": "Write an export bundle to \/data\/coolify\/exports on the managed host for air-gapped import.",
+                "description": "Write an export bundle to \/data\/xlaunch\/exports on the managed host for air-gapped import.",
                 "operationId": "export-server-transfer-mailbox",
                 "parameters": [
                     {
@@ -16818,7 +16818,7 @@
                                         ]
                                     },
                                     "max_restart_count": {
-                                        "description": "Maximum Docker restart count before Coolify stops the container. Set to 0 to disable the limit.",
+                                        "description": "Maximum Docker restart count before Xlaunch stops the container. Set to 0 to disable the limit.",
                                         "type": [
                                             "integer",
                                             "null"
@@ -17803,7 +17803,7 @@
                                                 },
                                                 "url": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")."
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")."
                                                 }
                                             },
                                             "type": "object"
@@ -18121,7 +18121,7 @@
                                                 },
                                                 "url": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.coolify.io,https:\/\/app2.coolify.io\")."
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")."
                                                 }
                                             },
                                             "type": "object"
@@ -18809,7 +18809,7 @@
                     "Services"
                 ],
                 "summary": "Migrate to Server",
-                "description": "Migrate a service to another destination\/server owned by the authenticated team. Stops the service, optionally transfers persistent volume data when both servers are managed by Coolify, and updates database records. Redeploy after migration completes.",
+                "description": "Migrate a service to another destination\/server owned by the authenticated team. Stops the service, optionally transfers persistent volume data when both servers are managed by Xlaunch, and updates database records. Redeploy after migration completes.",
                 "operationId": "migrate-service-by-uuid",
                 "parameters": [
                     {
@@ -21384,7 +21384,7 @@
                     "Vultr"
                 ],
                 "summary": "Create Vultr Server",
-                "description": "Create a Vultr instance and link it as a Coolify server.",
+                "description": "Create a Vultr instance and link it as a Xlaunch server.",
                 "operationId": "create-vultr-server",
                 "responses": {
                     "201": {
@@ -21958,7 +21958,7 @@
                     },
                     "compose_parsing_version": {
                         "type": "string",
-                        "description": "How Coolify parse the compose file."
+                        "description": "How Xlaunch parse the compose file."
                     },
                     "custom_nginx_configuration": {
                         "type": "string",
@@ -22675,7 +22675,7 @@
                     },
                     "docker_compose": {
                         "type": "string",
-                        "description": "The docker-compose.yml file that is parsed and modified by Coolify."
+                        "description": "The docker-compose.yml file that is parsed and modified by Xlaunch."
                     },
                     "destination_type": {
                         "type": "string",

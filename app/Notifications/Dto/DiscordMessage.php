@@ -46,9 +46,9 @@ class DiscordMessage
 
     public function toPayload(): array
     {
-        $footerText = 'Coolify v'.config('constants.coolify.version');
+        $footerText = 'Xlaunch v'.config('constants.xlaunch.version');
         if (isCloud()) {
-            $footerText = 'Coolify Cloud';
+            $footerText = 'Xlaunch Cloud';
         }
         $payload = [
             'embeds' => [

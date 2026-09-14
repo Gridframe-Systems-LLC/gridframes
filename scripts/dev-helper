@@ -3,9 +3,9 @@
 set -euo pipefail
 
 ROOT_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)
-REPOSITORY=${HELPER_IMAGE_REPOSITORY:-docker.io/coollabsio/coolify-helper}
+REPOSITORY=${HELPER_IMAGE_REPOSITORY:-docker.io/northlatch/xlaunch-helper}
 DEFAULT_TAG="dev-$(git -C "$ROOT_DIR" rev-parse --short HEAD)"
-COOLIFY_CONTAINER=${COOLIFY_CONTAINER:-coolify}
+XLAUNCH_CONTAINER=${XLAUNCH_CONTAINER:-xlaunch}
 
 usage() {
     cat <<EOF
@@ -13,7 +13,7 @@ Usage: $0 <command> [tag]
 
 Commands:
   build [tag]   Build the local helper image
-  use [tag]     Configure local Coolify to use an existing helper image
+  use [tag]     Configure local Xlaunch to use an existing helper image
   verify [tag]  Verify tools and run a Docker Compose socket smoke test
   deploy [tag]  Deploy seeded Dockerfile, Compose, and Nixpacks applications
   reset         Clear the local helper version override
@@ -23,17 +23,17 @@ Default tag: $DEFAULT_TAG
 EOF
 }
 
-require_local_coolify() {
+require_local_xlaunch() {
     local is_dev
 
-    if ! docker inspect "$COOLIFY_CONTAINER" >/dev/null 2>&1; then
-        echo "Coolify container '$COOLIFY_CONTAINER' is not running." >&2
+    if ! docker inspect "$XLAUNCH_CONTAINER" >/dev/null 2>&1; then
+        echo "Xlaunch container '$XLAUNCH_CONTAINER' is not running." >&2
         exit 1
     fi
 
-    is_dev=$(docker exec "$COOLIFY_CONTAINER" php artisan tinker --execute 'echo isDev() ? "yes" : "no";' 2>/dev/null | tail -1)
+    is_dev=$(docker exec "$XLAUNCH_CONTAINER" php artisan tinker --execute 'echo isDev() ? "yes" : "no";' 2>/dev/null | tail -1)
     if [[ $is_dev != yes ]]; then
-        echo "The running Coolify instance is not in development mode." >&2
+        echo "The running Xlaunch instance is not in development mode." >&2
         exit 1
     fi
 }
@@ -57,7 +57,7 @@ build_helper() {
     image=$(image_for "$tag")
 
     echo "Building $image"
-    docker build --progress=plain -f "$ROOT_DIR/docker/coolify-helper/Dockerfile" -t "$image" "$ROOT_DIR"
+    docker build --progress=plain -f "$ROOT_DIR/docker/xlaunch-helper/Dockerfile" -t "$image" "$ROOT_DIR"
 }
 
 use_helper() {
@@ -65,29 +65,29 @@ use_helper() {
     local image
     image=$(image_for "$tag")
 
-    require_local_coolify
+    require_local_xlaunch
     docker image inspect "$image" >/dev/null
-    docker exec -e DEV_HELPER_VERSION="$tag" "$COOLIFY_CONTAINER" php artisan tinker --execute '
+    docker exec -e DEV_HELPER_VERSION="$tag" "$XLAUNCH_CONTAINER" php artisan tinker --execute '
         App\Models\InstanceSettings::findOrFail(0)->update([
             "dev_helper_version" => getenv("DEV_HELPER_VERSION"),
         ]);
     ' >/dev/null
 
     local selected
-    selected=$(docker exec "$COOLIFY_CONTAINER" php artisan tinker --execute 'echo getHelperVersion();' 2>/dev/null | tail -1)
+    selected=$(docker exec "$XLAUNCH_CONTAINER" php artisan tinker --execute 'echo getHelperVersion();' 2>/dev/null | tail -1)
     if [[ $selected != "$tag" ]]; then
-        echo "Coolify selected helper '$selected' instead of '$tag'." >&2
+        echo "Xlaunch selected helper '$selected' instead of '$tag'." >&2
         exit 1
     fi
 
-    echo "Coolify now uses $image"
+    echo "Xlaunch now uses $image"
 }
 
 verify_helper() {
     local tag=$1
     local image project compose
     image=$(image_for "$tag")
-    project="coolify-helper-${tag//[^A-Za-z0-9_-]/-}-smoke"
+    project="xlaunch-helper-${tag//[^A-Za-z0-9_-]/-}-smoke"
     compose=$'services:\n  app:\n    image: alpine:3.21\n    command: ["sh", "-c", "sleep 30"]\n'
 
     docker image inspect "$image" >/dev/null
@@ -129,7 +129,7 @@ verify_helper() {
 queue_deployment() {
     local application_uuid=$1
 
-    docker exec -e APPLICATION_UUID="$application_uuid" "$COOLIFY_CONTAINER" php artisan tinker --execute '
+    docker exec -e APPLICATION_UUID="$application_uuid" "$XLAUNCH_CONTAINER" php artisan tinker --execute '
         $application = App\Models\Application::query()
             ->where("uuid", getenv("APPLICATION_UUID"))
             ->firstOrFail();
@@ -150,7 +150,7 @@ wait_for_deployment() {
     local status
 
     for _ in $(seq 1 150); do
-        status=$(docker exec -e DEPLOYMENT_UUID="$deployment_uuid" "$COOLIFY_CONTAINER" php artisan tinker --execute '
+        status=$(docker exec -e DEPLOYMENT_UUID="$deployment_uuid" "$XLAUNCH_CONTAINER" php artisan tinker --execute '
             $deployment = App\Models\ApplicationDeploymentQueue::query()
                 ->where("deployment_uuid", getenv("DEPLOYMENT_UUID"))
                 ->first();
@@ -179,7 +179,7 @@ wait_for_deployment() {
     used_expected_helper=$(docker exec \
         -e DEPLOYMENT_UUID="$deployment_uuid" \
         -e EXPECTED_HELPER_IMAGE="$expected_image" \
-        "$COOLIFY_CONTAINER" php artisan tinker --execute '
+        "$XLAUNCH_CONTAINER" php artisan tinker --execute '
             $deployment = App\Models\ApplicationDeploymentQueue::query()
                 ->where("deployment_uuid", getenv("DEPLOYMENT_UUID"))
                 ->firstOrFail();
@@ -203,7 +203,7 @@ deploy_examples() {
     local image application_uuid deployment_uuid fqdn
     image=$(image_for "$tag")
 
-    require_local_coolify
+    require_local_xlaunch
     use_helper "$tag"
 
     for application_uuid in dockerfile docker-compose nodejs; do
@@ -216,7 +216,7 @@ deploy_examples() {
 
         wait_for_deployment "$deployment_uuid" "$image"
 
-        fqdn=$(docker exec -e APPLICATION_UUID="$application_uuid" "$COOLIFY_CONTAINER" php artisan tinker --execute '
+        fqdn=$(docker exec -e APPLICATION_UUID="$application_uuid" "$XLAUNCH_CONTAINER" php artisan tinker --execute '
             echo App\Models\Application::query()
                 ->where("uuid", getenv("APPLICATION_UUID"))
                 ->value("fqdn") ?? "";
@@ -231,8 +231,8 @@ deploy_examples() {
 }
 
 reset_helper() {
-    require_local_coolify
-    docker exec "$COOLIFY_CONTAINER" php artisan tinker --execute '
+    require_local_xlaunch
+    docker exec "$XLAUNCH_CONTAINER" php artisan tinker --execute '
         App\Models\InstanceSettings::findOrFail(0)->update([
             "dev_helper_version" => null,
         ]);

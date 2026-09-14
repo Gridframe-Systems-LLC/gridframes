@@ -79,7 +79,7 @@ class RestartProxyJob implements ShouldBeEncrypted, ShouldQueue
     private function buildRestartCommands(): array
     {
         $proxyType = $this->server->proxyType();
-        $containerName = $this->server->isSwarm() ? 'coolify-proxy_traefik' : 'coolify-proxy';
+        $containerName = $this->server->isSwarm() ? 'xlaunch-proxy_traefik' : 'xlaunch-proxy';
         $proxy_path = $this->server->proxyPath();
         $stopTimeout = 30;
 
@@ -127,13 +127,13 @@ class RestartProxyJob implements ShouldBeEncrypted, ShouldQueue
                 "mkdir -p $proxy_path/dynamic",
                 "cd $proxy_path",
                 "echo 'Creating required Docker Compose file.'",
-                "echo 'Starting coolify-proxy.'",
-                'docker stack deploy --detach=true -c docker-compose.yml coolify-proxy',
-                "echo 'Successfully started coolify-proxy.'",
+                "echo 'Starting xlaunch-proxy.'",
+                'docker stack deploy --detach=true -c docker-compose.yml xlaunch-proxy',
+                "echo 'Successfully started xlaunch-proxy.'",
             ]);
         } else {
             if (isDev() && $proxyType === ProxyTypes::CADDY->value) {
-                $proxy_path = '/data/coolify/proxy/caddy';
+                $proxy_path = '/data/xlaunch/proxy/caddy';
             }
             $caddyfile = 'import /dynamic/*.caddy';
             $commands = $commands->merge([
@@ -148,9 +148,9 @@ class RestartProxyJob implements ShouldBeEncrypted, ShouldQueue
             // Ensure required networks exist BEFORE docker compose up
             $commands = $commands->merge(ensureProxyNetworksExist($this->server));
             $commands = $commands->merge([
-                "echo 'Starting coolify-proxy.'",
+                "echo 'Starting xlaunch-proxy.'",
                 'docker compose up -d --wait --remove-orphans',
-                "echo 'Successfully started coolify-proxy.'",
+                "echo 'Successfully started xlaunch-proxy.'",
             ]);
             $commands = $commands->merge(connectProxyToNetworks($this->server));
         }

@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\Blade;
 
-it('uses the Coolify base background for all empty states', function () {
+it('uses the Xlaunch base background for all empty states', function () {
     $html = Blade::render('<x-empty title="Nothing found" />');
     $css = file_get_contents(resource_path('css/app.css'));
 
@@ -15,7 +15,7 @@ it('uses the Coolify base background for all empty states', function () {
         ->toContain('.application-settings-section-body.is-flush:has(> .empty-state:only-child)')
         ->toContain('padding: 1rem;')
         ->toContain('.empty-state')
-        ->toContain('background: var(--coollabs-base);')
+        ->toContain('background: var(--northlatch-base);')
         ->toContain('.loading-state-card')
-        ->toContain('border: 1px dashed var(--coollabs-line);');
+        ->toContain('border: 1px dashed var(--northlatch-line);');
 });

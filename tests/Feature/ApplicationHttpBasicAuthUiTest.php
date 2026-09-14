@@ -44,7 +44,7 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
         'private_key_id' => $this->privateKey->id,
     ]);
     $this->destination = StandaloneDocker::where('server_id', $this->server->id)->first()
-        ?? StandaloneDocker::factory()->create(['server_id' => $this->server->id, 'network' => 'coolify-test']);
+        ?? StandaloneDocker::factory()->create(['server_id' => $this->server->id, 'network' => 'xlaunch-test']);
 });
 
 function createApplicationForHttpBasicAuth(array $overrides = []): Application
@@ -60,7 +60,7 @@ function createApplicationForHttpBasicAuth(array $overrides = []): Application
         'http_basic_auth_username' => 'admin',
         'http_basic_auth_password' => 'secret',
         'redirect' => 'no',
-        'git_repository' => 'coollabsio/coolify',
+        'git_repository' => 'northlatch/xlaunch',
         'git_branch' => 'main',
         'ports_exposes' => '3000',
     ], $overrides));

@@ -6,7 +6,7 @@
  * Tests verify that preview FQDNs correctly preserve the port from the original
  * domain URL, which is required for Caddy proxy labels to work correctly.
  *
- * @see https://github.com/coollabsio/coolify/issues/2184
+ * @see https://github.com/northlatch/xlaunch/issues/2184
  */
 
 use Spatie\Url\Url;
@@ -135,7 +135,7 @@ it('formats port string correctly for URL construction', function () {
 });
 
 // Tests for path preservation in preview URLs
-// @see https://github.com/coollabsio/coolify/issues/2184#issuecomment-3638971221
+// @see https://github.com/northlatch/xlaunch/issues/2184#issuecomment-3638971221
 
 it('generates preview FQDN with port and path preserved', function () {
     $domain = 'https://api.example.com:3000/api/v1';

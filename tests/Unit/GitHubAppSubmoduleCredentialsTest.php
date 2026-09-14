@@ -16,7 +16,7 @@ namespace {
         $application = new Application;
         $application->forceFill([
             'uuid' => 'test-app-uuid',
-            'git_repository' => 'coollabsio/private-app',
+            'git_repository' => 'northlatch/private-app',
             'git_branch' => 'main',
             'git_commit_sha' => 'HEAD',
         ]);

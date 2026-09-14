@@ -309,7 +309,7 @@ class Show extends Component
         if (isset($event['serverUuid']) && $event['serverUuid'] === $this->server->uuid) {
             $this->server->refresh();
             // Only refresh display-only state; never re-sync text-input properties
-            // (would clobber any unsaved typing — see coolify#6062 / #6354 / #9695).
+            // (would clobber any unsaved typing — see xlaunch#6062 / #6354 / #9695).
             $this->sentinelUpdatedAt = $this->server->sentinel_updated_at;
             $this->dispatch('success', 'Sentinel has been restarted successfully.');
         }
@@ -323,7 +323,7 @@ class Show extends Component
                 $this->dispatch(
                     'error',
                     'Cannot revalidate',
-                    'This server was transferred to another Coolify instance. Manage it from the target instance instead.'
+                    'This server was transferred to another Xlaunch instance. Manage it from the target instance instead.'
                 );
 
                 return;
@@ -367,7 +367,7 @@ class Show extends Component
                 $this->server->gatherServerMetadata();
                 $this->server->refresh();
             } else {
-                $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://coolify.io/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
+                $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://northlatch.com/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
 
                 return;
             }
@@ -484,7 +484,7 @@ class Show extends Component
                 $this->dispatch('success', 'Server status refreshed: '.ucfirst($this->hetznerServerStatus ?? 'unknown'));
             }
 
-            // If Hetzner server is off but Coolify thinks it's still reachable, update Coolify's state
+            // If Hetzner server is off but Xlaunch thinks it's still reachable, update Xlaunch's state
             if ($this->hetznerServerStatus === 'off' && $this->server->settings->is_reachable) {
                 ['uptime' => $uptime, 'error' => $error] = $this->server->validateConnection();
                 if ($uptime) {
@@ -494,7 +494,7 @@ class Show extends Component
                     $this->server->settings->save();
                     ServerReachabilityChanged::dispatch($this->server);
                 } else {
-                    $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://coolify.io/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
+                    $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://northlatch.com/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
 
                     return;
                 }
@@ -556,7 +556,7 @@ class Show extends Component
 
         // Refresh server data and only the display-only state that validation produces.
         // Never re-sync text-input properties via syncData() — would clobber any
-        // unsaved typing (see coolify#6062 / #6354 / #9695).
+        // unsaved typing (see xlaunch#6062 / #6354 / #9695).
         $this->server->refresh();
         $this->server->settings->refresh();
         $this->isValidating = $this->server->is_validating ?? false;
@@ -701,8 +701,8 @@ class Show extends Component
         }
 
         return match ($this->server->uuid) {
-            'lima-ubuntu-2404' => 'limactl start --yes --name=coolify-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml',
-            'lima-ubuntu-2604' => 'limactl start --yes --name=coolify-lima-ubuntu-2604 docker/lima/ubuntu-2604.yaml',
+            'lima-ubuntu-2404' => 'limactl start --yes --name=xlaunch-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml',
+            'lima-ubuntu-2604' => 'limactl start --yes --name=xlaunch-lima-ubuntu-2604 docker/lima/ubuntu-2604.yaml',
             default => null,
         };
     }

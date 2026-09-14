@@ -43,7 +43,7 @@ afterEach(function () {
 
 it('generates url using base_url instead of APP_URL', function () {
     // Set InstanceSettings to return a specific FQDN
-    ($this->setInstanceSettings)('https://coolify.example.com');
+    ($this->setInstanceSettings)('https://xlaunch.example.com');
 
     $mockServer = ($this->createMockServer)('test-server-uuid');
 
@@ -57,7 +57,7 @@ it('generates url using base_url instead of APP_URL', function () {
     $notification = new ServerPatchCheck($mockServer, $patchData);
 
     // The URL should use the FQDN from InstanceSettings, not APP_URL
-    expect($notification->serverUrl)->toBe('https://coolify.example.com/server/test-server-uuid/security/patches');
+    expect($notification->serverUrl)->toBe('https://xlaunch.example.com/server/test-server-uuid/security/patches');
 });
 
 it('falls back to public_ipv4 with port when fqdn is not set', function () {
@@ -80,7 +80,7 @@ it('falls back to public_ipv4 with port when fqdn is not set', function () {
 });
 
 it('includes server url in all notification channels', function () {
-    ($this->setInstanceSettings)('https://coolify.test');
+    ($this->setInstanceSettings)('https://xlaunch.test');
 
     $mockServer = ($this->createMockServer)('abc-123', 'Test Server');
 
@@ -103,27 +103,27 @@ it('includes server url in all notification channels', function () {
 
     // Check Discord
     $discord = $notification->toDiscord();
-    expect($discord->description)->toContain('https://coolify.test/server/abc-123/security/patches');
+    expect($discord->description)->toContain('https://xlaunch.test/server/abc-123/security/patches');
 
     // Check Telegram
     $telegram = $notification->toTelegram();
-    expect($telegram['buttons'][0]['url'])->toBe('https://coolify.test/server/abc-123/security/patches');
+    expect($telegram['buttons'][0]['url'])->toBe('https://xlaunch.test/server/abc-123/security/patches');
 
     // Check Pushover
     $pushover = $notification->toPushover();
-    expect($pushover->buttons[0]['url'])->toBe('https://coolify.test/server/abc-123/security/patches');
+    expect($pushover->buttons[0]['url'])->toBe('https://xlaunch.test/server/abc-123/security/patches');
 
     // Check Slack
     $slack = $notification->toSlack();
-    expect($slack->description)->toContain('https://coolify.test/server/abc-123/security/patches');
+    expect($slack->description)->toContain('https://xlaunch.test/server/abc-123/security/patches');
 
     // Check Webhook
     $webhook = $notification->toWebhook();
-    expect($webhook['url'])->toBe('https://coolify.test/server/abc-123/security/patches');
+    expect($webhook['url'])->toBe('https://xlaunch.test/server/abc-123/security/patches');
 });
 
 it('uses correct url in error notifications', function () {
-    ($this->setInstanceSettings)('https://coolify.production.com');
+    ($this->setInstanceSettings)('https://xlaunch.production.com');
 
     $mockServer = ($this->createMockServer)('error-server-uuid', 'Error Server');
 
@@ -137,10 +137,10 @@ it('uses correct url in error notifications', function () {
 
     // Check error Discord notification
     $discord = $notification->toDiscord();
-    expect($discord->description)->toContain('https://coolify.production.com/server/error-server-uuid/security/patches');
+    expect($discord->description)->toContain('https://xlaunch.production.com/server/error-server-uuid/security/patches');
 
     // Check error webhook
     $webhook = $notification->toWebhook();
-    expect($webhook['url'])->toBe('https://coolify.production.com/server/error-server-uuid/security/patches')
+    expect($webhook['url'])->toBe('https://xlaunch.production.com/server/error-server-uuid/security/patches')
         ->and($webhook['event'])->toBe('server_patch_check_error');
 });

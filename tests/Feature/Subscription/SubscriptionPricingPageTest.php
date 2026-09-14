@@ -23,7 +23,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     config()->set('app.maintenance.store', 'array');
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
     config()->set('subscription.provider', 'stripe');
     config()->set('subscription.stripe_api_key', 'sk_test_fake');
 
@@ -42,7 +42,7 @@ test('subscription pricing page shows pay as you go plan for unsubscribed team a
         ->assertSuccessful()
         ->assertSee('Pay as you go')
         ->assertSee('Subscribe monthly')
-        ->assertSee('Choose a plan for Coolify Cloud');
+        ->assertSee('Choose a plan for Xlaunch Cloud');
 });
 
 test('subscription pricing page still renders when provider config is missing', function () {

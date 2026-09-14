@@ -56,7 +56,7 @@ it('verifies collection filter removes empty items', function () {
     $collection = collect([
         'services' => collect(['web' => ['image' => 'nginx']]),
         'volumes' => collect([]),
-        'networks' => collect(['coolify' => ['external' => true]]),
+        'networks' => collect(['xlaunch' => ['external' => true]]),
         'configs' => collect([]),
         'secrets' => collect([]),
     ]);
@@ -86,7 +86,7 @@ it('verifies filtered collections serialize cleanly to YAML', function () {
     $collection = collect([
         'services' => collect(['web' => ['image' => 'nginx']]),
         'volumes' => collect([]),
-        'networks' => collect(['coolify' => ['external' => true]]),
+        'networks' => collect(['xlaunch' => ['external' => true]]),
         'configs' => collect([]),
         'secrets' => collect([]),
     ]);
@@ -138,7 +138,7 @@ it('verifies non-empty sections are preserved', function () {
     $collection = collect([
         'services' => collect(['web' => ['image' => 'nginx']]),
         'volumes' => collect(['data' => ['driver' => 'local']]),
-        'networks' => collect(['coolify' => ['external' => true]]),
+        'networks' => collect(['xlaunch' => ['external' => true]]),
         'configs' => collect(['app_config' => ['file' => './config']]),
         'secrets' => collect(['db_password' => ['file' => './secret']]),
     ]);
@@ -167,7 +167,7 @@ it('verifies mixed empty and non-empty sections', function () {
     $collection = collect([
         'services' => collect(['web' => ['image' => 'nginx']]),
         'volumes' => collect([]), // Empty
-        'networks' => collect(['coolify' => ['external' => true]]), // Not empty
+        'networks' => collect(['xlaunch' => ['external' => true]]), // Not empty
         'configs' => collect([]), // Empty
         'secrets' => collect(['db_password' => ['file' => './secret']]), // Not empty
     ]);

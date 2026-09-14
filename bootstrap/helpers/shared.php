@@ -69,7 +69,7 @@ use Symfony\Component\Yaml\Yaml;
 
 function base_configuration_dir(): string
 {
-    return '/data/coolify';
+    return '/data/xlaunch';
 }
 function application_configuration_dir(): string
 {
@@ -237,7 +237,7 @@ function validateFilenameSafe(string $input, string $context = 'filename'): stri
  *
  * File mount paths are container paths supplied by tenants. They may look like
  * absolute paths (for example /etc/nginx/nginx.conf), but are later joined to a
- * Coolify-managed configuration directory on the host. Therefore shell safety is
+ * Xlaunch-managed configuration directory on the host. Therefore shell safety is
  * not enough: every path segment must also be unable to traverse out of that
  * managed directory.
  *
@@ -278,8 +278,8 @@ function validateFileMountPath(string $input, string $context = 'file mount path
 /**
  * Validate a host file path used as a bind-only source.
  *
- * Unlike managed file mounts, this path is not re-based under the Coolify
- * configuration directory and must never be written by Coolify. It still needs
+ * Unlike managed file mounts, this path is not re-based under the Xlaunch
+ * configuration directory and must never be written by Xlaunch. It still needs
  * to be shell-safe because other storage code may pass paths through remote
  * shell commands.
  *
@@ -319,7 +319,7 @@ function validateHostFileMountPath(string $input, string $context = 'host file p
 }
 
 /**
- * Resolve a tenant file mount path under a Coolify-managed base directory.
+ * Resolve a tenant file mount path under a Xlaunch-managed base directory.
  *
  * This performs lexical normalization only; the target file does not need to
  * exist yet. The normalized result must remain inside the given base directory.
@@ -654,20 +654,20 @@ function get_route_parameters(): array
 function get_latest_sentinel_version(): string
 {
     try {
-        $response = Http::get(config('constants.coolify.versions_url'));
+        $response = Http::get(config('constants.xlaunch.versions_url'));
         $versions = $response->json();
 
-        return data_get($versions, 'coolify.sentinel.version');
+        return data_get($versions, 'xlaunch.sentinel.version');
     } catch (Throwable) {
         return '0.0.0';
     }
 }
-function get_latest_version_of_coolify(): string
+function get_latest_version_of_xlaunch(): string
 {
     try {
         $versions = get_versions_data();
 
-        return data_get($versions, 'coolify.v4.version', '0.0.0');
+        return data_get($versions, 'xlaunch.v4.version', '0.0.0');
     } catch (Throwable $e) {
 
         return '0.0.0';
@@ -694,14 +694,14 @@ function generateSSHKey(string $type = 'rsa')
 
         return [
             'private' => $key->toString('PKCS1'),
-            'public' => $key->getPublicKey()->toString('OpenSSH', ['comment' => 'coolify-generated-ssh-key']),
+            'public' => $key->getPublicKey()->toString('OpenSSH', ['comment' => 'xlaunch-generated-ssh-key']),
         ];
     } elseif ($type === 'ed25519') {
         $key = EC::createKey('Ed25519');
 
         return [
             'private' => $key->toString('OpenSSH'),
-            'public' => $key->getPublicKey()->toString('OpenSSH', ['comment' => 'coolify-generated-ssh-key']),
+            'public' => $key->getPublicKey()->toString('OpenSSH', ['comment' => 'xlaunch-generated-ssh-key']),
         ];
     }
     throw new Exception('Invalid key type');
@@ -769,7 +769,7 @@ function base_ip(): string
     return 'localhost';
 }
 /**
- * Parse a domain URL into scheme/host/path pieces used by COOLIFY_* and SERVICE_* env builders.
+ * Parse a domain URL into scheme/host/path pieces used by XLAUNCH_* and SERVICE_* env builders.
  * Omits a bare "/" path so port re-append stays valid ("http://host:80" not "http://host/:80").
  *
  * @return array{scheme: string, host: string, path: string}|null
@@ -800,7 +800,7 @@ function parseDomainUrlParts(string $fqdn): ?array
 
 /**
  * Absolute URL without port (and without a bare trailing slash).
- * Used for COOLIFY_URL / SERVICE_URL base values.
+ * Used for XLAUNCH_URL / SERVICE_URL base values.
  */
 function getFqdnWithoutPort(string $fqdn): string
 {
@@ -815,7 +815,7 @@ function getFqdnWithoutPort(string $fqdn): string
 
 /**
  * Host (+ optional path) without scheme or port.
- * Used for COOLIFY_FQDN / SERVICE_FQDN base values.
+ * Used for XLAUNCH_FQDN / SERVICE_FQDN base values.
  */
 function getHostWithoutPort(string $fqdn): string
 {
@@ -933,7 +933,7 @@ function isDev(): bool
 
 function isCloud(): bool
 {
-    return ! config('constants.coolify.self_hosted');
+    return ! config('constants.xlaunch.self_hosted');
 }
 
 /**
@@ -1357,7 +1357,7 @@ function generateFqdn(Server $server, string $random, bool $forceHttps = false, 
         $scheme = 'https';
     }
 
-    if ($parserVersion >= 5 && version_compare(config('constants.coolify.version'), '4.0.0-beta.420.7', '>=')) {
+    if ($parserVersion >= 5 && version_compare(config('constants.xlaunch.version'), '4.0.0-beta.420.7', '>=')) {
         return "{$random}.$host$path";
     }
 
@@ -1385,7 +1385,7 @@ function sslip(Server $server)
 
 function service_templates_cache_key(): string
 {
-    return (string) config('constants.services.cache_key', 'coolify:service-templates-bundle');
+    return (string) config('constants.services.cache_key', 'xlaunch:service-templates-bundle');
 }
 
 function service_templates_path(): string
@@ -1938,7 +1938,7 @@ function getRealtime()
 /**
  * Resolve a server IP or hostname to an IP address for DNS comparison/display.
  *
- * When a server uses a hostname (e.g. coolify-testing-host) instead of a literal
+ * When a server uses a hostname (e.g. xlaunch-testing-host) instead of a literal
  * IP, A-record validation and UI copy need the actual IP the user should point DNS to.
  *
  * Successful hostname resolutions are cached briefly so Livewire mounts/domain state
@@ -2680,7 +2680,7 @@ function parseDockerComposeFile(Service|Application $resource, bool $isNew = fal
                 $savedService->save();
 
                 if (! $hasValidNetworkMode) {
-                    // Add Coolify specific networks
+                    // Add Xlaunch specific networks
                     $definedNetworkExists = $topLevelNetworks->contains(function ($value, $_) use ($definedNetwork) {
                         return $value == $definedNetwork;
                     });
@@ -3208,8 +3208,8 @@ function parseDockerComposeFile(Service|Application $resource, bool $isNew = fal
                 return $service;
             });
 
-            $envs_from_coolify = $resource->environment_variables()->get();
-            $services = collect($services)->map(function ($service, $serviceName) use ($resource, $envs_from_coolify) {
+            $envs_from_xlaunch = $resource->environment_variables()->get();
+            $services = collect($services)->map(function ($service, $serviceName) use ($resource, $envs_from_xlaunch) {
                 $serviceVariables = collect(data_get($service, 'environment', []));
                 $parsedServiceVariables = collect([]);
                 foreach ($serviceVariables as $key => $value) {
@@ -3227,26 +3227,26 @@ function parseDockerComposeFile(Service|Application $resource, bool $isNew = fal
                         $parsedServiceVariables->put($key, $value);
                     }
                 }
-                $parsedServiceVariables->put('COOLIFY_RESOURCE_UUID', "{$resource->uuid}");
-                $parsedServiceVariables->put('COOLIFY_CONTAINER_NAME', "$serviceName-{$resource->uuid}");
+                $parsedServiceVariables->put('XLAUNCH_RESOURCE_UUID', "{$resource->uuid}");
+                $parsedServiceVariables->put('XLAUNCH_CONTAINER_NAME', "$serviceName-{$resource->uuid}");
 
                 // TODO: move this in a shared function
-                if (! $parsedServiceVariables->has('COOLIFY_APP_NAME')) {
-                    $parsedServiceVariables->put('COOLIFY_APP_NAME', "\"{$resource->name}\"");
+                if (! $parsedServiceVariables->has('XLAUNCH_APP_NAME')) {
+                    $parsedServiceVariables->put('XLAUNCH_APP_NAME', "\"{$resource->name}\"");
                 }
-                if (! $parsedServiceVariables->has('COOLIFY_SERVER_IP')) {
-                    $parsedServiceVariables->put('COOLIFY_SERVER_IP', "\"{$resource->destination->server->ip}\"");
+                if (! $parsedServiceVariables->has('XLAUNCH_SERVER_IP')) {
+                    $parsedServiceVariables->put('XLAUNCH_SERVER_IP', "\"{$resource->destination->server->ip}\"");
                 }
-                if (! $parsedServiceVariables->has('COOLIFY_ENVIRONMENT_NAME')) {
-                    $parsedServiceVariables->put('COOLIFY_ENVIRONMENT_NAME', "\"{$resource->environment->name}\"");
+                if (! $parsedServiceVariables->has('XLAUNCH_ENVIRONMENT_NAME')) {
+                    $parsedServiceVariables->put('XLAUNCH_ENVIRONMENT_NAME', "\"{$resource->environment->name}\"");
                 }
-                if (! $parsedServiceVariables->has('COOLIFY_PROJECT_NAME')) {
-                    $parsedServiceVariables->put('COOLIFY_PROJECT_NAME', "\"{$resource->project()->name}\"");
+                if (! $parsedServiceVariables->has('XLAUNCH_PROJECT_NAME')) {
+                    $parsedServiceVariables->put('XLAUNCH_PROJECT_NAME', "\"{$resource->project()->name}\"");
                 }
 
-                $parsedServiceVariables = $parsedServiceVariables->map(function ($value, $key) use ($envs_from_coolify) {
+                $parsedServiceVariables = $parsedServiceVariables->map(function ($value, $key) use ($envs_from_xlaunch) {
                     if (! str($value)->startsWith('$')) {
-                        $found_env = $envs_from_coolify->where('key', $key)->first();
+                        $found_env = $envs_from_xlaunch->where('key', $key)->first();
                         if ($found_env) {
                             return $found_env->value;
                         }
@@ -4061,7 +4061,7 @@ function generate_fluentd_configuration(): array
             'fluentd-async' => 'true',
             'fluentd-sub-second-precision' => 'true',
             // env vars are used in the LogDrain configurations
-            'env' => 'COOLIFY_APP_NAME,COOLIFY_PROJECT_NAME,COOLIFY_SERVER_IP,COOLIFY_ENVIRONMENT_NAME',
+            'env' => 'XLAUNCH_APP_NAME,XLAUNCH_PROJECT_NAME,XLAUNCH_SERVER_IP,XLAUNCH_ENVIRONMENT_NAME',
         ],
     ];
 }
@@ -4085,14 +4085,14 @@ function isAssociativeArray($array)
 
 /**
  * This method adds the default environment variables to the resource.
- * - COOLIFY_APP_NAME
- * - COOLIFY_PROJECT_NAME
- * - COOLIFY_SERVER_IP
- * - COOLIFY_ENVIRONMENT_NAME
+ * - XLAUNCH_APP_NAME
+ * - XLAUNCH_PROJECT_NAME
+ * - XLAUNCH_SERVER_IP
+ * - XLAUNCH_ENVIRONMENT_NAME
  *
  *  Theses variables are added in place to the $where_to_add array.
  */
-function add_coolify_default_environment_variables(StandaloneRedis|StandalonePostgresql|StandaloneMongodb|StandaloneMysql|StandaloneMariadb|StandaloneKeydb|StandaloneDragonfly|StandaloneClickhouse|Application|Service $resource, Collection &$where_to_add, ?Collection $where_to_check = null)
+function add_xlaunch_default_environment_variables(StandaloneRedis|StandalonePostgresql|StandaloneMongodb|StandaloneMysql|StandaloneMariadb|StandaloneKeydb|StandaloneDragonfly|StandaloneClickhouse|Application|Service $resource, Collection &$where_to_add, ?Collection $where_to_check = null)
 {
     // Currently disabled
     return;
@@ -4106,32 +4106,32 @@ function add_coolify_default_environment_variables(StandaloneRedis|StandalonePos
     } else {
         $isAssociativeArray = false;
     }
-    if ($where_to_check != null && $where_to_check->where('key', 'COOLIFY_APP_NAME')->isEmpty()) {
+    if ($where_to_check != null && $where_to_check->where('key', 'XLAUNCH_APP_NAME')->isEmpty()) {
         if ($isAssociativeArray) {
-            $where_to_add->put('COOLIFY_APP_NAME', "\"{$resource->name}\"");
+            $where_to_add->put('XLAUNCH_APP_NAME', "\"{$resource->name}\"");
         } else {
-            $where_to_add->push("COOLIFY_APP_NAME=\"{$resource->name}\"");
+            $where_to_add->push("XLAUNCH_APP_NAME=\"{$resource->name}\"");
         }
     }
-    if ($where_to_check != null && $where_to_check->where('key', 'COOLIFY_SERVER_IP')->isEmpty()) {
+    if ($where_to_check != null && $where_to_check->where('key', 'XLAUNCH_SERVER_IP')->isEmpty()) {
         if ($isAssociativeArray) {
-            $where_to_add->put('COOLIFY_SERVER_IP', "\"{$ip}\"");
+            $where_to_add->put('XLAUNCH_SERVER_IP', "\"{$ip}\"");
         } else {
-            $where_to_add->push("COOLIFY_SERVER_IP=\"{$ip}\"");
+            $where_to_add->push("XLAUNCH_SERVER_IP=\"{$ip}\"");
         }
     }
-    if ($where_to_check != null && $where_to_check->where('key', 'COOLIFY_ENVIRONMENT_NAME')->isEmpty()) {
+    if ($where_to_check != null && $where_to_check->where('key', 'XLAUNCH_ENVIRONMENT_NAME')->isEmpty()) {
         if ($isAssociativeArray) {
-            $where_to_add->put('COOLIFY_ENVIRONMENT_NAME', "\"{$resource->environment->name}\"");
+            $where_to_add->put('XLAUNCH_ENVIRONMENT_NAME', "\"{$resource->environment->name}\"");
         } else {
-            $where_to_add->push("COOLIFY_ENVIRONMENT_NAME=\"{$resource->environment->name}\"");
+            $where_to_add->push("XLAUNCH_ENVIRONMENT_NAME=\"{$resource->environment->name}\"");
         }
     }
-    if ($where_to_check != null && $where_to_check->where('key', 'COOLIFY_PROJECT_NAME')->isEmpty()) {
+    if ($where_to_check != null && $where_to_check->where('key', 'XLAUNCH_PROJECT_NAME')->isEmpty()) {
         if ($isAssociativeArray) {
-            $where_to_add->put('COOLIFY_PROJECT_NAME', "\"{$resource->project()->name}\"");
+            $where_to_add->put('XLAUNCH_PROJECT_NAME', "\"{$resource->project()->name}\"");
         } else {
-            $where_to_add->push("COOLIFY_PROJECT_NAME=\"{$resource->project()->name}\"");
+            $where_to_add->push("XLAUNCH_PROJECT_NAME=\"{$resource->project()->name}\"");
         }
     }
 }
@@ -4211,25 +4211,25 @@ function redirectRoute(Component $component, string $name, array $parameters = [
     return $component->redirectRoute($name, $parameters, navigate: $navigate);
 }
 
-function coolifyRegistryUrl(): string
+function xlaunchRegistryUrl(): string
 {
     try {
         return instanceSettings()->docker_registry_url ?: 'docker.io';
     } catch (Throwable) {
-        return config('constants.coolify.registry_url', 'docker.io');
+        return config('constants.xlaunch.registry_url', 'docker.io');
     }
 }
 
-function coolifyHelperImage(): string
+function xlaunchHelperImage(): string
 {
-    $configuredHelperImage = config('constants.coolify.helper_image');
-    $configuredDefaultHelperImage = config('constants.coolify.registry_url', 'docker.io').'/coollabsio/coolify-helper';
+    $configuredHelperImage = config('constants.xlaunch.helper_image');
+    $configuredDefaultHelperImage = config('constants.xlaunch.registry_url', 'docker.io').'/northlatch/xlaunch-helper';
 
     if ($configuredHelperImage !== $configuredDefaultHelperImage) {
         return $configuredHelperImage;
     }
 
-    return coolifyRegistryUrl().'/coollabsio/coolify-helper';
+    return xlaunchRegistryUrl().'/northlatch/xlaunch-helper';
 }
 
 function getHelperVersion(): string
@@ -4242,7 +4242,7 @@ function getHelperVersion(): string
         }
     }
 
-    return config('constants.coolify.helper_version');
+    return config('constants.xlaunch.helper_version');
 }
 
 function loggy($message = null, array $context = [])

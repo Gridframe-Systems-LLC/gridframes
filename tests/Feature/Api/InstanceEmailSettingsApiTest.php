@@ -44,7 +44,7 @@ function instanceEmailHeaders(string $token): array
 test('root team owners can get instance email settings', function () {
     InstanceSettings::findOrFail(0)->update([
         'smtp_enabled' => true,
-        'smtp_ehlo_domain' => 'coolify.example.com',
+        'smtp_ehlo_domain' => 'xlaunch.example.com',
     ]);
     $token = instanceEmailToken(User::factory()->create(), $this->rootTeam, 'owner', ['read']);
 
@@ -52,7 +52,7 @@ test('root team owners can get instance email settings', function () {
         ->getJson('/api/v1/settings/email')
         ->assertSuccessful()
         ->assertJsonPath('smtp_enabled', true)
-        ->assertJsonPath('smtp_ehlo_domain', 'coolify.example.com')
+        ->assertJsonPath('smtp_ehlo_domain', 'xlaunch.example.com')
         ->assertJsonMissingPath('smtp_password');
 });
 
@@ -63,22 +63,22 @@ test('root team admins can update instance email settings', function () {
         ->patchJson('/api/v1/settings/email', [
             'smtp_enabled' => true,
             'smtp_from_address' => 'alerts@example.com',
-            'smtp_from_name' => 'Coolify',
+            'smtp_from_name' => 'Xlaunch',
             'smtp_host' => 'smtp.example.com',
             'smtp_port' => 587,
             'smtp_encryption' => 'starttls',
-            'smtp_username' => 'coolify',
+            'smtp_username' => 'xlaunch',
             'smtp_password' => 'secret',
             'smtp_timeout' => 10,
-            'smtp_ehlo_domain' => 'coolify.example.com',
+            'smtp_ehlo_domain' => 'xlaunch.example.com',
         ])
         ->assertSuccessful()
-        ->assertJsonPath('smtp_ehlo_domain', 'coolify.example.com');
+        ->assertJsonPath('smtp_ehlo_domain', 'xlaunch.example.com');
 
     $settings = InstanceSettings::findOrFail(0);
     expect($settings->smtp_enabled)->toBeTrue()
         ->and($settings->smtp_host)->toBe('smtp.example.com')
-        ->and($settings->smtp_ehlo_domain)->toBe('coolify.example.com');
+        ->and($settings->smtp_ehlo_domain)->toBe('xlaunch.example.com');
 });
 
 test('instance email settings reject non-root teams', function () {

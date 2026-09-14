@@ -259,7 +259,7 @@ class MigrateResourceToDestination
             return;
         }
 
-        $customLabels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+        $customLabels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
         $application->custom_labels = base64_encode($customLabels);
         $application->save();
     }

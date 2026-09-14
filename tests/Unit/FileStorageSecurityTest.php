@@ -123,7 +123,7 @@ test('file storage accepts safe file mount paths', function () {
     $safePaths = [
         '/etc/nginx/nginx.conf',
         '/app/.env',
-        '/data/coolify/services/abc123/config.yml',
+        '/data/xlaunch/services/abc123/config.yml',
         '/var/www/html/index.php',
         '/opt/app/config/database.json',
     ];
@@ -182,23 +182,23 @@ test('host file mount path validator rejects ambiguous or directory paths', func
 ]);
 
 test('confined path resolver keeps file mounts inside their resource configuration root', function () {
-    expect(confineFileMountPath('/data/coolify/applications/app-uuid', '/etc/nginx/nginx.conf', 'file storage path'))
-        ->toBe('/data/coolify/applications/app-uuid/etc/nginx/nginx.conf');
+    expect(confineFileMountPath('/data/xlaunch/applications/app-uuid', '/etc/nginx/nginx.conf', 'file storage path'))
+        ->toBe('/data/xlaunch/applications/app-uuid/etc/nginx/nginx.conf');
 
-    expect(confineFileMountPath('/data/coolify/databases/db-uuid/', 'postgres/postgresql.conf', 'file storage path'))
-        ->toBe('/data/coolify/databases/db-uuid/postgres/postgresql.conf');
+    expect(confineFileMountPath('/data/xlaunch/databases/db-uuid/', 'postgres/postgresql.conf', 'file storage path'))
+        ->toBe('/data/xlaunch/databases/db-uuid/postgres/postgresql.conf');
 
-    expect(confineFileMountPath('/data/coolify/services/service-uuid', '/config.yaml', 'file storage path'))
-        ->toBe('/data/coolify/services/service-uuid/config.yaml');
+    expect(confineFileMountPath('/data/xlaunch/services/service-uuid', '/config.yaml', 'file storage path'))
+        ->toBe('/data/xlaunch/services/service-uuid/config.yaml');
 });
 
 test('confined path resolver rejects paths that escape the resource configuration root', function (string $base, string $path) {
     expect(fn () => confineFileMountPath($base, $path, 'file storage path'))
         ->toThrow(Exception::class);
 })->with([
-    'application parent segment' => ['/data/coolify/applications/app-uuid', '/../../etc/passwd'],
-    'database parent segment' => ['/data/coolify/databases/db-uuid', '/postgres/../../../etc/shadow'],
-    'service dot segment' => ['/data/coolify/services/service-uuid', '/./config.yaml'],
+    'application parent segment' => ['/data/xlaunch/applications/app-uuid', '/../../etc/passwd'],
+    'database parent segment' => ['/data/xlaunch/databases/db-uuid', '/postgres/../../../etc/shadow'],
+    'service dot segment' => ['/data/xlaunch/services/service-uuid', '/./config.yaml'],
 ]);
 
 test('local file volume write sink keeps saved managed file paths for compatibility', function () {

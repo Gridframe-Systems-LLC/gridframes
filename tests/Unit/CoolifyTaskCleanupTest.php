@@ -1,9 +1,9 @@
 <?php
 
-use App\Jobs\CoolifyTask;
+use App\Jobs\XlaunchTask;
 
-it('CoolifyTask has failed method that handles cleanup', function () {
-    $reflection = new ReflectionClass(CoolifyTask::class);
+it('XlaunchTask has failed method that handles cleanup', function () {
+    $reflection = new ReflectionClass(XlaunchTask::class);
 
     // Verify failed method exists
     expect($reflection->hasMethod('failed'))->toBeTrue();
@@ -27,8 +27,8 @@ it('CoolifyTask has failed method that handles cleanup', function () {
         ->and($methodSource)->toContain('Log::info');
 });
 
-it('CoolifyTask failed method updates activity status to ERROR', function () {
-    $reflection = new ReflectionClass(CoolifyTask::class);
+it('XlaunchTask failed method updates activity status to ERROR', function () {
+    $reflection = new ReflectionClass(XlaunchTask::class);
     $failedMethod = $reflection->getMethod('failed');
 
     // Read the method source
@@ -46,8 +46,8 @@ it('CoolifyTask failed method updates activity status to ERROR', function () {
         ->and($methodSource)->toContain("'failed_at' =>");
 });
 
-it('CoolifyTask failed method has proper error handling for event dispatch', function () {
-    $reflection = new ReflectionClass(CoolifyTask::class);
+it('XlaunchTask failed method has proper error handling for event dispatch', function () {
+    $reflection = new ReflectionClass(XlaunchTask::class);
     $failedMethod = $reflection->getMethod('failed');
 
     // Read the method source
@@ -65,8 +65,8 @@ it('CoolifyTask failed method has proper error handling for event dispatch', fun
         ->and($methodSource)->toContain("Log::error('Error dispatching cleanup event");
 });
 
-it('CoolifyTask constructor stores call_event_on_finish and call_event_data', function () {
-    $reflection = new ReflectionClass(CoolifyTask::class);
+it('XlaunchTask constructor stores call_event_on_finish and call_event_data', function () {
+    $reflection = new ReflectionClass(XlaunchTask::class);
     $constructor = $reflection->getConstructor();
 
     // Get constructor parameters

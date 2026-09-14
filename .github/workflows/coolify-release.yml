@@ -1,4 +1,4 @@
-name: Release Coolify Stable
+name: Release Xlaunch Stable
 run-name: ${{ inputs.tag }}
 
 on:
@@ -12,13 +12,13 @@ on:
 permissions: {}
 
 concurrency:
-  group: coolify-fix-release
+  group: xlaunch-fix-release
   cancel-in-progress: false
 
 env:
   GITHUB_REGISTRY: ghcr.io
   DOCKER_REGISTRY: docker.io
-  IMAGE_NAME: coollabsio/coolify
+  IMAGE_NAME: northlatch/xlaunch
 
 jobs:
   validate:
@@ -156,7 +156,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           build-args: |
-            COOLIFY_VERSION=${{ needs.validate.outputs.version }}
+            XLAUNCH_VERSION=${{ needs.validate.outputs.version }}
           tags: |
             ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:release-${{ needs.validate.outputs.version }}-${{ github.sha }}-${{ matrix.arch }}
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:release-${{ needs.validate.outputs.version }}-${{ github.sha }}-${{ matrix.arch }}

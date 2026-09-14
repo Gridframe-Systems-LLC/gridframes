@@ -17,7 +17,7 @@ beforeEach(function () {
 
 it('broadcasts v5 cluster updates when bootstrap state changes', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -110,10 +110,10 @@ it('writes quiet ssh options for v5 bootstrap ssh config', function () {
     }
 });
 
-it('bootstraps a single v5 server with the Coolify CLI', function () {
+it('bootstraps a single v5 server with the Xlaunch CLI', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
     fakeAgentTokenIssuer();
 
     [$user, $team] = createV5UserWithTeam();
@@ -167,7 +167,7 @@ it('bootstraps a single v5 server with the Coolify CLI', function () {
         ->assertJsonPath('cluster.servers.0.status', 'added')
         ->assertJsonPath('cluster.servers.0.lastBootstrapAction', 'bootstrap')
         ->assertJsonPath('cluster.servers.0.lastBootstrapStatus', 'queued')
-        ->assertJsonPath('cluster.servers.0.lastBootstrapOutput', 'Queued Coolify bootstrap for prod-01.');
+        ->assertJsonPath('cluster.servers.0.lastBootstrapOutput', 'Queued Xlaunch bootstrap for prod-01.');
 
     Queue::assertPushed(V5BootstrapServerJob::class);
 
@@ -185,7 +185,7 @@ it('bootstraps a single v5 server with the Coolify CLI', function () {
         $command = $process->command;
         $node = cliFlagValue($command, '--nodes');
 
-        return $command[0] === '/tmp/coolify'
+        return $command[0] === '/tmp/xlaunch'
             && in_array('init', $command, true)
             && in_array('bootstrap', $command, true)
             && cliFlagValue($command, '--format') === 'json'
@@ -215,9 +215,9 @@ it('bootstraps a single v5 server with the Coolify CLI', function () {
         ->and($server->last_bootstrapped_at)->not->toBeNull();
 });
 
-it('does not run a macOS development Coolify CLI binary from Docker during v5 server bootstrap', function () {
+it('does not run a macOS development Xlaunch CLI binary from Docker during v5 server bootstrap', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/usr/local/bin/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/usr/local/bin/xlaunch');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -257,12 +257,12 @@ it('does not run a macOS development Coolify CLI binary from Docker during v5 se
 
     (new V5BootstrapServerJob($cluster->id, $server->id))->handle();
 
-    Process::assertRan(fn ($process): bool => $process->command[0] === '/usr/local/bin/coolify');
+    Process::assertRan(fn ($process): bool => $process->command[0] === '/usr/local/bin/xlaunch');
 });
 
-it('keeps a v5 server added when Coolify CLI bootstrap fails', function () {
+it('keeps a v5 server added when Xlaunch CLI bootstrap fails', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -315,8 +315,8 @@ it('keeps a v5 server added when Coolify CLI bootstrap fails', function () {
 
 it('persists v5 bootstrap mesh assignments and enrolls coold into flux', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -393,11 +393,11 @@ it('persists v5 bootstrap mesh assignments and enrolls coold into flux', functio
     Process::assertRan(function ($process) use ($server): bool {
         $command = implode(' ', array_map(fn ($part) => is_string($part) ? $part : json_encode($part), $process->command));
 
-        return str_contains($command, 'COOLIFY_COOLD_FLUX_URL=http://coolify.example.com:6443')
-            && str_contains($command, 'COOLIFY_COOLD_HOST_ID='.$server->uuid)
-            && str_contains($command, 'COOLIFY_COOLD_HOST_JWT_PATH=/etc/coolify/host-jwt')
+        return str_contains($command, 'XLAUNCH_COOLD_FLUX_URL=http://xlaunch.example.com:6443')
+            && str_contains($command, 'XLAUNCH_COOLD_HOST_ID='.$server->uuid)
+            && str_contains($command, 'XLAUNCH_COOLD_HOST_JWT_PATH=/etc/xlaunch/host-jwt')
             && str_contains($command, 'signed-host-jwt')
-            && str_contains($command, 'chmod 600 /etc/coolify/host-jwt')
+            && str_contains($command, 'chmod 600 /etc/xlaunch/host-jwt')
             && str_contains($command, 'systemctl restart coold.service');
     });
 
@@ -411,15 +411,15 @@ it('persists v5 bootstrap mesh assignments and enrolls coold into flux', functio
     Process::assertRan(function ($process): bool {
         $command = implode(' ', array_map(fn ($part) => is_string($part) ? $part : json_encode($part), $process->command));
 
-        return str_contains($command, 'podman network inspect "coolify-${ns}-mesh"')
+        return str_contains($command, 'podman network inspect "xlaunch-${ns}-mesh"')
             && str_contains($command, "if [ \"$(id -u)\" != \"0\" ]; then SUDO='sudo'; fi");
     });
 });
 
 it('waits for the bootstrapped host to connect to flux before marking the server installed', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
     Config::set('flux.bootstrap_host_connection_timeout_seconds', 1);
 
     [$user, $team] = createV5UserWithTeam();
@@ -480,8 +480,8 @@ it('waits for the bootstrapped host to connect to flux before marking the server
 
 it('reads the WireGuard management IP from the host when bootstrap output does not include it', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -548,7 +548,7 @@ it('reads the WireGuard management IP from the host when bootstrap output does n
 
 it('fails the bootstrap when the flux url is not configured', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
     Config::set('coold.flux_url', '');
 
     [$user, $team] = createV5UserWithTeam();
@@ -584,14 +584,14 @@ it('fails the bootstrap when the flux url is not configured', function () {
 
     expect($server->status)->toBe('added')
         ->and($server->last_bootstrap_status)->toBe('failed')
-        ->and($server->last_bootstrap_output)->toContain('COOLIFY_COOLD_FLUX_URL')
+        ->and($server->last_bootstrap_output)->toContain('XLAUNCH_COOLD_FLUX_URL')
         ->and($server->last_bootstrapped_at)->toBeNull();
 });
 
 it('writes the bootstrap marker before flux enrollment so a failed enrollment can resume', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
     fakeAgentTokenIssuer();
 
     [$user, $team] = createV5UserWithTeam();
@@ -641,7 +641,7 @@ it('writes the bootstrap marker before flux enrollment so a failed enrollment ca
 
 it('exits the bootstrap job when its claim was superseded', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -725,8 +725,8 @@ it('recovers a stale queued v5 bootstrap claim', function () {
 
 it('extends a v5 cluster when bootstrapping a new server', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
     fakeAgentTokenIssuer();
 
     [$user, $team] = createV5UserWithTeam();
@@ -813,8 +813,8 @@ it('extends a v5 cluster when bootstrapping a new server', function () {
 
 it('adopts a re-added v5 server that is already bootstrapped for the same cluster', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
-    Config::set('coold.flux_url', 'http://coolify.example.com:6443');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
+    Config::set('coold.flux_url', 'http://xlaunch.example.com:6443');
     fakeAgentTokenIssuer();
 
     [$user, $team] = createV5UserWithTeam();
@@ -856,7 +856,7 @@ it('adopts a re-added v5 server that is already bootstrapped for the same cluste
 
     (new V5BootstrapServerJob($cluster->id, $server->id))->handle();
 
-    Process::assertNotRan(fn ($process): bool => $process->command[0] === '/tmp/coolify');
+    Process::assertNotRan(fn ($process): bool => $process->command[0] === '/tmp/xlaunch');
 
     $server->refresh();
 
@@ -866,13 +866,13 @@ it('adopts a re-added v5 server that is already bootstrapped for the same cluste
         ->and($server->wireguard_public_key)->toBe('public-key')
         ->and($server->container_subnets)->toBe(['default' => '10.210.0.0/24'])
         ->and($server->last_bootstrap_status)->toBe('succeeded')
-        ->and($server->last_bootstrap_output)->toBe('Adopted existing Coolify bootstrap state for this cluster.')
+        ->and($server->last_bootstrap_output)->toBe('Adopted existing Xlaunch bootstrap state for this cluster.')
         ->and($server->last_bootstrapped_at)->not->toBeNull();
 });
 
 it('blocks bootstrapping a v5 server that belongs to another cluster', function () {
     createSharedUserAndTeamTables();
-    Config::set('coold.coolify_cli_bin', '/tmp/coolify');
+    Config::set('coold.xlaunch_cli_bin', '/tmp/xlaunch');
 
     [$user, $team] = createV5UserWithTeam();
     $privateKey = createV5PrivateKey($team, 'Production SSH Key');
@@ -909,7 +909,7 @@ it('blocks bootstrapping a v5 server that belongs to another cluster', function 
 
     (new V5BootstrapServerJob($cluster->id, $server->id))->handle();
 
-    Process::assertNotRan(fn ($process): bool => $process->command[0] === '/tmp/coolify');
+    Process::assertNotRan(fn ($process): bool => $process->command[0] === '/tmp/xlaunch');
 
     $server->refresh();
 

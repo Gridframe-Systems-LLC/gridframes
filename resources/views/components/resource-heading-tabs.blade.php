@@ -50,10 +50,10 @@
                 if (child.hasAttribute('data-active') || child.dataset.active === 'true') {
                     return true
                 }
-                // Active resource tabs use coollabs/warning highlight classes.
+                // Active resource tabs use northlatch/warning highlight classes.
                 const cls = typeof child.className === 'string' ? child.className : ''
-                return cls.includes('ring-coollabs')
-                    || cls.includes('bg-coollabs')
+                return cls.includes('ring-northlatch')
+                    || cls.includes('bg-northlatch')
                     || cls.includes('ring-warning')
                     || cls.includes('bg-warning')
             }) ?? null

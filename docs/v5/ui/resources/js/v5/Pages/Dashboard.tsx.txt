@@ -738,9 +738,9 @@ export default function Dashboard({
             <Dialog open={pendingLocalDelete !== null} onOpenChange={(open) => !open && setPendingLocalDelete(null)}>
                 <DialogContent className="max-w-md" showCloseButton={false}>
                     <DialogHeader>
-                        <DialogTitle>Delete from Coolify only?</DialogTitle>
+                        <DialogTitle>Delete from Xlaunch only?</DialogTitle>
                         <DialogDescription>
-                            Coolify could not reach the server to clean up containers, volumes, networks, or ingress config.
+                            Xlaunch could not reach the server to clean up containers, volumes, networks, or ingress config.
                         </DialogDescription>
                     </DialogHeader>
 
@@ -750,7 +750,7 @@ export default function Dashboard({
                                 {pendingLocalDelete.message}
                             </p>
                             <p>
-                                Deleting locally removes {pendingLocalDelete.application.name} from Coolify, but orphaned resources may remain on the unreachable server.
+                                Deleting locally removes {pendingLocalDelete.application.name} from Xlaunch, but orphaned resources may remain on the unreachable server.
                             </p>
                         </div>
                     )}
@@ -785,7 +785,7 @@ export default function Dashboard({
                                 }
                             }}
                         >
-                            Delete from Coolify only
+                            Delete from Xlaunch only
                         </Button>
                     </DialogFooter>
                 </DialogContent>

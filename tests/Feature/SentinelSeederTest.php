@@ -19,10 +19,10 @@ it('uses the configured development Sentinel URL for seeded servers', function (
     ]);
 
     config()->set('app.env', 'local');
-    config()->set('constants.sentinel.dev_url', 'https://coolify-dev.example.com:8000');
+    config()->set('constants.sentinel.dev_url', 'https://xlaunch-dev.example.com:8000');
 
     app(SentinelSeeder::class)->run();
 
     expect($server->settings->fresh()->sentinel_custom_url)
-        ->toBe('https://coolify-dev.example.com:8000');
+        ->toBe('https://xlaunch-dev.example.com:8000');
 });

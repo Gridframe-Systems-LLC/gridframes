@@ -7,7 +7,7 @@ test('loading indicators use warning yellow throughout dark mode', function () {
     $pageLoading = file_get_contents(resource_path('views/components/page-loading.blade.php'));
     expect($utilities)
         ->toContain('@utility loading-indicator')
-        ->toContain('@apply text-coollabs dark:text-warning;')
+        ->toContain('@apply text-northlatch dark:text-warning;')
         ->and($loading)->toContain('loading-indicator')
         ->and($pageLoading)->toContain('loading-indicator')
         ->and($appCss)->toContain('.dark .animate-spin')
@@ -16,6 +16,6 @@ test('loading indicators use warning yellow throughout dark mode', function () {
         ->toContain('background: var(--color-warning) !important;');
 });
 
-test('livewire navigation progress bar uses coollabs purple', function () {
+test('livewire navigation progress bar uses northlatch purple', function () {
     expect(config('livewire.navigate.progress_bar_color'))->toBe('#6b16ed');
 });

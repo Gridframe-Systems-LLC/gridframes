@@ -231,10 +231,10 @@ function checkDomainUsage(ServiceApplication|Application|null $resource = null, 
             if ($domains->contains(domainConflictKey($naked_domain))) {
                 $conflicts[] = [
                     'domain' => $naked_domain,
-                    'resource_name' => 'Coolify Instance',
+                    'resource_name' => 'Xlaunch Instance',
                     'resource_link' => '#',
                     'resource_type' => 'instance',
-                    'message' => "Domain $naked_domain is already in use by this Coolify instance",
+                    'message' => "Domain $naked_domain is already in use by this Xlaunch instance",
                 ];
             }
         }
@@ -322,10 +322,10 @@ function checkIfDomainIsAlreadyUsedViaAPI(Collection|array $domains, ?string $te
         if ($domains->contains(domainConflictKey($naked_domain))) {
             $conflicts[] = [
                 'domain' => $naked_domain,
-                'resource_name' => 'Coolify Instance',
+                'resource_name' => 'Xlaunch Instance',
                 'resource_uuid' => null,
                 'resource_type' => 'instance',
-                'message' => "Domain $naked_domain is already in use by this Coolify instance",
+                'message' => "Domain $naked_domain is already in use by this Xlaunch instance",
             ];
         }
     }
@@ -337,7 +337,7 @@ function checkIfDomainIsAlreadyUsedViaAPI(Collection|array $domains, ?string $te
 }
 
 /**
- * Normalize a compose service name the way Coolify historically did for env var keys
+ * Normalize a compose service name the way Xlaunch historically did for env var keys
  * (hyphens and dots → underscores). Used for comparison and SERVICE_* env names only —
  * docker_compose_domains keys should use the original compose service name.
  */

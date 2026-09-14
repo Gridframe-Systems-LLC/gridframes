@@ -1,4 +1,4 @@
-name: Build Coolify (SHA)
+name: Build Xlaunch (SHA)
 
 on:
   push:
@@ -11,7 +11,7 @@ permissions:
 env:
   GITHUB_REGISTRY: ghcr.io
   DOCKER_REGISTRY: docker.io
-  IMAGE_NAME: "coollabsio/coolify"
+  IMAGE_NAME: "northlatch/xlaunch"
 
 jobs:
   build-push:
@@ -61,7 +61,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           build-args: |
-            COOLIFY_VERSION=${{ steps.version.outputs.version }}
+            XLAUNCH_VERSION=${{ steps.version.outputs.version }}
           tags: |
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ steps.version.outputs.short_sha }}-${{ matrix.arch }}
             ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:sha-${{ steps.version.outputs.short_sha }}-${{ matrix.arch }}

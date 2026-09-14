@@ -1,10 +1,10 @@
 <?php
 
-it('pins the same MinIO client release in every Coolify image', function () {
+it('pins the same MinIO client release in every Xlaunch image', function () {
     $dockerfiles = [
         dirname(__DIR__, 2).'/docker/production/Dockerfile',
         dirname(__DIR__, 2).'/docker/development/Dockerfile',
-        dirname(__DIR__, 2).'/docker/coolify-helper/Dockerfile',
+        dirname(__DIR__, 2).'/docker/xlaunch-helper/Dockerfile',
     ];
 
     $versions = collect($dockerfiles)->map(function (string $dockerfile): string {

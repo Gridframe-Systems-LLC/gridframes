@@ -37,12 +37,12 @@ class Help extends Component
 
             // Sending feedback through Cloud API
             if (blank($type)) {
-                $url = 'https://app.coolify.io/api/feedback';
+                $url = 'https://app.northlatch.com/api/feedback';
                 Http::post($url, [
                     'content' => 'User: `'.auth()->user()?->email.'` with subject: `'.$this->subject.'` has the following problem: `'.$this->description.'`',
                 ]);
             } else {
-                send_user_an_email($mail, auth()->user()?->email, 'feedback@coollabs.io');
+                send_user_an_email($mail, auth()->user()?->email, 'feedback@northlatch.com');
             }
             $this->dispatch('success', 'Feedback sent.', 'We will get in touch with you as soon as possible.');
             $this->reset('description', 'subject');

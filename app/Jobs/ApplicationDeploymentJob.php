@@ -54,9 +54,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
     private const RAILPACK_REPOSITORY_CONFIG_PATH = 'railpack.json';
 
-    private const RAILPACK_GENERATED_CONFIG_PATH = '.coolify/railpack.generated.json';
+    private const RAILPACK_GENERATED_CONFIG_PATH = '.xlaunch/railpack.generated.json';
 
-    private const CONTAINER_REMOVE_TIMEOUT_MARKER = '__COOLIFY_CONTAINER_REMOVE_TIMEOUT__';
+    private const CONTAINER_REMOVE_TIMEOUT_MARKER = '__XLAUNCH_CONTAINER_REMOVE_TIMEOUT__';
 
     private const DOCKER_CLIENT_ENV_KEYS = [
         'BUILDKIT_HOST',
@@ -195,7 +195,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
     private ?string $branch = null;
 
-    private ?string $coolify_variables = null;
+    private ?string $xlaunch_variables = null;
 
     private bool $preserveRepository = false;
 
@@ -332,7 +332,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     $allContainers = collect($allContainers)->sort()->values();
                     foreach ($allContainers as $container) {
                         $containerName = data_get($container, 'Name');
-                        if ($containerName === 'coolify-proxy') {
+                        if ($containerName === 'xlaunch-proxy') {
                             continue;
                         }
                         if (preg_match('/-(\d{12})/', $containerName)) {
@@ -453,7 +453,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 return;
             }
 
-            // Check buildx availability (always installed by Coolify on Docker 24.0+)
+            // Check buildx availability (always installed by Xlaunch on Docker 24.0+)
             $buildxAvailable = instant_remote_process(
                 ["docker buildx version >/dev/null 2>&1 && echo 'available' || echo 'not-available'"],
                 $serverToCheck
@@ -780,7 +780,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 throw $e;
             }
         } else {
-            $command = "{$this->coolify_variables} docker compose";
+            $command = "{$this->xlaunch_variables} docker compose";
             // Prepend DOCKER_BUILDKIT=1 if BuildKit is supported
             if ($this->dockerBuildkitSupported) {
                 $command = "DOCKER_BUILDKIT=1 {$command}";
@@ -824,7 +824,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 'hidden' => true,
                 'ignore_errors' => true,
             ], [
-                "docker network connect {$networkId} coolify-proxy >/dev/null 2>&1 || true",
+                "docker network connect {$networkId} xlaunch-proxy >/dev/null 2>&1 || true",
                 'hidden' => true,
                 'ignore_errors' => true,
             ]);
@@ -858,7 +858,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 $this->write_deployment_configurations();
                 $this->docker_compose_location = '/docker-compose.yaml';
 
-                $command = "{$this->coolify_variables} docker compose";
+                $command = "{$this->xlaunch_variables} docker compose";
                 // Always use .env file
                 $command .= " --env-file {$server_workdir}/.env";
                 $command .= " --project-directory {$server_workdir} -f {$server_workdir}{$this->docker_compose_location} up -d";
@@ -888,7 +888,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     );
                 }
             } else {
-                $command = "{$this->coolify_variables} docker compose";
+                $command = "{$this->xlaunch_variables} docker compose";
                 if ($this->preserveRepository) {
                     // Always use .env file
                     $command .= " --env-file {$server_workdir}/.env";
@@ -921,10 +921,10 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             $this->write_deployment_configurations();
             $this->server = $this->mainServer;
             $workdir = $this->application->workdir();
-            $command = "{$this->coolify_variables} docker compose --env-file {$workdir}/.env --project-name {$this->application->uuid} --project-directory {$workdir} -f {$workdir}{$this->docker_compose_location} pull --ignore-buildable";
+            $command = "{$this->xlaunch_variables} docker compose --env-file {$workdir}/.env --project-name {$this->application->uuid} --project-directory {$workdir} -f {$workdir}{$this->docker_compose_location} pull --ignore-buildable";
         } else {
             $workdir = $this->workdir;
-            $command = executeInDocker($this->deployment_uuid, "{$this->coolify_variables} docker compose --env-file {$workdir}/.env --project-name {$this->application->uuid} --project-directory {$workdir} -f {$workdir}{$this->docker_compose_location} pull --ignore-buildable");
+            $command = executeInDocker($this->deployment_uuid, "{$this->xlaunch_variables} docker compose --env-file {$workdir}/.env --project-name {$this->application->uuid} --project-directory {$workdir} -f {$workdir}{$this->docker_compose_location} pull --ignore-buildable");
         }
 
         $this->execute_remote_command([
@@ -1373,8 +1373,8 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             $sorted_environment_variables_preview = $sorted_environment_variables_preview->reject(fn (EnvironmentVariable $env) => $this->isGeneratedDockerComposeEnvironmentVariable($env));
         }
         $ports = $this->application->main_port();
-        $coolify_envs = $this->generate_coolify_env_variables();
-        $coolify_envs->each(function ($item, $key) use ($envs) {
+        $xlaunch_envs = $this->generate_xlaunch_env_variables();
+        $xlaunch_envs->each(function ($item, $key) use ($envs) {
             $envs->push($key.'='.$item);
         });
         if ($this->pull_request_id === 0) {
@@ -1388,13 +1388,13 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     $parsedDomain = composeDomainEntryString($domain);
                     if (filled($parsedDomain)) {
                         $parsedDomain = str($parsedDomain)->explode(',')->first();
-                        $coolifyUrl = Url::fromString($parsedDomain);
-                        $coolifyScheme = $coolifyUrl->getScheme();
-                        $coolifyFqdn = $coolifyUrl->getHost();
-                        $coolifyUrl = $coolifyUrl->withScheme($coolifyScheme)->withHost($coolifyFqdn)->withPort(null);
+                        $xlaunchUrl = Url::fromString($parsedDomain);
+                        $xlaunchScheme = $xlaunchUrl->getScheme();
+                        $xlaunchFqdn = $xlaunchUrl->getHost();
+                        $xlaunchUrl = $xlaunchUrl->withScheme($xlaunchScheme)->withHost($xlaunchFqdn)->withPort(null);
                         $serviceEnvKey = str(normalizeComposeServiceName((string) $forServiceName))->upper();
-                        $envs->push('SERVICE_URL_'.$serviceEnvKey.'='.$coolifyUrl->__toString());
-                        $envs->push('SERVICE_FQDN_'.$serviceEnvKey.'='.$coolifyFqdn);
+                        $envs->push('SERVICE_URL_'.$serviceEnvKey.'='.$xlaunchUrl->__toString());
+                        $envs->push('SERVICE_FQDN_'.$serviceEnvKey.'='.$xlaunchFqdn);
                     }
                 }
 
@@ -1459,13 +1459,13 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     $parsedDomain = composeDomainEntryString($domain);
                     if (filled($parsedDomain)) {
                         $parsedDomain = str($parsedDomain)->explode(',')->first();
-                        $coolifyUrl = Url::fromString($parsedDomain);
-                        $coolifyScheme = $coolifyUrl->getScheme();
-                        $coolifyFqdn = $coolifyUrl->getHost();
-                        $coolifyUrl = $coolifyUrl->withScheme($coolifyScheme)->withHost($coolifyFqdn)->withPort(null);
+                        $xlaunchUrl = Url::fromString($parsedDomain);
+                        $xlaunchScheme = $xlaunchUrl->getScheme();
+                        $xlaunchFqdn = $xlaunchUrl->getHost();
+                        $xlaunchUrl = $xlaunchUrl->withScheme($xlaunchScheme)->withHost($xlaunchFqdn)->withPort(null);
                         $serviceEnvKey = str(normalizeComposeServiceName((string) $forServiceName))->upper();
-                        $envs->push('SERVICE_URL_'.$serviceEnvKey.'='.$coolifyUrl->__toString());
-                        $envs->push('SERVICE_FQDN_'.$serviceEnvKey.'='.$coolifyFqdn);
+                        $envs->push('SERVICE_URL_'.$serviceEnvKey.'='.$xlaunchUrl->__toString());
+                        $envs->push('SERVICE_FQDN_'.$serviceEnvKey.'='.$xlaunchFqdn);
                     }
                 }
 
@@ -1670,8 +1670,8 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 foreach ($planVariables as $key => $value) {
                     $key = (string) $key;
 
-                    // Skip COOLIFY_* and SERVICE_* - they'll be added later with higher priority
-                    if (str_starts_with($key, 'COOLIFY_') || str_starts_with($key, 'SERVICE_')) {
+                    // Skip XLAUNCH_* and SERVICE_* - they'll be added later with higher priority
+                    if (str_starts_with($key, 'XLAUNCH_') || str_starts_with($key, 'SERVICE_')) {
                         continue;
                     }
 
@@ -1686,9 +1686,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             }
         }
 
-        // 2. Add COOLIFY variables (can override nixpacks, but shouldn't happen in practice)
-        $coolify_envs = $this->generate_coolify_env_variables(forBuildTime: true);
-        foreach ($coolify_envs as $key => $item) {
+        // 2. Add XLAUNCH variables (can override nixpacks, but shouldn't happen in practice)
+        $xlaunch_envs = $this->generate_xlaunch_env_variables(forBuildTime: true);
+        foreach ($xlaunch_envs as $key => $item) {
             $envs_dict[$key] = escapeBashEnvValue($item);
         }
 
@@ -1712,13 +1712,13 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     $parsedDomain = composeDomainEntryString($domain);
                     if (filled($parsedDomain)) {
                         $parsedDomain = str($parsedDomain)->explode(',')->first();
-                        $coolifyUrl = Url::fromString($parsedDomain);
-                        $coolifyScheme = $coolifyUrl->getScheme();
-                        $coolifyFqdn = $coolifyUrl->getHost();
-                        $coolifyUrl = $coolifyUrl->withScheme($coolifyScheme)->withHost($coolifyFqdn)->withPort(null);
+                        $xlaunchUrl = Url::fromString($parsedDomain);
+                        $xlaunchScheme = $xlaunchUrl->getScheme();
+                        $xlaunchFqdn = $xlaunchUrl->getHost();
+                        $xlaunchUrl = $xlaunchUrl->withScheme($xlaunchScheme)->withHost($xlaunchFqdn)->withPort(null);
                         $serviceEnvKey = str(normalizeComposeServiceName((string) $forServiceName))->upper();
-                        $envs_dict['SERVICE_URL_'.$serviceEnvKey] = escapeBashEnvValue($coolifyUrl->__toString());
-                        $envs_dict['SERVICE_FQDN_'.$serviceEnvKey] = escapeBashEnvValue($coolifyFqdn);
+                        $envs_dict['SERVICE_URL_'.$serviceEnvKey] = escapeBashEnvValue($xlaunchUrl->__toString());
+                        $envs_dict['SERVICE_FQDN_'.$serviceEnvKey] = escapeBashEnvValue($xlaunchFqdn);
                     }
                 }
             } else {
@@ -1735,13 +1735,13 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                     $parsedDomain = composeDomainEntryString($domain);
                     if (filled($parsedDomain)) {
                         $parsedDomain = str($parsedDomain)->explode(',')->first();
-                        $coolifyUrl = Url::fromString($parsedDomain);
-                        $coolifyScheme = $coolifyUrl->getScheme();
-                        $coolifyFqdn = $coolifyUrl->getHost();
-                        $coolifyUrl = $coolifyUrl->withScheme($coolifyScheme)->withHost($coolifyFqdn)->withPort(null);
+                        $xlaunchUrl = Url::fromString($parsedDomain);
+                        $xlaunchScheme = $xlaunchUrl->getScheme();
+                        $xlaunchFqdn = $xlaunchUrl->getHost();
+                        $xlaunchUrl = $xlaunchUrl->withScheme($xlaunchScheme)->withHost($xlaunchFqdn)->withPort(null);
                         $serviceEnvKey = str(normalizeComposeServiceName((string) $forServiceName))->upper();
-                        $envs_dict['SERVICE_URL_'.$serviceEnvKey] = escapeBashEnvValue($coolifyUrl->__toString());
-                        $envs_dict['SERVICE_FQDN_'.$serviceEnvKey] = escapeBashEnvValue($coolifyFqdn);
+                        $envs_dict['SERVICE_URL_'.$serviceEnvKey] = escapeBashEnvValue($xlaunchUrl->__toString());
+                        $envs_dict['SERVICE_FQDN_'.$serviceEnvKey] = escapeBashEnvValue($xlaunchFqdn);
                     }
                 }
             }
@@ -2292,7 +2292,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
     private function prepare_builder_image(bool $firstTry = true)
     {
         $this->checkForCancellation();
-        $helperImage = coolifyHelperImage();
+        $helperImage = xlaunchHelperImage();
         $helperImage = "{$helperImage}:".getHelperVersion();
         // Get user home directory
         $this->serverUserHomeDir = instant_remote_process(['echo $HOME'], $this->server);
@@ -2301,7 +2301,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         $env_flags = $this->generate_docker_env_flags_for_secrets();
         $buildxMetadataVolume = isDev() && $this->server->isLocalhost()
-            ? '-v coolify-buildx:/root/.docker/buildx'
+            ? '-v xlaunch-buildx:/root/.docker/buildx'
             : "-v {$this->serverUserHomeDir}/.docker/buildx:/root/.docker/buildx";
         if ($this->use_build_server) {
             if ($this->dockerConfigFileExists === 'NOK') {
@@ -2389,13 +2389,13 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
         }
     }
 
-    private function set_coolify_variables()
+    private function set_xlaunch_variables()
     {
-        $this->coolify_variables = '';
+        $this->xlaunch_variables = '';
 
         // Only include SOURCE_COMMIT in build context if enabled in settings
         if ($this->application->settings->include_source_commit_in_build) {
-            $this->coolify_variables .= 'SOURCE_COMMIT='.escapeShellValue($this->commit).' ';
+            $this->xlaunch_variables .= 'SOURCE_COMMIT='.escapeShellValue($this->commit).' ';
         }
         if ($this->pull_request_id === 0) {
             $fqdn = $this->application->fqdn;
@@ -2411,18 +2411,18 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 $url = $domains->map(fn (string $domain) => Url::fromString($domain)->withPort(null)->__toString())->implode(',');
                 $fqdn = $domains->map(fn (string $domain) => Url::fromString($domain)->getHost())->implode(',');
                 if ((int) $this->application->compose_parsing_version >= 3) {
-                    $this->coolify_variables .= 'COOLIFY_URL='.escapeShellValue($url).' ';
-                    $this->coolify_variables .= 'COOLIFY_FQDN='.escapeShellValue($fqdn).' ';
+                    $this->xlaunch_variables .= 'XLAUNCH_URL='.escapeShellValue($url).' ';
+                    $this->xlaunch_variables .= 'XLAUNCH_FQDN='.escapeShellValue($fqdn).' ';
                 } else {
-                    $this->coolify_variables .= 'COOLIFY_URL='.escapeShellValue($fqdn).' ';
-                    $this->coolify_variables .= 'COOLIFY_FQDN='.escapeShellValue($url).' ';
+                    $this->xlaunch_variables .= 'XLAUNCH_URL='.escapeShellValue($fqdn).' ';
+                    $this->xlaunch_variables .= 'XLAUNCH_FQDN='.escapeShellValue($url).' ';
                 }
             }
         }
         if (isset($this->application->git_branch)) {
-            $this->coolify_variables .= 'COOLIFY_BRANCH='.escapeShellValue($this->application->git_branch).' ';
+            $this->xlaunch_variables .= 'XLAUNCH_BRANCH='.escapeShellValue($this->application->git_branch).' ';
         }
-        $this->coolify_variables .= 'COOLIFY_RESOURCE_UUID='.escapeShellValue($this->application->uuid).' ';
+        $this->xlaunch_variables .= 'XLAUNCH_RESOURCE_UUID='.escapeShellValue($this->application->uuid).' ';
     }
 
     private function shellAssignmentForDockerfileArg(string $assignment): string
@@ -2486,7 +2486,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
         $private_key = data_get($this->application, 'private_key.private_key');
         if ($private_key) {
             $private_key = base64_encode($private_key);
-            $customSshKeyLocation = "/root/.ssh/id_rsa_coolify_{$this->deployment_uuid}";
+            $customSshKeyLocation = "/root/.ssh/id_rsa_xlaunch_{$this->deployment_uuid}";
             $this->execute_remote_command(
                 [
                     executeInDocker($this->deployment_uuid, 'mkdir -p /root/.ssh'),
@@ -2537,7 +2537,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
                 }
             }
         }
-        $this->set_coolify_variables();
+        $this->set_xlaunch_variables();
 
         // Restart helper container with actual SOURCE_COMMIT value
         if ($this->application->settings->use_build_secrets && $this->commit !== 'HEAD') {
@@ -2748,9 +2748,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             }
         }
 
-        // Add COOLIFY_* environment variables to Nixpacks build context
-        $coolify_envs = $this->generate_coolify_env_variables(forBuildTime: true);
-        $coolify_envs->each(function ($value, $key) {
+        // Add XLAUNCH_* environment variables to Nixpacks build context
+        $xlaunch_envs = $this->generate_xlaunch_env_variables(forBuildTime: true);
+        $xlaunch_envs->each(function ($value, $key) {
             // Only add environment variables with non-null and non-empty values
             if (! is_null($value) && $value !== '') {
                 $this->env_nixpacks_args->push('--env '.escapeShellValue("{$key}={$value}"));
@@ -2838,9 +2838,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         $variables = $this->merge_railpack_deploy_apt_packages($variables);
 
-        // Mirror Nixpacks behavior: expose COOLIFY_* and SOURCE_COMMIT to the build so apps
+        // Mirror Nixpacks behavior: expose XLAUNCH_* and SOURCE_COMMIT to the build so apps
         // (e.g. SPAs baking the public URL) can read them via /run/secrets/<KEY>.
-        foreach ($this->generate_coolify_env_variables(forBuildTime: true) as $key => $value) {
+        foreach ($this->generate_xlaunch_env_variables(forBuildTime: true) as $key => $value) {
             if (! is_null($value) && $value !== '') {
                 $variables->put($key, $value);
             }
@@ -2909,8 +2909,8 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         // Build-time variables reach the build through the sourced build-time .env file
         // (written by save_buildtime_environment_variables), which interpolates shell-style
-        // references such as BETTER_AUTH_URL=$COOLIFY_URL. Passing them inline via `env`
-        // would forward the literal `$COOLIFY_URL` because each value is single-quoted and
+        // references such as BETTER_AUTH_URL=$XLAUNCH_URL. Passing them inline via `env`
+        // would forward the literal `$XLAUNCH_URL` because each value is single-quoted and
         // `env` does not interpolate its own assignments. Only buildpack control variables
         // (NIXPACKS_/RAILPACK_) — which are excluded from the build-time .env file and never
         // need interpolation — are still passed inline.
@@ -2920,9 +2920,9 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         $environmentPrefix = $this->railpack_build_environment_prefix($controlVariables);
         $secretFlags = $this->railpack_build_secret_flags($variables);
-        $frontendImage = 'ghcr.io/railwayapp/railpack-frontend:v'.config('constants.coolify.railpack_version');
+        $frontendImage = 'ghcr.io/railwayapp/railpack-frontend:v'.config('constants.xlaunch.railpack_version');
 
-        $buildxBuildCommand = "{$environmentPrefix}DOCKER_CONFIG=/root/.docker docker buildx build --builder coolify-railpack"
+        $buildxBuildCommand = "{$environmentPrefix}DOCKER_CONFIG=/root/.docker docker buildx build --builder xlaunch-railpack"
             ." {$this->addHosts} --network host"
             ." --build-arg BUILDKIT_SYNTAX=\"{$frontendImage}\""
             ." {$cacheArgs}"
@@ -2933,7 +2933,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             ." -t {$imageName}"
             ." {$this->workdir}";
 
-        return 'DOCKER_CONFIG=/root/.docker docker buildx create --name coolify-railpack --driver docker-container 2>/dev/null || true'
+        return 'DOCKER_CONFIG=/root/.docker docker buildx create --name xlaunch-railpack --driver docker-container 2>/dev/null || true'
             .' && '.$this->wrap_build_command_with_env_export($buildxBuildCommand);
     }
 
@@ -3038,7 +3038,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
 
         $this->execute_remote_command(
             [
-                executeInDocker($this->deployment_uuid, "mkdir -p {$this->workdir}/.coolify"),
+                executeInDocker($this->deployment_uuid, "mkdir -p {$this->workdir}/.xlaunch"),
                 'hidden' => true,
             ],
             [
@@ -3100,7 +3100,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
             return;
         }
 
-        throw new DeploymentException('Railpack deployments require the Docker buildx CLI plugin inside the Coolify helper container. The helper could not find buildx at /root/.docker/cli-plugins/docker-buildx. Pull the latest helper image and retry the deployment.');
+        throw new DeploymentException('Railpack deployments require the Docker buildx CLI plugin inside the Xlaunch helper container. The helper could not find buildx at /root/.docker/cli-plugins/docker-buildx. Pull the latest helper image and retry the deployment.');
     }
 
     private function build_railpack_image(): void
@@ -3181,7 +3181,7 @@ class ApplicationDeploymentJob implements ShouldBeEncrypted, ShouldQueue
         $publishDir = $publishDir ? "/{$publishDir}" : '';
         $dockerfile = base64_encode("FROM {$this->application->static_image}
 WORKDIR /usr/share/nginx/html/
-LABEL coolify.deploymentId={$this->deployment_uuid}
+LABEL xlaunch.deploymentId={$this->deployment_uuid}
 COPY --from={$this->build_image_name} /app{$publishDir} .
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
 
@@ -3207,9 +3207,9 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         );
     }
 
-    protected function generate_coolify_env_variables(bool $forBuildTime = false): Collection
+    protected function generate_xlaunch_env_variables(bool $forBuildTime = false): Collection
     {
-        $coolify_envs = collect([]);
+        $xlaunch_envs = collect([]);
         $local_branch = $this->branch;
         if ($this->pull_request_id !== 0) {
             // Only add SOURCE_COMMIT for runtime OR when explicitly enabled for build-time
@@ -3217,43 +3217,43 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             if (! $forBuildTime || $this->application->settings->include_source_commit_in_build) {
                 if ($this->application->environment_variables_preview->where('key', 'SOURCE_COMMIT')->isEmpty()) {
                     if (! is_null($this->commit)) {
-                        $coolify_envs->put('SOURCE_COMMIT', $this->commit);
+                        $xlaunch_envs->put('SOURCE_COMMIT', $this->commit);
                     } else {
-                        $coolify_envs->put('SOURCE_COMMIT', 'unknown');
+                        $xlaunch_envs->put('SOURCE_COMMIT', 'unknown');
                     }
                 }
             }
-            if ($this->application->environment_variables_preview->where('key', 'COOLIFY_FQDN')->isEmpty()) {
+            if ($this->application->environment_variables_preview->where('key', 'XLAUNCH_FQDN')->isEmpty()) {
                 if ((int) $this->application->compose_parsing_version >= 3) {
-                    $coolify_envs->put('COOLIFY_URL', $this->preview->fqdn);
+                    $xlaunch_envs->put('XLAUNCH_URL', $this->preview->fqdn);
                 } else {
-                    $coolify_envs->put('COOLIFY_FQDN', $this->preview->fqdn);
+                    $xlaunch_envs->put('XLAUNCH_FQDN', $this->preview->fqdn);
                 }
             }
-            if ($this->application->environment_variables_preview->where('key', 'COOLIFY_URL')->isEmpty()) {
+            if ($this->application->environment_variables_preview->where('key', 'XLAUNCH_URL')->isEmpty()) {
                 $url = str($this->preview->fqdn)->replace('http://', '')->replace('https://', '');
                 if ((int) $this->application->compose_parsing_version >= 3) {
-                    $coolify_envs->put('COOLIFY_FQDN', $url);
+                    $xlaunch_envs->put('XLAUNCH_FQDN', $url);
                 } else {
-                    $coolify_envs->put('COOLIFY_URL', $url);
+                    $xlaunch_envs->put('XLAUNCH_URL', $url);
                 }
             }
             if ($this->application->build_pack !== 'dockercompose' || $this->application->compose_parsing_version === '1' || $this->application->compose_parsing_version === '2') {
-                if ($this->application->environment_variables_preview->where('key', 'COOLIFY_BRANCH')->isEmpty()) {
-                    $coolify_envs->put('COOLIFY_BRANCH', $local_branch);
+                if ($this->application->environment_variables_preview->where('key', 'XLAUNCH_BRANCH')->isEmpty()) {
+                    $xlaunch_envs->put('XLAUNCH_BRANCH', $local_branch);
                 }
-                if ($this->application->environment_variables_preview->where('key', 'COOLIFY_RESOURCE_UUID')->isEmpty()) {
-                    $coolify_envs->put('COOLIFY_RESOURCE_UUID', $this->application->uuid);
+                if ($this->application->environment_variables_preview->where('key', 'XLAUNCH_RESOURCE_UUID')->isEmpty()) {
+                    $xlaunch_envs->put('XLAUNCH_RESOURCE_UUID', $this->application->uuid);
                 }
-                // Only add COOLIFY_CONTAINER_NAME for runtime (not build-time) - it changes every deployment and breaks Docker cache
+                // Only add XLAUNCH_CONTAINER_NAME for runtime (not build-time) - it changes every deployment and breaks Docker cache
                 if (! $forBuildTime) {
-                    if ($this->application->environment_variables_preview->where('key', 'COOLIFY_CONTAINER_NAME')->isEmpty()) {
-                        $coolify_envs->put('COOLIFY_CONTAINER_NAME', $this->container_name);
+                    if ($this->application->environment_variables_preview->where('key', 'XLAUNCH_CONTAINER_NAME')->isEmpty()) {
+                        $xlaunch_envs->put('XLAUNCH_CONTAINER_NAME', $this->container_name);
                     }
                 }
             }
 
-            add_coolify_default_environment_variables($this->application, $coolify_envs, $this->application->environment_variables_preview);
+            add_xlaunch_default_environment_variables($this->application, $xlaunch_envs, $this->application->environment_variables_preview);
 
         } else {
             // Only add SOURCE_COMMIT for runtime OR when explicitly enabled for build-time
@@ -3261,47 +3261,47 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             if (! $forBuildTime || $this->application->settings->include_source_commit_in_build) {
                 if ($this->application->environment_variables->where('key', 'SOURCE_COMMIT')->isEmpty()) {
                     if (! is_null($this->commit)) {
-                        $coolify_envs->put('SOURCE_COMMIT', $this->commit);
+                        $xlaunch_envs->put('SOURCE_COMMIT', $this->commit);
                     } else {
-                        $coolify_envs->put('SOURCE_COMMIT', 'unknown');
+                        $xlaunch_envs->put('SOURCE_COMMIT', 'unknown');
                     }
                 }
             }
-            if ($this->application->environment_variables->where('key', 'COOLIFY_FQDN')->isEmpty()) {
+            if ($this->application->environment_variables->where('key', 'XLAUNCH_FQDN')->isEmpty()) {
                 if ((int) $this->application->compose_parsing_version >= 3) {
-                    $coolify_envs->put('COOLIFY_URL', $this->application->fqdn);
+                    $xlaunch_envs->put('XLAUNCH_URL', $this->application->fqdn);
                 } else {
-                    $coolify_envs->put('COOLIFY_FQDN', $this->application->fqdn);
+                    $xlaunch_envs->put('XLAUNCH_FQDN', $this->application->fqdn);
                 }
             }
-            if ($this->application->environment_variables->where('key', 'COOLIFY_URL')->isEmpty()) {
+            if ($this->application->environment_variables->where('key', 'XLAUNCH_URL')->isEmpty()) {
                 $url = str($this->application->fqdn)->replace('http://', '')->replace('https://', '');
                 if ((int) $this->application->compose_parsing_version >= 3) {
-                    $coolify_envs->put('COOLIFY_FQDN', $url);
+                    $xlaunch_envs->put('XLAUNCH_FQDN', $url);
                 } else {
-                    $coolify_envs->put('COOLIFY_URL', $url);
+                    $xlaunch_envs->put('XLAUNCH_URL', $url);
                 }
             }
             if ($this->application->build_pack !== 'dockercompose' || $this->application->compose_parsing_version === '1' || $this->application->compose_parsing_version === '2') {
-                if ($this->application->environment_variables->where('key', 'COOLIFY_BRANCH')->isEmpty()) {
-                    $coolify_envs->put('COOLIFY_BRANCH', $local_branch);
+                if ($this->application->environment_variables->where('key', 'XLAUNCH_BRANCH')->isEmpty()) {
+                    $xlaunch_envs->put('XLAUNCH_BRANCH', $local_branch);
                 }
-                if ($this->application->environment_variables->where('key', 'COOLIFY_RESOURCE_UUID')->isEmpty()) {
-                    $coolify_envs->put('COOLIFY_RESOURCE_UUID', $this->application->uuid);
+                if ($this->application->environment_variables->where('key', 'XLAUNCH_RESOURCE_UUID')->isEmpty()) {
+                    $xlaunch_envs->put('XLAUNCH_RESOURCE_UUID', $this->application->uuid);
                 }
-                // Only add COOLIFY_CONTAINER_NAME for runtime (not build-time) - it changes every deployment and breaks Docker cache
+                // Only add XLAUNCH_CONTAINER_NAME for runtime (not build-time) - it changes every deployment and breaks Docker cache
                 if (! $forBuildTime) {
-                    if ($this->application->environment_variables->where('key', 'COOLIFY_CONTAINER_NAME')->isEmpty()) {
-                        $coolify_envs->put('COOLIFY_CONTAINER_NAME', $this->container_name);
+                    if ($this->application->environment_variables->where('key', 'XLAUNCH_CONTAINER_NAME')->isEmpty()) {
+                        $xlaunch_envs->put('XLAUNCH_CONTAINER_NAME', $this->container_name);
                     }
                 }
             }
 
-            add_coolify_default_environment_variables($this->application, $coolify_envs, $this->application->environment_variables);
+            add_xlaunch_default_environment_variables($this->application, $xlaunch_envs, $this->application->environment_variables);
 
         }
 
-        return $coolify_envs;
+        return $xlaunch_envs;
     }
 
     private function generate_env_variables()
@@ -3313,8 +3313,8 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             $this->env_args->put('SOURCE_COMMIT', $this->commit);
         }
 
-        $coolify_envs = $this->generate_coolify_env_variables(forBuildTime: true);
-        $coolify_envs->each(function ($value, $key) {
+        $xlaunch_envs = $this->generate_xlaunch_env_variables(forBuildTime: true);
+        $xlaunch_envs->each(function ($value, $key) {
             if (! is_null($value) && $value !== '') {
                 $this->env_args->put($key, $value);
             }
@@ -3368,7 +3368,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             $this->application->parseContainerLabels();
             $labels = collect(preg_split("/\r\n|\n|\r/", base64_decode($this->application->custom_labels)));
             $labels = $labels->filter(function ($value, $key) {
-                return ! Str::startsWith($value, 'coolify.');
+                return ! Str::startsWith($value, 'xlaunch.');
             });
             $this->application->custom_labels = base64_encode($labels->implode("\n"));
             $this->application->save();
@@ -3439,7 +3439,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             $docker_compose['services'][$this->container_name]['stop_grace_period'] = $this->application->settings->stopGracePeriodSeconds().'s';
         }
 
-        // Only add Coolify healthcheck if no custom HEALTHCHECK found in Dockerfile
+        // Only add Xlaunch healthcheck if no custom HEALTHCHECK found in Dockerfile
         // If custom_healthcheck_found is true, the Dockerfile's HEALTHCHECK will be used
         // If healthcheck is disabled, no healthcheck will be added
         if (! $this->application->custom_healthcheck_found && ! $this->application->isHealthcheckDisabled()) {
@@ -3727,7 +3727,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         }
         $dockerfile = base64_encode("FROM {$this->application->static_image}
         WORKDIR /usr/share/nginx/html/
-        LABEL coolify.deploymentId={$this->deployment_uuid}
+        LABEL xlaunch.deploymentId={$this->deployment_uuid}
         COPY . .
         RUN rm -f /usr/share/nginx/html/nginx.conf
         RUN rm -f /usr/share/nginx/html/Dockerfile
@@ -3774,7 +3774,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
 
     /**
      * Wrap a docker build command with environment export from build-time .env file
-     * This enables shell interpolation of variables (e.g., APP_URL=$COOLIFY_URL)
+     * This enables shell interpolation of variables (e.g., APP_URL=$XLAUNCH_URL)
      *
      * @param  string  $build_command  The docker build command to wrap
      * @return string The wrapped command with export statement
@@ -3792,11 +3792,11 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
 
     private function build_image()
     {
-        // Add Coolify related variables to the build args/secrets
+        // Add Xlaunch related variables to the build args/secrets
         if (! $this->dockerSecretsSupported) {
-            // Traditional build args approach - generate COOLIFY_ variables locally
-            $coolify_envs = $this->generate_coolify_env_variables(forBuildTime: true);
-            $coolify_envs->each(function ($value, $key) {
+            // Traditional build args approach - generate XLAUNCH_ variables locally
+            $xlaunch_envs = $this->generate_xlaunch_env_variables(forBuildTime: true);
+            $xlaunch_envs->each(function ($value, $key) {
                 $this->build_args->push("--build-arg '{$key}'");
             });
         }
@@ -3927,7 +3927,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             $publishDir = $publishDir ? "/{$publishDir}" : '';
             $dockerfile = base64_encode("FROM {$this->application->static_image}
 WORKDIR /usr/share/nginx/html/
-LABEL coolify.deploymentId={$this->deployment_uuid}
+LABEL xlaunch.deploymentId={$this->deployment_uuid}
 COPY --from=$this->build_image_name /app{$publishDir} .
 COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             if (str($this->application->custom_nginx_configuration)->isNotEmpty()) {
@@ -4188,7 +4188,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             } else {
                 if ($this->application->dockerfile || $this->application->build_pack === 'dockerfile' || $this->application->build_pack === 'dockerimage') {
                     $this->application_deployment_queue->addLogEntry('----------------------------------------');
-                    $this->application_deployment_queue->addLogEntry("WARNING: Dockerfile or Docker Image based deployment detected. The healthcheck needs a curl or wget command to check the health of the application. Please make sure that it is available in the image or turn off healthcheck on Coolify's UI.");
+                    $this->application_deployment_queue->addLogEntry("WARNING: Dockerfile or Docker Image based deployment detected. The healthcheck needs a curl or wget command to check the health of the application. Please make sure that it is available in the image or turn off healthcheck on Xlaunch's UI.");
                     $this->application_deployment_queue->addLogEntry('----------------------------------------');
                 }
                 $this->application_deployment_queue->addLogEntry('New container is not healthy, rolling back to the old container.');
@@ -4234,16 +4234,16 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                 $this->application_deployment_queue->addLogEntry('Pulling latest images from the registry.');
                 $this->execute_remote_command(
                     [executeInDocker($this->deployment_uuid, "docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} pull"), 'hidden' => true],
-                    [executeInDocker($this->deployment_uuid, "{$this->coolify_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} up --build -d"), 'hidden' => true],
+                    [executeInDocker($this->deployment_uuid, "{$this->xlaunch_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} up --build -d"), 'hidden' => true],
                 );
             } else {
                 if ($this->use_build_server) {
                     $this->execute_remote_command(
-                        ["{$this->coolify_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->configuration_dir} -f {$this->configuration_dir}{$this->docker_compose_location} up --pull always --build -d", 'hidden' => true],
+                        ["{$this->xlaunch_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->configuration_dir} -f {$this->configuration_dir}{$this->docker_compose_location} up --pull always --build -d", 'hidden' => true],
                     );
                 } else {
                     $this->execute_remote_command(
-                        [executeInDocker($this->deployment_uuid, "{$this->coolify_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} -f {$this->workdir}{$this->docker_compose_location} up --build -d"), 'hidden' => true],
+                        [executeInDocker($this->deployment_uuid, "{$this->xlaunch_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} -f {$this->workdir}{$this->docker_compose_location} up --build -d"), 'hidden' => true],
                     );
                 }
             }
@@ -4352,7 +4352,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             $this->build_args = generateDockerBuildArgs($vars_with_metadata);
 
             if ($secrets_hash) {
-                $this->build_args->push("--build-arg COOLIFY_BUILD_SECRETS_HASH={$secrets_hash}");
+                $this->build_args->push("--build-arg XLAUNCH_BUILD_SECRETS_HASH={$secrets_hash}");
             }
         }
     }
@@ -4365,7 +4365,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         }
 
         // Generate env variables if not already done
-        // This populates $this->env_args with both user-defined and COOLIFY_* variables
+        // This populates $this->env_args with both user-defined and XLAUNCH_* variables
         if (! $this->env_args || $this->env_args->isEmpty()) {
             $this->generate_env_variables();
         }
@@ -4399,7 +4399,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         });
 
         $env_flags = generateDockerEnvFlags($vars_array);
-        $env_flags .= " -e COOLIFY_BUILD_SECRETS_HASH={$secrets_hash}";
+        $env_flags .= " -e XLAUNCH_BUILD_SECRETS_HASH={$secrets_hash}";
 
         return $env_flags;
     }
@@ -4418,7 +4418,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             })
             ->implode(' ');
 
-        $this->build_secrets .= ' --secret id=COOLIFY_BUILD_SECRETS_HASH,env=COOLIFY_BUILD_SECRETS_HASH';
+        $this->build_secrets .= ' --secret id=XLAUNCH_BUILD_SECRETS_HASH,env=XLAUNCH_BUILD_SECRETS_HASH';
     }
 
     private function generate_secrets_hash($variables)
@@ -4511,14 +4511,14 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                     $argsToInsert->push("ARG {$env->key}={$env->getResolvedValueWithServer($this->mainServer)}");
                 }
             }
-            // Add Coolify variables as ARGs
-            if ($this->coolify_variables) {
-                $coolify_vars = collect(explode(' ', trim($this->coolify_variables)))
+            // Add Xlaunch variables as ARGs
+            if ($this->xlaunch_variables) {
+                $xlaunch_vars = collect(explode(' ', trim($this->xlaunch_variables)))
                     ->filter()
                     ->map(function ($var) {
                         return 'ARG '.$this->shellAssignmentForDockerfileArg($var);
                     });
-                $argsToInsert = $argsToInsert->merge($coolify_vars);
+                $argsToInsert = $argsToInsert->merge($xlaunch_vars);
             }
         } else {
             // Only add preview environment variables that are available during build
@@ -4533,14 +4533,14 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                     $argsToInsert->push("ARG {$env->key}={$env->getResolvedValueWithServer($this->mainServer)}");
                 }
             }
-            // Add Coolify variables as ARGs
-            if ($this->coolify_variables) {
-                $coolify_vars = collect(explode(' ', trim($this->coolify_variables)))
+            // Add Xlaunch variables as ARGs
+            if ($this->xlaunch_variables) {
+                $xlaunch_vars = collect(explode(' ', trim($this->xlaunch_variables)))
                     ->filter()
                     ->map(function ($var) {
                         return 'ARG '.$this->shellAssignmentForDockerfileArg($var);
                     });
-                $argsToInsert = $argsToInsert->merge($coolify_vars);
+                $argsToInsert = $argsToInsert->merge($xlaunch_vars);
             }
         }
 
@@ -4569,7 +4569,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
                 return [$env->key => $env->getResolvedValueWithServer($this->mainServer)];
             });
             $secrets_hash = $this->generate_secrets_hash($envs_mapped);
-            $argsToInsert->push("ARG COOLIFY_BUILD_SECRETS_HASH={$secrets_hash}");
+            $argsToInsert->push("ARG XLAUNCH_BUILD_SECRETS_HASH={$secrets_hash}");
         }
 
         $dockerfile_base64 = base64_encode($dockerfile->implode("\n"));
@@ -4608,7 +4608,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         }
 
         // Generate env variables if not already done
-        // This populates $this->env_args with both user-defined and COOLIFY_* variables
+        // This populates $this->env_args with both user-defined and XLAUNCH_* variables
         if (! $this->env_args || $this->env_args->isEmpty()) {
             $this->generate_env_variables();
         }
@@ -4655,7 +4655,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         $mountStrings = $variables->map(fn ($value, $key) => "--mount=type=secret,id={$key},env={$key}")->implode(' ');
 
         // Add mount for the secrets hash to ensure cache invalidation
-        $mountStrings .= ' --mount=type=secret,id=COOLIFY_BUILD_SECRETS_HASH,env=COOLIFY_BUILD_SECRETS_HASH';
+        $mountStrings .= ' --mount=type=secret,id=XLAUNCH_BUILD_SECRETS_HASH,env=XLAUNCH_BUILD_SECRETS_HASH';
 
         $modified ??= false;
         $dockerfile = $dockerfile->map(function ($line) use ($mountStrings, &$modified) {
@@ -4697,7 +4697,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
         }
 
         // Generate env variables if not already done
-        // This populates $this->env_args with both user-defined and COOLIFY_* variables
+        // This populates $this->env_args with both user-defined and XLAUNCH_* variables
         if (! $this->env_args || $this->env_args->isEmpty()) {
             $this->generate_env_variables();
         }
@@ -4860,7 +4860,7 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
     private function add_build_secrets_to_compose($composeFile)
     {
         // Generate env variables if not already done
-        // This populates $this->env_args with both user-defined and COOLIFY_* variables
+        // This populates $this->env_args with both user-defined and XLAUNCH_* variables
         if (! $this->env_args || $this->env_args->isEmpty()) {
             $this->generate_env_variables();
         }

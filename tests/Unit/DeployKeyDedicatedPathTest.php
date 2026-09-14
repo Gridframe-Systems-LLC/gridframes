@@ -25,7 +25,7 @@ function privateKeyMaterializationCommands(array|Collection|string $commands): C
         $commands = [$commands];
     }
 
-    return collect($commands)->filter(fn ($command) => str(commandStrings([$command])->first())->contains('base64 -d | tee /root/.ssh/id_rsa_coolify_'));
+    return collect($commands)->filter(fn ($command) => str(commandStrings([$command])->first())->contains('base64 -d | tee /root/.ssh/id_rsa_xlaunch_'));
 }
 
 function expectCommandListToContain(array|Collection|string $commands, string $expected): void
@@ -49,14 +49,14 @@ function expectPrivateKeyMaterializationCommandsSkipLogging(array|Collection|str
 }
 
 /**
- * Git operations authenticate with the SSH key assigned in the UI. Coolify writes that key to a
- * per-deployment path (/root/.ssh/id_rsa_coolify_<deployment_uuid>) instead of the shared
+ * Git operations authenticate with the SSH key assigned in the UI. Xlaunch writes that key to a
+ * per-deployment path (/root/.ssh/id_rsa_xlaunch_<deployment_uuid>) instead of the shared
  * /root/.ssh/id_rsa, so it can neither overwrite the server root's own key nor race with other
  * concurrent operations on the same host. `-o IdentitiesOnly=yes` makes ssh offer only that key.
  * On the host path an EXIT trap removes the key when the shell finishes; the docker path runs in an
  * ephemeral container, so it needs no cleanup.
  */
-$keyPath = '/root/.ssh/id_rsa_coolify_test-deployment-uuid';
+$keyPath = '/root/.ssh/id_rsa_xlaunch_test-deployment-uuid';
 
 it('skips logging the docker deploy key materialization command before ls-remote', function () {
     $source = file_get_contents(__DIR__.'/../../app/Jobs/ApplicationDeploymentJob.php');
@@ -220,8 +220,8 @@ it('uses the per-deployment deploy key for pull request fetches', function () us
 
     $result = $application->generateGitImportCommands('test-deployment-uuid', 123, 'github', false);
 
-    expectCommandListToContain($result['commands'], "GIT_SSH_COMMAND=\"ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {$keyPath} -o IdentitiesOnly=yes\" git fetch origin pull/123/head:pr-123-coolify");
-    expectCommandListNotToContain($result['commands'], 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /root/.ssh/id_rsa" git fetch origin pull/123/head:pr-123-coolify');
+    expectCommandListToContain($result['commands'], "GIT_SSH_COMMAND=\"ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i {$keyPath} -o IdentitiesOnly=yes\" git fetch origin pull/123/head:pr-123-xlaunch");
+    expectCommandListNotToContain($result['commands'], 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /root/.ssh/id_rsa" git fetch origin pull/123/head:pr-123-xlaunch');
     expectPrivateKeyMaterializationCommandsSkipLogging($result['commands']);
 });
 
@@ -240,6 +240,6 @@ it('does not force a missing per-deployment key for other repository pull reques
 
     $result = $application->generateGitImportCommands('test-deployment-uuid', 123, 'github', false);
 
-    expectCommandListToContain($result['commands'], 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /root/.ssh/id_rsa" git fetch origin pull/123/head:pr-123-coolify');
+    expectCommandListToContain($result['commands'], 'GIT_SSH_COMMAND="ssh -o ConnectTimeout=30 -p 22 -o Port=22 -o LogLevel=ERROR -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i /root/.ssh/id_rsa" git fetch origin pull/123/head:pr-123-xlaunch');
     expectCommandListNotToContain($result['commands'], $keyPath);
 });

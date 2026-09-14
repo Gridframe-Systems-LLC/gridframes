@@ -8,7 +8,7 @@
  * be falsely marked as "exited". This was originally added for applications and
  * previews (commit 684bd823c) but was missing for databases and services.
  *
- * @see https://github.com/coollabsio/coolify/issues/8826
+ * @see https://github.com/northlatch/xlaunch/issues/8826
  */
 it('has empty container safeguard for applications', function () {
     $actionFile = file_get_contents(__DIR__.'/../../app/Actions/Docker/GetContainersStatus.php');

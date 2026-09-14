@@ -109,7 +109,7 @@ function seedBrowserResourceStack(array $overrides = []): array
         'uuid' => $overrides['serverUuid'] ?? 'localhost',
         'name' => $overrides['serverName'] ?? 'localhost',
         'description' => $overrides['serverDescription'] ?? 'Test docker container in development',
-        'ip' => $overrides['serverIp'] ?? 'coolify-testing-host',
+        'ip' => $overrides['serverIp'] ?? 'xlaunch-testing-host',
         'team_id' => 0,
         'private_key_id' => $privateKey->id,
         'proxy' => [
@@ -127,10 +127,10 @@ function seedBrowserResourceStack(array $overrides = []): array
     $destination = null;
     StandaloneDocker::withoutEvents(function () use ($server, &$destination, $overrides) {
         $destination = StandaloneDocker::firstOrCreate(
-            ['server_id' => $server->id, 'network' => $overrides['network'] ?? 'coolify'],
+            ['server_id' => $server->id, 'network' => $overrides['network'] ?? 'xlaunch'],
             [
                 'uuid' => $overrides['destinationUuid'] ?? 'docker-destination-1',
-                'name' => $overrides['destinationName'] ?? 'coolify',
+                'name' => $overrides['destinationName'] ?? 'xlaunch',
             ]
         );
     });
@@ -155,7 +155,7 @@ function createBrowserApplication(array $stack, array $attributes = []): Applica
         'uuid' => $attributes['uuid'] ?? 'app-browser-'.Str::lower(Str::random(8)),
         'name' => $attributes['name'] ?? 'Browser App',
         'description' => $attributes['description'] ?? 'Browser test application',
-        'git_repository' => $attributes['git_repository'] ?? 'https://github.com/coollabsio/coolify.git',
+        'git_repository' => $attributes['git_repository'] ?? 'https://github.com/northlatch/xlaunch.git',
         'git_branch' => $attributes['git_branch'] ?? 'main',
         'build_pack' => $attributes['build_pack'] ?? 'nixpacks',
         'ports_exposes' => $attributes['ports_exposes'] ?? '3000',
@@ -239,7 +239,7 @@ function serviceConfigurationUrl(Project $project, $environment, Service $servic
 }
 
 /**
- * Choose an option from a Coolify Alpine listbox (`x-forms.listbox`).
+ * Choose an option from a Xlaunch Alpine listbox (`x-forms.listbox`).
  *
  * Opens the trigger `#{$id}-trigger`, then clicks the option whose label matches
  * within that listbox only (avoids matching same labels on other listboxes, e.g.

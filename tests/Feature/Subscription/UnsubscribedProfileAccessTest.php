@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
     config()->set('subscription.provider', 'stripe');
 
     InstanceSettings::unguarded(fn () => InstanceSettings::query()->create(['id' => 0]));

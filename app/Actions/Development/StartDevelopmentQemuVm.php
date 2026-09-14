@@ -184,7 +184,7 @@ YAML;
 
     private function waitForSsh(string $ip): void
     {
-        $container = escapeshellarg(config('development-qemu.coolify_container'));
+        $container = escapeshellarg(config('development-qemu.xlaunch_container'));
         $probe = <<<'PHP'
 $deadline = time() + 120;
 do {

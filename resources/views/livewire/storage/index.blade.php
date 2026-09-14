@@ -1,6 +1,6 @@
 <div class="application-settings-form w-full">
     <x-slot:title>
-        Storages | Coolify
+        Storages | Xlaunch
     </x-slot>
 
     <header class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -39,10 +39,10 @@
             ])->values();
         @endphp
         <div x-data="{
-            search: '', viewMode: localStorage.getItem('coolify-s3-storages-view') || 'table', items: @js($items),
+            search: '', viewMode: localStorage.getItem('xlaunch-s3-storages-view') || 'table', items: @js($items),
             get filteredItems() { const query = this.search.trim().toLowerCase(); return query ? this.items.filter(item => Object.values(item).some(value => String(value || '').toLowerCase().includes(query))) : this.items; },
             matches(values) { const query = this.search.trim().toLowerCase(); return !query || values.some(value => String(value || '').toLowerCase().includes(query)); },
-            setViewMode(mode) { this.viewMode = mode; localStorage.setItem('coolify-s3-storages-view', mode); }
+            setViewMode(mode) { this.viewMode = mode; localStorage.setItem('xlaunch-s3-storages-view', mode); }
         }">
         @include('livewire.shared.list-search-controls', ['placeholder' => 'Search S3 storages', 'singular' => 'storage', 'plural' => 'storages'])
         <div x-cloak x-show="viewMode === 'grid'" class="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">

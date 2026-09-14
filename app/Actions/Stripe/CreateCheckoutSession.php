@@ -71,7 +71,7 @@ class CreateCheckoutSession
                     'team_id' => $team->id,
                 ],
             ], [
-                'idempotency_key' => "coolify-team-{$team->id}-customer",
+                'idempotency_key' => "xlaunch-team-{$team->id}-customer",
             ]);
             $customerId = $customer->id;
             $subscription->stripe_customer_id = $customerId;

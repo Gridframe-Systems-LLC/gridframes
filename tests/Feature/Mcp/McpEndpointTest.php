@@ -140,7 +140,7 @@ test('MCP endpoint lists tools for an authenticated token', function () {
         'list_env_keys',
     );
     expect($toolNames)->not->toContain('get_resource_status');
-    expect($toolNames)->toContain('coolify_help', 'control', 'deploy');
+    expect($toolNames)->toContain('xlaunch_help', 'control', 'deploy');
 });
 
 test('list_projects returns summary + pagination scoped to the token team', function () {
@@ -200,7 +200,7 @@ test('get_infrastructure_overview returns counts', function () {
 
     $body = mcpToolJson($response);
     expect($body)->toHaveKey('data');
-    expect($body['data'])->toHaveKeys(['coolify_version', 'servers', 'projects', 'counts', 'health_hints']);
+    expect($body['data'])->toHaveKeys(['xlaunch_version', 'servers', 'projects', 'counts', 'health_hints']);
     expect($body['data']['counts']['projects'])->toBe(2);
     expect($body['data']['projects'])->toHaveCount(2);
     expect($body['data']['projects'][0])->toHaveKey('counts');

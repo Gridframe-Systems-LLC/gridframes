@@ -28,7 +28,7 @@ test('wraps complex Docker install command with pipes in bash -c', function () {
 test('preserves command substitutions inside database and volume backup scripts', function () {
     $script = 'compressor=$(if command -v pigz; then printf pigz; else printf gzip; fi); exec $compressor';
     $command = 'docker exec database pg_dumpall | docker run --rm -i helper sh -c '.escapeshellarg($script);
-    $volumeCommand = 'docker run --rm helper sh -c '.escapeshellarg($script).' > /data/coolify/backups/volume.tar.gz';
+    $volumeCommand = 'docker run --rm helper sh -c '.escapeshellarg($script).' > /data/xlaunch/backups/volume.tar.gz';
 
     $result = parseCommandsByLineForSudo(collect([$command, $volumeCommand]), $this->server);
 
@@ -188,21 +188,21 @@ test('handles if statements by adding sudo to condition', function () {
 test('preserves shell negation before sudo', function (string $command, string $expected) {
     expect(parseCommandsByLineForSudo(collect([$command]), $this->server))->toBe([$expected]);
 })->with([
-    'negated condition' => ['if ! docker inspect coolify-proxy; then', 'if ! sudo docker inspect coolify-proxy; then'],
-    'indented condition' => ["\tif  !  docker inspect coolify-proxy; then", "\tif  !  sudo docker inspect coolify-proxy; then"],
+    'negated condition' => ['if ! docker inspect xlaunch-proxy; then', 'if ! sudo docker inspect xlaunch-proxy; then'],
+    'indented condition' => ["\tif  !  docker inspect xlaunch-proxy; then", "\tif  !  sudo docker inspect xlaunch-proxy; then"],
     'negated pipeline' => [
-        '    if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
-        '    if ! sudo docker ps -a --format "{{.Names}}" | sudo grep -q "^coolify-proxy$"; then',
+        '    if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
+        '    if ! sudo docker ps -a --format "{{.Names}}" | sudo grep -q "^xlaunch-proxy$"; then',
     ],
-    'standalone negation' => ['! docker inspect coolify-proxy', '! sudo docker inspect coolify-proxy'],
-    'repeated negation' => ['if ! ! docker inspect coolify-proxy; then', 'if ! ! sudo docker inspect coolify-proxy; then'],
+    'standalone negation' => ['! docker inspect xlaunch-proxy', '! sudo docker inspect xlaunch-proxy'],
+    'repeated negation' => ['if ! ! docker inspect xlaunch-proxy; then', 'if ! ! sudo docker inspect xlaunch-proxy; then'],
     'literal exclamation argument' => ['echo "! docker"', 'echo "! docker"'],
 ]);
 
 test('proxy removal loop exits only once the container is absent', function (string $containers, string $expected) {
     $commands = collect([
         'for i in {1..15}; do',
-        '    if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
+        '    if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
         '        echo "Container removed successfully."',
         '        break',
         '    fi',
@@ -223,7 +223,7 @@ BASH;
 })->with([
     'removed' => ['', "Container removed successfully.\n"],
     'other containers remain' => ['another-container', "Container removed successfully.\n"],
-    'still present' => ['coolify-proxy', implode('', array_map(
+    'still present' => ['xlaunch-proxy', implode('', array_map(
         fn (int $attempt): string => "Waiting for container to be removed... ($attempt/15)\n",
         range(1, 15),
     ))],
@@ -239,28 +239,28 @@ test('skips sudo for fi statements', function () {
     expect($result[0])->toBe('fi');
 });
 
-test('adds ownership changes for Coolify data paths', function () {
+test('adds ownership changes for Xlaunch data paths', function () {
     $commands = collect([
-        'mkdir -p /data/coolify/logs',
+        'mkdir -p /data/xlaunch/logs',
     ]);
 
     $result = parseCommandsByLineForSudo($commands, $this->server);
 
     // Note: The && operator adds another sudo, creating double sudo for chown/chmod
     // This is existing behavior that may need refactoring but isn't part of this bug fix
-    expect($result[0])->toBe('sudo mkdir -p /data/coolify/logs && sudo sudo chown -R ubuntu:ubuntu /data/coolify/logs && sudo sudo chmod -R o-rwx /data/coolify/logs');
+    expect($result[0])->toBe('sudo mkdir -p /data/xlaunch/logs && sudo sudo chown -R ubuntu:ubuntu /data/xlaunch/logs && sudo sudo chmod -R o-rwx /data/xlaunch/logs');
 });
 
-test('adds ownership changes for Coolify tmp paths', function () {
+test('adds ownership changes for Xlaunch tmp paths', function () {
     $commands = collect([
-        'mkdir -p /tmp/coolify/cache',
+        'mkdir -p /tmp/xlaunch/cache',
     ]);
 
     $result = parseCommandsByLineForSudo($commands, $this->server);
 
     // Note: The && operator adds another sudo, creating double sudo for chown/chmod
     // This is existing behavior that may need refactoring but isn't part of this bug fix
-    expect($result[0])->toBe('sudo mkdir -p /tmp/coolify/cache && sudo sudo chown -R ubuntu:ubuntu /tmp/coolify/cache && sudo sudo chmod -R o-rwx /tmp/coolify/cache');
+    expect($result[0])->toBe('sudo mkdir -p /tmp/xlaunch/cache && sudo sudo chown -R ubuntu:ubuntu /tmp/xlaunch/cache && sudo sudo chmod -R o-rwx /tmp/xlaunch/cache');
 });
 
 test('does not add ownership changes for system paths', function () {
@@ -466,19 +466,19 @@ test('skips sudo for bash control structure keywords - elif', function () {
 test('handles real-world proxy startup with for loop from StartProxy action', function () {
     // This is the exact command structure that was causing the bug in issue #7346
     $commands = collect([
-        'if docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
-        "    echo 'Stopping and removing existing coolify-proxy.'",
-        '    docker stop coolify-proxy 2>/dev/null || true',
-        '    docker rm -f coolify-proxy 2>/dev/null || true',
+        'if docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
+        "    echo 'Stopping and removing existing xlaunch-proxy.'",
+        '    docker stop xlaunch-proxy 2>/dev/null || true',
+        '    docker rm -f xlaunch-proxy 2>/dev/null || true',
         '    # Wait for container to be fully removed',
         '    for i in {1..10}; do',
-        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
+        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
         '            break',
         '        fi',
-        '        echo "Waiting for coolify-proxy to be removed... ($i/10)"',
+        '        echo "Waiting for xlaunch-proxy to be removed... ($i/10)"',
         '        sleep 1',
         '    done',
-        "    echo 'Successfully stopped and removed existing coolify-proxy.'",
+        "    echo 'Successfully stopped and removed existing xlaunch-proxy.'",
         'fi',
     ]);
 
@@ -502,7 +502,7 @@ test('handles real-world proxy startup with for loop from StartProxy action', fu
 
     // Verify other control structures remain correct
     expect($result[0])->toStartWith('if sudo docker ps');
-    expect($result[6])->toBe('        if ! sudo docker ps -a --format "{{.Names}}" | sudo grep -q "^coolify-proxy$"; then');
+    expect($result[6])->toBe('        if ! sudo docker ps -a --format "{{.Names}}" | sudo grep -q "^xlaunch-proxy$"; then');
     expect($result[8])->toBe('        fi');
     expect($result[13])->toBe('fi');
 });

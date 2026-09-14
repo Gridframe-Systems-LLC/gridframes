@@ -169,7 +169,7 @@ class ApplicationsController extends Controller
         $application->settings->fill($settings)->save();
 
         if ($regenerateLabels) {
-            $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+            $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
             $application->save();
         }
     }
@@ -364,7 +364,7 @@ class ApplicationsController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io")'],
+                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com")'],
                                         'redirect' => ['type' => 'string', 'nullable' => true, 'description' => 'Per-service www/non-www redirect for this compose service.', 'enum' => ['www', 'non-www', 'both']],
                                     ],
                                 ),
@@ -558,7 +558,7 @@ class ApplicationsController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io")'],
+                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com")'],
                                         'redirect' => ['type' => 'string', 'nullable' => true, 'description' => 'Per-service www/non-www redirect for this compose service.', 'enum' => ['www', 'non-www', 'both']],
                                     ],
                                 ),
@@ -752,7 +752,7 @@ class ApplicationsController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io")'],
+                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com")'],
                                         'redirect' => ['type' => 'string', 'nullable' => true, 'description' => 'Per-service www/non-www redirect for this compose service.', 'enum' => ['www', 'non-www', 'both']],
                                     ],
                                 ),
@@ -1526,7 +1526,7 @@ class ApplicationsController extends Controller
                 $application->save();
             }
             if ($application->settings->is_container_label_readonly_enabled) {
-                $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+                $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
                 $application->save();
             }
             if ($tagNames !== []) {
@@ -1786,7 +1786,7 @@ class ApplicationsController extends Controller
                 $application->settings->save();
             }
             if ($application->settings->is_container_label_readonly_enabled) {
-                $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+                $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
                 $application->save();
             }
             if ($tagNames !== []) {
@@ -2015,7 +2015,7 @@ class ApplicationsController extends Controller
                 $application->settings->save();
             }
             if ($application->settings->is_container_label_readonly_enabled) {
-                $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+                $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
                 $application->save();
             }
             if ($tagNames !== []) {
@@ -2112,7 +2112,7 @@ class ApplicationsController extends Controller
             $application->destination_type = $destination->getMorphClass();
             $application->environment_id = $environment->id;
 
-            $application->git_repository = 'coollabsio/coolify';
+            $application->git_repository = 'northlatch/xlaunch';
             $application->git_branch = 'main';
             $application->save();
             $this->applyApplicationSettings($application, $applicationSettings);
@@ -2147,7 +2147,7 @@ class ApplicationsController extends Controller
                 $application->settings->save();
             }
             if ($application->settings->is_container_label_readonly_enabled) {
-                $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+                $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
                 $application->save();
             }
             if ($tagNames !== []) {
@@ -2243,7 +2243,7 @@ class ApplicationsController extends Controller
             $application->destination_type = $destination->getMorphClass();
             $application->environment_id = $environment->id;
 
-            $application->git_repository = 'coollabsio/coolify';
+            $application->git_repository = 'northlatch/xlaunch';
             $application->git_branch = 'main';
             $application->save();
             $this->applyApplicationSettings($application, $applicationSettings);
@@ -2278,7 +2278,7 @@ class ApplicationsController extends Controller
                 $application->settings->save();
             }
             if ($application->settings->is_container_label_readonly_enabled) {
-                $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+                $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
                 $application->save();
             }
             if ($tagNames !== []) {
@@ -2939,7 +2939,7 @@ class ApplicationsController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io")'],
+                                        'domain' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com")'],
                                         'redirect' => ['type' => 'string', 'nullable' => true, 'description' => 'Per-service www/non-www redirect for this compose service.', 'enum' => ['www', 'non-www', 'both']],
                                     ],
                                 ),
@@ -3392,7 +3392,7 @@ class ApplicationsController extends Controller
             $application->setNoindexDomains($request->input('noindex_domains') ?? []);
         }
         if ($application->settings->is_container_label_readonly_enabled && ($requestHasDomains || $requestHasNoindexDomains || $requestHasHttpBasicAuth) && $server->isProxyShouldRun()) {
-            $application->custom_labels = str(implode('|coolify|', generateLabelsApplication($application)))->replace('|coolify|', "\n");
+            $application->custom_labels = str(implode('|xlaunch|', generateLabelsApplication($application)))->replace('|xlaunch|', "\n");
         }
         $application->save();
 
@@ -4647,7 +4647,7 @@ class ApplicationsController extends Controller
 
     #[OA\Post(
         summary: 'Migrate to Server',
-        description: 'Migrate an application to another destination/server owned by the authenticated team. Stops the application, optionally transfers persistent volume data when both servers are managed by Coolify, and updates database records. Redeploy after migration completes.',
+        description: 'Migrate an application to another destination/server owned by the authenticated team. Stops the application, optionally transfers persistent volume data when both servers are managed by Xlaunch, and updates database records. Redeploy after migration completes.',
         path: '/applications/{uuid}/migrate',
         operationId: 'migrate-application-by-uuid',
         security: [['bearerAuth' => []]],

@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Actions\CoolifyTask\RunRemoteProcess;
+use App\Actions\XlaunchTask\RunRemoteProcess;
 use App\Enums\ProcessStatus;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -13,7 +13,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Spatie\Activitylog\Models\Activity;
 
-class CoolifyTask implements ShouldBeEncrypted, ShouldQueue
+class XlaunchTask implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
@@ -73,8 +73,8 @@ class CoolifyTask implements ShouldBeEncrypted, ShouldQueue
      */
     public function failed(?\Throwable $exception): void
     {
-        Log::channel('scheduled-errors')->error('CoolifyTask permanently failed', [
-            'job' => 'CoolifyTask',
+        Log::channel('scheduled-errors')->error('XlaunchTask permanently failed', [
+            'job' => 'XlaunchTask',
             'activity_id' => $this->activity->id,
             'server_uuid' => $this->activity->getExtraProperty('server_uuid'),
             'command_preview' => substr($this->activity->getExtraProperty('command') ?? '', 0, 200),

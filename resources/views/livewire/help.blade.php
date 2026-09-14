@@ -2,7 +2,7 @@
     <div
         class="flex items-start gap-3 rounded-lg bg-neutral-100 px-3 py-2.5 text-sm text-neutral-600 dark:bg-white/[0.04] dark:text-fg-dim">
         <div
-            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-neutral-500 shadow-[0_0_0_1px_var(--coollabs-hairline)] dark:bg-raised dark:text-fg-dim">
+            class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-neutral-500 shadow-[0_0_0_1px_var(--northlatch-hairline)] dark:bg-raised dark:text-fg-dim">
             <x-reicon name="feedback" class="size-4" />
         </div>
         <div class="min-w-0">

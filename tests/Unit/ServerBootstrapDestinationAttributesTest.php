@@ -11,8 +11,8 @@ it('includes a uuid in standalone docker bootstrap attributes for the root serve
     expect($attributes)
         ->toMatchArray([
             'id' => 0,
-            'name' => 'coolify',
-            'network' => 'coolify',
+            'name' => 'xlaunch',
+            'network' => 'xlaunch',
             'server_id' => 0,
         ])
         ->and($attributes['uuid'])->toBeString()

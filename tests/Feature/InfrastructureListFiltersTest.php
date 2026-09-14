@@ -9,9 +9,9 @@ it('provides search and persisted grid and table views for infrastructure lists'
         ->toContain("localStorage.setItem('{$storageKey}', mode)")
         ->toContain("@include('livewire.shared.list-search-empty'");
 })->with([
-    'sources' => ['views/source/all.blade.php', 'sources', 'coolify-sources-view'],
-    'destinations' => ['views/livewire/destination/index.blade.php', 'destinations', 'coolify-destinations-view'],
-    'S3 storages' => ['views/livewire/storage/index.blade.php', 'S3 storages', 'coolify-s3-storages-view'],
+    'sources' => ['views/source/all.blade.php', 'sources', 'xlaunch-sources-view'],
+    'destinations' => ['views/livewire/destination/index.blade.php', 'destinations', 'xlaunch-destinations-view'],
+    'S3 storages' => ['views/livewire/storage/index.blade.php', 'S3 storages', 'xlaunch-s3-storages-view'],
 ]);
 
 it('renders shared search controls with result counts and view switchers', function () {

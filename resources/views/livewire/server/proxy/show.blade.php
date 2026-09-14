@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Proxy Configuration | Coolify
+        Proxy Configuration | Xlaunch
     </x-slot>
     <livewire:server.navbar :server="$server" />
     <div

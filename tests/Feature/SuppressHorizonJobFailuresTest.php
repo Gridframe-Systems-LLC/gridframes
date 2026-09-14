@@ -22,7 +22,7 @@ function fireJobFailed(Job $job, Throwable $exception): void
 }
 
 beforeEach(function () {
-    config(['constants.coolify.self_hosted' => false]);
+    config(['constants.xlaunch.self_hosted' => false]);
 });
 
 test('scrubs Horizon failed entry for DeploymentException on cloud', function () {
@@ -54,7 +54,7 @@ test('does not scrub generic exceptions on cloud', function () {
 });
 
 test('does not scrub when self-hosted even for filtered exceptions', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
 
     $this->mock(JobRepository::class, function (MockInterface $mock) {
         $mock->shouldNotReceive('deleteFailed');

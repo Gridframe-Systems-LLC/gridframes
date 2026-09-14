@@ -47,7 +47,7 @@ it('only adds Grafana extra fields for Grafana server images', function (string 
 ]);
 
 it('exposes Jean Server authentication and access settings', function () {
-    $service = serviceExtraFieldsTestServiceWithApplicationImage('ghcr.io/coollabsio/jean-server:latest');
+    $service = serviceExtraFieldsTestServiceWithApplicationImage('ghcr.io/northlatch/jean-server:latest');
 
     $service->environment_variables()->createMany([
         ['key' => 'SERVICE_PASSWORD_64_JEAN', 'value' => 'secret-token', 'is_preview' => false],

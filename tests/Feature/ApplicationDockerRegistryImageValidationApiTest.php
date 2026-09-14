@@ -29,7 +29,7 @@ beforeEach(function () {
     $this->server = Server::factory()->create(['team_id' => $this->team->id]);
     $this->destination = StandaloneDocker::factory()->create([
         'server_id' => $this->server->id,
-        'network' => 'coolify-'.Str::lower(Str::random(8)),
+        'network' => 'xlaunch-'.Str::lower(Str::random(8)),
     ]);
     $this->project = Project::factory()->create(['team_id' => $this->team->id]);
     $this->environment = Environment::factory()->create(['project_id' => $this->project->id]);
@@ -50,7 +50,7 @@ function makeDockerRegistryValidationApplication(array $overrides = []): Applica
         'destination_id' => test()->destination->id,
         'destination_type' => test()->destination->getMorphClass(),
         'build_pack' => 'nixpacks',
-        'docker_registry_image_name' => 'ghcr.io/coollabsio/example',
+        'docker_registry_image_name' => 'ghcr.io/northlatch/example',
         'docker_registry_image_tag' => 'latest',
     ], $overrides));
 }
@@ -61,7 +61,7 @@ describe('PATCH /api/v1/applications/{uuid} docker registry image validation', f
 
         $response = $this->withHeaders(dockerRegistryApiHeaders($this->bearerToken))
             ->patchJson("/api/v1/applications/{$application->uuid}", [
-                'docker_registry_image_name' => 'coolify/poc$(touch /tmp/pwned)',
+                'docker_registry_image_name' => 'xlaunch/poc$(touch /tmp/pwned)',
                 'docker_registry_image_tag' => 'latest',
             ]);
 
@@ -69,7 +69,7 @@ describe('PATCH /api/v1/applications/{uuid} docker registry image validation', f
             ->assertInvalid(['docker_registry_image_name']);
 
         $application->refresh();
-        expect($application->docker_registry_image_name)->toBe('ghcr.io/coollabsio/example')
+        expect($application->docker_registry_image_name)->toBe('ghcr.io/northlatch/example')
             ->and($application->docker_registry_image_tag)->toBe('latest');
     });
 
@@ -78,7 +78,7 @@ describe('PATCH /api/v1/applications/{uuid} docker registry image validation', f
 
         $response = $this->withHeaders(dockerRegistryApiHeaders($this->bearerToken))
             ->patchJson("/api/v1/applications/{$application->uuid}", [
-                'docker_registry_image_name' => 'ghcr.io/coollabsio/example',
+                'docker_registry_image_name' => 'ghcr.io/northlatch/example',
                 'docker_registry_image_tag' => 'latest$(touch /tmp/pwned)',
             ]);
 
@@ -86,7 +86,7 @@ describe('PATCH /api/v1/applications/{uuid} docker registry image validation', f
             ->assertInvalid(['docker_registry_image_tag']);
 
         $application->refresh();
-        expect($application->docker_registry_image_name)->toBe('ghcr.io/coollabsio/example')
+        expect($application->docker_registry_image_name)->toBe('ghcr.io/northlatch/example')
             ->and($application->docker_registry_image_tag)->toBe('latest');
     });
 

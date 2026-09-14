@@ -231,7 +231,7 @@ test('an expired checkout session permits a new checkout', function () {
 
 test('checkout creates and persists one Stripe customer for later attempts', function () {
     $this->customers->shouldReceive('create')->once()
-        ->withArgs(fn (array $payload, array $options): bool => $payload['metadata']['team_id'] === $this->team->id && $options['idempotency_key'] === 'coolify-team-'.$this->team->id.'-customer')
+        ->withArgs(fn (array $payload, array $options): bool => $payload['metadata']['team_id'] === $this->team->id && $options['idempotency_key'] === 'xlaunch-team-'.$this->team->id.'-customer')
         ->andReturn((object) ['id' => 'cus_new']);
     $this->stripeSubscriptions->shouldReceive('all')->once()->andReturn(stripeCheckoutCollection([]));
     $this->checkoutSessions->shouldReceive('all')->once()->andReturn(stripeCheckoutCollection([]));

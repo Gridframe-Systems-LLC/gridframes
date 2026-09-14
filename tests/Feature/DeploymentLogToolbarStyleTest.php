@@ -1,10 +1,10 @@
 <?php
 
-test('active deployment log controls use a coollabs background and white icon', function () {
+test('active deployment log controls use a northlatch background and white icon', function () {
     $styles = file_get_contents(resource_path('css/app.css'));
 
     expect($styles)
-        ->toMatch('/\.logs-viewer-btn-active\s*\{[^}]*background:\s*var\(--color-coollabs\);[^}]*color:\s*#fff;/s')
+        ->toMatch('/\.logs-viewer-btn-active\s*\{[^}]*background:\s*var\(--color-northlatch\);[^}]*color:\s*#fff;/s')
         ->toMatch('/\.dark \.logs-viewer-btn-active\s*\{[^}]*color:\s*#fff;/s')
         ->not->toMatch('/\.logs-viewer-btn-active\s*\{[^}]*var\(--color-warning\)/s');
 });

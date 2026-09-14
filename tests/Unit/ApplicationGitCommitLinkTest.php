@@ -10,28 +10,28 @@ it('generates commit links for direct repository remotes', function (string $rep
     expect($application->gitCommitLink('1234567890abcdef'))->toBe($expected);
 })->with([
     'HTTPS remote' => [
-        'https://github.com/coollabsio/coolify.git',
-        'https://github.com/coollabsio/coolify/commit/1234567890abcdef',
+        'https://github.com/northlatch/xlaunch.git',
+        'https://github.com/northlatch/xlaunch/commit/1234567890abcdef',
     ],
     'SSH remote' => [
-        'git@github.com:coollabsio/coolify.git',
-        'https://github.com/coollabsio/coolify/commit/1234567890abcdef',
+        'git@github.com:northlatch/xlaunch.git',
+        'https://github.com/northlatch/xlaunch/commit/1234567890abcdef',
     ],
     'SSH remote with custom username' => [
-        'custom-user@git.example.com:coollabsio/coolify.git',
-        'https://git.example.com/coollabsio/coolify/commit/1234567890abcdef',
+        'custom-user@git.example.com:northlatch/xlaunch.git',
+        'https://git.example.com/northlatch/xlaunch/commit/1234567890abcdef',
     ],
     'SSH remote with custom username and port' => [
-        'custom-user@git.example.com:2222/coollabsio/coolify.git',
-        'https://git.example.com/coollabsio/coolify/commit/1234567890abcdef',
+        'custom-user@git.example.com:2222/northlatch/xlaunch.git',
+        'https://git.example.com/northlatch/xlaunch/commit/1234567890abcdef',
     ],
     'SSH URL' => [
-        'ssh://git@gitlab.com/coollabsio/coolify.git',
-        'https://gitlab.com/coollabsio/coolify/commit/1234567890abcdef',
+        'ssh://git@gitlab.com/northlatch/xlaunch.git',
+        'https://gitlab.com/northlatch/xlaunch/commit/1234567890abcdef',
     ],
     'Bitbucket HTTPS remote' => [
-        'https://bitbucket.org/coollabsio/coolify.git',
-        'https://bitbucket.org/coollabsio/coolify/commits/1234567890abcdef',
+        'https://bitbucket.org/northlatch/xlaunch.git',
+        'https://bitbucket.org/northlatch/xlaunch/commits/1234567890abcdef',
     ],
 ]);
 
@@ -43,7 +43,7 @@ it('does not generate commit links from incomplete repository URLs', function (s
     expect($application->gitCommitLink('1234567890abcdef'))->toBeNull();
 })->with([
     'missing host' => 'https://',
-    'missing scheme' => 'github.com/coollabsio/coolify',
+    'missing scheme' => 'github.com/northlatch/xlaunch',
 ]);
 
 it('converts scp-style remotes with generic usernames into https repository links', function (string $repository, string $expectedBranch, string $expectedCommits, string $expectedWebhook) {
@@ -58,10 +58,10 @@ it('converts scp-style remotes with generic usernames into https repository link
         ->and($application->gitWebhook)->toBe($expectedWebhook);
 })->with([
     'git username' => [
-        'git@github.com:coollabsio/coolify.git',
-        'https://github.com/coollabsio/coolify/tree/main/',
-        'https://github.com/coollabsio/coolify/commits/main',
-        'https://github.com/coollabsio/coolify/settings/hooks',
+        'git@github.com:northlatch/xlaunch.git',
+        'https://github.com/northlatch/xlaunch/tree/main/',
+        'https://github.com/northlatch/xlaunch/commits/main',
+        'https://github.com/northlatch/xlaunch/settings/hooks',
     ],
     'custom username' => [
         'custom-user@git.example.com:organization/repository.git',

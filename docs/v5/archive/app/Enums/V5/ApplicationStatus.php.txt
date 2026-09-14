@@ -5,7 +5,7 @@ namespace App\Enums\V5;
 /**
  * Lifecycle states persisted on `v5_applications.status`.
  *
- * Besides Coolify's own states (creating, failed, unknown), the column also
+ * Besides Xlaunch's own states (creating, failed, unknown), the column also
  * receives raw container runtime states reported by coold, so the Docker and
  * Podman container states are part of the catalog.
  */

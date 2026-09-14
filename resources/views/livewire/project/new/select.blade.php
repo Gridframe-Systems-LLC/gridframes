@@ -304,12 +304,12 @@
                                     </div>
 
                                     <p class="mt-3 line-clamp-2 text-[12px] leading-5 text-neutral-600 dark:text-fg-dim"
-                                        x-text="service.slogan || service.description || 'Deploy this service with a ready-to-use Coolify template.'">
+                                        x-text="service.slogan || service.description || 'Deploy this service with a ready-to-use Xlaunch template.'">
                                     </p>
 
                                     <div
                                         class="mt-auto flex items-center gap-1.5 border-t border-neutral-200 pt-3 dark:border-white/[0.07]">
-                                        <a :href="getDocLink(service) || coolifyDocsUrl(service)" target="_blank"
+                                        <a :href="getDocLink(service) || xlaunchDocsUrl(service)" target="_blank"
                                             rel="noopener noreferrer" @mouseenter="resolveDocLink(service)" @click.stop
                                             class="button" :class="{ 'opacity-60': docCheckInProgress[service.name] }">
                                             Docs
@@ -451,9 +451,9 @@
                             // Remove flavor suffixes: -with-*, -without-*
                             return normalized.replace(/-(with|without)-.+$/, '');
                         },
-                        coolifyDocsUrl(service) {
+                        xlaunchDocsUrl(service) {
                             const baseName = service.docsSlug || this.extractBaseServiceName(service.name);
-                            return 'https://coolify.io/docs/services/' + baseName;
+                            return 'https://northlatch.com/docs/services/' + baseName;
                         },
                         officialDocsUrl(service) {
                             return service.documentation || null;
@@ -501,14 +501,14 @@
 
                             this.docCheckInProgress[serviceName] = true;
 
-                            // 1. Try Coolify docs first
-                            const coolifyUrl = this.coolifyDocsUrl(service);
-                            const coolifyExists = await this.checkUrlExists(coolifyUrl);
+                            // 1. Try Xlaunch docs first
+                            const xlaunchUrl = this.xlaunchDocsUrl(service);
+                            const xlaunchExists = await this.checkUrlExists(xlaunchUrl);
 
-                            if (coolifyExists) {
-                                this.docLinkCache[serviceName] = coolifyUrl;
+                            if (xlaunchExists) {
+                                this.docLinkCache[serviceName] = xlaunchUrl;
                                 this.docCheckInProgress[serviceName] = false;
-                                return coolifyUrl;
+                                return xlaunchUrl;
                             }
 
                             // 2. Fall back to official docs
@@ -734,7 +734,7 @@
                     :disabled="selecting">
                     <div class="flex flex-col">
                         <div class="text-[13px] font-semibold text-black dark:text-fg">PostgreSQL 18 <span
-                                class="ml-1 rounded-full bg-coollabs/10 px-2 py-0.5 text-[10px] font-medium text-coollabs dark:bg-warning/15 dark:text-warning">Default</span>
+                                class="ml-1 rounded-full bg-northlatch/10 px-2 py-0.5 text-[10px] font-medium text-northlatch dark:bg-warning/15 dark:text-warning">Default</span>
                         </div>
                         <div class="mt-1 pr-8 text-[11px] leading-4 text-neutral-500 dark:text-fg-faint">
                             PostgreSQL is a powerful, open-source object-relational database system (no extensions).
@@ -884,7 +884,7 @@
     @endif
     @if ($current_step === 'existing-postgresql')
         <x-application.settings-section title="Connect an existing PostgreSQL database"
-            description="Provide the connection URL for the database Coolify should use.">
+            description="Provide the connection URL for the database Xlaunch should use.">
             <form wire:submit="addExistingPostgresql" class="flex flex-col gap-3 sm:flex-row sm:items-end">
                 <div class="min-w-0 flex-1">
                     <x-forms.input placeholder="postgres://username:password@database:5432" label="Database URL"

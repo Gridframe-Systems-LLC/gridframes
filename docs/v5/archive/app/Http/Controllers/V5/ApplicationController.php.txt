@@ -114,7 +114,7 @@ class ApplicationController extends Controller
             'created_by_user_id' => $request->user()->id,
             'name' => 'nginx-test',
             'image' => $image,
-            'container_name' => 'coolify-v5-nginx-'.strtolower((string) Str::ulid()),
+            'container_name' => 'xlaunch-v5-nginx-'.strtolower((string) Str::ulid()),
             'status' => ApplicationStatus::Creating->value,
             'status_message' => 'Starting nginx container.',
             'mesh_namespace' => 'default',
@@ -236,7 +236,7 @@ class ApplicationController extends Controller
                     return;
                 }
 
-                $container = $containers->first(fn (array $container) => ($container['name'] ?? null) === 'coolify-v5-caddy');
+                $container = $containers->first(fn (array $container) => ($container['name'] ?? null) === 'xlaunch-v5-caddy');
                 $rawState = is_array($container) && is_string($container['state'] ?? null) && $container['state'] !== '' ? $container['state'] : null;
                 $state = $rawState !== null
                     ? (StatusObservation::normalize($rawState, IngressStatus::class) ?? IngressStatus::Unknown->value)

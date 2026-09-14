@@ -136,9 +136,9 @@ export function AppNavbar({
                 <Link
                     href="/v5"
                     className="flex shrink-0 items-center rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-                    aria-label="Coolify dashboard"
+                    aria-label="Xlaunch dashboard"
                 >
-                    <img src="/coolify-logo.svg" alt="Coolify" className="size-6" />
+                    <img src="/xlaunch-logo.svg" alt="Xlaunch" className="size-6" />
                 </Link>
 
                 <div className="absolute left-1/2 flex min-w-0 -translate-x-1/2 items-center justify-center gap-1 md:static md:flex-1 md:translate-x-0 md:justify-start md:gap-2">
@@ -211,8 +211,8 @@ export function AppNavbar({
                         </SheetTrigger>
                         <SheetContent side="right" className="w-72 max-w-[85vw] bg-background">
                             <SheetHeader>
-                                <SheetTitle>Coolify</SheetTitle>
-                                <SheetDescription className="sr-only">Move between Coolify v5 pages.</SheetDescription>
+                                <SheetTitle>Xlaunch</SheetTitle>
+                                <SheetDescription className="sr-only">Move between Xlaunch v5 pages.</SheetDescription>
                             </SheetHeader>
                             <nav className="flex flex-col gap-1 px-4" aria-label="Mobile navigation">
                                 <SheetClose

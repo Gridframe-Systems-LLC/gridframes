@@ -42,7 +42,7 @@ it('returns local, CDN, and default logo fallbacks for every service', function 
     expect($services['opnform']['logo'])->toBe(asset('svgs/opnform.svg'))
         ->and($services['pydio-cells']['logo'])->toBe(asset('svgs/cells.svg'))
         ->and($services['pydio-cells']['logo_cdn_url'])
-        ->toBe('https://raw.githubusercontent.com/coollabsio/coolify/refs/heads/main/public/svgs/cells.svg')
+        ->toBe('https://raw.githubusercontent.com/northlatch/xlaunch/refs/heads/main/public/svgs/cells.svg')
         ->and($services['pydio-cells']['logo_default_url'])->toBe(asset('svgs/default.webp'));
 });
 
@@ -58,7 +58,7 @@ it('prefers embedded service template git timestamps from the templates bundle',
     $path = base_path('templates/'.config('constants.services.file_name'));
     $payload = json_encode([
         'activepieces' => [
-            'documentation' => 'https://coolify.io/docs',
+            'documentation' => 'https://northlatch.com/docs',
             'slogan' => 'Open source no-code business automation.',
             'compose' => '',
             'tags' => null,

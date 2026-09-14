@@ -330,7 +330,7 @@ it('redacts webhook URLs for logs', function () {
 it('falls back to system DNS when custom DNS returns no answers', function () {
     InstanceSettings::unguarded(fn () => InstanceSettings::query()->updateOrCreate(['id' => 0], [
         'custom_dns_servers' => '1.1.1.1',
-        'webhook_allowed_internal_hosts' => ['coolify-minio'],
+        'webhook_allowed_internal_hosts' => ['xlaunch-minio'],
     ]));
 
     $rule = new class extends SafeWebhookUrl
@@ -358,15 +358,15 @@ it('falls back to system DNS when custom DNS returns no answers', function () {
     };
 
     $validator = Validator::make(
-        ['url' => 'http://coolify-minio:9000'],
+        ['url' => 'http://xlaunch-minio:9000'],
         ['url' => $rule],
     );
 
     expect($validator->passes())->toBeTrue('Expected system-DNS fallback for allowlisted docker hostname')
         ->and($rule->customCalls)->toHaveCount(1)
-        ->and($rule->customCalls[0][0])->toBe('coolify-minio')
+        ->and($rule->customCalls[0][0])->toBe('xlaunch-minio')
         ->and($rule->customCalls[0][1])->toBe(['1.1.1.1'])
-        ->and($rule->systemCalls)->toBe(['coolify-minio']);
+        ->and($rule->systemCalls)->toBe(['xlaunch-minio']);
 });
 
 it('does not fall back to system DNS when custom DNS returns answers', function () {
@@ -420,7 +420,7 @@ it('still rejects private targets after system DNS fallback when host is not all
     };
 
     $validator = Validator::make(
-        ['url' => 'http://coolify-minio:9000'],
+        ['url' => 'http://xlaunch-minio:9000'],
         ['url' => $rule],
     );
 

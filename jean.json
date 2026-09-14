@@ -2,12 +2,12 @@
   "scripts": {
     "setup": "cp $JEAN_ROOT_PATH/.env .",
     "teardown": null,
-    "run": "docker rm -f coolify coolify-minio-init coolify-realtime coolify-minio coolify-testing-host coolify-redis coolify-db coolify-mail coolify-vite; docker compose -f docker-compose.yml -f docker-compose.dev.yml up; docker compose -f docker-compose.yml -f docker-compose.dev.yml down"
+    "run": "docker rm -f xlaunch xlaunch-minio-init xlaunch-realtime xlaunch-minio xlaunch-testing-host xlaunch-redis xlaunch-db xlaunch-mail xlaunch-vite; docker compose -f docker-compose.yml -f docker-compose.dev.yml up; docker compose -f docker-compose.yml -f docker-compose.dev.yml down"
   },
   "ports": [
     {
       "port": 8000,
-      "label": "Coolify UI"
+      "label": "Xlaunch UI"
     }
   ]
 }

@@ -13,7 +13,7 @@
         <button
             type="button"
             @click.prevent="await window.copyToClipboard({{ Js::from($text) }}); copied = true; setTimeout(() => copied = false, 1000)"
-            class="copy-button flex absolute inset-y-0 right-0 z-10 items-center pr-2 cursor-pointer text-neutral-500 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-coollabs focus-visible:ring-offset-2 dark:text-neutral-400 dark:hover:text-white dark:focus-visible:ring-warning dark:focus-visible:ring-offset-base"
+            class="copy-button flex absolute inset-y-0 right-0 z-10 items-center pr-2 cursor-pointer text-neutral-500 transition-colors hover:text-black focus-visible:ring-2 focus-visible:ring-northlatch focus-visible:ring-offset-2 dark:text-neutral-400 dark:hover:text-white dark:focus-visible:ring-warning dark:focus-visible:ring-offset-base"
             title="Copy to clipboard"
             aria-label="Copy to clipboard">
             <svg x-show="!copied" class="size-[18px]" fill="none" stroke="currentColor" viewBox="0 0 24 24">

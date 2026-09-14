@@ -8,7 +8,7 @@
         ];
     @endphp
     <x-slot:title>
-        Team Danger Zone | Coolify
+        Team Danger Zone | Xlaunch
     </x-slot>
 
     <x-team.settings-layout>
@@ -38,18 +38,18 @@
                                 </p>
                             @elseif(currentTeam()->subscription)
                                 <p class="mt-2 text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
-                                    Cancel your <a class="font-medium text-coollabs hover:underline dark:text-warning"
+                                    Cancel your <a class="font-medium text-northlatch hover:underline dark:text-warning"
                                         {{ wireNavigate() }} href="{{ route('subscription.show') }}">subscription</a>
                                     before deleting this team.
                                 </p>
                             @elseif($deletionBlockers === [])
                                 <p class="mt-2 max-w-2xl text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
                                     Permanently delete <strong class="font-semibold text-black dark:text-fg">{{ currentTeam()->name }}</strong>
-                                    from Coolify. This action cannot be undone.
+                                    from Xlaunch. This action cannot be undone.
                                 </p>
                                 <ul class="mt-3 space-y-1 text-xs text-neutral-500 dark:text-fg-dim">
                                     <li>• All members will lose access to this team.</li>
-                                    <li>• This team cannot be restored from Coolify after deletion.</li>
+                                    <li>• This team cannot be restored from Xlaunch after deletion.</li>
                                 </ul>
                             @else
                                 <p class="mt-2 text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
@@ -58,7 +58,7 @@
                                 <ul class="mt-2 space-y-1 text-[13px] text-neutral-600 dark:text-fg-dim">
                                     @foreach ($deletionBlockers as $type => $count)
                                         <li>
-                                            <a class="font-medium text-coollabs hover:underline dark:text-warning"
+                                            <a class="font-medium text-northlatch hover:underline dark:text-warning"
                                                 {{ wireNavigate() }} href="{{ route($blockerDetails[$type]['route']) }}">
                                                 {{ $count }} {{ str($blockerDetails[$type]['label'])->plural($count) }}
                                             </a>
@@ -81,7 +81,7 @@
                                     $deletionBlockers === [])
                                 <x-modal-confirmation title="Confirm Team Deletion?" buttonTitle="Delete team"
                                     isErrorButton submitAction="delete"
-                                    :actions="['The current team will be permanently deleted from Coolify and the database.']"
+                                    :actions="['The current team will be permanently deleted from Xlaunch and the database.']"
                                     confirmationText="{{ currentTeam()->name }}"
                                     confirmationLabel="Enter the team name to confirm permanent deletion"
                                     shortConfirmationLabel="Team name" :confirmWithPassword="false"

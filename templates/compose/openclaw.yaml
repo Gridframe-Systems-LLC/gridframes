@@ -1,4 +1,4 @@
-# documentation: https://coolify.io/docs/services/openclaw
+# documentation: https://northlatch.com/docs/services/openclaw
 # slogan: AI-powered coding assistant with multi-provider support and browser automation.
 # category: ai
 # tags: ai, coding, assistant, llm, anthropic, openai, automation
@@ -7,7 +7,7 @@
 
 services:
   openclaw:
-    image: "coollabsio/openclaw:2026.2.6"
+    image: "northlatch/openclaw:2026.2.6"
     environment:
       - SERVICE_FQDN_OPENCLAW_8080
       - AUTH_USERNAME=$SERVICE_USER_OPENCLAW
@@ -71,7 +71,7 @@ services:
       timeout: 10s
       retries: 5
   browser:
-    image: "coollabsio/openclaw-browser:latest"
+    image: "northlatch/openclaw-browser:latest"
     environment:
       - PUID=1000
       - PGID=1000

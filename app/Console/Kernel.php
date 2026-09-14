@@ -14,7 +14,7 @@ use App\Jobs\PullTemplatesFromCDN;
 use App\Jobs\RegenerateSslCertJob;
 use App\Jobs\ScheduledJobManager;
 use App\Jobs\ServerManagerJob;
-use App\Jobs\UpdateCoolifyJob;
+use App\Jobs\UpdateXlaunchJob;
 use App\Models\InstanceSettings;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
@@ -44,7 +44,7 @@ class Kernel extends ConsoleKernel
         $this->scheduleInstance->call(fn () => app(CleanupStaleMultiplexedConnections::class)->handle())
             ->name('cleanup:ssh-mux')
             ->hourly()
-            ->when(fn () => config('constants.ssh.mux_enabled') && ! config('constants.coolify.is_windows_docker_desktop'));
+            ->when(fn () => config('constants.ssh.mux_enabled') && ! config('constants.xlaunch.is_windows_docker_desktop'));
         $this->scheduleInstance->command('cleanup:redis --clear-locks')->daily();
         $this->scheduleInstance->command('cleanup:stucked-resources')
             ->dailyAt('03:17')
@@ -115,7 +115,7 @@ class Kernel extends ConsoleKernel
 
         if ($this->settings->is_auto_update_enabled) {
             $autoUpdateFrequency = $this->settings->auto_update_frequency;
-            $this->scheduleInstance->job(new UpdateCoolifyJob)
+            $this->scheduleInstance->job(new UpdateXlaunchJob)
                 ->cron($autoUpdateFrequency)
                 ->timezone($this->instanceTimezone)
                 ->onOneServer();

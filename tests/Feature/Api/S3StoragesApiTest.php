@@ -56,7 +56,7 @@ function validS3StoragePayload(array $overrides = []): array
         'name' => 'My S3 Storage',
         'description' => 'Backup storage',
         'endpoint' => 'https://s3.amazonaws.com',
-        'bucket' => 'coolify-backups',
+        'bucket' => 'xlaunch-backups',
         'region' => 'us-east-1',
         'key' => 'AKIAEXAMPLEKEY',
         'secret' => 'example-secret-value',
@@ -256,7 +256,7 @@ describe('POST /api/v1/s3-storages', function () {
         $this->assertDatabaseHas('s3_storages', [
             'team_id' => $this->team->id,
             'name' => 'My S3 Storage',
-            'bucket' => 'coolify-backups',
+            'bucket' => 'xlaunch-backups',
             'region' => 'us-east-1',
         ]);
     });

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Notifications | Coolify
+        Notifications | Xlaunch
     </x-slot>
 
     <x-notification.settings-layout>
@@ -114,7 +114,7 @@
                         <x-forms.input canGate="update" :canResource="$settings" id="smtpTimeout" type="number"
                             helper="Timeout value for sending emails." label="Timeout" />
                         <x-forms.input canGate="update" :canResource="$settings" id="smtpEhloDomain"
-                            placeholder="coolify.example.com"
+                            placeholder="xlaunch.example.com"
                             helper="Fully qualified domain sent in the SMTP EHLO command. Uses the system default when empty."
                             label="EHLO domain" />
                     </div>

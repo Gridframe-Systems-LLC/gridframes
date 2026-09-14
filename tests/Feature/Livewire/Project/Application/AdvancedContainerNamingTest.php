@@ -23,7 +23,7 @@ function createApplicationForContainerNamingTest(): Application
 
     return Application::create([
         'name' => 'container-naming-test-app',
-        'git_repository' => 'https://github.com/coollabsio/coolify',
+        'git_repository' => 'https://github.com/northlatch/xlaunch',
         'git_branch' => 'main',
         'build_pack' => 'nixpacks',
         'ports_exposes' => '3000',
@@ -77,7 +77,7 @@ it('renders the configuration link from application uuids when labels are manual
         ->assertSee($expectedHref, false);
 });
 
-it('toggles consistent naming when labels are managed by coolify', function () {
+it('toggles consistent naming when labels are managed by xlaunch', function () {
     $application = createApplicationForContainerNamingTest();
     $application->settings->update([
         'is_container_label_readonly_enabled' => true,

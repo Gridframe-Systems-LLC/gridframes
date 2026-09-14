@@ -172,7 +172,7 @@ describe('S3RestoreJobFinished path validation', function () {
     it('validates realistic S3 restore paths', function () {
         // These are the kinds of paths that would actually be used
         $realisticPaths = [
-            '/tmp/coolify-s3-restore-'.uniqid().'.sql',
+            '/tmp/xlaunch-s3-restore-'.uniqid().'.sql',
             '/tmp/db-backup-'.date('Y-m-d').'.dump',
             '/tmp/restore-script-'.uniqid().'.sh',
         ];

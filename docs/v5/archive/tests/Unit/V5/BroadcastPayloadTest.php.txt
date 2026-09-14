@@ -77,7 +77,7 @@ it('broadcasts the same application shape as the initial-load canvas serializer'
         'created_by_user_id' => $server->created_by_user_id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-parity',
+        'container_name' => 'xlaunch-v5-nginx-parity',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'container-123',

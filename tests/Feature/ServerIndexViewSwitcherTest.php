@@ -1,6 +1,6 @@
 <?php
 
-test('view switchers use the shared coollabs selected state on every page', function () {
+test('view switchers use the shared northlatch selected state on every page', function () {
     $views = collect([
         resource_path('views/livewire/server/index.blade.php'),
         resource_path('views/livewire/project/index.blade.php'),
@@ -22,7 +22,7 @@ test('view switchers use the shared coollabs selected state on every page', func
         ->and($views->implode("\n"))->not->toContain('dark:bg-warning/15 dark:text-warning')
         ->and($utilities)
         ->toContain('@utility control-selected')
-        ->toContain('@apply bg-linear-to-b from-coollabs-100 to-coollabs-200 text-white;');
+        ->toContain('@apply bg-linear-to-b from-northlatch-100 to-northlatch-200 text-white;');
 });
 
 test('server index does not expose server IP addresses', function () {

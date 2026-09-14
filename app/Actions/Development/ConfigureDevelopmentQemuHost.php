@@ -61,7 +61,7 @@ class ConfigureDevelopmentQemuHost
 
     private function configureIpForwarding(): void
     {
-        $this->runOrFail("printf 'net.ipv4.ip_forward=1\\n' > /etc/sysctl.d/99-coolify-development-qemu.conf");
+        $this->runOrFail("printf 'net.ipv4.ip_forward=1\\n' > /etc/sysctl.d/99-xlaunch-development-qemu.conf");
         $this->runOrFail('sysctl -w net.ipv4.ip_forward=1');
     }
 
@@ -79,7 +79,7 @@ class ConfigureDevelopmentQemuHost
         $subnet = trim($subnetResult->output());
 
         if ($subnetResult->failed() || $subnet === '') {
-            throw new RuntimeException('Unable to determine the Coolify Docker network subnet.');
+            throw new RuntimeException('Unable to determine the Xlaunch Docker network subnet.');
         }
 
         $rule = sprintf('-s %s -d %s -o virbr0 -j ACCEPT', escapeshellarg($subnet), escapeshellarg(config('development-qemu.subnet')));

@@ -9,7 +9,7 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     Storage::fake('backups');
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 });
 
 test('it exports subscribed and unsubscribed verified users to separate files without tags', function () {
@@ -86,11 +86,11 @@ test('it exports subscribed and unsubscribed verified users to separate files wi
     ]);
 });
 
-test('it only runs on Coolify Cloud', function () {
-    config()->set('constants.coolify.self_hosted', true);
+test('it only runs on Xlaunch Cloud', function () {
+    config()->set('constants.xlaunch.self_hosted', true);
 
     $this->artisan('cloud:export-users')
-        ->expectsOutput('This command can only be run on Coolify Cloud.')
+        ->expectsOutput('This command can only be run on Xlaunch Cloud.')
         ->assertFailed();
 
     Storage::disk('backups')->assertMissing([

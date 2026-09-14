@@ -1,16 +1,16 @@
 <?php
 
 test('generate_application_name strips owner from git repository', function () {
-    $name = generate_application_name('coollabsio/coolify', 'main', 'test123');
+    $name = generate_application_name('northlatch/xlaunch', 'main', 'test123');
 
-    expect($name)->toBe('coolify:main-test123');
-    expect($name)->not->toContain('coollabsio');
+    expect($name)->toBe('xlaunch:main-test123');
+    expect($name)->not->toContain('northlatch');
 });
 
 test('generate_application_name handles repository without owner', function () {
-    $name = generate_application_name('coolify', 'main', 'test123');
+    $name = generate_application_name('xlaunch', 'main', 'test123');
 
-    expect($name)->toBe('coolify:main-test123');
+    expect($name)->toBe('xlaunch:main-test123');
 });
 
 test('generate_application_name handles deeply nested repository path', function () {

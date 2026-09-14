@@ -4,7 +4,7 @@
             <div class="application-settings-section-header">
                 <div>
                     <h2>Private repository</h2>
-                    <p>Choose the SSH key Coolify will use to clone this repository.</p>
+                    <p>Choose the SSH key Xlaunch will use to clone this repository.</p>
                 </div>
             </div>
             <div class="application-settings-section-body p-0!">
@@ -46,7 +46,7 @@
                 <div class="application-settings-section-header">
                     <div>
                         <h2>Repository configuration</h2>
-                        <p>Enter the repository location and choose how Coolify should build it.</p>
+                        <p>Enter the repository location and choose how Xlaunch should build it.</p>
                     </div>
                     <x-forms.button type="submit" isHighlighted>Continue</x-forms.button>
                 </div>
@@ -95,7 +95,7 @@
                                 @blur="composeLocation = normalize(composeLocation)" />
                             <p class="sm:col-span-2 text-xs text-neutral-500 dark:text-fg-dim">
                                 Resolved file:
-                                <code class="font-mono text-coollabs dark:text-warning"
+                                <code class="font-mono text-northlatch dark:text-warning"
                                     x-text='(baseDir === "/" ? "" : baseDir) + (composeLocation.startsWith("/") ? composeLocation : "/" + composeLocation)'></code>
                             </p>
                         </div>

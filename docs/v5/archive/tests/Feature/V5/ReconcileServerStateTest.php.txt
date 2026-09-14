@@ -63,7 +63,7 @@ function createReconcileApplication(V5Server $server, array $attributes = []): V
         'created_by_user_id' => 1,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-test',
+        'container_name' => 'xlaunch-v5-nginx-test',
         'status' => 'running',
         'runtime_container_id' => 'container-live',
         ...$attributes,
@@ -104,7 +104,7 @@ it('updates application status from the observed container state and refreshes c
     $fluxClient->shouldReceive('listContainers')->once()->andReturn([
         [
             'id' => 'container-live',
-            'name' => 'coolify-v5-nginx-test',
+            'name' => 'xlaunch-v5-nginx-test',
             'image' => 'docker.io/library/nginx:alpine',
             'state' => 'Restarting',
         ],
@@ -246,7 +246,7 @@ it('drops a reconcile write when the stored observation is newer than the snapsh
 
     $fluxClient = Mockery::mock(FluxClient::class);
     $fluxClient->shouldReceive('listContainers')->once()->andReturn([
-        ['id' => 'container-live', 'name' => 'coolify-v5-nginx-test', 'state' => 'exited'],
+        ['id' => 'container-live', 'name' => 'xlaunch-v5-nginx-test', 'state' => 'exited'],
     ]);
 
     (new V5ReconcileServerStateJob($server->id))->handle($fluxClient);
@@ -271,7 +271,7 @@ it('advances status_observed_at when reconcile writes an application status', fu
 
     $fluxClient = Mockery::mock(FluxClient::class);
     $fluxClient->shouldReceive('listContainers')->once()->andReturn([
-        ['id' => 'container-live', 'name' => 'coolify-v5-nginx-test', 'state' => 'restarting'],
+        ['id' => 'container-live', 'name' => 'xlaunch-v5-nginx-test', 'state' => 'restarting'],
     ]);
 
     (new V5ReconcileServerStateJob($server->id))->handle($fluxClient);
@@ -290,7 +290,7 @@ it('normalizes the coold configured state to a valid status on reconcile', funct
 
     $fluxClient = Mockery::mock(FluxClient::class);
     $fluxClient->shouldReceive('listContainers')->once()->andReturn([
-        ['id' => 'container-live', 'name' => 'coolify-v5-nginx-test', 'state' => 'configured'],
+        ['id' => 'container-live', 'name' => 'xlaunch-v5-nginx-test', 'state' => 'configured'],
     ]);
 
     (new V5ReconcileServerStateJob($server->id))->handle($fluxClient);
@@ -336,7 +336,7 @@ it('does not broadcast when reconcile finds the application status unchanged', f
 
     $fluxClient = Mockery::mock(FluxClient::class);
     $fluxClient->shouldReceive('listContainers')->once()->andReturn([
-        ['id' => 'container-live', 'name' => 'coolify-v5-nginx-test', 'state' => 'running'],
+        ['id' => 'container-live', 'name' => 'xlaunch-v5-nginx-test', 'state' => 'running'],
     ]);
 
     (new V5ReconcileServerStateJob($server->id))->handle($fluxClient);

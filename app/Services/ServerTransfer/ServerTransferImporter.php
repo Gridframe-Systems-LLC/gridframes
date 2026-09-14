@@ -351,7 +351,7 @@ class ServerTransferImporter
                     $result['claimed'] = true;
                     $result['claim'] = $claimResult;
                     if (! data_get($claimResult, 'claim_written') && $writeRemote) {
-                        $result['warnings'][] = 'Server imported and claimed in Coolify, but the remote ownership file was not written (SSH unavailable).';
+                        $result['warnings'][] = 'Server imported and claimed in Xlaunch, but the remote ownership file was not written (SSH unavailable).';
                     }
                 } catch (Throwable $e) {
                     $result['claimed'] = false;
@@ -531,8 +531,8 @@ class ServerTransferImporter
                     $model = new SwarmDocker;
                     $model->forceFill([
                         'uuid' => SwarmDocker::where('uuid', $uuid)->exists() ? new_public_id() : $uuid,
-                        'name' => data_get($destination, 'name') ?: 'coolify-overlay',
-                        'network' => data_get($destination, 'network') ?: 'coolify-overlay',
+                        'name' => data_get($destination, 'name') ?: 'xlaunch-overlay',
+                        'network' => data_get($destination, 'network') ?: 'xlaunch-overlay',
                         'server_id' => $server->id,
                     ])->saveQuietly();
                 }
@@ -552,8 +552,8 @@ class ServerTransferImporter
                     $model = new StandaloneDocker;
                     $model->forceFill([
                         'uuid' => StandaloneDocker::where('uuid', $uuid)->exists() ? new_public_id() : $uuid,
-                        'name' => data_get($destination, 'name') ?: 'coolify',
-                        'network' => data_get($destination, 'network') ?: 'coolify',
+                        'name' => data_get($destination, 'name') ?: 'xlaunch',
+                        'network' => data_get($destination, 'network') ?: 'xlaunch',
                         'server_id' => $server->id,
                     ])->saveQuietly();
                 }

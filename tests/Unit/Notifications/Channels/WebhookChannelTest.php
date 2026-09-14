@@ -21,7 +21,7 @@ uses(TestCase::class, RefreshDatabase::class);
 beforeEach(function () {
     // base_url() resolves the instance settings singleton, which lives at the id = 0 sentinel.
     InstanceSettings::unguarded(fn () => InstanceSettings::query()->updateOrCreate(['id' => 0], [
-        'fqdn' => 'https://coolify.example.com',
+        'fqdn' => 'https://xlaunch.example.com',
     ]));
     Queue::fake();
 
@@ -33,7 +33,7 @@ beforeEach(function () {
     // Assign through the model so the `encrypted` cast on webhook_url is applied.
     $settings = $this->team->webhookNotificationSettings;
     $settings->webhook_enabled = true;
-    $settings->webhook_url = 'https://webhook.example.com/coolify';
+    $settings->webhook_url = 'https://webhook.example.com/xlaunch';
     $settings->save();
     $this->team->refresh();
 });

@@ -13,7 +13,7 @@ return new class extends Migration
 
         // Fillfactor < 100 leaves free space per page so Postgres can do HOT
         // (Heap-Only Tuple) in-place updates instead of allocating a new tuple
-        // elsewhere. Coolify's hot-update tables churn rows on every Sentinel
+        // elsewhere. Xlaunch's hot-update tables churn rows on every Sentinel
         // push / status change; without page-local headroom, non-HOT updates
         // accumulate dead tuples and bloat the heap (we've seen up to 50× on
         // cloud). Lower fillfactor on hot-update tables, default on the rest.

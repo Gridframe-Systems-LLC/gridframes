@@ -1,11 +1,11 @@
-name: Coolify Realtime
+name: Xlaunch Realtime
 
 on:
   push:
     branches: [ "main" ]
     paths:
-      - .github/workflows/coolify-realtime.yml
-      - docker/coolify-realtime/**
+      - .github/workflows/xlaunch-realtime.yml
+      - docker/xlaunch-realtime/**
 
 permissions:
   contents: read
@@ -14,7 +14,7 @@ permissions:
 env:
   GITHUB_REGISTRY: ghcr.io
   DOCKER_REGISTRY: docker.io
-  IMAGE_NAME: "coollabsio/coolify-realtime"
+  IMAGE_NAME: "northlatch/xlaunch-realtime"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -101,14 +101,14 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: docker/coolify-realtime/Dockerfile
+          file: docker/xlaunch-realtime/Dockerfile
           platforms: ${{ matrix.platform }}
           push: true
           tags: |
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-${{ matrix.arch }}
             ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}-${{ matrix.arch }}
           labels: |
-            coolify.managed=true
+            xlaunch.managed=true
 
   merge-manifest:
     runs-on: ubuntu-24.04

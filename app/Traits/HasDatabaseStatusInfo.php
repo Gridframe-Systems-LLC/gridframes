@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
  *
  * Lives on a child Livewire component so status broadcasts never trigger a
  * roundtrip on the parent form — preserving in-progress typing AND wire:dirty.
- * See coolify#6062 / #6354 / #9695.
+ * See xlaunch#6062 / #6354 / #9695.
  *
  * Consumers must declare a typed `public Model $database` and implement
  * databaseLabel(). All other hooks have sensible defaults.

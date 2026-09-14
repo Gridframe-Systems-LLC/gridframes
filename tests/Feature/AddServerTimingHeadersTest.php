@@ -68,7 +68,7 @@ test('injects on-screen HUD into full HTML documents when server_timing is enabl
         ->toContain('toggleOpen')
         ->toContain('formatEntryForAi')
         ->toContain('copyEntryById')
-        ->toContain('__coolifyServerTimingHistory')
+        ->toContain('__xlaunchServerTimingHistory')
         ->toContain('</body>');
     expect(substr_count($body, 'id="server-timing-hud"'))->toBe(1);
     // Docks into main top bar via #server-timing-hud-slot; float fallback is bottom-left.
@@ -220,11 +220,11 @@ test('server timing HUD can be toggled from the development command center', fun
     $commandCenter = file_get_contents(resource_path('views/livewire/global-search.blade.php'));
 
     expect($hud)
-        ->toContain('coolify.serverTimingHud.enabled')
+        ->toContain('xlaunch.serverTimingHud.enabled')
         ->toContain('server-timing-hud-visibility-changed')
         ->and($commandCenter)
         ->toContain("app()->environment('local')")
         ->toContain('Toggle Server Timing HUD')
-        ->toContain("localStorage.setItem('coolify.serverTimingHud.enabled'")
+        ->toContain("localStorage.setItem('xlaunch.serverTimingHud.enabled'")
         ->toContain("window.dispatchEvent(new CustomEvent('server-timing-hud-visibility-changed'))");
 });

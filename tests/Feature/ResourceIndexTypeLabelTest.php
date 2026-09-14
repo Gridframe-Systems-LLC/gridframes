@@ -28,13 +28,13 @@ beforeEach(function () {
     $this->destination = StandaloneDocker::where('server_id', $this->server->id)->first()
         ?? StandaloneDocker::create([
             'name' => 'default',
-            'network' => 'coolify',
+            'network' => 'xlaunch',
             'server_id' => $this->server->id,
         ]);
 
     $this->project = Project::factory()->create([
         'team_id' => $this->team->id,
-        'name' => 'coolLabs',
+        'name' => 'northlatch',
     ]);
     $this->environment = $this->project->environments()->firstOrFail();
 });
@@ -77,7 +77,7 @@ test('resource index type labels use category names not engine names for databas
     Application::create([
         'name' => 'docker-image-test',
         'fqdn' => 'https://example.com',
-        'git_repository' => 'coollabsio/coolify',
+        'git_repository' => 'northlatch/xlaunch',
         'git_branch' => 'main',
         'build_pack' => 'dockerimage',
         'ports_exposes' => '80',

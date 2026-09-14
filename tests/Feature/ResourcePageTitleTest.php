@@ -24,8 +24,8 @@ beforeEach(function () {
 
 it('renders the source name as a large page title before the navbar', function () {
     $githubApp = GithubApp::create([
-        'name' => 'coolify-laravel-dev-public',
-        'organization' => 'coollabsio',
+        'name' => 'xlaunch-laravel-dev-public',
+        'organization' => 'northlatch',
         'api_url' => 'https://api.github.com',
         'html_url' => 'https://github.com',
         'custom_user' => 'git',
@@ -45,8 +45,8 @@ it('renders the source name as a large page title before the navbar', function (
     $response->assertSee('text-[24px]! leading-7! font-semibold! tracking-tight!', false);
     $response->assertSee('order-1 mb-4 flex min-w-0 items-start justify-between gap-4 lg:order-2', false);
     $response->assertSee('order-2 lg:order-1', false);
-    $response->assertSee('coolify-laravel-dev-public');
-    $response->assertSee('GitHub App for coollabsio');
+    $response->assertSee('xlaunch-laravel-dev-public');
+    $response->assertSee('GitHub App for northlatch');
     $response->assertSee('>General</h3>', false);
 
     $html = $response->getContent();
@@ -82,13 +82,13 @@ it('renders family page titles before tabs for team notifications and keys', fun
 it('renders the destination name as a large page title', function () {
     $server = Server::factory()->create(['team_id' => $this->team->id, 'name' => 'prod-server']);
     $destination = StandaloneDocker::query()->where('server_id', $server->id)->firstOrFail();
-    $destination->update(['name' => 'coolify']);
+    $destination->update(['name' => 'xlaunch']);
 
     $response = $this->get(route('destination.show', ['destination_uuid' => $destination->uuid]));
 
     $response->assertSuccessful();
     $response->assertSee('text-[24px]! leading-7! font-semibold! tracking-tight!', false);
-    $response->assertSee('coolify');
+    $response->assertSee('xlaunch');
     $response->assertSee('Docker network on prod-server');
     $response->assertSee('>General</h3>', false);
 });
@@ -100,7 +100,7 @@ it('renders the s3 storage name as a large page title', function () {
         'region' => 'us-east-1',
         'key' => 'access-key',
         'secret' => 'secret-key',
-        'bucket' => 'coolify-backups',
+        'bucket' => 'xlaunch-backups',
         'endpoint' => 'https://s3.example.com',
         'team_id' => $this->team->id,
         'is_usable' => true,

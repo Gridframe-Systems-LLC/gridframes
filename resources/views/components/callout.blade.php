@@ -24,9 +24,9 @@
         ],
         'info' => [
             'icon' => 'info-circle',
-            'shell' => 'border-coollabs/20 bg-coollabs/[0.055] dark:border-warning/15 dark:bg-warning/[0.045]',
-            'iconClass' => 'text-coollabs dark:text-warning',
-            'titleClass' => 'text-coollabs dark:text-warning',
+            'shell' => 'border-northlatch/20 bg-northlatch/[0.055] dark:border-warning/15 dark:bg-warning/[0.045]',
+            'iconClass' => 'text-northlatch dark:text-warning',
+            'titleClass' => 'text-northlatch dark:text-warning',
             'textClass' => 'text-neutral-600 dark:text-fg-dim',
         ],
         'success' => [

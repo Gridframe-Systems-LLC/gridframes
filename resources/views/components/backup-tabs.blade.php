@@ -43,7 +43,7 @@
         @if ($context === 'service-schedule')
             <button type="button" @click="activeSection = '{{ $item['key'] }}'"
                 :class="activeSection === '{{ $item['key'] }}'
-                    ? 'bg-coollabs/10 text-coollabs ring-1 ring-coollabs/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'
+                    ? 'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'
                     : 'text-neutral-500 hover:bg-black/5 hover:text-neutral-900 dark:text-fg-dim dark:hover:bg-white/[0.06] dark:hover:text-fg'"
                 class="inline-flex h-8 shrink-0 cursor-pointer items-center rounded-md px-3 text-[13px] font-medium transition-colors">
                 {{ $item['label'] }}
@@ -51,7 +51,7 @@
         @else
             <a @class([
                 'inline-flex h-8 shrink-0 items-center rounded-md px-3 text-[13px] font-medium transition-colors',
-                'bg-coollabs/10 text-coollabs ring-1 ring-coollabs/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25' => $section === $item['key'],
+                'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25' => $section === $item['key'],
                 'text-neutral-500 hover:bg-black/5 hover:text-neutral-900 dark:text-fg-dim dark:hover:bg-white/[0.06] dark:hover:text-fg' => $section !== $item['key'],
             ])
                 {{ wireNavigate() }} href="{{ route($routes[$item['key']], $parameters) }}">

@@ -23,8 +23,8 @@ beforeEach(function () {
     $this->publicKey = $pair['public'];
 
     config([
-        'constants.coolify.self_hosted' => false, // isCloud()
-        'services.domain_connect.provider_id' => 'coolify.io',
+        'constants.xlaunch.self_hosted' => false, // isCloud()
+        'services.domain_connect.provider_id' => 'northlatch.com',
         'services.domain_connect.service_id' => 'hosting',
         'services.domain_connect.key_id' => '_dcpubkeyv1',
         'services.domain_connect.private_key' => $this->privateKey,
@@ -51,7 +51,7 @@ it('builds a signed cloudflare domain connect apply url like resend', function (
     );
 
     expect($url)
-        ->toStartWith('https://dash.cloudflare.com/domainconnect/v2/domainTemplates/providers/coolify.io/services/hosting/apply?')
+        ->toStartWith('https://dash.cloudflare.com/domainconnect/v2/domainTemplates/providers/northlatch.com/services/hosting/apply?')
         ->toContain('domain=example.com')
         ->toContain('host=app')
         ->toContain('ip=203.0.113.10')

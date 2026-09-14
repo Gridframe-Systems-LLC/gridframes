@@ -4,9 +4,9 @@
  * Shared domain URL helpers used by application/service parsers and updateCompose.
  *
  * TDD targets:
- * - getHostWithoutPort(): COOLIFY_FQDN / SERVICE_FQDN host-only form (no scheme, no port)
+ * - getHostWithoutPort(): XLAUNCH_FQDN / SERVICE_FQDN host-only form (no scheme, no port)
  * - firstDomainFromList(): comma-separated FQDN lists (same as updateCompose / serviceParser)
- * - getFqdnWithoutPort() remains the scheme+host form for COOLIFY_URL / SERVICE_URL
+ * - getFqdnWithoutPort() remains the scheme+host form for XLAUNCH_URL / SERVICE_URL
  */
 
 // ---------------------------------------------------------------------------
@@ -25,7 +25,7 @@ test('getHostWithoutPort preserves path segments', function () {
 });
 
 test('getHostWithoutPort keeps real host when credentials are present', function () {
-    // Legacy COOLIFY_FQDN strip: replace scheme then before(':') → "user"
+    // Legacy XLAUNCH_FQDN strip: replace scheme then before(':') → "user"
     expect(getHostWithoutPort('http://user:secret@git.example.com:80'))
         ->toBe('git.example.com');
 });
@@ -38,7 +38,7 @@ test('getHostWithoutPort returns original when host cannot be parsed', function 
     expect(getHostWithoutPort('not-a-url'))->toBe('not-a-url');
 });
 
-test('legacy COOLIFY_FQDN strip corrupts credential urls (documents why we refactor)', function () {
+test('legacy XLAUNCH_FQDN strip corrupts credential urls (documents why we refactor)', function () {
     $fqdn = 'http://user:secret@git.example.com:80';
 
     $legacy = (string) str($fqdn)

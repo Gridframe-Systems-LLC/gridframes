@@ -30,7 +30,7 @@
 
 ## Apply shared domain UX to every supported resource type
 - When a user asks for domain-management behavior, inventory every resource that can edit domains before implementation.
-- Do not stop at the resource type named in the original report when the requested UX is meant to be consistent across Coolify.
+- Do not stop at the resource type named in the original report when the requested UX is meant to be consistent across Xlaunch.
 
 ## Verify manual and generated domain paths separately
 - Domain regeneration and manual hostname edits must start the same post-save DNS check.

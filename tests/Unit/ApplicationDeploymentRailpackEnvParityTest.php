@@ -53,7 +53,7 @@ it('generates escaped railpack env args from resolved values and includes instal
 
     $job = Mockery::mock(ApplicationDeploymentJob::class)->makePartial();
     $job->shouldAllowMockingProtectedMethods();
-    $job->shouldReceive('generate_coolify_env_variables')->andReturn(collect([]));
+    $job->shouldReceive('generate_xlaunch_env_variables')->andReturn(collect([]));
 
     $reflection = new ReflectionClass(ApplicationDeploymentJob::class);
     $applicationProperty = $reflection->getProperty('application');
@@ -115,7 +115,7 @@ it('uses preview railpack environment variables for preview deployments', functi
 
     $job = Mockery::mock(ApplicationDeploymentJob::class)->makePartial();
     $job->shouldAllowMockingProtectedMethods();
-    $job->shouldReceive('generate_coolify_env_variables')->andReturn(collect([]));
+    $job->shouldReceive('generate_xlaunch_env_variables')->andReturn(collect([]));
 
     $reflection = new ReflectionClass(ApplicationDeploymentJob::class);
     $applicationProperty = $reflection->getProperty('application');
@@ -140,7 +140,7 @@ it('uses preview railpack environment variables for preview deployments', functi
     ]);
 });
 
-it('merges coolify env variables into railpack build variables', function () {
+it('merges xlaunch env variables into railpack build variables', function () {
     $application = Mockery::mock(Application::class);
     $application->shouldReceive('getAttribute')->with('install_command')->andReturn(null);
 
@@ -164,13 +164,13 @@ it('merges coolify env variables into railpack build variables', function () {
 
     $job = Mockery::mock(ApplicationDeploymentJob::class)->makePartial();
     $job->shouldAllowMockingProtectedMethods();
-    $job->shouldReceive('generate_coolify_env_variables')
+    $job->shouldReceive('generate_xlaunch_env_variables')
         ->with(true)
         ->andReturn(collect([
-            'COOLIFY_URL' => 'https://app.example.com',
-            'COOLIFY_FQDN' => 'app.example.com',
-            'COOLIFY_BRANCH' => 'main',
-            'COOLIFY_RESOURCE_UUID' => 'app-uuid',
+            'XLAUNCH_URL' => 'https://app.example.com',
+            'XLAUNCH_FQDN' => 'app.example.com',
+            'XLAUNCH_BRANCH' => 'main',
+            'XLAUNCH_RESOURCE_UUID' => 'app-uuid',
             'SOURCE_COMMIT' => 'abc123',
             'EMPTY_VAR' => '',
             'NULL_VAR' => null,
@@ -196,10 +196,10 @@ it('merges coolify env variables into railpack build variables', function () {
     expect($variables->all())->toBe([
         'MY_BUILD_VAR' => 'hello',
         'RAILPACK_DEPLOY_APT_PACKAGES' => 'curl wget',
-        'COOLIFY_URL' => 'https://app.example.com',
-        'COOLIFY_FQDN' => 'app.example.com',
-        'COOLIFY_BRANCH' => 'main',
-        'COOLIFY_RESOURCE_UUID' => 'app-uuid',
+        'XLAUNCH_URL' => 'https://app.example.com',
+        'XLAUNCH_FQDN' => 'app.example.com',
+        'XLAUNCH_BRANCH' => 'main',
+        'XLAUNCH_RESOURCE_UUID' => 'app-uuid',
         'SOURCE_COMMIT' => 'abc123',
     ]);
 
@@ -207,7 +207,7 @@ it('merges coolify env variables into railpack build variables', function () {
     $envArgsProperty->setAccessible(true);
     $envArgs = $envArgsProperty->getValue($job);
 
-    expect($envArgs)->toContain("--env 'COOLIFY_URL=https://app.example.com'");
+    expect($envArgs)->toContain("--env 'XLAUNCH_URL=https://app.example.com'");
     expect($envArgs)->toContain("--env 'SOURCE_COMMIT=abc123'");
     expect($envArgs)->toContain("--env 'RAILPACK_DEPLOY_APT_PACKAGES=curl wget'");
     expect($envArgs)->not->toContain('EMPTY_VAR');
@@ -238,7 +238,7 @@ it('preserves user railpack deploy apt packages while adding healthcheck tools o
 
     $job = Mockery::mock(ApplicationDeploymentJob::class)->makePartial();
     $job->shouldAllowMockingProtectedMethods();
-    $job->shouldReceive('generate_coolify_env_variables')->andReturn(collect([]));
+    $job->shouldReceive('generate_xlaunch_env_variables')->andReturn(collect([]));
 
     $reflection = new ReflectionClass(ApplicationDeploymentJob::class);
     $applicationProperty = $reflection->getProperty('application');

@@ -7,7 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('constants.coolify.self_hosted', true);
+    config()->set('constants.xlaunch.self_hosted', true);
 });
 
 it('returns server limit when team is passed directly without session', function () {
@@ -42,7 +42,7 @@ it('returns false for serverLimitReached when team has servers under limit', fun
 });
 
 it('returns true for serverLimitReached when team has servers at limit', function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 
     $team = Team::factory()->create(['custom_server_limit' => 1]);
     Server::factory()->create(['team_id' => $team->id]);

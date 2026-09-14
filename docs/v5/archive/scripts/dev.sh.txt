@@ -4,7 +4,7 @@ set -euo pipefail
 ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT"
 
-read_coolify_env() {
+read_xlaunch_env() {
   key="$1"
   default_value="$2"
   current_value="${!key:-}"
@@ -27,10 +27,10 @@ read_coolify_env() {
 
 coold_vm_count() {
   local count
-  count="$(read_coolify_env COOLIFY_COOLD_VM_COUNT 2)"
+  count="$(read_xlaunch_env XLAUNCH_COOLD_VM_COUNT 2)"
 
   if [ "$count" != "1" ] && [ "$count" != "2" ]; then
-    echo "ERROR: COOLIFY_COOLD_VM_COUNT supports 1 or 2 for now." >&2
+    echo "ERROR: XLAUNCH_COOLD_VM_COUNT supports 1 or 2 for now." >&2
     exit 1
   fi
 
@@ -40,24 +40,24 @@ coold_vm_count() {
 coold_vm_instance() {
   local index="$1"
   local base
-  base="$(read_coolify_env COOLIFY_COOLD_LIMA_INSTANCE coold-dev)"
+  base="$(read_xlaunch_env XLAUNCH_COOLD_LIMA_INSTANCE coold-dev)"
 
   if [ "$index" = "1" ]; then
     printf '%s\n' "$base"
     return
   fi
 
-  read_coolify_env "COOLIFY_COOLD_LIMA_INSTANCE_${index}" "${base}-${index}"
+  read_xlaunch_env "XLAUNCH_COOLD_LIMA_INSTANCE_${index}" "${base}-${index}"
 }
 
 coold_vm_wg_ip() {
   local index="$1"
-  read_coolify_env "COOLIFY_COOLD_VM_WG_IP_${index}" "100.64.0.${index}"
+  read_xlaunch_env "XLAUNCH_COOLD_VM_WG_IP_${index}" "100.64.0.${index}"
 }
 
 coold_vm_wg_port() {
   local index="$1"
-  read_coolify_env "COOLIFY_COOLD_VM_WG_PORT_${index}" "$((51820 + index))"
+  read_xlaunch_env "XLAUNCH_COOLD_VM_WG_PORT_${index}" "$((51820 + index))"
 }
 
 coold_vm_dns_name() {
@@ -87,7 +87,7 @@ resolve_coold_asset_checksum() {
   local url
 
   arch="$(coold_asset_arch)"
-  url="https://github.com/coollabsio/coold/releases/download/${version}/${asset}-linux-musl-${arch}.tar.gz.sha256"
+  url="https://github.com/northlatch/coold/releases/download/${version}/${asset}-linux-musl-${arch}.tar.gz.sha256"
 
   curl -fsSL --retry 3 --max-time 30 "$url" | awk '{ print $1; exit }'
 }
@@ -101,28 +101,28 @@ prepare_coold_asset_cache_bust() {
   local current_key
   local resolved_checksum
 
-  flux_version="$(read_coolify_env COOLIFY_FLUX_VERSION nightly)"
-  cli_version="$(read_coolify_env COOLIFY_CLI_VERSION nightly)"
+  flux_version="$(read_xlaunch_env XLAUNCH_FLUX_VERSION nightly)"
+  cli_version="$(read_xlaunch_env XLAUNCH_CLI_VERSION nightly)"
 
-  if [ -z "${COOLIFY_FLUX_CHECKSUM:-}" ]; then
+  if [ -z "${XLAUNCH_FLUX_CHECKSUM:-}" ]; then
     if resolved_checksum="$(resolve_coold_asset_checksum "$flux_version" flux 2>/dev/null)"; then
-      export COOLIFY_FLUX_CHECKSUM="$resolved_checksum"
+      export XLAUNCH_FLUX_CHECKSUM="$resolved_checksum"
     else
       echo "WARN: Could not resolve Flux checksum for ${flux_version}; Docker may reuse a cached Flux layer." >&2
-      export COOLIFY_FLUX_CHECKSUM=unknown
+      export XLAUNCH_FLUX_CHECKSUM=unknown
     fi
   fi
 
-  if [ -z "${COOLIFY_CLI_CHECKSUM:-}" ]; then
-    if resolved_checksum="$(resolve_coold_asset_checksum "$cli_version" coolify 2>/dev/null)"; then
-      export COOLIFY_CLI_CHECKSUM="$resolved_checksum"
+  if [ -z "${XLAUNCH_CLI_CHECKSUM:-}" ]; then
+    if resolved_checksum="$(resolve_coold_asset_checksum "$cli_version" xlaunch 2>/dev/null)"; then
+      export XLAUNCH_CLI_CHECKSUM="$resolved_checksum"
     else
-      echo "WARN: Could not resolve Coolify CLI checksum for ${cli_version}; Docker may reuse a cached CLI layer." >&2
-      export COOLIFY_CLI_CHECKSUM=unknown
+      echo "WARN: Could not resolve Xlaunch CLI checksum for ${cli_version}; Docker may reuse a cached CLI layer." >&2
+      export XLAUNCH_CLI_CHECKSUM=unknown
     fi
   fi
 
-  current_key="flux=${flux_version}:${COOLIFY_FLUX_CHECKSUM};cli=${cli_version}:${COOLIFY_CLI_CHECKSUM}"
+  current_key="flux=${flux_version}:${XLAUNCH_FLUX_CHECKSUM};cli=${cli_version}:${XLAUNCH_CLI_CHECKSUM}"
 
   if [ -f "$cache_file" ]; then
     previous_key="$(cat "$cache_file")"
@@ -164,7 +164,7 @@ resolve_lima_dns_name() {
   printf '%s\n' "$ip"
 }
 
-sync_lima_hosts_into_coolify_container() {
+sync_lima_hosts_into_xlaunch_container() {
   local count
   local hosts_file="$ROOT/.dev/lima/hosts"
   local name
@@ -180,11 +180,11 @@ sync_lima_hosts_into_coolify_container() {
     printf '%s %s\n' "$ip" "$name" >> "$hosts_file"
   done
 
-  echo "==> Syncing Lima .local host records into the Coolify container..."
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T -u root coolify sh -lc '
+  echo "==> Syncing Lima .local host records into the Xlaunch container..."
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T -u root xlaunch sh -lc '
 set -e
-records=/tmp/coolify-lima-hosts
-next=/tmp/coolify-hosts-next
+records=/tmp/xlaunch-lima-hosts
+next=/tmp/xlaunch-hosts-next
 cat > "$records"
 cp /etc/hosts "$next"
 while read -r ip name; do
@@ -203,16 +203,16 @@ rm -f "$records" "$next" "${next}.filtered"
 
 coold_vm_container_subnet() {
   local index="$1"
-  read_coolify_env "COOLIFY_COOLD_VM_CONTAINER_SUBNET_${index}" "10.210.$((index - 1)).0/24"
+  read_xlaunch_env "XLAUNCH_COOLD_VM_CONTAINER_SUBNET_${index}" "10.210.$((index - 1)).0/24"
 }
 
 coold_vm_container_gateway() {
   local index="$1"
-  read_coolify_env "COOLIFY_COOLD_VM_CONTAINER_GATEWAY_${index}" "10.210.$((index - 1)).1"
+  read_xlaunch_env "XLAUNCH_COOLD_VM_CONTAINER_GATEWAY_${index}" "10.210.$((index - 1)).1"
 }
 
-coolify_cli_bin() {
-  printf '%s\n' '/usr/local/bin/coolify'
+xlaunch_cli_bin() {
+  printf '%s\n' '/usr/local/bin/xlaunch'
 }
 
 lima_ssh_target() {
@@ -220,7 +220,7 @@ lima_ssh_target() {
   coold_vm_dns_name "$index"
 }
 
-coolify_nodes_arg() {
+xlaunch_nodes_arg() {
   local count
   local nodes=""
   local node
@@ -237,7 +237,7 @@ coolify_nodes_arg() {
   printf '%s\n' "$nodes"
 }
 
-coolify_wg_listen_overrides_arg() {
+xlaunch_wg_listen_overrides_arg() {
   local count
   local overrides=""
   local node
@@ -254,7 +254,7 @@ coolify_wg_listen_overrides_arg() {
   printf '%s\n' "$overrides"
 }
 
-coolify_wg_endpoint_overrides_arg() {
+xlaunch_wg_endpoint_overrides_arg() {
   local count
   local overrides=""
   local node
@@ -271,22 +271,22 @@ coolify_wg_endpoint_overrides_arg() {
   printf '%s\n' "$overrides"
 }
 
-coolify_ssh_key() {
-  read_coolify_env COOLIFY_CLI_SSH_KEY "/var/www/html/.dev/lima/ssh_key"
+xlaunch_ssh_key() {
+  read_xlaunch_env XLAUNCH_CLI_SSH_KEY "/var/www/html/.dev/lima/ssh_key"
 }
 
-coolify_host_ssh_key_source() {
-  read_coolify_env COOLIFY_CLI_HOST_SSH_KEY "$HOME/.lima/_config/user"
+xlaunch_host_ssh_key_source() {
+  read_xlaunch_env XLAUNCH_CLI_HOST_SSH_KEY "$HOME/.lima/_config/user"
 }
 
-ensure_coolify_container_ssh_key() {
+ensure_xlaunch_container_ssh_key() {
   local source_key
   local target_key="$ROOT/.dev/lima/ssh_key"
 
-  source_key="$(coolify_host_ssh_key_source)"
+  source_key="$(xlaunch_host_ssh_key_source)"
   if [ ! -f "$source_key" ]; then
     echo "ERROR: SSH key for dev Lima VMs was not found at ${source_key}." >&2
-    echo "Set COOLIFY_CLI_HOST_SSH_KEY to the host-side private key that Lima authorized." >&2
+    echo "Set XLAUNCH_CLI_HOST_SSH_KEY to the host-side private key that Lima authorized." >&2
     exit 1
   fi
 
@@ -294,64 +294,64 @@ ensure_coolify_container_ssh_key() {
   install -m 0600 "$source_key" "$target_key"
 }
 
-coolify_ssh_user() {
-  read_coolify_env COOLIFY_CLI_SSH_USER coolify
+xlaunch_ssh_user() {
+  read_xlaunch_env XLAUNCH_CLI_SSH_USER xlaunch
 }
 
-coolify_bootstrap_concurrency() {
-  read_coolify_env COOLIFY_COOLD_BOOTSTRAP_CONCURRENCY 1
+xlaunch_bootstrap_concurrency() {
+  read_xlaunch_env XLAUNCH_COOLD_BOOTSTRAP_CONCURRENCY 1
 }
 
-coolify_bootstrap_ssh_timeout() {
-  read_coolify_env COOLIFY_COOLD_BOOTSTRAP_SSH_TIMEOUT 90s
+xlaunch_bootstrap_ssh_timeout() {
+  read_xlaunch_env XLAUNCH_COOLD_BOOTSTRAP_SSH_TIMEOUT 90s
 }
 
-coolify_bootstrap_command() {
+xlaunch_bootstrap_command() {
   local nodes
   local listen_overrides
   local endpoint_overrides
 
-  nodes="$(coolify_nodes_arg)" || return 1
-  listen_overrides="$(coolify_wg_listen_overrides_arg)" || return 1
-  endpoint_overrides="$(coolify_wg_endpoint_overrides_arg)" || return 1
+  nodes="$(xlaunch_nodes_arg)" || return 1
+  listen_overrides="$(xlaunch_wg_listen_overrides_arg)" || return 1
+  endpoint_overrides="$(xlaunch_wg_endpoint_overrides_arg)" || return 1
 
   cat <<CMD
-docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify $(coolify_cli_bin) init bootstrap \\
+docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch $(xlaunch_cli_bin) init bootstrap \\
   --nodes "${nodes}" \\
-  --ssh-key "$(coolify_ssh_key)" \\
-  --ssh-user "$(coolify_ssh_user)" \\
-  --concurrency "$(coolify_bootstrap_concurrency)" \\
-  --ssh-timeout "$(coolify_bootstrap_ssh_timeout)" \\
+  --ssh-key "$(xlaunch_ssh_key)" \\
+  --ssh-user "$(xlaunch_ssh_user)" \\
+  --concurrency "$(xlaunch_bootstrap_concurrency)" \\
+  --ssh-timeout "$(xlaunch_bootstrap_ssh_timeout)" \\
   --debug \\
   --wg-listen-port-overrides "${listen_overrides}" \\
   --wg-endpoint-overrides "${endpoint_overrides}" \\
-  --coold-version "$(read_coolify_env COOLIFY_COOLD_VERSION nightly)" \\
-  --corrosion-version "$(read_coolify_env COOLIFY_CORROSION_VERSION v1.0.0)" \\
+  --coold-version "$(read_xlaunch_env XLAUNCH_COOLD_VERSION nightly)" \\
+  --corrosion-version "$(read_xlaunch_env XLAUNCH_CORROSION_VERSION v1.0.0)" \\
   --yes
 CMD
 }
 
-coolify_bootstrap() {
+xlaunch_bootstrap() {
   local nodes
   local listen_overrides
   local endpoint_overrides
-  ensure_coolify_container_ssh_key
+  ensure_xlaunch_container_ssh_key
 
-  nodes="$(coolify_nodes_arg)" || return 1
-  listen_overrides="$(coolify_wg_listen_overrides_arg)" || return 1
-  endpoint_overrides="$(coolify_wg_endpoint_overrides_arg)" || return 1
+  nodes="$(xlaunch_nodes_arg)" || return 1
+  listen_overrides="$(xlaunch_wg_listen_overrides_arg)" || return 1
+  endpoint_overrides="$(xlaunch_wg_endpoint_overrides_arg)" || return 1
 
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify "$(coolify_cli_bin)" init bootstrap \
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch "$(xlaunch_cli_bin)" init bootstrap \
     --nodes "$nodes" \
-    --ssh-key "$(coolify_ssh_key)" \
-    --ssh-user "$(coolify_ssh_user)" \
-    --concurrency "$(coolify_bootstrap_concurrency)" \
-    --ssh-timeout "$(coolify_bootstrap_ssh_timeout)" \
+    --ssh-key "$(xlaunch_ssh_key)" \
+    --ssh-user "$(xlaunch_ssh_user)" \
+    --concurrency "$(xlaunch_bootstrap_concurrency)" \
+    --ssh-timeout "$(xlaunch_bootstrap_ssh_timeout)" \
     --debug \
     --wg-listen-port-overrides "$listen_overrides" \
     --wg-endpoint-overrides "$endpoint_overrides" \
-    --coold-version "$(read_coolify_env COOLIFY_COOLD_VERSION nightly)" \
-    --corrosion-version "$(read_coolify_env COOLIFY_CORROSION_VERSION v1.0.0)" \
+    --coold-version "$(read_xlaunch_env XLAUNCH_COOLD_VERSION nightly)" \
+    --corrosion-version "$(read_xlaunch_env XLAUNCH_CORROSION_VERSION v1.0.0)" \
     --yes
 }
 
@@ -364,7 +364,7 @@ diagnose_coold_bootstrap_failure() {
   for index in $(seq 1 "$count"); do
     instance="$(coold_vm_instance "$index")"
     echo "--- ${instance}: diagnostics ---" >&2
-    run_with_timeout 45 env COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<'SH' >&2 || true
+    run_with_timeout 45 env XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<'SH' >&2 || true
 set +e
 echo '[cloud-init]'
 cloud-init status 2>/dev/null || true
@@ -376,7 +376,7 @@ for lock in /var/lib/dpkg/lock-frontend /var/lib/dpkg/lock /var/lib/apt/lists/lo
 done
 echo '[failed units]'
 systemctl --failed --no-pager 2>/dev/null || true
-echo '[coolify services]'
+echo '[xlaunch services]'
 systemctl --no-pager --full status wg-quick@wg0 podman.socket corrosion coold 2>/dev/null | tail -n 120 || true
 echo '[disk]'
 df -h / /var 2>/dev/null || true
@@ -384,12 +384,12 @@ SH
   done
 }
 
-coolify_bootstrap_with_retry() {
+xlaunch_bootstrap_with_retry() {
   local attempt
   local attempts=5
 
   for attempt in $(seq 1 "$attempts"); do
-    if coolify_bootstrap; then
+    if xlaunch_bootstrap; then
       return
     fi
 
@@ -399,12 +399,12 @@ coolify_bootstrap_with_retry() {
       return 1
     fi
 
-    echo "WARN: coolify bootstrap failed on attempt ${attempt}/${attempts}; retrying because fresh Lima hosts can finish setup after partial bootstrap phases..." >&2
+    echo "WARN: xlaunch bootstrap failed on attempt ${attempt}/${attempts}; retrying because fresh Lima hosts can finish setup after partial bootstrap phases..." >&2
     sleep 3
   done
 }
 
-coolify_dev() {
+xlaunch_dev() {
   local command="${1:-help}"
   if [ $# -gt 0 ]; then
     shift
@@ -412,35 +412,35 @@ coolify_dev() {
 
   case "$command" in
     install)
-      echo "==> coolify CLI is provided by the Coolify dev container."
-      docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify "$(coolify_cli_bin)" --version
+      echo "==> xlaunch CLI is provided by the Xlaunch dev container."
+      docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch "$(xlaunch_cli_bin)" --version
       ;;
     path)
-      coolify_cli_bin
+      xlaunch_cli_bin
       ;;
     bootstrap-command)
-      coolify_bootstrap_command
+      xlaunch_bootstrap_command
       ;;
     run)
-      exec docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify "$(coolify_cli_bin)" "$@"
+      exec docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch "$(xlaunch_cli_bin)" "$@"
       ;;
     -h|--help|help)
       cat <<'USAGE'
-Usage: scripts/dev.sh coolify <command>
+Usage: scripts/dev.sh xlaunch <command>
 
 Commands:
-  install             Print the coolify CLI version from the dev container
-  path                Print the coolify CLI path inside the dev container
+  install             Print the xlaunch CLI version from the dev container
+  path                Print the xlaunch CLI path inside the dev container
   bootstrap-command   Print the dev Lima bootstrap command without running it
-  run <args>          Run coolify with arbitrary args
+  run <args>          Run xlaunch with arbitrary args
 
 Example:
-  scripts/dev.sh coolify bootstrap-command
+  scripts/dev.sh xlaunch bootstrap-command
 USAGE
       ;;
     *)
-      echo "unknown coolify command: $command" >&2
-      echo "Run: scripts/dev.sh coolify help" >&2
+      echo "unknown xlaunch command: $command" >&2
+      echo "Run: scripts/dev.sh xlaunch help" >&2
       exit 1
       ;;
   esac
@@ -449,10 +449,10 @@ USAGE
 coold_vm() {
   local index="$1"
   shift
-  COOLIFY_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" \
-  COOLIFY_COOLD_VM_WG_IP="$(coold_vm_wg_ip "$index")" \
-  COOLIFY_COOLD_VM_CONTAINER_SUBNET="$(coold_vm_container_subnet "$index")" \
-  COOLIFY_COOLD_VM_CONTAINER_GATEWAY="$(coold_vm_container_gateway "$index")" \
+  XLAUNCH_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" \
+  XLAUNCH_COOLD_VM_WG_IP="$(coold_vm_wg_ip "$index")" \
+  XLAUNCH_COOLD_VM_CONTAINER_SUBNET="$(coold_vm_container_subnet "$index")" \
+  XLAUNCH_COOLD_VM_CONTAINER_GATEWAY="$(coold_vm_container_gateway "$index")" \
     scripts/coold-vm.sh "$@"
 }
 
@@ -469,7 +469,7 @@ coold_vm_shell() {
     exit 1
   fi
 
-  COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell
+  XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell
 }
 
 coold_vm_up_with_retry() {
@@ -504,13 +504,13 @@ mint_host_jwt_for_host() {
   local output
 
   for attempt in $(seq 1 "$attempts"); do
-    if output="$(docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify php artisan flux:dev "$host_id" 2>&1)"; then
+    if output="$(docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch php artisan flux:dev "$host_id" 2>&1)"; then
       printf '%s\n' "$output" | tail -n 1
       return 0
     fi
 
     echo "==> Waiting for Flux dev JWT key for ${host_id} (${attempt}/${attempts})..." >&2
-    printf '%s\n' "$output" | tail -n 3 | sed 's/^/[coolify] /' >&2
+    printf '%s\n' "$output" | tail -n 3 | sed 's/^/[xlaunch] /' >&2
     sleep 2
   done
 
@@ -564,7 +564,7 @@ sync_v5_dev_lima_servers() {
   local ssh_user
 
   count="$(coold_vm_count)"
-  ssh_user="$(coolify_ssh_user)"
+  ssh_user="$(xlaunch_ssh_user)"
 
   for index in $(seq 1 "$count"); do
     instance="$(coold_vm_instance "$index")"
@@ -572,12 +572,12 @@ sync_v5_dev_lima_servers() {
   done
 
   echo "==> Running pending migrations before syncing v5 dev Lima state..."
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify php artisan migrate --force
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch php artisan migrate --force
 
   echo "==> Seeding dev Lima VM(s) into v5 clusters/servers..."
   docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T \
-    -e COOLIFY_CLI_SSH_USER="$ssh_user" \
-    coolify php artisan v5:sync-dev-lima-servers \
+    -e XLAUNCH_CLI_SSH_USER="$ssh_user" \
+    xlaunch php artisan v5:sync-dev-lima-servers \
       "${server_args[@]}"
 }
 
@@ -588,20 +588,20 @@ configure_flux_dev_for_vm() {
   local flux_url
 
   host_id="$(coold_vm_wg_ip "$index")"
-  flux_url="$(read_coolify_env COOLIFY_COOLD_VM_FLUX_URL http://host.lima.internal:6443)"
+  flux_url="$(read_xlaunch_env XLAUNCH_COOLD_VM_FLUX_URL http://host.lima.internal:6443)"
 
   echo "==> Minting Flux dev host JWT for ${host_id}..."
   host_jwt="$(mint_host_jwt_for_host "$host_id")"
   echo "==> Installing Flux dev env/JWT into $(coold_vm_instance "$index")..."
   coold_vm "$index" install-host-jwt "$host_jwt"
 
-  COOLIFY_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" scripts/coold-vm.sh shell <<SH
+  XLAUNCH_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" scripts/coold-vm.sh shell <<SH
 set -e
 sudo install -d -m 0755 /etc/systemd/system/coold.service.d
 sudo tee /etc/systemd/system/coold.service.d/10-flux-dev.conf >/dev/null <<UNIT
 [Service]
-Environment=COOLIFY_COOLD_FLUX_URL=${flux_url}
-Environment=COOLIFY_COOLD_HOST_JWT_PATH=/etc/coolify/host-jwt
+Environment=XLAUNCH_COOLD_FLUX_URL=${flux_url}
+Environment=XLAUNCH_COOLD_HOST_JWT_PATH=/etc/xlaunch/host-jwt
 UNIT
 sudo systemctl daemon-reload
 sudo systemctl restart coold.service
@@ -614,8 +614,8 @@ up() {
   local count
   local naked=false
   local compose_args=()
-  coold_vm_enabled="$(read_coolify_env COOLIFY_COOLD_VM_ENABLED true)"
-  follow_dev_logs="$(read_coolify_env COOLIFY_DEV_FOLLOW_LOGS true)"
+  coold_vm_enabled="$(read_xlaunch_env XLAUNCH_COOLD_VM_ENABLED true)"
+  follow_dev_logs="$(read_xlaunch_env XLAUNCH_DEV_FOLLOW_LOGS true)"
   count="$(coold_vm_count)"
 
   while [ $# -gt 0 ]; do
@@ -632,39 +632,39 @@ up() {
   done
 
   if [ "$coold_vm_enabled" != "false" ]; then
-    echo "==> Starting ${count} Coolify coold VM(s) before Docker Compose..."
+    echo "==> Starting ${count} Xlaunch coold VM(s) before Docker Compose..."
     for index in $(seq 1 "$count"); do
       coold_vm_up_with_retry "$index"
     done
   else
-    echo "==> COOLIFY_COOLD_VM_ENABLED=false; skipping coold VM."
+    echo "==> XLAUNCH_COOLD_VM_ENABLED=false; skipping coold VM."
   fi
 
-  echo "==> Starting Coolify Docker stack with Docker Compose..."
+  echo "==> Starting Xlaunch Docker stack with Docker Compose..."
   prepare_coold_asset_cache_bust
   if [ "$COOLD_ASSETS_CHANGED" = "changed" ]; then
-    echo "==> Coold nightly assets changed; rebuilding the Coolify dev image..."
-    COOLIFY_CLI_SSH_USER="$(coolify_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml build coolify
+    echo "==> Coold nightly assets changed; rebuilding the Xlaunch dev image..."
+    XLAUNCH_CLI_SSH_USER="$(xlaunch_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml build xlaunch
   fi
 
   if [ "${#compose_args[@]}" -gt 0 ]; then
-    COOLIFY_CLI_SSH_USER="$(coolify_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d "${compose_args[@]}"
+    XLAUNCH_CLI_SSH_USER="$(xlaunch_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d "${compose_args[@]}"
   else
-    COOLIFY_CLI_SSH_USER="$(coolify_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+    XLAUNCH_CLI_SSH_USER="$(xlaunch_ssh_user)" docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
   fi
 
   if [ "$coold_vm_enabled" != "false" ]; then
-    sync_lima_hosts_into_coolify_container
+    sync_lima_hosts_into_xlaunch_container
   fi
 
   if [ "$naked" = "true" ]; then
-    echo "==> --naked enabled. Skipping coolify bootstrap and Flux VM wiring. Use /v5 to bootstrap hosts from the UI."
+    echo "==> --naked enabled. Skipping xlaunch bootstrap and Flux VM wiring. Use /v5 to bootstrap hosts from the UI."
     return
   fi
 
   if [ "$coold_vm_enabled" != "false" ]; then
-    echo "==> Bootstrapping coold VM mesh with coolify..."
-    coolify_bootstrap_with_retry
+    echo "==> Bootstrapping coold VM mesh with xlaunch..."
+    xlaunch_bootstrap_with_retry
 
     for index in $(seq 1 "$count"); do
       configure_flux_dev_for_vm "$index"
@@ -686,8 +686,8 @@ down() {
   local stop_coold_vm
   local cleanup=false
   local compose_args=()
-  coold_vm_enabled="$(read_coolify_env COOLIFY_COOLD_VM_ENABLED true)"
-  stop_coold_vm="$(read_coolify_env COOLIFY_COOLD_VM_STOP_ON_DOWN false)"
+  coold_vm_enabled="$(read_xlaunch_env XLAUNCH_COOLD_VM_ENABLED true)"
+  stop_coold_vm="$(read_xlaunch_env XLAUNCH_COOLD_VM_STOP_ON_DOWN false)"
 
   while [ $# -gt 0 ]; do
     case "$1" in
@@ -709,7 +709,7 @@ down() {
     done
   fi
 
-  echo "==> Stopping Coolify Docker stack with Docker Compose..."
+  echo "==> Stopping Xlaunch Docker stack with Docker Compose..."
   if [ "${#compose_args[@]}" -gt 0 ]; then
     docker compose -f docker-compose.yml -f docker-compose.dev.yml down "${compose_args[@]}"
   else
@@ -722,7 +722,7 @@ down() {
   fi
 
   if [ "$stop_coold_vm" = "true" ]; then
-    echo "==> Stopping Coolify coold VM..."
+    echo "==> Stopping Xlaunch coold VM..."
     for index in $(seq 1 "$(coold_vm_count)"); do
       coold_vm "$index" stop
     done
@@ -807,7 +807,7 @@ corrosion_for_each_vm() {
   for index in $(seq 1 "$count"); do
     instance="$(coold_vm_instance "$index")"
     echo "--- ${instance}: ${label} ---"
-    printf '%s\n' "$script" | COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell "$@"
+    printf '%s\n' "$script" | XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell "$@"
   done
 }
 
@@ -824,7 +824,7 @@ corrosion_check() {
     peer_ip="$(coold_vm_wg_ip "$peer_index")"
 
     echo "--- ${instance}: check ---"
-    COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
+    XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
 set -e
 printf 'services: '
 systemctl is-active corrosion.service || true
@@ -931,11 +931,11 @@ example_nginx_name() {
   local index="$1"
 
   if [ "$index" = "1" ]; then
-    printf '%s\n' coolify-example-nginx
+    printf '%s\n' xlaunch-example-nginx
     return
   fi
 
-  printf 'coolify-example-nginx-%s\n' "$index"
+  printf 'xlaunch-example-nginx-%s\n' "$index"
 }
 
 example_nginx_up() {
@@ -948,14 +948,14 @@ example_nginx_up() {
     gateway="$(coold_vm_container_gateway "$index")"
 
     echo "--- ${instance}: starting ${name} with coold DNS (${gateway}) ---"
-    COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
+    XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
 set -e
 sudo podman rm -f ${name} >/dev/null 2>&1 || true
 sudo podman run -d \\
   --name ${name} \\
-  --network coolify-default-mesh \\
+  --network xlaunch-default-mesh \\
   --dns ${gateway} \\
-  --dns-search default.coolify.internal \\
+  --dns-search default.xlaunch.internal \\
   docker.io/library/nginx:alpine
 SH
   done
@@ -970,29 +970,29 @@ example_nginx_down() {
     name="$(example_nginx_name "$index")"
 
     echo "--- ${instance}: removing ${name} ---"
-    COOLIFY_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
+    XLAUNCH_COOLD_LIMA_INSTANCE="$instance" scripts/coold-vm.sh shell <<SH
 sudo podman rm -f ${name} >/dev/null 2>&1 || true
 SH
   done
 }
 
 example_nginx_check_dns() {
-  COOLIFY_COOLD_LIMA_INSTANCE="$(coold_vm_instance 1)" scripts/coold-vm.sh shell <<'SH'
+  XLAUNCH_COOLD_LIMA_INSTANCE="$(coold_vm_instance 1)" scripts/coold-vm.sh shell <<'SH'
 set -e
 echo '--- resolv.conf ---'
-sudo podman exec coolify-example-nginx cat /etc/resolv.conf
+sudo podman exec xlaunch-example-nginx cat /etc/resolv.conf
 echo
 echo '--- coold DNS lookup through search domain ---'
-sudo podman exec coolify-example-nginx nslookup coolify-example-nginx-2
+sudo podman exec xlaunch-example-nginx nslookup xlaunch-example-nginx-2
 echo
 echo '--- coold DNS lookup by full name ---'
-sudo podman exec coolify-example-nginx nslookup coolify-example-nginx-2.default.coolify.internal
+sudo podman exec xlaunch-example-nginx nslookup xlaunch-example-nginx-2.default.xlaunch.internal
 SH
 }
 
 example_nginx_require_pair() {
   if [ "$(coold_vm_count)" = "1" ]; then
-    echo "ERROR: example-nginx ping command requires COOLIFY_COOLD_VM_COUNT=2." >&2
+    echo "ERROR: example-nginx ping command requires XLAUNCH_COOLD_VM_COUNT=2." >&2
     exit 1
   fi
 }
@@ -1002,7 +1002,7 @@ example_nginx_container_ip() {
   local name
   name="$(example_nginx_name "$index")"
 
-  COOLIFY_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" scripts/coold-vm.sh shell <<SH
+  XLAUNCH_COOLD_LIMA_INSTANCE="$(coold_vm_instance "$index")" scripts/coold-vm.sh shell <<SH
 set -e
 sudo podman inspect -f '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' ${name}
 SH
@@ -1011,10 +1011,10 @@ SH
 example_nginx_ping() {
   example_nginx_require_pair
 
-  COOLIFY_COOLD_LIMA_INSTANCE="$(coold_vm_instance 1)" scripts/coold-vm.sh shell <<'SH'
+  XLAUNCH_COOLD_LIMA_INSTANCE="$(coold_vm_instance 1)" scripts/coold-vm.sh shell <<'SH'
 set -e
-sudo podman exec coolify-example-nginx wget -qO- --timeout=3 http://coolify-example-nginx-2.default.coolify.internal/ >/dev/null
-echo 'ok: coolify-example-nginx can reach coolify-example-nginx-2 on tcp/80'
+sudo podman exec xlaunch-example-nginx wget -qO- --timeout=3 http://xlaunch-example-nginx-2.default.xlaunch.internal/ >/dev/null
+echo 'ok: xlaunch-example-nginx can reach xlaunch-example-nginx-2 on tcp/80'
 SH
 }
 
@@ -1062,18 +1062,18 @@ example_nginx() {
 
 
 refresh_test_host_key() {
-  echo "==> Refreshing /tmp/testhostkey inside coolify..."
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify php artisan tinker --execute='file_put_contents("/tmp/testhostkey", \App\Models\PrivateKey::query()->where("name", "Testing Host Key")->sole()->private_key); chmod("/tmp/testhostkey", 0600);'
+  echo "==> Refreshing /tmp/testhostkey inside xlaunch..."
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch php artisan tinker --execute='file_put_contents("/tmp/testhostkey", \App\Models\PrivateKey::query()->where("name", "Testing Host Key")->sole()->private_key); chmod("/tmp/testhostkey", 0600);'
 }
 
 recreate_naked_lima_vm() {
-  local instance="${1:-coolify-naked-test}"
-  local config="${2:-.dev/lima/coolify-naked-test.yaml}"
+  local instance="${1:-xlaunch-naked-test}"
+  local config="${2:-.dev/lima/xlaunch-naked-test.yaml}"
   local attempt
   local attempts=2
   local start_timeout
 
-  start_timeout="$(read_coolify_env COOLIFY_NAKED_VM_START_TIMEOUT "$(read_coolify_env COOLIFY_COOLD_VM_START_TIMEOUT 300)")"
+  start_timeout="$(read_xlaunch_env XLAUNCH_NAKED_VM_START_TIMEOUT "$(read_xlaunch_env XLAUNCH_COOLD_VM_START_TIMEOUT 300)")"
 
   if [ ! -f "$config" ]; then
     echo "ERROR: naked Lima config not found: ${config}" >&2
@@ -1099,14 +1099,14 @@ recreate_naked_lima_vm() {
 }
 
 fresh() {
-  echo "==> Recreating coold Lima VMs and Coolify dev stack..."
+  echo "==> Recreating coold Lima VMs and Xlaunch dev stack..."
   down --cleanup
-  COOLIFY_DEV_FOLLOW_LOGS=false up
+  XLAUNCH_DEV_FOLLOW_LOGS=false up
 
-  echo "==> Refreshing Coolify database with seed data..."
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify php artisan migrate:fresh --seed --force
+  echo "==> Refreshing Xlaunch database with seed data..."
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch php artisan migrate:fresh --seed --force
 
-  if [ "$(read_coolify_env COOLIFY_COOLD_VM_ENABLED true)" != "false" ]; then
+  if [ "$(read_xlaunch_env XLAUNCH_COOLD_VM_ENABLED true)" != "false" ]; then
     echo "==> Re-syncing seeded v5 Lima servers after DB refresh..."
     sync_v5_dev_lima_servers
   fi
@@ -1115,10 +1115,10 @@ fresh() {
   refresh_test_host_key
 
   echo "==> Restarting Horizon so workers use the latest code..."
-  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T coolify php artisan horizon:terminate || true
+  docker compose -f docker-compose.yml -f docker-compose.dev.yml exec -T xlaunch php artisan horizon:terminate || true
 
   echo "==> Fresh dev environment is ready."
-  limactl list | grep -E 'NAME|coold-dev|coolify-naked-test' || true
+  limactl list | grep -E 'NAME|coold-dev|xlaunch-naked-test' || true
 }
 
 usage() {
@@ -1140,7 +1140,7 @@ Commands:
   naked-vm Recreate the naked Lima VM used for bootstrap testing
   corrosion <command> Inspect Corrosion state, config, logs, and registered containers
   example-nginx <command> Start/check example nginx containers with coold DNS
-  coolify <command> Install/run the released coolify dev helper
+  xlaunch <command> Install/run the released xlaunch dev helper
 USAGE
 }
 
@@ -1177,8 +1177,8 @@ case "$cmd" in
   example-nginx)
     example_nginx "$@"
     ;;
-  coolify)
-    coolify_dev "$@"
+  xlaunch)
+    xlaunch_dev "$@"
     ;;
   -h|--help|help|"")
     usage

@@ -4,7 +4,7 @@ use App\Enums\ActivityTypes;
 use App\Enums\ProcessStatus;
 use App\Helpers\SshMultiplexingHelper;
 use App\Helpers\SshRetryHandler;
-use App\Jobs\CoolifyTask;
+use App\Jobs\XlaunchTask;
 use App\Models\Application;
 use App\Models\ApplicationDeploymentQueue;
 use App\Models\PrivateKey;
@@ -64,7 +64,7 @@ function remote_process(
 
     $activity = $activityLog->log('[]');
 
-    dispatch(new CoolifyTask(
+    dispatch(new XlaunchTask(
         activity: $activity,
         ignore_errors: $ignore_errors,
         call_event_on_finish: $callEventOnFinish,
@@ -103,7 +103,7 @@ function instant_scp(string $source, string $dest, Server $server, $throwError =
 }
 
 /**
- * Download a remote file from a managed server onto the Coolify host via SCP.
+ * Download a remote file from a managed server onto the Xlaunch host via SCP.
  */
 function instant_scp_from_server(string $remoteSource, string $localDest, Server $server, $throwError = true)
 {

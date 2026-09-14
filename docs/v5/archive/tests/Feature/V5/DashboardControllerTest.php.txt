@@ -41,8 +41,8 @@ it('serves the v5 inertia shell', function () {
         ->get('/v5')
         ->assertSuccessful()
         ->assertSee('<html lang="en" class="dark">', false)
-        ->assertSee('coolify-logo-dev-transparent.png', false)
-        ->assertDontSee('coolify-logo.svg', false)
+        ->assertSee('xlaunch-logo-dev-transparent.png', false)
+        ->assertDontSee('xlaunch-logo.svg', false)
         ->assertSee('js/echo.js', false)
         ->assertSee('js/pusher.js', false)
         ->assertSee('window.Echo', false)
@@ -99,7 +99,7 @@ it('serves v5 dashboard applications as canvas nodes', function () {
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
         'runtime_container_id' => 'abc123',
@@ -115,7 +115,7 @@ it('serves v5 dashboard applications as canvas nodes', function () {
         'created_by_user_id' => $user->id,
         'name' => 'other-nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-other',
+        'container_name' => 'xlaunch-v5-nginx-other',
         'status' => 'running',
     ]);
 
@@ -132,7 +132,7 @@ it('serves v5 dashboard applications as canvas nodes', function () {
         ->assertSee('"name":"nginx-test"', false)
         ->assertSee('"serverName":"edge-01"', false)
         ->assertSee('"meshNamespace":"default"', false)
-        ->assertSee('"meshFqdn":"coolify-v5-nginx-1.default.coolify.internal"', false)
+        ->assertSee('"meshFqdn":"xlaunch-v5-nginx-1.default.xlaunch.internal"', false)
         ->assertSee('"canvasX":120', false)
         ->assertSee('"canvasY":-80', false)
         ->assertDontSee('other-nginx-test', false);
@@ -167,7 +167,7 @@ it('marks v5 application status as unknown when its server is unreachable', func
         'created_by_user_id' => $user->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-1',
+        'container_name' => 'xlaunch-v5-nginx-1',
         'status' => 'running',
         'status_message' => 'Container started.',
     ]);
@@ -316,8 +316,8 @@ it('serves the production v5 favicon outside local environments', function () {
         ->withSession(['currentTeam' => $team])
         ->get('/v5')
         ->assertSuccessful()
-        ->assertSee('coolify-logo.svg', false)
-        ->assertDontSee('coolify-logo-dev-transparent.png', false);
+        ->assertSee('xlaunch-logo.svg', false)
+        ->assertDontSee('xlaunch-logo-dev-transparent.png', false);
 });
 
 it('shares existing projects and environments with the v5 dashboard page', function () {

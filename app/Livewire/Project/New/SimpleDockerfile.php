@@ -54,7 +54,7 @@ CMD ["nginx", "-g", "daemon off;"]
         $application = new Application([
             'name' => 'dockerfile-'.new_public_id(),
             'repository_project_id' => 0,
-            'git_repository' => 'coollabsio/coolify',
+            'git_repository' => 'northlatch/xlaunch',
             'git_branch' => 'main',
             'build_pack' => 'dockerfile',
             'dockerfile' => $this->dockerfile,

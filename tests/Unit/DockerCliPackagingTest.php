@@ -1,7 +1,7 @@
 <?php
 
-it('installs the current Docker CLI in the Coolify helper image', function () {
-    $dockerfile = file_get_contents(dirname(__DIR__, 2).'/docker/coolify-helper/Dockerfile');
+it('installs the current Docker CLI in the Xlaunch helper image', function () {
+    $dockerfile = file_get_contents(dirname(__DIR__, 2).'/docker/xlaunch-helper/Dockerfile');
     expect($dockerfile)
         ->toContain('ARG DOCKER_VERSION=29.7.2')
         ->toContain('ARG DOCKER_COMPOSE_VERSION=5.5.0')

@@ -34,7 +34,7 @@ _ide_helper_models.php
 scripts/load-test/*
 .ignition.json
 .env.dusk.local
-docker/coolify-realtime/node_modules
+docker/xlaunch-realtime/node_modules
 .DS_Store
 CHANGELOG.md
 /.workspaces
@@ -52,5 +52,5 @@ ref
 .dev/lima/ssh_key
 .dev/lima/hosts
 
-# Multi-instance local Coolify env files (scripts/dev-instances)
+# Multi-instance local Xlaunch env files (scripts/dev-instances)
 .dev-instances/

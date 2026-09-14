@@ -30,7 +30,7 @@ it('uses max of CDN and cache versions', function () {
     // CDN has older version
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.0']],
+            'xlaunch' => ['v4' => ['version' => '4.0.0']],
             'traefik' => ['v3.5' => '3.5.6'],
         ], 200),
     ]);
@@ -42,7 +42,7 @@ it('uses max of CDN and cache versions', function () {
 
     File::shouldReceive('get')
         ->with(base_path('versions.json'))
-        ->andReturn(json_encode(['coolify' => ['v4' => ['version' => '4.0.10']]]));
+        ->andReturn(json_encode(['xlaunch' => ['v4' => ['version' => '4.0.10']]]));
 
     File::shouldReceive('put')
         ->once()
@@ -50,12 +50,12 @@ it('uses max of CDN and cache versions', function () {
             $data = json_decode($json, true);
 
             // Should use cached version (4.0.10), not CDN version (4.0.0)
-            return $data['coolify']['v4']['version'] === '4.0.10';
+            return $data['xlaunch']['v4']['version'] === '4.0.10';
         }));
 
     Cache::shouldReceive('forget')->once();
 
-    config(['constants.coolify.version' => '4.0.5']);
+    config(['constants.xlaunch.version' => '4.0.5']);
 
     // Mock instanceSettings function
     $this->app->instance('App\Models\InstanceSettings', function () {
@@ -70,7 +70,7 @@ it('never downgrades from current running version', function () {
     // CDN has older version
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.0']],
+            'xlaunch' => ['v4' => ['version' => '4.0.0']],
             'traefik' => ['v3.5' => '3.5.6'],
         ], 200),
     ]);
@@ -82,7 +82,7 @@ it('never downgrades from current running version', function () {
 
     File::shouldReceive('get')
         ->with(base_path('versions.json'))
-        ->andReturn(json_encode(['coolify' => ['v4' => ['version' => '4.0.5']]]));
+        ->andReturn(json_encode(['xlaunch' => ['v4' => ['version' => '4.0.5']]]));
 
     File::shouldReceive('put')
         ->once()
@@ -90,13 +90,13 @@ it('never downgrades from current running version', function () {
             $data = json_decode($json, true);
 
             // Should use running version (4.0.10), not CDN (4.0.0) or cache (4.0.5)
-            return $data['coolify']['v4']['version'] === '4.0.10';
+            return $data['xlaunch']['v4']['version'] === '4.0.10';
         }));
 
     Cache::shouldReceive('forget')->once();
 
     // Running version is newest
-    config(['constants.coolify.version' => '4.0.10']);
+    config(['constants.xlaunch.version' => '4.0.10']);
 
     \Illuminate\Support\Facades\Log::shouldReceive('warning')
         ->once()
@@ -113,7 +113,7 @@ it('never downgrades from current running version', function () {
 it('uses data_set for safe version mutation', function () {
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.10']],
+            'xlaunch' => ['v4' => ['version' => '4.0.10']],
         ], 200),
     ]);
 
@@ -121,7 +121,7 @@ it('uses data_set for safe version mutation', function () {
     File::shouldReceive('put')->once();
     Cache::shouldReceive('forget')->once();
 
-    config(['constants.coolify.version' => '4.0.5']);
+    config(['constants.xlaunch.version' => '4.0.5']);
 
     $this->app->instance('App\Models\InstanceSettings', function () {
         return $this->settings;
@@ -134,11 +134,11 @@ it('uses data_set for safe version mutation', function () {
     $job->handle();
 })->skip('Needs better mock setup for instanceSettings');
 
-it('preserves other component versions when preventing Coolify downgrade', function () {
-    // CDN has older Coolify but newer Traefik
+it('preserves other component versions when preventing Xlaunch downgrade', function () {
+    // CDN has older Xlaunch but newer Traefik
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.0']],
+            'xlaunch' => ['v4' => ['version' => '4.0.0']],
             'traefik' => ['v3.6' => '3.6.2'],
             'sentinel' => ['version' => '1.0.5'],
         ], 200),
@@ -147,7 +147,7 @@ it('preserves other component versions when preventing Coolify downgrade', funct
     File::shouldReceive('exists')->andReturn(true);
     File::shouldReceive('get')
         ->andReturn(json_encode([
-            'coolify' => ['v4' => ['version' => '4.0.5']],
+            'xlaunch' => ['v4' => ['version' => '4.0.5']],
             'traefik' => ['v3.5' => '3.5.6'],
         ]));
 
@@ -155,8 +155,8 @@ it('preserves other component versions when preventing Coolify downgrade', funct
         ->once()
         ->with(base_path('versions.json'), Mockery::on(function ($json) {
             $data = json_decode($json, true);
-            // Coolify should use running version
-            expect($data['coolify']['v4']['version'])->toBe('4.0.10');
+            // Xlaunch should use running version
+            expect($data['xlaunch']['v4']['version'])->toBe('4.0.10');
             // Traefik should use CDN version (newer)
             expect($data['traefik']['v3.6'])->toBe('3.6.2');
             // Sentinel should use CDN version
@@ -167,11 +167,11 @@ it('preserves other component versions when preventing Coolify downgrade', funct
 
     Cache::shouldReceive('forget')->once();
 
-    config(['constants.coolify.version' => '4.0.10']);
+    config(['constants.xlaunch.version' => '4.0.10']);
 
     \Illuminate\Support\Facades\Log::shouldReceive('warning')
         ->once()
-        ->with('CDN served older Coolify version than cache', Mockery::type('array'));
+        ->with('CDN served older Xlaunch version than cache', Mockery::type('array'));
 
     \Illuminate\Support\Facades\Log::shouldReceive('warning')
         ->once()

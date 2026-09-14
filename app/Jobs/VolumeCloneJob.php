@@ -17,7 +17,7 @@ class VolumeCloneJob implements ShouldBeEncrypted, ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected string $cloneDir = '/data/coolify/clone';
+    protected string $cloneDir = '/data/xlaunch/clone';
 
     public int $timeout = 3600;
 
@@ -86,7 +86,7 @@ class VolumeCloneJob implements ShouldBeEncrypted, ShouldQueue
                 "chmod 777 {$tgtDir}",
             ], $this->targetServer);
 
-            // Coolify host is the intermediary: download from source, upload to target.
+            // Xlaunch host is the intermediary: download from source, upload to target.
             instant_scp_from_server(
                 "{$sourceCloneDir}/volume-data.tar.gz",
                 $localArchive,

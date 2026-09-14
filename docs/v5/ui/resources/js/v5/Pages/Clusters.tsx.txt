@@ -1123,7 +1123,7 @@ export default function Clusters({
                                 </span>
                                 <Button
                                     type="button"
-                                    variant="coolify"
+                                    variant="xlaunch"
                                     size="sm"
                                     className="rounded-r-md"
                                     disabled={isBootstrappingServer}
@@ -1309,7 +1309,7 @@ export default function Clusters({
 
                                     <Button
                                         type="button"
-                                        variant="coolify"
+                                        variant="xlaunch"
                                         size="default"
                                         aria-label="Create cluster"
                                         onClick={() => setIsCreateDialogOpen(true)}
@@ -1491,7 +1491,7 @@ export default function Clusters({
                                             </div>
                                             <Button
                                                 type="button"
-                                                variant="coolify"
+                                                variant="xlaunch"
                                                 aria-label="Add server to cluster"
                                                 onClick={() => {
                                                     setServerBuilderEnabled(selectedCluster.builderEnabled);
@@ -1862,7 +1862,7 @@ export default function Clusters({
                                     </div>
 
                                     <DialogFooter>
-                                        <Button type="submit" variant="coolify" disabled={isSubmitting}>
+                                        <Button type="submit" variant="xlaunch" disabled={isSubmitting}>
                                             {isSubmitting ? 'Creating...' : 'Create cluster'}
                                         </Button>
                                     </DialogFooter>
@@ -2122,7 +2122,7 @@ export default function Clusters({
                                     <DialogFooter>
                                         <Button
                                             type="submit"
-                                            variant="coolify"
+                                            variant="xlaunch"
                                             disabled={isServerSubmitting || !selectedCluster}
                                         >
                                             {isServerSubmitting ? 'Adding...' : 'Add server'}
@@ -2610,7 +2610,7 @@ export default function Clusters({
                                     <DialogFooter>
                                         <Button
                                             type="submit"
-                                            variant="coolify"
+                                            variant="xlaunch"
                                             disabled={isServerUpdateSubmitting || !selectedCluster || !editingServer}
                                         >
                                             {isServerUpdateSubmitting ? 'Saving...' : 'Save server'}

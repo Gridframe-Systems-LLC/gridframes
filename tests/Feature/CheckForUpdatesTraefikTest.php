@@ -14,7 +14,7 @@ it('checks installed Traefik versions after refreshing available versions', func
     Bus::fake();
     Http::fake([
         '*' => Http::response([
-            'coolify' => ['v4' => ['version' => '4.0.10']],
+            'xlaunch' => ['v4' => ['version' => '4.0.10']],
             'traefik' => ['v3.7' => '3.7.13'],
         ]),
     ]);
@@ -25,8 +25,8 @@ it('checks installed Traefik versions after refreshing available versions', func
 
     config([
         'app.env' => 'production',
-        'constants.coolify.self_hosted' => true,
-        'constants.coolify.version' => '4.0.10',
+        'constants.xlaunch.self_hosted' => true,
+        'constants.xlaunch.version' => '4.0.10',
     ]);
 
     (new CheckForUpdatesJob)->handle();

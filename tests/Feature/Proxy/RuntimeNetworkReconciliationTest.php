@@ -13,10 +13,10 @@ it('discovers managed container networks regardless of container status', functi
     $commands = connectProxyToNetworks($server)->implode("\n");
 
     expect($commands)
-        ->toContain('docker ps -a --filter label=coolify.managed=true')
+        ->toContain('docker ps -a --filter label=xlaunch.managed=true')
         ->toContain('.NetworkSettings.Networks')
         ->toContain('docker network inspect "$network"')
-        ->toContain('docker network connect "$network" coolify-proxy')
+        ->toContain('docker network connect "$network" xlaunch-proxy')
         ->not->toContain('docker network create');
 });
 

@@ -60,5 +60,5 @@ it('falls back to the default host when write host and db host are empty', funct
         'DB_WRITE_HOST' => '',
     ]);
 
-    expect($config['connections']['pgsql']['write']['host'])->toBe(['coolify-db']);
+    expect($config['connections']['pgsql']['write']['host'])->toBe(['xlaunch-db']);
 });

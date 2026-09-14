@@ -133,7 +133,7 @@ test('chains volume clone and finalize jobs when migrating volumes across server
     LocalPersistentVolume::create([
         'name' => $application->uuid.'-bind',
         'mount_path' => '/bind',
-        'host_path' => '/var/lib/coolify-test-bind',
+        'host_path' => '/var/lib/xlaunch-test-bind',
         'resource_id' => $application->id,
         'resource_type' => $application->getMorphClass(),
     ]);

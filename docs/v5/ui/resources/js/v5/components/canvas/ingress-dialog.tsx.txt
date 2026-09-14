@@ -71,7 +71,7 @@ export function IngressDialog({ modal, isSaving, onDomainsChange, onInternalPort
                     )}
 
                     <div className="flex justify-end">
-                        <Button type="submit" variant="coolify" disabled={isSaving}>
+                        <Button type="submit" variant="xlaunch" disabled={isSaving}>
                             {isSaving ? 'Saving...' : 'Enable ingress'}
                         </Button>
                     </div>

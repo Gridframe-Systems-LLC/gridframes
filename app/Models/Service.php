@@ -28,7 +28,7 @@ use Symfony\Component\Yaml\Yaml;
         'server_id' => ['type' => 'integer', 'description' => 'The unique identifier of the server where the service is running.'],
         'description' => ['type' => 'string', 'description' => 'The description of the service.'],
         'docker_compose_raw' => ['type' => 'string', 'description' => 'The raw docker-compose.yml file of the service.'],
-        'docker_compose' => ['type' => 'string', 'description' => 'The docker-compose.yml file that is parsed and modified by Coolify.'],
+        'docker_compose' => ['type' => 'string', 'description' => 'The docker-compose.yml file that is parsed and modified by Xlaunch.'],
         'destination_type' => ['type' => 'string', 'description' => 'Destination type.'],
         'destination_id' => ['type' => 'integer', 'description' => 'The unique identifier of the destination where the service is running.'],
         'connect_to_docker_network' => ['type' => 'boolean', 'description' => 'The flag to connect the service to the predefined Docker network.'],
@@ -218,7 +218,7 @@ class Service extends BaseModel
     public function deleteConnectedNetworks()
     {
         $server = data_get($this, 'destination.server');
-        instant_remote_process(["docker network disconnect {$this->uuid} coolify-proxy"], $server, false);
+        instant_remote_process(["docker network disconnect {$this->uuid} xlaunch-proxy"], $server, false);
         instant_remote_process(["docker network rm {$this->uuid}"], $server, false);
     }
 
@@ -1153,7 +1153,7 @@ class Service extends BaseModel
                     }
                     $fields->put('Sessy', $data->toArray());
                     break;
-                case $image->contains('coollabsio/openclaw'):
+                case $image->contains('northlatch/openclaw'):
                     $data = collect([]);
                     $username = $this->environment_variables()->where('key', 'AUTH_USERNAME')->first();
                     $password = $this->environment_variables()->where('key', 'SERVICE_PASSWORD_OPENCLAW')->first();
@@ -1187,7 +1187,7 @@ class Service extends BaseModel
                     }
                     $fields->put('Openclaw', $data->toArray());
                     break;
-                case $image->contains('coollabsio/jean-server'):
+                case $image->contains('northlatch/jean-server'):
                     $data = collect([]);
                     $settings = [
                         'Token' => ['key' => 'SERVICE_PASSWORD_64_JEAN', 'rules' => 'required', 'isPassword' => true, 'sortOrder' => 1, 'customHelper' => 'Token required to access Jean Server. Variable name: SERVICE_PASSWORD_64_JEAN'],
@@ -1603,8 +1603,8 @@ class Service extends BaseModel
             }
         }
 
-        $envs_from_coolify = $this->environment_variables()->get();
-        $sorted = $envs_from_coolify->sortBy(function ($env) {
+        $envs_from_xlaunch = $this->environment_variables()->get();
+        $sorted = $envs_from_xlaunch->sortBy(function ($env) {
             if (str($env->key)->startsWith('SERVICE_')) {
                 return 1;
             }

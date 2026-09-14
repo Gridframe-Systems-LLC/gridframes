@@ -27,7 +27,7 @@ test('convertContainerEnvsToArray', function () {
           "HostnamePath": "/var/lib/docker/containers/c9248632fb1f1ba4b0d885f78ebadf6af6233799a645d2f5c749088dbf55d79f/hostname",
           "HostsPath": "/var/lib/docker/containers/c9248632fb1f1ba4b0d885f78ebadf6af6233799a645d2f5c749088dbf55d79f/hosts",
           "LogPath": "/var/lib/docker/containers/c9248632fb1f1ba4b0d885f78ebadf6af6233799a645d2f5c749088dbf55d79f/c9248632fb1f1ba4b0d885f78ebadf6af6233799a645d2f5c749088dbf55d79f-json.log",
-          "Name": "/coolify-db",
+          "Name": "/xlaunch-db",
           "RestartCount": 0,
           "Driver": "overlay2",
           "Platform": "linux",
@@ -45,7 +45,7 @@ test('convertContainerEnvsToArray', function () {
                       "max-size": "20m"
                   }
               },
-              "NetworkMode": "coolify",
+              "NetworkMode": "xlaunch",
               "PortBindings": {
                   "5432/tcp": [
                       {
@@ -119,7 +119,7 @@ test('convertContainerEnvsToArray', function () {
               "Mounts": [
                   {
                       "Type": "volume",
-                      "Source": "coolify_dev_postgres_data",
+                      "Source": "xlaunch_dev_postgres_data",
                       "Target": "/var/lib/postgresql/data",
                       "VolumeOptions": {}
                   }
@@ -157,8 +157,8 @@ test('convertContainerEnvsToArray', function () {
           "Mounts": [
               {
                   "Type": "volume",
-                  "Name": "coolify_dev_postgres_data",
-                  "Source": "/var/lib/docker/volumes/coolify_dev_postgres_data/_data",
+                  "Name": "xlaunch_dev_postgres_data",
+                  "Source": "/var/lib/docker/volumes/xlaunch_dev_postgres_data/_data",
                   "Destination": "/var/lib/postgresql/data",
                   "Driver": "local",
                   "Mode": "z",
@@ -189,13 +189,13 @@ test('convertContainerEnvsToArray', function () {
                   "SELF_HOSTED=false",
                   "APP_DEBUG=true",
                   "DB_HOST=host.docker.internal",
-                  "POSTGRES_DB=coolify",
+                  "POSTGRES_DB=xlaunch",
                   "APP_KEY=base64:8VEfVNVkXQ9mH2L33WBWNMF4eQ0BWD5CTzB9mIxcl+k=",
                   "APP_ID=development",
-                  "DB_DATABASE=coolify",
+                  "DB_DATABASE=xlaunch",
                   "DUSK_DRIVER_URL=http://selenium:4444",
-                  "DB_USERNAME=coolify",
-                  "APP_NAME=Coolify Development",
+                  "DB_USERNAME=xlaunch",
+                  "APP_NAME=Xlaunch Development",
                   "APP_PORT=8000",
                   "DB_PORT=5432",
                   "APP_URL=http://localhost",
@@ -227,9 +227,9 @@ test('convertContainerEnvsToArray', function () {
                   "com.docker.compose.depends_on": "",
                   "com.docker.compose.image": "sha256:4100a24644378a24cdbe3def6fc2346999c53d87b12180c221ebb17f05259948",
                   "com.docker.compose.oneoff": "False",
-                  "com.docker.compose.project": "coolify",
-                  "com.docker.compose.project.config_files": "/Users/heyandras/devel/coolify/docker-compose.yml,/Users/heyandras/devel/coolify/docker-compose.dev.yml",
-                  "com.docker.compose.project.working_dir": "/Users/heyandras/devel/coolify",
+                  "com.docker.compose.project": "xlaunch",
+                  "com.docker.compose.project.config_files": "/Users/heyandras/devel/xlaunch/docker-compose.yml,/Users/heyandras/devel/xlaunch/docker-compose.dev.yml",
+                  "com.docker.compose.project.working_dir": "/Users/heyandras/devel/xlaunch",
                   "com.docker.compose.service": "postgres",
                   "com.docker.compose.version": "2.32.4"
               },
@@ -265,11 +265,11 @@ test('convertContainerEnvsToArray', function () {
               "IPv6Gateway": "",
               "MacAddress": "",
               "Networks": {
-                  "coolify": {
+                  "xlaunch": {
                       "IPAMConfig": null,
                       "Links": null,
                       "Aliases": [
-                          "coolify-db",
+                          "xlaunch-db",
                           "postgres"
                       ],
                       "MacAddress": "02:42:c0:a8:61:02",
@@ -283,7 +283,7 @@ test('convertContainerEnvsToArray', function () {
                       "GlobalIPv6Address": "",
                       "GlobalIPv6PrefixLen": 0,
                       "DNSNames": [
-                          "coolify-db",
+                          "xlaunch-db",
                           "postgres",
                           "c9248632fb1f"
                       ]

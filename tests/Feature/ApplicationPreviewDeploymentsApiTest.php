@@ -30,7 +30,7 @@ beforeEach(function () {
 
     StandaloneDocker::withoutEvents(function () {
         $this->destination = $this->server->standaloneDockers()->firstOrCreate(
-            ['network' => 'coolify'],
+            ['network' => 'xlaunch'],
             ['uuid' => (string) new Cuid2, 'name' => 'test-docker']
         );
     });
@@ -118,7 +118,7 @@ describe('POST /api/v1/applications/public is_preview_deployments_enabled', func
                 'project_uuid' => $this->project->uuid,
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
-                'git_repository' => 'https://gitlab.com/coolify/test-preview-app',
+                'git_repository' => 'https://gitlab.com/xlaunch/test-preview-app',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',
@@ -138,7 +138,7 @@ describe('POST /api/v1/applications/public is_preview_deployments_enabled', func
                 'project_uuid' => $this->project->uuid,
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
-                'git_repository' => 'https://gitlab.com/coolify/test-preview-app',
+                'git_repository' => 'https://gitlab.com/xlaunch/test-preview-app',
                 'git_branch' => 'main',
                 'build_pack' => 'nixpacks',
                 'ports_exposes' => '3000',

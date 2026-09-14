@@ -10,8 +10,8 @@ const buttonVariants = cva(
         variants: {
             variant: {
                 default: 'bg-primary text-primary-foreground hover:bg-primary/80',
-                coolify:
-                    'border-coollabs bg-coollabs-50 text-coollabs-200 hover:bg-coollabs hover:text-white focus-visible:border-coollabs-100 focus-visible:bg-coollabs focus-visible:text-white dark:border-coollabs-100 dark:bg-coollabs/20 dark:text-white dark:hover:bg-coollabs-100 dark:hover:text-white dark:focus-visible:border-coollabs-100 dark:focus-visible:bg-coollabs-100',
+                xlaunch:
+                    'border-northlatch bg-northlatch-50 text-northlatch-200 hover:bg-northlatch hover:text-white focus-visible:border-northlatch-100 focus-visible:bg-northlatch focus-visible:text-white dark:border-northlatch-100 dark:bg-northlatch/20 dark:text-white dark:hover:bg-northlatch-100 dark:hover:text-white dark:focus-visible:border-northlatch-100 dark:focus-visible:bg-northlatch-100',
                 outline:
                     'border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:border-input dark:bg-input/30 dark:hover:bg-input/50',
                 secondary:

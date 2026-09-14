@@ -1,5 +1,5 @@
 <div>
-    <x-slot:title>{{ data_get_str($project, 'name')->limit(10) }} > Clone | Coolify</x-slot>
+    <x-slot:title>{{ data_get_str($project, 'name')->limit(10) }} > Clone | Xlaunch</x-slot>
     <div class="w-full max-w-none">
         <header class="mb-5">
             <h1 class="truncate text-[24px]! leading-7! font-semibold! tracking-tight!">{{ $environment->name }}</h1>
@@ -48,11 +48,11 @@
                                 wire:click="selectServer('{{ $server->id }}', '{{ $destination->uuid }}')"
                                 @class([
                                     'data-table-row clone-destinations-table-grid w-full border-b border-neutral-200 text-left last:border-b-0 dark:border-white/[0.06]',
-                                    'bg-coollabs/5 dark:bg-warning/[0.06]' => $selectedDestination === $destination->uuid,
+                                    'bg-northlatch/5 dark:bg-warning/[0.06]' => $selectedDestination === $destination->uuid,
                                 ])>
                                 <span @class([
                                     'flex size-4 items-center justify-center rounded-full border',
-                                    'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black' => $selectedDestination === $destination->uuid,
+                                    'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black' => $selectedDestination === $destination->uuid,
                                     'border-neutral-300 dark:border-white/[0.15]' => $selectedDestination !== $destination->uuid,
                                 ])>
                                     @if ($selectedDestination === $destination->uuid)

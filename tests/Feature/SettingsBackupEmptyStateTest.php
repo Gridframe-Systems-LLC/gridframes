@@ -82,5 +82,5 @@ test('instance backup settings show a configure button when backup is not set up
         ->assertOk()
         ->assertSee('Backup is not configured')
         ->assertSee('Configure backup')
-        ->assertSeeHtml('wire:click="addCoolifyDatabase"');
+        ->assertSeeHtml('wire:click="addXlaunchDatabase"');
 });

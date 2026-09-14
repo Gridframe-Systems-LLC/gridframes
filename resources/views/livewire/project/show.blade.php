@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($project, 'name')->limit(10) }} > Environments | Coolify
+        {{ data_get_str($project, 'name')->limit(10) }} > Environments | Xlaunch
     </x-slot>
     <div x-data="projectEnvironments()" class="w-full">
         <header class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -167,7 +167,7 @@
                 </div>
                 <x-client-pagination x-show="filteredEnvironments.length > 0" class="mt-3 rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-white/[0.08] dark:bg-white/[0.05]"
                     summary="`${rangeStart}-${rangeEnd} of ${filteredEnvironments.length}`" page-size-model="pageSize"
-                    storage-key="coolify.page-size.project-environments" :options="[12, 24, 48, 96]" />
+                    storage-key="xlaunch.page-size.project-environments" :options="[12, 24, 48, 96]" />
             </div>
 
             <div x-show="viewMode === 'table'"
@@ -218,7 +218,7 @@
                 </template>
                 <x-client-pagination x-show="filteredEnvironments.length > 0"
                     summary="`${rangeStart}-${rangeEnd} of ${filteredEnvironments.length}`" page-size-model="pageSize"
-                    storage-key="coolify.page-size.project-environments" :options="[12, 24, 48, 96]" />
+                    storage-key="xlaunch.page-size.project-environments" :options="[12, 24, 48, 96]" />
             </div>
 
             <div x-show="filteredEnvironments.length === 0"

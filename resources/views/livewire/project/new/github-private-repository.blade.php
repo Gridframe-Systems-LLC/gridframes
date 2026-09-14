@@ -8,7 +8,7 @@
                 </div>
             </div>
             <x-empty title="No GitHub Apps"
-                description="Create an app to grant Coolify access to selected repositories."
+                description="Create an app to grant Xlaunch access to selected repositories."
                 icon-name="sources">
                 <x-slot:contents>
                     <x-modal-input buttonTitle="+ Add GitHub App" title="New GitHub App" closeOutside="false">
@@ -153,7 +153,7 @@
                                     @blur="composeLocation = normalize(composeLocation)" />
                                 <p class="sm:col-span-2 text-xs text-neutral-500 dark:text-fg-dim">
                                     Resolved file:
-                                    <code class="font-mono text-coollabs dark:text-warning"
+                                    <code class="font-mono text-northlatch dark:text-warning"
                                         x-text='(baseDir === "/" ? "" : baseDir) + (composeLocation.startsWith("/") ? composeLocation : "/" + composeLocation)'></code>
                                 </p>
                             </div>

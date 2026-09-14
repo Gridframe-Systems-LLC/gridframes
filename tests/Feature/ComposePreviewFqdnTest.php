@@ -143,7 +143,7 @@ it('collapses dashed and underscore twin domain keys into one preview service', 
         'application_id' => $application->id,
         'pull_request_id' => 58,
         'pull_request_html_url' => 'https://github.com/example/repo/pull/58',
-        // Existing dual-key preview state from older Coolify versions / mixed write paths.
+        // Existing dual-key preview state from older Xlaunch versions / mixed write paths.
         'docker_compose_domains' => json_encode([
             'web_api' => ['domain' => 'https://old-preview.example.com'],
             'web-api' => ['domain' => ''],

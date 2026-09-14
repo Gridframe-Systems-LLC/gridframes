@@ -113,7 +113,7 @@ it('detects added storage mounts as redeploy-only changes', function (string $ty
 it('detects Docker image reference changes as redeploy-only changes', function (string $field, string $label, string $newValue) {
     $application = snapshotTestApplication([
         'build_pack' => 'dockerimage',
-        'docker_registry_image_name' => 'ghcr.io/coollabsio/shoutrrr',
+        'docker_registry_image_name' => 'ghcr.io/northlatch/shoutrrr',
         'docker_registry_image_tag' => '1.3.0-rc.4',
     ]);
     markSnapshotTestApplicationDeployed($application);
@@ -128,7 +128,7 @@ it('detects Docker image reference changes as redeploy-only changes', function (
         ->and($change['old_display_value'])->not->toBe($change['new_display_value'])
         ->and($change['new_display_value'])->toBe($newValue);
 })->with([
-    'image name' => ['docker_registry_image_name', 'Docker image', 'ghcr.io/coollabsio/coolify'],
+    'image name' => ['docker_registry_image_name', 'Docker image', 'ghcr.io/northlatch/xlaunch'],
     'image tag' => ['docker_registry_image_tag', 'Docker image tag or hash', '1.3.0-rc.5'],
 ]);
 

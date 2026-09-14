@@ -4,7 +4,7 @@ it('includes a Jean Server one-click service template with all deployment enviro
     $compose = file_get_contents(__DIR__.'/../../templates/compose/jean.yaml');
 
     expect($compose)
-        ->toContain('ghcr.io/coollabsio/jean-server:${JEAN_VERSION:-latest}')
+        ->toContain('ghcr.io/northlatch/jean-server:${JEAN_VERSION:-latest}')
         ->toContain('SERVICE_URL_JEAN_3456')
         ->toContain('JEAN_HEADLESS=${JEAN_HEADLESS:-1}')
         ->toContain('JEAN_HOST=${JEAN_HOST:-0.0.0.0}')
@@ -33,7 +33,7 @@ it('includes a Jean Server one-click service template with all deployment enviro
         $generatedCompose = base64_decode($templates['jean']['compose'], strict: true);
 
         expect($generatedCompose)
-            ->toContain('ghcr.io/coollabsio/jean-server:${JEAN_VERSION:-latest}')
+            ->toContain('ghcr.io/northlatch/jean-server:${JEAN_VERSION:-latest}')
             ->toContain('JEAN_TOKEN=${SERVICE_PASSWORD_64_JEAN}');
     }
 });

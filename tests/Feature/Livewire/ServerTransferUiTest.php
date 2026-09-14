@@ -16,7 +16,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     config(['app.env' => 'local']);
 
-    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://coolify-a.test']);
+    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true, 'fqdn' => 'https://xlaunch-a.test']);
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

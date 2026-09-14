@@ -41,7 +41,7 @@ it('routes custom-theme accent text utilities to the readable on-surface token',
 
     expect($css)
         ->toMatch('/\[class~="text-warning"\][^{]*\{\s*color:\s*var\(--theme-fg-on-surface\)/')
-        ->toContain('[class~="text-coollabs"]');
+        ->toContain('[class~="text-northlatch"]');
 });
 
 it('uses the clamped placeholder token for custom-theme inputs', function () {

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($environment, 'name')->limit(10) }} > Resources | Coolify
+        {{ data_get_str($environment, 'name')->limit(10) }} > Resources | Xlaunch
     </x-slot>
     <div x-data="resourceIndex()" class="w-full">
         <header class="mb-5 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
@@ -95,7 +95,7 @@
                                                 <span
                                                     class="flex size-4 shrink-0 items-center justify-center rounded-[5px] border"
                                                     :class="isFilterSelected(group.key, option.value)
-                                                        ? 'border-coollabs bg-coollabs text-white dark:border-warning dark:bg-warning dark:text-black'
+                                                        ? 'border-northlatch bg-northlatch text-white dark:border-warning dark:bg-warning dark:text-black'
                                                         : 'border-neutral-300 bg-white dark:border-white/[0.14] dark:bg-white/[0.045]'">
                                                     <svg x-show="isFilterSelected(group.key, option.value)" class="size-3"
                                                         viewBox="0 0 12 12" fill="none" aria-hidden="true">
@@ -264,7 +264,7 @@
                 </div>
                 <x-client-pagination x-show="filteredResources.length > 0"
                     summary="filteredResources.length === 0 ? '0 resources' : `${rangeStart}-${rangeEnd} of ${filteredResources.length}`"
-                    page-size-model="pageSize" storage-key="coolify.page-size.environment-resources" />
+                    page-size-model="pageSize" storage-key="xlaunch.page-size.environment-resources" />
             </div>
 
             <div x-cloak x-show="viewMode === 'grid'">
@@ -330,7 +330,7 @@
                 <x-client-pagination x-show="filteredResources.length > 0"
                     class="mt-3 rounded-xl border border-neutral-200 bg-white shadow-sm dark:border-white/[0.08] dark:bg-white/[0.05]"
                     summary="filteredResources.length === 0 ? '0 resources' : `${rangeStart}-${rangeEnd} of ${filteredResources.length}`"
-                    page-size-model="pageSize" storage-key="coolify.page-size.environment-resources" />
+                    page-size-model="pageSize" storage-key="xlaunch.page-size.environment-resources" />
             </div>
         @endif
     </div>

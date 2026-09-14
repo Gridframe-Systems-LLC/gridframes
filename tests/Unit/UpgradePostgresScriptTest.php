@@ -34,9 +34,9 @@ it('downloads postgres upgrade script during install and upgrade without auto-ru
 
     expect($script)
         ->toContain('upgrade-postgres.sh')
-        ->toContain('curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/coolify/source/upgrade-postgres.sh')
+        ->toContain('curl -fsSL -L $CDN/upgrade-postgres.sh -o /data/xlaunch/source/upgrade-postgres.sh')
         ->toContain('chmod +x')
-        ->not->toContain('bash /data/coolify/source/upgrade-postgres.sh');
+        ->not->toContain('bash /data/xlaunch/source/upgrade-postgres.sh');
 })->with([
     'stable install' => 'scripts/install.sh',
     'nightly install' => 'other/nightly/install.sh',
@@ -78,14 +78,14 @@ it('persists the target image and runtime version before recreating containers',
     };
 
     $latestImagePosition = $position('set_env_var "LATEST_IMAGE" "$LATEST_IMAGE"');
-    $coolifyVersionPosition = $position('set_env_var "COOLIFY_VERSION" "$LATEST_IMAGE"');
+    $xlaunchVersionPosition = $position('set_env_var "XLAUNCH_VERSION" "$LATEST_IMAGE"');
     $imagesPulledPosition = $position('log "All images pulled successfully"');
-    $composeUpPosition = $position('docker compose --env-file /data/coolify/source/.env');
+    $composeUpPosition = $position('docker compose --env-file /data/xlaunch/source/.env');
 
     expect($latestImagePosition)->toBeGreaterThan($imagesPulledPosition)
-        ->and($coolifyVersionPosition)->toBeGreaterThan($imagesPulledPosition)
+        ->and($xlaunchVersionPosition)->toBeGreaterThan($imagesPulledPosition)
         ->and($latestImagePosition)->toBeLessThan($composeUpPosition)
-        ->and($coolifyVersionPosition)->toBeLessThan($composeUpPosition);
+        ->and($xlaunchVersionPosition)->toBeLessThan($composeUpPosition);
 })->with([
     'stable upgrade' => 'scripts/upgrade.sh',
     'nightly upgrade' => 'other/nightly/upgrade.sh',
@@ -123,7 +123,7 @@ it('uses postgres 18 compatible mount path in generated override and restore con
     expect($script)
         ->toContain("printf '%s' '/var/lib/postgresql'")
         ->toContain("printf '%s' '/var/lib/postgresql/data'")
-        ->toContain('- coolify-db:${mount_path}')
+        ->toContain('- xlaunch-db:${mount_path}')
         ->toContain('-v "${TARGET_VOLUME}:${TARGET_MOUNT_PATH}"');
 });
 
@@ -141,7 +141,7 @@ it('persists rollback metadata and exposes a rollback command', function () {
         ->toContain('Rollback completed successfully.');
 });
 
-it('detects the active postgres volume instead of assuming coolify-db', function () {
+it('detects the active postgres volume instead of assuming xlaunch-db', function () {
     $script = file_get_contents(getcwd().'/scripts/upgrade-postgres.sh');
 
     expect($script)

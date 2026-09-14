@@ -1,10 +1,10 @@
 <?php
 
-use App\Services\CoolifyUpgradeStatus;
+use App\Services\XlaunchUpgradeStatus;
 use Carbon\Carbon;
 
 it('treats empty or malformed status as none', function (?string $content) {
-    expect(CoolifyUpgradeStatus::fromFile(
+    expect(XlaunchUpgradeStatus::fromFile(
         content: $content ?? '',
         runningVersion: '4.3.0',
         targetVersion: '4.3.1',
@@ -23,7 +23,7 @@ it('treats empty or malformed status as none', function (?string $content) {
 it('returns in_progress for intermediate upgrade steps', function () {
     $content = '4|Stopping containers|'.Carbon::parse('2026-08-13T12:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.0',
         targetVersion: '4.3.1',
@@ -42,7 +42,7 @@ it('returns in_progress for intermediate upgrade steps', function () {
 it('does not mark the upgrade complete when the script finished but the running version is still old', function () {
     $content = '6|Upgrade complete|'.Carbon::parse('2026-08-13T12:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.0',
         targetVersion: '4.3.1',
@@ -53,14 +53,14 @@ it('does not mark the upgrade complete when the script finished but the running 
         ->and($result['step'])->toBe(6)
         ->and($result['running_version'])->toBe('4.3.0')
         ->and($result['target_version'])->toBe('4.3.1')
-        ->and($result['message'])->toContain('Waiting for Coolify')
+        ->and($result['message'])->toContain('Waiting for Xlaunch')
         ->and($result['message'])->toContain('4.3.1');
 });
 
 it('marks the upgrade complete only after the running version matches the target', function () {
     $content = '6|Upgrade complete|'.Carbon::parse('2026-08-13T12:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.1',
         targetVersion: '4.3.1',
@@ -79,7 +79,7 @@ it('marks the upgrade complete only after the running version matches the target
 it('treats a running version newer than the target as complete', function () {
     $content = '6|Upgrade complete|'.Carbon::parse('2026-08-13T12:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.2',
         targetVersion: '4.3.1',
@@ -92,7 +92,7 @@ it('treats a running version newer than the target as complete', function () {
 it('returns error status without requiring a version match', function () {
     $content = 'error|Failed to pull image|'.Carbon::parse('2026-08-13T12:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.0',
         targetVersion: '4.3.1',
@@ -109,7 +109,7 @@ it('returns error status without requiring a version match', function () {
 it('ignores stale status files older than ten minutes', function () {
     $content = '6|Upgrade complete|'.Carbon::parse('2026-08-13T11:00:00+00:00')->toIso8601String();
 
-    $result = CoolifyUpgradeStatus::fromFile(
+    $result = XlaunchUpgradeStatus::fromFile(
         content: $content,
         runningVersion: '4.3.1',
         targetVersion: '4.3.1',
@@ -123,7 +123,7 @@ it('checks the running version through authenticated upgrade status before showi
     $upgradeView = file_get_contents(__DIR__.'/../../resources/views/livewire/upgrade.blade.php');
 
     expect($upgradeView)
-        ->not->toContain('X-Coolify-Version')
+        ->not->toContain('X-Xlaunch-Version')
         ->toContain('this.$wire.getUpgradeStatus()')
         ->toContain("data.status === 'complete'")
         ->toContain('livewireFailures');
@@ -170,11 +170,11 @@ it('starts the upgrade after the Livewire response so status polling is not bloc
 
     expect($upgradeComponent)
         ->toContain('afterResponse()')
-        ->toContain('CoolifyUpgradeStatus::fromFile');
+        ->toContain('XlaunchUpgradeStatus::fromFile');
 });
 
 it('reports whether the running version has reached the target', function (string $running, string $target, bool $reached) {
-    expect(CoolifyUpgradeStatus::hasReachedTargetVersion($running, $target))->toBe($reached);
+    expect(XlaunchUpgradeStatus::hasReachedTargetVersion($running, $target))->toBe($reached);
 })->with([
     'old instance still serving' => ['4.3.0', '4.3.1', false],
     'target reached' => ['4.3.1', '4.3.1', true],

@@ -9,11 +9,11 @@ use Laravel\Mcp\Request;
 use Laravel\Mcp\Response;
 use Laravel\Mcp\Server\Tool;
 
-class CoolifyHelp extends Tool
+class XlaunchHelp extends Tool
 {
-    protected string $name = 'coolify_help';
+    protected string $name = 'xlaunch_help';
 
-    protected string $description = 'Tool catalog by intent. Call first when unsure which Coolify MCP tool to use. Optional intent: overview | search | inventory | debug | deploy | github | team | essentials.';
+    protected string $description = 'Tool catalog by intent. Call first when unsure which Xlaunch MCP tool to use. Optional intent: overview | search | inventory | debug | deploy | github | team | essentials.';
 
     use BuildsResponse;
     use ResolvesTeam;
@@ -122,7 +122,7 @@ class CoolifyHelp extends Tool
             'essentials' => [
                 'description' => 'Minimal set for most questions',
                 'tools' => [
-                    'coolify_help',
+                    'xlaunch_help',
                     'get_infrastructure_overview',
                     'search_resources',
                     'list_unhealthy_resources',
@@ -163,7 +163,7 @@ class CoolifyHelp extends Tool
     private function workflowHints(): array
     {
         return [
-            'Start with coolify_help, get_infrastructure_overview, search_resources, or list_unhealthy_resources (sample_only=true).',
+            'Start with xlaunch_help, get_infrastructure_overview, search_resources, or list_unhealthy_resources (sample_only=true).',
             'Resolve a UUID, then get_* for details.',
             'Debug with list_deployments / get_deployment(include_log_summary) before get_logs.',
             'get_logs is optional and fails structured when not running or server unreachable.',

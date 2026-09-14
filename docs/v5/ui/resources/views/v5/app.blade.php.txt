@@ -7,9 +7,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title inertia>{{ config('app.name') }} v5</title>
     @env('local')
-        <link rel="icon" href="{{ asset('coolify-logo-dev-transparent.png') }}" type="image/png" />
+        <link rel="icon" href="{{ asset('xlaunch-logo-dev-transparent.png') }}" type="image/png" />
     @else
-        <link rel="icon" href="{{ asset('coolify-logo.svg') }}" type="image/svg+xml" />
+        <link rel="icon" href="{{ asset('xlaunch-logo.svg') }}" type="image/svg+xml" />
     @endenv
     @auth
         <script type="text/javascript" src="{{ URL::asset('js/echo.js') }}"></script>
@@ -20,7 +20,7 @@
             window.Echo = new EchoConstructor({
                 broadcaster: 'pusher',
                 cluster: "{{ config('constants.pusher.host') }}" || window.location.hostname,
-                key: "{{ config('constants.pusher.app_key') }}" || 'coolify',
+                key: "{{ config('constants.pusher.app_key') }}" || 'xlaunch',
                 wsHost: "{{ config('constants.pusher.host') }}" || window.location.hostname,
                 wsPort: "{{ getRealtime() }}",
                 wssPort: "{{ getRealtime() }}",

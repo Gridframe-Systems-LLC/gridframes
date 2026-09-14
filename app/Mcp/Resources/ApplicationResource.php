@@ -16,15 +16,15 @@ class ApplicationResource extends Resource implements HasUriTemplate
     use BuildsResponse;
     use ResolvesTeam;
 
-    protected string $name = 'coolify-application';
+    protected string $name = 'xlaunch-application';
 
-    protected string $description = 'Application summary JSON for a team-owned application UUID (coolify://application/{uuid}).';
+    protected string $description = 'Application summary JSON for a team-owned application UUID (xlaunch://application/{uuid}).';
 
     protected string $mimeType = 'application/json';
 
     public function uriTemplate(): UriTemplate
     {
-        return new UriTemplate('coolify://application/{uuid}');
+        return new UriTemplate('xlaunch://application/{uuid}');
     }
 
     public function handle(Request $request): Response

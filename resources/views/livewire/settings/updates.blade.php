@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Update Settings | Coolify
+        Update Settings | Xlaunch
     </x-slot>
 
     <x-settings.layout>
@@ -8,8 +8,8 @@
             {{-- Exclude is_auto_update_enabled (instantSave) so the bar does not flash. --}}
             <x-unsaved-bar action="submit" targets="update_check_frequency,auto_update_frequency" />
 
-            <x-application.settings-section title="Update Coolify"
-                helper="Install the latest Coolify version manually when an update is available.">
+            <x-application.settings-section title="Update Xlaunch"
+                helper="Install the latest Xlaunch version manually when an update is available.">
                 <livewire:upgrade :full-button="true" key="settings-upgrade" />
             </x-application.settings-section>
 
@@ -27,7 +27,7 @@
 
             <x-application.settings-section title="Automatic updates">
                 <div class="grid gap-4 lg:grid-cols-2">
-                    @if (!is_null(config('constants.coolify.autoupdate', null)))
+                    @if (!is_null(config('constants.xlaunch.autoupdate', null)))
                         <x-forms.listbox disabled id="is_auto_update_enabled" label="Automatic updates"
                             helper="Controlled by the AUTOUPDATE environment variable." :options="[
                                 ['value' => true, 'label' => 'Enabled'],
@@ -41,7 +41,7 @@
                             ]" />
                     @endif
 
-                    @if (is_null(config('constants.coolify.autoupdate', null)) && $is_auto_update_enabled)
+                    @if (is_null(config('constants.xlaunch.autoupdate', null)) && $is_auto_update_enabled)
                         <x-forms.input required id="auto_update_frequency" label="Update frequency"
                             placeholder="0 0 * * *"
                             helper="Cron expression or preset for installing updates." />

@@ -15,13 +15,13 @@ return new class extends Migration
             foreach ($servers as $server) {
                 $existingKeys = SharedEnvironmentVariable::where('type', 'server')
                     ->where('server_id', $server->id)
-                    ->whereIn('key', ['COOLIFY_SERVER_UUID', 'COOLIFY_SERVER_NAME'])
+                    ->whereIn('key', ['XLAUNCH_SERVER_UUID', 'XLAUNCH_SERVER_NAME'])
                     ->pluck('key')
                     ->toArray();
 
-                if (! in_array('COOLIFY_SERVER_UUID', $existingKeys)) {
+                if (! in_array('XLAUNCH_SERVER_UUID', $existingKeys)) {
                     SharedEnvironmentVariable::create([
-                        'key' => 'COOLIFY_SERVER_UUID',
+                        'key' => 'XLAUNCH_SERVER_UUID',
                         'value' => $server->uuid,
                         'type' => 'server',
                         'server_id' => $server->id,
@@ -30,9 +30,9 @@ return new class extends Migration
                     ]);
                 }
 
-                if (! in_array('COOLIFY_SERVER_NAME', $existingKeys)) {
+                if (! in_array('XLAUNCH_SERVER_NAME', $existingKeys)) {
                     SharedEnvironmentVariable::create([
-                        'key' => 'COOLIFY_SERVER_NAME',
+                        'key' => 'XLAUNCH_SERVER_NAME',
                         'value' => $server->name,
                         'type' => 'server',
                         'server_id' => $server->id,
@@ -50,7 +50,7 @@ return new class extends Migration
     public function down(): void
     {
         SharedEnvironmentVariable::where('type', 'server')
-            ->whereIn('key', ['COOLIFY_SERVER_UUID', 'COOLIFY_SERVER_NAME'])
+            ->whereIn('key', ['XLAUNCH_SERVER_UUID', 'XLAUNCH_SERVER_NAME'])
             ->delete();
     }
 };

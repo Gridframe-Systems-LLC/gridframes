@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Artisan;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 });
 
 test('it previews eligible unverified users without deleting them', function () {
@@ -145,10 +145,10 @@ test('it keeps unverified root team members', function () {
     $this->assertModelExists($user);
 });
 
-test('it only runs on Coolify Cloud', function () {
-    config()->set('constants.coolify.self_hosted', true);
+test('it only runs on Xlaunch Cloud', function () {
+    config()->set('constants.xlaunch.self_hosted', true);
 
     $this->artisan('cloud:cleanup-unverified-users')
-        ->expectsOutput('This command can only be run on Coolify Cloud.')
+        ->expectsOutput('This command can only be run on Xlaunch Cloud.')
         ->assertFailed();
 });

@@ -50,7 +50,7 @@ describe('Traefik noindex middleware', function () {
             domains: collect(['https://example.com/api']),
             is_force_https_enabled: false,
             onlyPort: 3000,
-            serviceLabels: collect(['coolify.traefik.middlewares=rate-limit']),
+            serviceLabels: collect(['xlaunch.traefik.middlewares=rate-limit']),
             redirect_direction: 'www',
             is_http_basic_auth_enabled: true,
             http_basic_auth_username: 'user',

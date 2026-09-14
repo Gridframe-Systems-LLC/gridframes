@@ -1,6 +1,6 @@
 <?php
 
-it('uses yellow focus borders for normal v5 controls and purple focus borders for coolify buttons', function () {
+it('uses yellow focus borders for normal v5 controls and purple focus borders for xlaunch buttons', function () {
     $v5Css = file_get_contents(resource_path('css/v5/app.css'));
     $buttonComponent = file_get_contents(resource_path('js/v5/components/ui/button.tsx'));
     $inputComponent = file_get_contents(resource_path('js/v5/components/ui/input.tsx'));
@@ -13,9 +13,9 @@ it('uses yellow focus borders for normal v5 controls and purple focus borders fo
         ->toContain('--tw-ring-offset-color: var(--background)')
         ->and($buttonComponent)
         ->toContain('focus-visible:border-ring')
-        ->toContain('focus-visible:border-coollabs-100')
-        ->toContain('dark:focus-visible:border-coollabs-100')
-        ->not->toContain('dark:focus-visible:border-coollabs-50')
+        ->toContain('focus-visible:border-northlatch-100')
+        ->toContain('dark:focus-visible:border-northlatch-100')
+        ->not->toContain('dark:focus-visible:border-northlatch-50')
         ->not->toContain('focus-visible:ring-')
         ->not->toContain('focus-visible:border-destructive')
         ->and($inputComponent)

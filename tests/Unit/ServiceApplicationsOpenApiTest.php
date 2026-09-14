@@ -40,7 +40,7 @@ it('documents the service application restart limit setting', function () {
 
     expect($properties['max_restart_count'])
         ->toMatchArray([
-            'description' => 'Maximum Docker restart count before Coolify stops the container. Set to 0 to disable the limit.',
+            'description' => 'Maximum Docker restart count before Xlaunch stops the container. Set to 0 to disable the limit.',
             'minimum' => 0,
         ]);
 });

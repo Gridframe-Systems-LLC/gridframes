@@ -13,7 +13,7 @@ test('removes exclude_from_hc from service level', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     assertEquals('nginx:latest', $result['services']['web']['image']);
     assertEquals(['80:80'], $result['services']['web']['ports']);
@@ -37,7 +37,7 @@ test('removes content from volume level', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result['services']['app']['volumes'][0])->toHaveKeys(['type', 'source', 'target']);
     expect($result['services']['app']['volumes'][0])->not->toHaveKey('content');
@@ -60,7 +60,7 @@ test('removes isDirectory from volume level', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result['services']['app']['volumes'][0])->toHaveKeys(['type', 'source', 'target']);
     expect($result['services']['app']['volumes'][0])->not->toHaveKey('isDirectory');
@@ -83,7 +83,7 @@ test('removes is_directory from volume level', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result['services']['app']['volumes'][0])->toHaveKeys(['type', 'source', 'target']);
     expect($result['services']['app']['volumes'][0])->not->toHaveKey('is_directory');
@@ -118,7 +118,7 @@ test('removes all custom fields together', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     // Verify service-level custom fields removed
     expect($result['services']['web'])->not->toHaveKey('exclude_from_hc');
@@ -165,7 +165,7 @@ test('preserves standard Docker Compose fields', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     // All standard fields should be preserved
     expect($result)->toHaveKeys(['services', 'networks', 'volumes']);
@@ -182,7 +182,7 @@ test('handles missing services gracefully', function () {
         'version' => '3.8',
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result)->toBe($yaml);
 });
@@ -197,7 +197,7 @@ test('handles missing volumes in service gracefully', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result['services']['app'])->not->toHaveKey('exclude_from_hc');
     expect($result['services']['app'])->not->toHaveKey('volumes');
@@ -221,7 +221,7 @@ test('handles traccar.yaml example with multiline content', function () {
         ],
     ];
 
-    $result = stripCoolifyCustomFields($yaml);
+    $result = stripXlaunchCustomFields($yaml);
 
     expect($result['services']['traccar']['volumes'][0])->toHaveKeys(['type', 'source', 'target']);
     expect($result['services']['traccar']['volumes'][0])->not->toHaveKey('content');

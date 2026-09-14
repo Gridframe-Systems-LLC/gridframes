@@ -169,9 +169,9 @@ it('falls back to the SSH push when RPC delivery fails and advances jti on SSH s
 
         $script = end($command);
 
-        return str_contains($script, '/etc/coolify/host-jwt')
-            && str_contains($script, 'chmod 600 /etc/coolify/host-jwt')
-            && str_contains($script, 'tee /etc/coolify/host-jwt');
+        return str_contains($script, '/etc/xlaunch/host-jwt')
+            && str_contains($script, 'chmod 600 /etc/xlaunch/host-jwt')
+            && str_contains($script, 'tee /etc/xlaunch/host-jwt');
     });
     Log::shouldHaveReceived('debug')->withArgs(
         fn (string $message, array $context = []) => ($context['delivery'] ?? null) === 'ssh'

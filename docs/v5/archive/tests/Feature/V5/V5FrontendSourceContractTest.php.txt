@@ -51,7 +51,7 @@ it('uses the shared dialog and button components for the application ingress mod
         ->toContain('open')
         ->toContain('<DialogContent')
         ->toContain('showCloseButton')
-        ->toContain('<Button type="submit" variant="coolify"')
+        ->toContain('<Button type="submit" variant="xlaunch"')
         ->not->toContain('>Cancel</button>')
         ->not->toContain('>Close</button>');
 });
@@ -465,7 +465,7 @@ it('defines the v5 dashboard page as a shadcn styled canvas shell', function () 
         ->toContain("import { csrfToken } from '@/lib/csrf';")
         ->not->toContain('function csrfToken()')
         ->toContain('export function AppNavbar')
-        ->toContain('/coolify-logo.svg')
+        ->toContain('/xlaunch-logo.svg')
         ->toContain('<Link')
         ->toContain('className="fixed inset-x-0 top-0 z-40 border-b border-border bg-background"')
         ->not->toContain('className="sticky top-0 z-40 shrink-0 border-b border-border bg-background"')
@@ -491,10 +491,10 @@ it('defines the v5 dashboard page as a shadcn styled canvas shell', function () 
         ->toContain('<SheetTrigger')
         ->toContain('<SheetContent side="right" className="w-72 max-w-[85vw] bg-background"')
         ->toContain('<SheetHeader>')
-        ->toContain('<SheetTitle>Coolify</SheetTitle>')
+        ->toContain('<SheetTitle>Xlaunch</SheetTitle>')
         ->toContain('<SheetDescription className="sr-only">')
         ->toContain('<SheetClose')
-        ->toContain('Move between Coolify v5 pages.')
+        ->toContain('Move between Xlaunch v5 pages.')
         ->not->toContain('<SheetTitle className="sr-only">Navigation</SheetTitle>')
         ->toContain('className="hidden rounded-md px-3 py-1 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground md:inline-flex"')
         ->toContain('className="inline-flex rounded-md p-2 text-warning transition-colors hover:bg-muted hover:text-warning md:hidden"')
@@ -533,7 +533,7 @@ it('defines the v5 dashboard page as a shadcn styled canvas shell', function () 
         ->not->toContain('supports-[backdrop-filter]')
         ->not->toContain('border-coolgray')
         ->not->toContain('className="w-[12rem]"')
-        ->not->toContain('<h1>Coolify v5</h1>')
+        ->not->toContain('<h1>Xlaunch v5</h1>')
         ->not->toContain('<h2 id="clusters-heading">Clusters</h2>');
 
     expect(file_exists(resource_path('js/v5/components/top-navigation-loading-indicator.tsx')))->toBeFalse();
@@ -571,7 +571,7 @@ it('defines the v5 cluster management page and create cluster form', function ()
 
     expect(file_exists($clustersPagePath))->toBeTrue();
 
-    preg_match('/<Button\s+type="button"\s+variant="coolify"\s+aria-label="Add server to cluster"/m', $clustersPage, $addServerButtonMatches);
+    preg_match('/<Button\s+type="button"\s+variant="xlaunch"\s+aria-label="Add server to cluster"/m', $clustersPage, $addServerButtonMatches);
 
     expect($addServerButtonMatches)->not->toBeEmpty();
 
@@ -595,7 +595,7 @@ it('defines the v5 cluster management page and create cluster form', function ()
         ->toContain('aria-label="Create cluster"')
         ->toContain('setIsCreateDialogOpen(true)')
         ->toContain('Add cluster')
-        ->toContain('variant="coolify"')
+        ->toContain('variant="xlaunch"')
         ->not->toContain('border-warning bg-warning/10 text-foreground')
         ->not->toContain('border-primary bg-primary/10 text-foreground')
         ->toContain('<Dialog')
@@ -645,7 +645,7 @@ it('defines the v5 cluster management page and create cluster form', function ()
         ->toContain('role="group"')
         ->toContain('aria-label="Server initialization"')
         ->toContain('rounded-l-md border border-r-0 border-destructive/30 bg-destructive/10')
-        ->toContain('variant="coolify"')
+        ->toContain('variant="xlaunch"')
         ->toContain('className="rounded-r-md"')
         ->toContain('onClick={() => void bootstrapServer(server)}')
         ->not->toContain('<DropdownMenuItem
@@ -751,11 +751,11 @@ it('defines the v5 cluster management page and create cluster form', function ()
         ->not->toContain('<aside className="rounded-lg border border-border bg-card p-5">')
         ->not->toContain('This is where the magic happens.');
 
-    expect(substr_count($clustersPage, 'variant="coolify"'))->toBe(6)
+    expect(substr_count($clustersPage, 'variant="xlaunch"'))->toBe(6)
         ->and($buttonComponent)
-        ->toContain('coolify:')
-        ->toContain('bg-coollabs-50')
-        ->toContain('hover:bg-coollabs')
+        ->toContain('xlaunch:')
+        ->toContain('bg-northlatch-50')
+        ->toContain('hover:bg-northlatch')
         ->toContain('delete:');
 
     expect($dialogComponent)
@@ -899,12 +899,12 @@ it('sizes the v5 app root with the dynamic mobile viewport', function () {
         ->not->toContain('min-height: 100vh;');
 });
 
-it('does not include coolify version controls on the v5 dashboard page', function () {
+it('does not include xlaunch version controls on the v5 dashboard page', function () {
     $dashboardPage = file_get_contents(resource_path('js/v5/Pages/Dashboard.tsx'));
 
     expect($dashboardPage)
-        ->not->toContain('Check coolify version')
-        ->not->toContain('/v5/coolify/version')
+        ->not->toContain('Check xlaunch version')
+        ->not->toContain('/v5/xlaunch/version')
         ->not->toContain('Installed version:');
 });
 

@@ -52,7 +52,7 @@ function fakeFluxHealth(bool $available = true, string $message = 'Flux is runni
                 'available' => $available,
                 'label' => $available ? 'Running' : 'Unavailable',
                 'message' => $message,
-                'socket' => '/run/coolify/flux.sock',
+                'socket' => '/run/xlaunch/flux.sock',
             ]);
     }));
 }
@@ -74,8 +74,8 @@ function fakeSuccessfulNginxFluxDeployment(string $image = 'docker.io/library/ng
         $mock->shouldReceive('createContainer')
             ->once()
             ->with(Mockery::type('string'), Mockery::on(fn (array $spec): bool => ($spec['image'] ?? null) === $image
-                && ($spec['networks'] ?? []) === ['coolify-default-mesh']
-                && ($spec['dns_search'] ?? []) === ['default.coolify.internal']
+                && ($spec['networks'] ?? []) === ['xlaunch-default-mesh']
+                && ($spec['dns_search'] ?? []) === ['default.xlaunch.internal']
                 && in_array($spec['name'] ?? '', $spec['network_aliases'] ?? [], true)))
             ->andReturn('nginx-container-id');
         $mock->shouldReceive('startContainer')
@@ -100,7 +100,7 @@ function expectCaddyIngressFirewallRule(mixed $fluxClient): void
             'id' => 'v5-caddy-ingress:80',
             'namespace' => 'default',
             'src' => '0.0.0.0/0',
-            'dst' => 'coolify-v5-caddy',
+            'dst' => 'xlaunch-v5-caddy',
             'proto' => 'tcp',
             'port' => 80,
         ])

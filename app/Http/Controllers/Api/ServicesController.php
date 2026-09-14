@@ -286,7 +286,7 @@ class ServicesController extends Controller
                                 type: 'object',
                                 properties: [
                                     'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                    'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io").'],
+                                    'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com").'],
                                 ],
                             ),
                         ],
@@ -1081,7 +1081,7 @@ class ServicesController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.coolify.io,https://app2.coolify.io").'],
+                                        'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com").'],
                                     ],
                                 ),
                             ],
@@ -1977,7 +1977,7 @@ class ServicesController extends Controller
 
     #[OA\Post(
         summary: 'Migrate to Server',
-        description: 'Migrate a service to another destination/server owned by the authenticated team. Stops the service, optionally transfers persistent volume data when both servers are managed by Coolify, and updates database records. Redeploy after migration completes.',
+        description: 'Migrate a service to another destination/server owned by the authenticated team. Stops the service, optionally transfers persistent volume data when both servers are managed by Xlaunch, and updates database records. Redeploy after migration completes.',
         path: '/services/{uuid}/migrate',
         operationId: 'migrate-service-by-uuid',
         security: [['bearerAuth' => []]],

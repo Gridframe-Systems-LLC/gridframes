@@ -22,7 +22,7 @@ class ManageDevelopmentQemuVm
                 SeedDevelopmentQemuServer::run($profileName, $index === 0);
             } catch (QueryException $exception) {
                 $keepOthers = $index === 0 ? '' : ' --keep-others';
-                $result = Process::run('docker exec coolify php artisan dev:qemu:seed '.escapeshellarg($profileName).$keepOthers);
+                $result = Process::run('docker exec xlaunch php artisan dev:qemu:seed '.escapeshellarg($profileName).$keepOthers);
 
                 if ($result->failed()) {
                     throw $exception;

@@ -29,8 +29,8 @@ test('generateDockerBuildArgs works with collection of objects', function () {
 
 test('generateDockerBuildArgs collection can be imploded into valid command string', function () {
     $variables = [
-        ['key' => 'COOLIFY_URL', 'value' => 'http://example.com', 'is_multiline' => false],
-        ['key' => 'COOLIFY_BRANCH', 'value' => 'main', 'is_multiline' => false],
+        ['key' => 'XLAUNCH_URL', 'value' => 'http://example.com', 'is_multiline' => false],
+        ['key' => 'XLAUNCH_BRANCH', 'value' => 'main', 'is_multiline' => false],
     ];
 
     $buildArgs = generateDockerBuildArgs($variables);
@@ -38,7 +38,7 @@ test('generateDockerBuildArgs collection can be imploded into valid command stri
     // The collection must be imploded to a string for command interpolation
     // This was the bug: Collection was interpolated as JSON instead of a space-separated string
     $argsString = $buildArgs->implode(' ');
-    expect($argsString)->toBe("--build-arg 'COOLIFY_URL' --build-arg 'COOLIFY_BRANCH'");
+    expect($argsString)->toBe("--build-arg 'XLAUNCH_URL' --build-arg 'XLAUNCH_BRANCH'");
 
     // Verify it does NOT produce JSON when cast to string
     expect($argsString)->not->toContain('{');

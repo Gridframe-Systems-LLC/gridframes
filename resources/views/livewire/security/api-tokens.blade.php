@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        API Tokens | Coolify
+        API Tokens | Xlaunch
     </x-slot>
 
     <x-security.settings-layout>
@@ -8,7 +8,7 @@
     @if (!$isApiEnabled)
         <div class="application-settings-form">
             <x-application.settings-section title="API disabled"
-                description="Enable the Coolify API before creating access tokens.">
+                description="Enable the Xlaunch API before creating access tokens.">
                 <x-empty title="API access is turned off"
                     description="Enable API access in instance settings to issue tokens." icon-name="keys"
                     size="sm">
@@ -198,7 +198,7 @@
                                                 'inline-flex min-h-5 items-center rounded-md border px-2 py-0.5 text-[10px] font-medium',
                                                 'border-error/20 bg-error/10 text-error' => $ability === 'root',
                                                 'border-warning/20 bg-warning/10 text-warning' => in_array($ability, ['write', 'write:sensitive']),
-                                                'border-coollabs/20 bg-coollabs/10 text-coollabs dark:border-warning/20 dark:bg-warning/10 dark:text-warning' => $ability === 'deploy',
+                                                'border-northlatch/20 bg-northlatch/10 text-northlatch dark:border-warning/20 dark:bg-warning/10 dark:text-warning' => $ability === 'deploy',
                                                 'border-neutral-200 bg-neutral-100 text-neutral-600 dark:border-white/[0.08] dark:bg-white/[0.06] dark:text-fg-dim' => in_array($ability, ['read', 'read:sensitive']),
                                             ])>{{ $ability }}</span>
                                         @endforeach
@@ -248,7 +248,7 @@
 
                         <x-client-pagination x-cloak x-show="filteredTokens.length > 0"
                             summary="`${firstVisibleRow}-${lastVisibleRow} of ${filteredTokens.length}`"
-                            page-size-model="perPage" storage-key="coolify.page-size.api-tokens"
+                            page-size-model="perPage" storage-key="xlaunch.page-size.api-tokens"
                             previous-action="goToPage(page - 1)" next-action="goToPage(page + 1)"
                             next-disabled="page >= lastPage" />
                     @endif

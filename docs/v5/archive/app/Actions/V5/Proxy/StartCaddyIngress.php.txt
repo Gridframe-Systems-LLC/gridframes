@@ -41,7 +41,7 @@ class StartCaddyIngress
                     'id' => "v5-caddy-ingress:{$port}",
                     'namespace' => 'default',
                     'src' => '0.0.0.0/0',
-                    'dst' => 'coolify-v5-caddy',
+                    'dst' => 'xlaunch-v5-caddy',
                     'proto' => 'tcp',
                     'port' => $port,
                 ]);

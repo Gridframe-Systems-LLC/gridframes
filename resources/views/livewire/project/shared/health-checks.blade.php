@@ -6,14 +6,14 @@
     <x-unsaved-bar action="submit" />
 
     <x-application.settings-section id="healthcheck-configuration-section" title="Healthcheck"
-        helper="Define how Coolify determines whether this application is ready to receive traffic.">
+        helper="Define how Xlaunch determines whether this application is ready to receive traffic.">
         <x-slot:actions>
             @if (!$healthCheckEnabled)
                 <x-modal-confirmation :disabled="!auth()->user()->can('update', $resource)"
                     :authDisabled="!auth()->user()->can('update', $resource)"
                     title="Enable healthcheck?" buttonTitle="Enable"
                     submitAction="toggleHealthcheck" :actions="['Enable healthcheck for this resource.']"
-                    warningMessage="If the healthcheck fails, your application will become inaccessible. Review the <a href='https://coolify.io/docs/knowledge-base/health-checks' target='_blank' class='underline text-white'>Healthchecks guide</a> before continuing."
+                    warningMessage="If the healthcheck fails, your application will become inaccessible. Review the <a href='https://northlatch.com/docs/knowledge-base/health-checks' target='_blank' class='underline text-white'>Healthchecks guide</a> before continuing."
                     step2ButtonText="Enable healthcheck" :confirmWithText="false"
                     :confirmWithPassword="false" isHighlightedButton />
             @else
@@ -42,7 +42,7 @@
 
     @if ($healthCheckType === 'http')
         <x-application.settings-section id="healthcheck-request-section" title="HTTP request"
-            helper="Coolify sends this request from inside the container and evaluates the response.">
+            helper="Xlaunch sends this request from inside the container and evaluates the response.">
             <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
                 <x-forms.listbox id="healthCheckMethod" label="Method" required :options="[
                     ['value' => 'GET', 'label' => 'GET'],

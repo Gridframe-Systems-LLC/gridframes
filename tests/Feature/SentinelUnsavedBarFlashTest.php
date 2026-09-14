@@ -78,7 +78,7 @@ test('unsaved bar keyboard shortcut remains visible in light mode', function () 
     expect($contents)
         ->toContain('border-current/20 bg-current/10')
         ->toContain('text-current')
-        ->not->toContain('text-coollabs-200');
+        ->not->toContain('text-northlatch-200');
 });
 
 test('unsaved bar uses a light surface in light mode', function () {

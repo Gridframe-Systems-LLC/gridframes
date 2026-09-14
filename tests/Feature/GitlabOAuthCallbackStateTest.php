@@ -24,7 +24,7 @@ beforeEach(function () {
         'html_url' => 'https://gitlab.example.com',
         'client_id' => 'client-id',
         'client_secret' => 'client-secret',
-        'redirect_uri' => 'https://coolify.example.com/webhooks/source/gitlab/redirect',
+        'redirect_uri' => 'https://xlaunch.example.com/webhooks/source/gitlab/redirect',
         'team_id' => $this->team->id,
         'is_system_wide' => false,
         'is_public' => false,

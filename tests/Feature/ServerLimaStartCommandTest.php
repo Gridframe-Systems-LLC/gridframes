@@ -60,7 +60,7 @@ it('does not show the lima start command outside development', function () {
     $this->get(route('server.show', ['server_uuid' => $server->uuid]))
         ->assertSuccessful()
         ->assertDontSee('Start this Lima VM locally')
-        ->assertDontSee('limactl start --yes --name=coolify-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml');
+        ->assertDontSee('limactl start --yes --name=xlaunch-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml');
 });
 
 function createServerForLimaStartCommandTest(string $uuid, int $port): Server
@@ -85,12 +85,12 @@ function limaStartCommandDefinitions(): array
         [
             'uuid' => 'lima-ubuntu-2404',
             'port' => 2222,
-            'command' => 'limactl start --yes --name=coolify-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml',
+            'command' => 'limactl start --yes --name=xlaunch-lima-ubuntu-2404 docker/lima/ubuntu-2404.yaml',
         ],
         [
             'uuid' => 'lima-ubuntu-2604',
             'port' => 2223,
-            'command' => 'limactl start --yes --name=coolify-lima-ubuntu-2604 docker/lima/ubuntu-2604.yaml',
+            'command' => 'limactl start --yes --name=xlaunch-lima-ubuntu-2604 docker/lima/ubuntu-2604.yaml',
         ],
     ];
 }

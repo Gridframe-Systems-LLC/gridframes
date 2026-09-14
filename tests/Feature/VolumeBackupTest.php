@@ -101,8 +101,8 @@ it('changes the default volume backup timeout without changing existing timeouts
         ->and($customBackup->fresh()->timeout)->toBe(7200);
 });
 
-it('includes parallel gzip support in the Coolify helper image', function () {
-    $dockerfile = file_get_contents(base_path('docker/coolify-helper/Dockerfile'));
+it('includes parallel gzip support in the Xlaunch helper image', function () {
+    $dockerfile = file_get_contents(base_path('docker/xlaunch-helper/Dockerfile'));
 
     expect($dockerfile)->toContain('pigz');
 });
@@ -415,7 +415,7 @@ it('splits scheduled backup settings and executions across dedicated urls', func
     ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
         'finished_at' => now(),
     ]);
     $parameters = [
@@ -747,7 +747,7 @@ it('renders volume backup executions like database backup executions', function 
     ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
         'size' => 1024,
         'finished_at' => now(),
     ]);
@@ -766,7 +766,7 @@ it('renders volume backup executions like database backup executions', function 
         ->assertSee('Cleanup Deleted')
         ->assertSee('Backup Availability:')
         ->assertSee('Local Storage')
-        ->assertSee('Location: /data/coolify/backups/volumes/test/archive.tar.gz')
+        ->assertSee('Location: /data/xlaunch/backups/volumes/test/archive.tar.gz')
         ->assertSee('Download')
         ->assertSee('Delete')
         ->assertDontSee('border border-neutral-200', false);
@@ -816,7 +816,7 @@ it('deletes an individual volume backup archive and execution', function () {
     $execution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
         'finished_at' => now(),
     ]);
 
@@ -863,14 +863,14 @@ it('deletes an individual S3 archive from the storage recorded on its execution'
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $originalStorage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/historical.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/historical.tar.gz',
         'local_storage_deleted' => true,
         's3_uploaded' => true,
     ]);
     $disk = Mockery::mock();
     $disk->shouldReceive('delete')
         ->once()
-        ->with(['/data/coolify/backups/volumes/test/historical.tar.gz'])
+        ->with(['/data/xlaunch/backups/volumes/test/historical.tar.gz'])
         ->andReturnTrue();
     Storage::shouldReceive('build')
         ->once()
@@ -896,7 +896,7 @@ it('prevents another team from downloading a volume backup', function () {
     $execution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
     ]);
     $otherTeam = Team::factory()->create();
     signInForVolumeBackups($this, $otherTeam);
@@ -1435,7 +1435,7 @@ it('disables S3 volume backups when the storage is deleted', function () {
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $s3Storage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/s3.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/s3.tar.gz',
         's3_uploaded' => true,
         's3_cleanup_pending' => true,
     ]);
@@ -1479,7 +1479,7 @@ it('marks historical executions deleted when their recorded S3 storage is remove
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $originalStorage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/historical.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/historical.tar.gz',
         's3_uploaded' => true,
         's3_cleanup_pending' => true,
     ]);
@@ -1562,7 +1562,7 @@ it('deletes local archives before deleting a volume backup schedule', function (
     ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
         'size' => 128,
     ]);
 
@@ -1631,14 +1631,14 @@ it('deletes S3 archives from the storage recorded on each execution', function (
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $originalStorage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/historical.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/historical.tar.gz',
         'local_storage_deleted' => true,
         's3_uploaded' => true,
     ]);
     $disk = Mockery::mock();
     $disk->shouldReceive('delete')
         ->once()
-        ->with(['/data/coolify/backups/volumes/test/historical.tar.gz'])
+        ->with(['/data/xlaunch/backups/volumes/test/historical.tar.gz'])
         ->andReturnTrue();
     Storage::shouldReceive('build')
         ->once()
@@ -1741,7 +1741,7 @@ it('deletes disabled volume backup archives before deleting their application', 
     $execution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/application-delete.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/application-delete.tar.gz',
     ]);
     $application->delete();
 
@@ -1764,7 +1764,7 @@ it('marks a running execution failed even when the job instance lost its executi
     $execution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'running',
-        'filename' => '/data/coolify/backups/volumes/test/timed-out.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/timed-out.tar.gz',
     ]);
 
     (new VolumeBackupJob($backup))->failed(new RuntimeException('Worker timed out'));
@@ -2064,14 +2064,14 @@ it('removes local volume backups older than the configured retention days', func
     $expiredExecution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/expired.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/expired.tar.gz',
         'size' => 64,
     ]);
     ScheduledVolumeBackupExecution::query()->whereKey($expiredExecution)->update(['created_at' => now()->subDays(8)]);
     $recentExecution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/recent.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/recent.tar.gz',
         'size' => 64,
     ]);
     ScheduledVolumeBackupExecution::query()->whereKey($recentExecution)->update(['created_at' => now()->subDay()]);
@@ -2104,7 +2104,7 @@ it('removes oldest local volume backups over the configured storage limit', func
     $oldExecution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/over-limit.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/over-limit.tar.gz',
         'size' => 64,
     ]);
     ScheduledVolumeBackupExecution::query()->whereKey($oldExecution)->update(['created_at' => now()->subDay()]);
@@ -2161,7 +2161,7 @@ it('removes retained S3 archives from the storage recorded on each execution', f
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $originalStorage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/old.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/old.tar.gz',
         's3_uploaded' => true,
         'created_at' => now()->subDay(),
     ]);
@@ -2169,11 +2169,11 @@ it('removes retained S3 archives from the storage recorded on each execution', f
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $newStorage->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/new.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/new.tar.gz',
         's3_uploaded' => true,
     ]);
     $disk = Mockery::mock();
-    $disk->shouldReceive('delete')->once()->with(['/data/coolify/backups/volumes/test/old.tar.gz'])->andReturnTrue();
+    $disk->shouldReceive('delete')->once()->with(['/data/xlaunch/backups/volumes/test/old.tar.gz'])->andReturnTrue();
     Storage::shouldReceive('build')
         ->once()
         ->with(Mockery::on(fn (array $config): bool => $config['key'] === 'original-key'))
@@ -2200,7 +2200,7 @@ it('does not query execution history when local retention is unlimited', functio
     ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/unlimited.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/unlimited.tar.gz',
     ]);
     $job = new VolumeBackupJob($backup);
     $method = (new ReflectionClass($job))->getMethod('removeExpiredBackups');
@@ -2230,7 +2230,7 @@ it('keeps a successful backup successful when retention cleanup fails', function
     $oldExecution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/old.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/old.tar.gz',
         'size' => 64,
         'created_at' => now()->subDay(),
     ]);
@@ -2357,7 +2357,7 @@ it('retries container recovery when a timed out backup left a container stopped'
         'stop_recovery_pending' => true,
     ]);
     Process::fake([
-        '*cat *coolify-volume-backup-*' => 'abc123',
+        '*cat *xlaunch-volume-backup-*' => 'abc123',
         '*docker start*' => Process::result(errorOutput: 'daemon unavailable', exitCode: 1),
     ]);
 
@@ -2434,7 +2434,7 @@ it('cleans an interrupted S3 upload and coordinates recovery with the backup loc
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $s3Storage->id,
         'status' => 'failed',
-        'filename' => '/data/coolify/backups/volumes/test/interrupted.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/interrupted.tar.gz',
         's3_cleanup_pending' => true,
     ]);
     $disk = Mockery::mock();
@@ -2482,7 +2482,7 @@ it('cleans an interrupted upload from the execution S3 storage after a schedule 
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $originalStorage->id,
         'status' => 'failed',
-        'filename' => '/data/coolify/backups/volumes/test/interrupted.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/interrupted.tar.gz',
         's3_cleanup_pending' => true,
     ]);
     $disk = Mockery::mock();
@@ -2523,7 +2523,7 @@ it('keeps the S3 key tracked when interrupted upload cleanup must be retried', f
         'scheduled_volume_backup_id' => $backup->id,
         's3_storage_id' => $s3Storage->id,
         'status' => 'running',
-        'filename' => '/data/coolify/backups/volumes/test/interrupted.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/interrupted.tar.gz',
         's3_cleanup_pending' => true,
     ]);
     $disk = Mockery::mock();
@@ -2532,13 +2532,13 @@ it('keeps the S3 key tracked when interrupted upload cleanup must be retried', f
 
     (new VolumeBackupJob($backup))->failed(new RuntimeException('Worker timed out'));
 
-    expect($execution->fresh()->filename)->toBe('/data/coolify/backups/volumes/test/interrupted.tar.gz')
+    expect($execution->fresh()->filename)->toBe('/data/xlaunch/backups/volumes/test/interrupted.tar.gz')
         ->and($execution->fresh()->s3_cleanup_pending)->toBeTrue();
     Queue::assertPushed(VolumeBackupRecoveryJob::class);
 });
 
 it('dispatches due scheduled volume backups', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow('2026-07-15 12:00:00');
     Queue::fake();
     $team = Team::factory()->create();
@@ -2566,7 +2566,7 @@ it('dispatches due scheduled volume backups', function () {
 });
 
 it('dispatches due scheduled directory backups', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Carbon::setTestNow('2026-07-15 12:00:00');
     Queue::fake();
     $team = Team::factory()->create();
@@ -2593,7 +2593,7 @@ it('dispatches due scheduled directory backups', function () {
 });
 
 it('retains scheduled volume backups and archive metadata when the server is missing', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Queue::fake();
     $team = Team::factory()->create();
     [$application, $volume] = createVolumeBackupApplication($team);
@@ -2605,7 +2605,7 @@ it('retains scheduled volume backups and archive metadata when the server is mis
     $execution = ScheduledVolumeBackupExecution::create([
         'scheduled_volume_backup_id' => $backup->id,
         'status' => 'success',
-        'filename' => '/data/coolify/backups/volumes/test/archive.tar.gz',
+        'filename' => '/data/xlaunch/backups/volumes/test/archive.tar.gz',
     ]);
     $application->update([
         'destination_id' => null,
@@ -2616,12 +2616,12 @@ it('retains scheduled volume backups and archive metadata when the server is mis
 
     expect($backup->fresh())->not->toBeNull()
         ->and($execution->fresh())->not->toBeNull()
-        ->and($execution->fresh()->filename)->toBe('/data/coolify/backups/volumes/test/archive.tar.gz');
+        ->and($execution->fresh()->filename)->toBe('/data/xlaunch/backups/volumes/test/archive.tar.gz');
     Queue::assertNotPushed(VolumeBackupJob::class);
 });
 
 it('dispatches pending recovery without starting another volume backup', function () {
-    config(['constants.coolify.self_hosted' => true]);
+    config(['constants.xlaunch.self_hosted' => true]);
     Queue::fake();
     $team = Team::factory()->create();
     [$application, $volume, $server] = createVolumeBackupApplication($team);

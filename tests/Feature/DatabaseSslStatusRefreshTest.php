@@ -91,7 +91,7 @@ dataset('display-only-status-components', [
 ]);
 
 it('does not subscribe the form to status broadcasts when display lives in a sibling', function (string $componentClass) {
-    // Regression guard for coolify#6062 / #6354 / #9695:
+    // Regression guard for xlaunch#6062 / #6354 / #9695:
     // Status broadcasts on the form would trigger a Livewire roundtrip that absorbs
     // deferred wire:model values into the snapshot — clobbering both the typed text
     // (resolved by the earlier refreshStatus fix) and the wire:dirty indicator.
@@ -179,9 +179,9 @@ it('refreshes database import status from stored resource identity after the rou
         'name' => 'import-status-mysql',
         'image' => 'mysql:8',
         'mysql_root_password' => 'password',
-        'mysql_user' => 'coolify',
+        'mysql_user' => 'xlaunch',
         'mysql_password' => 'password',
-        'mysql_database' => 'coolify',
+        'mysql_database' => 'xlaunch',
         'status' => 'exited:unhealthy',
         'is_log_drain_enabled' => false,
         'environment_id' => $environment->id,
@@ -210,9 +210,9 @@ it('reloads the mysql status-info model when refresh is called so ssl controls f
         'name' => 'test-mysql',
         'image' => 'mysql:8',
         'mysql_root_password' => 'password',
-        'mysql_user' => 'coolify',
+        'mysql_user' => 'xlaunch',
         'mysql_password' => 'password',
-        'mysql_database' => 'coolify',
+        'mysql_database' => 'xlaunch',
         'status' => 'exited:unhealthy',
         'enable_ssl' => true,
         'is_log_drain_enabled' => false,
@@ -240,9 +240,9 @@ it('shows ssl mode even when ssl is disabled, as a disabled control', function (
         'name' => 'ssl-disabled-mysql',
         'image' => 'mysql:8',
         'mysql_root_password' => 'password',
-        'mysql_user' => 'coolify',
+        'mysql_user' => 'xlaunch',
         'mysql_password' => 'password',
-        'mysql_database' => 'coolify',
+        'mysql_database' => 'xlaunch',
         'status' => 'exited:unhealthy',
         'enable_ssl' => false,
         'ssl_mode' => 'REQUIRED',

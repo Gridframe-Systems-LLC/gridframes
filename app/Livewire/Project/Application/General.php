@@ -314,12 +314,12 @@ class General extends Component
             // Only update custom labels if user has permission
             try {
                 $this->authorize('update', $this->application);
-                $this->customLabels = str(implode('|coolify|', generateLabelsApplication($this->application)))->replace('|coolify|', "\n");
+                $this->customLabels = str(implode('|xlaunch|', generateLabelsApplication($this->application)))->replace('|xlaunch|', "\n");
                 $this->application->custom_labels = base64_encode($this->customLabels);
                 $this->application->save();
             } catch (AuthorizationException $e) {
                 // User doesn't have update permission, just use existing labels
-                // $this->customLabels = str(implode('|coolify|', generateLabelsApplication($this->application)))->replace('|coolify|', "\n");
+                // $this->customLabels = str(implode('|xlaunch|', generateLabelsApplication($this->application)))->replace('|xlaunch|', "\n");
             }
         }
         $this->initialDockerComposeLocation = $this->application->docker_compose_location;
@@ -659,7 +659,7 @@ class General extends Component
             if (! $this->isContainerLabelReadonlyEnabled && ! $manualReset) {
                 return;
             }
-            $this->customLabels = str(implode('|coolify|', generateLabelsApplication($this->application)))->replace('|coolify|', "\n");
+            $this->customLabels = str(implode('|xlaunch|', generateLabelsApplication($this->application)))->replace('|xlaunch|', "\n");
             $this->application->custom_labels = base64_encode($this->customLabels);
             $this->application->save();
             $this->application->refresh();
@@ -683,7 +683,7 @@ class General extends Component
                         $server = $this->application->destination->server;
                         $target = serverDnsTargetIp($server) ?? $server->ip;
                         $guidance = dnsMismatchGuidanceMessage($target, $target);
-                        $showToaster && $this->dispatch('error', 'Validating DNS failed.', "{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://coolify.io/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
+                        $showToaster && $this->dispatch('error', 'Validating DNS failed.', "{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://northlatch.com/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
                     }
                 }
             }
@@ -820,7 +820,7 @@ class General extends Component
 
             $this->application->save();
             if (! $this->customLabels && $this->application->destination->server->proxyType() !== 'NONE' && ! $this->application->settings->is_container_label_readonly_enabled) {
-                $this->customLabels = str(implode('|coolify|', generateLabelsApplication($this->application)))->replace('|coolify|', "\n");
+                $this->customLabels = str(implode('|xlaunch|', generateLabelsApplication($this->application)))->replace('|xlaunch|', "\n");
                 $this->application->custom_labels = base64_encode($this->customLabels);
                 $this->application->save();
             }
@@ -859,7 +859,7 @@ class General extends Component
                                 $server = $this->application->destination->server;
                                 $target = serverDnsTargetIp($server) ?? $server->ip;
                                 $guidance = dnsMismatchGuidanceMessage($target, $target);
-                                $showToaster && $this->dispatch('error', 'Validating DNS failed.', "{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://coolify.io/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
+                                $showToaster && $this->dispatch('error', 'Validating DNS failed.', "{$guidance}<br><br>Check this <a target='_blank' class='underline dark:text-white' href='https://northlatch.com/docs/knowledge-base/dns-configuration'>documentation</a> for further help.");
                             }
                         }
                     }

@@ -1,6 +1,6 @@
 # v5 Host Primitives
 
-Coolify deploy logic must send explicit primitives to coold through Flux. There
+Xlaunch deploy logic must send explicit primitives to coold through Flux. There
 must be no raw Podman passthrough.
 
 This file is the target primitive catalog. Implementations may lag behind this
@@ -90,7 +90,7 @@ logs, artifacts, cancellation, restart adoption, and registry flow.
 
 ## Not primitives
 
-These belong in Coolify, not coold:
+These belong in Xlaunch, not coold:
 
 - `deploy.application`
 - `rollback.deployment`

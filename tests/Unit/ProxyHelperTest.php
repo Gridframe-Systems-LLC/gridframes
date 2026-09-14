@@ -162,12 +162,12 @@ it('identifies host as predefined network', function () {
     expect(isDockerPredefinedNetwork('host'))->toBeTrue();
 });
 
-it('identifies coolify as not predefined network', function () {
-    expect(isDockerPredefinedNetwork('coolify'))->toBeFalse();
+it('identifies xlaunch as not predefined network', function () {
+    expect(isDockerPredefinedNetwork('xlaunch'))->toBeFalse();
 });
 
-it('identifies coolify-overlay as not predefined network', function () {
-    expect(isDockerPredefinedNetwork('coolify-overlay'))->toBeFalse();
+it('identifies xlaunch-overlay as not predefined network', function () {
+    expect(isDockerPredefinedNetwork('xlaunch-overlay'))->toBeFalse();
 });
 
 it('identifies custom networks as not predefined', function () {

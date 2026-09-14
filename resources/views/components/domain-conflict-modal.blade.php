@@ -19,7 +19,7 @@
                     x-transition:leave-start="opacity-100 translate-y-0 sm:scale-100"
                     x-transition:leave-end="opacity-0 -translate-y-2 sm:scale-95"
                     class="application-settings-form application-settings-section relative w-full lg:min-w-[36rem] lg:max-w-2xl"
-                    style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                    style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                     <header>
                         <h3>Domain already in use</h3>
                         <button @click="modalOpen = false; $wire.set('showDomainConflictModal', false)"

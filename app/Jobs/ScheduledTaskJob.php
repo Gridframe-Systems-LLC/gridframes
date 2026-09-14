@@ -154,7 +154,7 @@ class ScheduledTaskJob implements ShouldBeEncrypted, ShouldQueue
                     $execCommand = "{$dockerCommand} exec {$containerName} {$cmd}";
                     $exec = $this->boundedTaskCommand($execCommand);
                     // Disable SSH multiplexing to prevent race conditions when multiple tasks run concurrently
-                    // See: https://github.com/coollabsio/coolify/issues/6736
+                    // See: https://github.com/northlatch/xlaunch/issues/6736
                     $this->task_output = instant_remote_process([$exec], $this->server, throwError: true, no_sudo: true, timeout: $this->timeout, disableMultiplexing: true);
                     $this->task_log->update([
                         'status' => 'success',

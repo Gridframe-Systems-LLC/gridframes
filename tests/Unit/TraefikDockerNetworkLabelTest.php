@@ -1,6 +1,6 @@
 <?php
 
-it('adds the Coolify network when the user did not select a Traefik network', function () {
+it('adds the Xlaunch network when the user did not select a Traefik network', function () {
     $labels = addTraefikDockerNetworkLabel(collect([
         'traefik.enable=true',
     ]), 'app-uuid');

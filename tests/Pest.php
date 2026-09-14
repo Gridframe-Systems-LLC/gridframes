@@ -60,7 +60,7 @@ beforeEach(function () {
     Server::flushIdentityMap();
 
     // Browser Livewire actions often dispatch events; the Soketi host is not
-    // resolvable from host-side Pest runs (docker DNS name coolify-realtime).
+    // resolvable from host-side Pest runs (docker DNS name xlaunch-realtime).
     config(['broadcasting.default' => 'null']);
 });
 

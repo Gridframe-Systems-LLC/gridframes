@@ -18,7 +18,7 @@ use Mockery\MockInterface;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::forceCreate(['id' => 0, 'fqdn' => 'https://coolify.test']);
+    InstanceSettings::forceCreate(['id' => 0, 'fqdn' => 'https://xlaunch.test']);
 });
 
 function applicationWithRestartState(array $attributes = []): Application
@@ -95,7 +95,7 @@ it('shows a stopped after restart limit warning in the status badge', function (
 
     expect($html)->toContain('Restart limit reached')
         ->not->toContain('Stopped after reaching restart limit (2/2).')
-        ->and($html)->toContain('Container has crashed and Coolify stopped it after 2 restart attempts.');
+        ->and($html)->toContain('Container has crashed and Xlaunch stopped it after 2 restart attempts.');
 });
 
 it('does not show the restart limit warning for a normal manual stop', function () {
@@ -188,7 +188,7 @@ it('builds restart limit notification urls from the instance base url', function
 
     $notification = new RestartLimitReached($application);
 
-    expect($notification->resource_url)->toBe('https://coolify.test/project/project-uuid/environment/environment-uuid/application/application-uuid');
+    expect($notification->resource_url)->toBe('https://xlaunch.test/project/project-uuid/environment/environment-uuid/application/application-uuid');
 });
 
 it('links preview, service resource and database restart limit notifications to their pages', function () {
@@ -212,9 +212,9 @@ it('links preview, service resource and database restart limit notifications to 
     $database->forceFill(['name' => 'postgres', 'uuid' => 'database-uuid', 'restart_count' => 2, 'max_restart_count' => 2]);
     $database->setRelation('environment', $environment);
 
-    expect((new RestartLimitReached($preview))->resource_url)->toBe('https://coolify.test/project/project-uuid/environment/environment-uuid/application/application-uuid')
-        ->and((new RestartLimitReached($serviceApplication))->resource_url)->toBe('https://coolify.test/project/project-uuid/environment/environment-uuid/service/service-uuid')
-        ->and((new RestartLimitReached($database))->resource_url)->toBe('https://coolify.test/project/project-uuid/environment/environment-uuid/database/database-uuid');
+    expect((new RestartLimitReached($preview))->resource_url)->toBe('https://xlaunch.test/project/project-uuid/environment/environment-uuid/application/application-uuid')
+        ->and((new RestartLimitReached($serviceApplication))->resource_url)->toBe('https://xlaunch.test/project/project-uuid/environment/environment-uuid/service/service-uuid')
+        ->and((new RestartLimitReached($database))->resource_url)->toBe('https://xlaunch.test/project/project-uuid/environment/environment-uuid/database/database-uuid');
 });
 
 it('uses the resolved environment project name in Slack restart limit notifications', function () {
@@ -223,7 +223,7 @@ it('uses the resolved environment project name in Slack restart limit notificati
         'name' => 'production',
         'project' => (object) [
             'uuid' => 'project-uuid',
-            'name' => 'Coolify',
+            'name' => 'Xlaunch',
         ],
     ];
 
@@ -231,7 +231,7 @@ it('uses the resolved environment project name in Slack restart limit notificati
     {
         public function link(): string
         {
-            return 'https://coolify.test/application';
+            return 'https://xlaunch.test/application';
         }
     };
     $application->forceFill(['name' => 'app']);
@@ -259,12 +259,12 @@ it('uses the resolved environment project name in Slack restart limit notificati
 
         public function link(): string
         {
-            return 'https://coolify.test/service';
+            return 'https://xlaunch.test/service';
         }
     });
 
     expect((new RestartLimitReached($preview))->toSlack()->description)
-        ->toContain('*Project:* Coolify')
+        ->toContain('*Project:* Xlaunch')
         ->and((new RestartLimitReached($serviceResource))->toSlack()->description)
-        ->toContain('*Project:* Coolify');
+        ->toContain('*Project:* Xlaunch');
 });

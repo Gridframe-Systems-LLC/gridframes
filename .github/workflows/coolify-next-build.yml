@@ -1,16 +1,16 @@
-name: Build Coolify Next
+name: Build Xlaunch Next
 
 on:
   push:
     branches: [next]
     paths-ignore:
-      - .github/workflows/coolify-helper.yml
-      - .github/workflows/coolify-helper-next.yml
-      - .github/workflows/coolify-realtime.yml
-      - .github/workflows/coolify-realtime-next.yml
+      - .github/workflows/xlaunch-helper.yml
+      - .github/workflows/xlaunch-helper-next.yml
+      - .github/workflows/xlaunch-realtime.yml
+      - .github/workflows/xlaunch-realtime-next.yml
       - .github/workflows/pr-quality.yaml
-      - docker/coolify-helper/Dockerfile
-      - docker/coolify-realtime/Dockerfile
+      - docker/xlaunch-helper/Dockerfile
+      - docker/xlaunch-realtime/Dockerfile
       - docker/testing-host/Dockerfile
       - templates/**
       - CHANGELOG.md
@@ -20,13 +20,13 @@ permissions:
   packages: write
 
 concurrency:
-  group: coolify-next-build
+  group: xlaunch-next-build
   cancel-in-progress: false
 
 env:
   GITHUB_REGISTRY: ghcr.io
   DOCKER_REGISTRY: docker.io
-  IMAGE_NAME: coollabsio/coolify
+  IMAGE_NAME: northlatch/xlaunch
 
 jobs:
   prepare:
@@ -43,7 +43,7 @@ jobs:
       - name: Resolve next version
         id: version
         run: |
-          RC_VERSION=$(jq -r '.coolify.nightly.version' versions.json)
+          RC_VERSION=$(jq -r '.xlaunch.nightly.version' versions.json)
           if [[ ! "${RC_VERSION}" =~ ^[0-9]+\.[0-9]+-rc\.[0-9]+$ ]]; then
             echo "Invalid next RC version: ${RC_VERSION}"
             exit 1
@@ -96,7 +96,7 @@ jobs:
           platforms: ${{ matrix.platform }}
           push: true
           build-args: |
-            COOLIFY_VERSION=${{ needs.prepare.outputs.version }}
+            XLAUNCH_VERSION=${{ needs.prepare.outputs.version }}
           tags: |
             ${{ env.GITHUB_REGISTRY }}/${{ env.IMAGE_NAME }}:next-build-${{ needs.prepare.outputs.short_sha }}-${{ matrix.arch }}
             ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:next-build-${{ needs.prepare.outputs.short_sha }}-${{ matrix.arch }}

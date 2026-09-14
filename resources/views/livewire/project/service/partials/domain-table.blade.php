@@ -92,7 +92,7 @@
                                 </span>
                             @endif
                             <a href="{{ $publicUrl }}" target="_blank" rel="noopener noreferrer"
-                                class="min-w-0 flex-1 truncate text-[13px] text-black underline decoration-neutral-300 underline-offset-2 hover:decoration-coollabs [overflow-wrap:anywhere] dark:text-fg dark:decoration-white/20 dark:hover:decoration-warning"
+                                class="min-w-0 flex-1 truncate text-[13px] text-black underline decoration-neutral-300 underline-offset-2 hover:decoration-northlatch [overflow-wrap:anywhere] dark:text-fg dark:decoration-white/20 dark:hover:decoration-warning"
                                 title="{{ $publicUrl }}">
                                 {{ $publicUrl }}
                             </a>
@@ -125,7 +125,7 @@
                     <span>{{ match ($rowDirection) { 'www' => 'non-www → www', 'non-www' => 'www → non-www', default => 'Disabled' } }}</span>
                 </div>
                 <div class="service-domain-detail"
-                    title="{{ ($row['has_port_override'] ?? false) ? 'Custom internal port for this domain' : 'Inherited from the Coolify service port' }}">
+                    title="{{ ($row['has_port_override'] ?? false) ? 'Custom internal port for this domain' : 'Inherited from the Xlaunch service port' }}">
                     <span class="service-domain-detail-label">Internal port</span>
                     <span @if (filled($row['internal_port'] ?? null)) aria-label="Internal port {{ $row['internal_port'] }}" @endif>{{ $row['internal_port'] ?? '—' }}</span>
                 </div>

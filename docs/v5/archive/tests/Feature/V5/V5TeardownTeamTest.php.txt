@@ -65,7 +65,7 @@ function createTeardownApplication(Team $team, User $owner, V5Server $server): V
         'created_by_user_id' => $owner->id,
         'name' => 'nginx-test',
         'image' => 'docker.io/library/nginx:alpine',
-        'container_name' => 'coolify-v5-nginx-'.fake()->unique()->numerify('#######'),
+        'container_name' => 'xlaunch-v5-nginx-'.fake()->unique()->numerify('#######'),
         'status' => 'running',
     ]));
 }
@@ -131,7 +131,7 @@ it('dispatches the v5 teardown job for the team servers when the team is deleted
             && $ingressServer['is_ingress'] === true
             && str_contains((string) $ingressServer['private_key'], 'BEGIN OPENSSH PRIVATE KEY')
             && count($ingressServer['applications']) === 1
-            && str_starts_with((string) $ingressServer['applications'][0]['container_name'], 'coolify-v5-nginx-');
+            && str_starts_with((string) $ingressServer['applications'][0]['container_name'], 'xlaunch-v5-nginx-');
     });
 });
 
@@ -159,7 +159,7 @@ it('runs the full per-server teardown sequence over ssh and flux', function () {
         'is_ingress' => true,
         'ingress_type' => 'caddy',
     ], [
-        ['id' => 5, 'container_name' => 'coolify-v5-nginx-abc', 'runtime_container_id' => 'runtime-1'],
+        ['id' => 5, 'container_name' => 'xlaunch-v5-nginx-abc', 'runtime_container_id' => 'runtime-1'],
     ]);
 
     (new V5TeardownTeamJob($this->team->id, [$payload]))->handle();
@@ -167,12 +167,12 @@ it('runs the full per-server teardown sequence over ssh and flux', function () {
     // Application container removal ran over SSH.
     Process::assertRan(fn ($process) => is_array($process->command)
         && ($process->command[0] ?? null) === 'ssh'
-        && str_contains((string) end($process->command), "rm -f 'coolify-v5-nginx-abc'"));
+        && str_contains((string) end($process->command), "rm -f 'xlaunch-v5-nginx-abc'"));
 
     // On-host bootstrap identity removal ran over SSH.
     Process::assertRan(fn ($process) => is_array($process->command)
         && ($process->command[0] ?? null) === 'ssh'
-        && str_contains((string) end($process->command), '/etc/coolify/v5-node.json'));
+        && str_contains((string) end($process->command), '/etc/xlaunch/v5-node.json'));
 });
 
 it('keeps tearing down other servers when one host is unreachable', function () {
@@ -206,12 +206,12 @@ it('keeps tearing down other servers when one host is unreachable', function () 
     // The healthy server was still cleaned up despite the first host failing.
     Process::assertRan(fn ($process) => is_array($process->command)
         && in_array('root@203.0.113.11', $process->command, true)
-        && str_contains((string) end($process->command), '/etc/coolify/v5-node.json'));
+        && str_contains((string) end($process->command), '/etc/xlaunch/v5-node.json'));
 
     // The unreachable ingress server's marker removal was still attempted.
     Process::assertRan(fn ($process) => is_array($process->command)
         && in_array('root@203.0.113.10', $process->command, true)
-        && str_contains((string) end($process->command), '/etc/coolify/v5-node.json'));
+        && str_contains((string) end($process->command), '/etc/xlaunch/v5-node.json'));
 });
 
 it('captures each server agent token jti and expiry in the dispatched payload', function () {
@@ -304,7 +304,7 @@ it('logs the incomplete-teardown error naming hosts that could not be torn down'
     // The healthy host was still cleaned up despite the ingress host failing.
     Process::assertRan(fn ($process) => is_array($process->command)
         && in_array('root@203.0.113.11', $process->command, true)
-        && str_contains((string) end($process->command), '/etc/coolify/v5-node.json'));
+        && str_contains((string) end($process->command), '/etc/xlaunch/v5-node.json'));
 
     // The operator-facing signal names only the unreachable host.
     Log::shouldHaveReceived('error')->withArgs(

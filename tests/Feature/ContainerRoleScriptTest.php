@@ -24,9 +24,9 @@ it('rejects services missing from the comma separated container roles', function
 });
 
 it('falls back to the container role from the local env file', function () {
-    $directory = sys_get_temp_dir().'/coolify-container-role-'.bin2hex(random_bytes(4));
+    $directory = sys_get_temp_dir().'/xlaunch-container-role-'.bin2hex(random_bytes(4));
     mkdir($directory);
-    file_put_contents($directory.'/.env', 'COOLIFY_CONTAINER_ROLE=worker,flux'.PHP_EOL);
+    file_put_contents($directory.'/.env', 'XLAUNCH_CONTAINER_ROLE=worker,flux'.PHP_EOL);
 
     $result = runContainerRoleHelper('', 'flux', $directory);
 
@@ -41,7 +41,7 @@ it('keeps container roles out of the production image', function () {
 
         expect($runScript)
             ->not->toContain('container-role')
-            ->not->toContain('COOLIFY_CONTAINER_ROLE');
+            ->not->toContain('XLAUNCH_CONTAINER_ROLE');
     }
 });
 
@@ -49,12 +49,12 @@ function runContainerRoleHelper(string $roles, string $serviceRole, ?string $wor
 {
     $script = base_path('docker/development/etc/s6-overlay/scripts/container-role');
     $command = sprintf(
-        '. %s && coolify_container_has_role %s',
+        '. %s && xlaunch_container_has_role %s',
         escapeshellarg($script),
         escapeshellarg($serviceRole),
     );
 
     return Process::path($workingDirectory ?? base_path())
-        ->env(['COOLIFY_CONTAINER_ROLE' => $roles])
+        ->env(['XLAUNCH_CONTAINER_ROLE' => $roles])
         ->run($command);
 }

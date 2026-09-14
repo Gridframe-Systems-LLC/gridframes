@@ -21,7 +21,7 @@ function importFormWithResource(string $modelClass): ImportForm
  */
 function invokedPostgresRestoreClients(string $contents, bool $gzip = false): array
 {
-    $binDir = sys_get_temp_dir().'/coolify-pg-restore-'.bin2hex(random_bytes(8));
+    $binDir = sys_get_temp_dir().'/xlaunch-pg-restore-'.bin2hex(random_bytes(8));
     mkdir($binDir);
 
     try {

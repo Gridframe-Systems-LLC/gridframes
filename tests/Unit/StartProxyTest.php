@@ -7,43 +7,43 @@ it('ensures container cleanup includes wait loop in command sequence', function 
 
     // Simulate the command generation pattern from StartProxy
     $commands = collect([
-        'mkdir -p /data/coolify/proxy/dynamic',
-        'cd /data/coolify/proxy',
+        'mkdir -p /data/xlaunch/proxy/dynamic',
+        'cd /data/xlaunch/proxy',
         "echo 'Creating required Docker Compose file.'",
         "echo 'Pulling docker image.'",
         'docker compose pull',
-        'if docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
-        "    echo 'Stopping and removing existing coolify-proxy.'",
-        '    docker stop coolify-proxy 2>/dev/null || true',
-        '    docker rm -f coolify-proxy 2>/dev/null || true',
+        'if docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
+        "    echo 'Stopping and removing existing xlaunch-proxy.'",
+        '    docker stop xlaunch-proxy 2>/dev/null || true',
+        '    docker rm -f xlaunch-proxy 2>/dev/null || true',
         '    # Wait for container to be fully removed',
         '    for i in {1..10}; do',
-        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
+        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
         '            break',
         '        fi',
-        '        echo "Waiting for coolify-proxy to be removed... ($i/10)"',
+        '        echo "Waiting for xlaunch-proxy to be removed... ($i/10)"',
         '        sleep 1',
         '    done',
-        "    echo 'Successfully stopped and removed existing coolify-proxy.'",
+        "    echo 'Successfully stopped and removed existing xlaunch-proxy.'",
         'fi',
-        "echo 'Starting coolify-proxy.'",
+        "echo 'Starting xlaunch-proxy.'",
         'docker compose up -d --wait --remove-orphans',
-        "echo 'Successfully started coolify-proxy.'",
+        "echo 'Successfully started xlaunch-proxy.'",
     ]);
 
     $commandsString = $commands->implode("\n");
 
     // Verify the cleanup sequence includes all required components
-    expect($commandsString)->toContain('docker stop coolify-proxy 2>/dev/null || true')
-        ->and($commandsString)->toContain('docker rm -f coolify-proxy 2>/dev/null || true')
+    expect($commandsString)->toContain('docker stop xlaunch-proxy 2>/dev/null || true')
+        ->and($commandsString)->toContain('docker rm -f xlaunch-proxy 2>/dev/null || true')
         ->and($commandsString)->toContain('for i in {1..10}; do')
-        ->and($commandsString)->toContain('if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then')
+        ->and($commandsString)->toContain('if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then')
         ->and($commandsString)->toContain('break')
         ->and($commandsString)->toContain('sleep 1')
         ->and($commandsString)->toContain('docker compose up -d --wait --remove-orphans');
 
     // Verify the order: cleanup must come before compose up
-    $stopPosition = strpos($commandsString, 'docker stop coolify-proxy');
+    $stopPosition = strpos($commandsString, 'docker stop xlaunch-proxy');
     $waitLoopPosition = strpos($commandsString, 'for i in {1..10}');
     $composeUpPosition = strpos($commandsString, 'docker compose up -d');
 
@@ -56,8 +56,8 @@ it('includes error suppression in container cleanup commands', function () {
     // when the container doesn't exist
 
     $cleanupCommands = [
-        '    docker stop coolify-proxy 2>/dev/null || true',
-        '    docker rm -f coolify-proxy 2>/dev/null || true',
+        '    docker stop xlaunch-proxy 2>/dev/null || true',
+        '    docker rm -f xlaunch-proxy 2>/dev/null || true',
     ];
 
     foreach ($cleanupCommands as $command) {
@@ -70,10 +70,10 @@ it('waits up to 10 seconds for container removal', function () {
 
     $waitLoop = [
         '    for i in {1..10}; do',
-        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^coolify-proxy$"; then',
+        '        if ! docker ps -a --format "{{.Names}}" | grep -q "^xlaunch-proxy$"; then',
         '            break',
         '        fi',
-        '        echo "Waiting for coolify-proxy to be removed... ($i/10)"',
+        '        echo "Waiting for xlaunch-proxy to be removed... ($i/10)"',
         '        sleep 1',
         '    done',
     ];

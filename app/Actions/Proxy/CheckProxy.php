@@ -40,7 +40,7 @@ class CheckProxy
         }
 
         // Determine proxy container name based on environment
-        $proxyContainerName = $server->isSwarm() ? 'coolify-proxy_traefik' : 'coolify-proxy';
+        $proxyContainerName = $server->isSwarm() ? 'xlaunch-proxy_traefik' : 'xlaunch-proxy';
 
         if ($server->isSwarm()) {
             $status = getContainerStatus($server, $proxyContainerName);
@@ -102,7 +102,7 @@ class CheckProxy
             foreach ($conflicts as $port => $conflict) {
                 if ($conflict) {
                     if ($fromUI) {
-                        throw new \Exception("Port $port is in use.<br>You must stop the process using this port.<br><br>Docs: <a target='_blank' class='dark:text-white hover:underline' href='https://coolify.io/docs'>https://coolify.io/docs</a><br>Discord: <a target='_blank' class='dark:text-white hover:underline' href='https://coolify.io/discord'>https://coolify.io/discord</a>");
+                        throw new \Exception("Port $port is in use.<br>You must stop the process using this port.<br><br>Docs: <a target='_blank' class='dark:text-white hover:underline' href='https://northlatch.com/docs'>https://northlatch.com/docs</a><br>Discord: <a target='_blank' class='dark:text-white hover:underline' href='https://northlatch.com/discord'>https://northlatch.com/discord</a>");
                     } else {
                         return false;
                     }
@@ -194,7 +194,7 @@ class CheckProxy
                     exit 0;
                 fi;
                 # Check for dual-stack or docker processes
-                if [ \$count -le 2 ] && (echo \"\$ss_output\" | grep -q 'docker\\|coolify'); then
+                if [ \$count -le 2 ] && (echo \"\$ss_output\" | grep -q 'docker\\|xlaunch'); then
                     echo 'port_free';
                     exit 0;
                 fi;
@@ -214,7 +214,7 @@ class CheckProxy
                     echo 'port_free';
                     exit 0;
                 fi;
-                if [ \$count -le 2 ] && (echo \"\$netstat_output\" | grep -q 'docker\\|coolify'); then
+                if [ \$count -le 2 ] && (echo \"\$netstat_output\" | grep -q 'docker\\|xlaunch'); then
                     echo 'port_free';
                     exit 0;
                 fi;
@@ -356,7 +356,7 @@ class CheckProxy
                     return false;
                 }
 
-                // Try to detect if this is our coolify-proxy
+                // Try to detect if this is our xlaunch-proxy
                 if (strpos($details, 'docker') !== false || strpos($details, $proxyContainerName) !== false) {
                     // It's likely our docker or proxy, which is fine
                     return false;

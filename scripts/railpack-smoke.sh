@@ -3,9 +3,9 @@
 # Railpack end-to-end deploy smoke test against the local dev stack.
 #
 # Walks a curated set of railpack-* example apps from
-# DevelopmentRailpackExamplesSeeder, triggers a deploy via the Coolify API,
+# DevelopmentRailpackExamplesSeeder, triggers a deploy via the Xlaunch API,
 # waits for the deployment queue to finish, then exec()s into the resulting
-# container and checks that COOLIFY_*, SOURCE_COMMIT, and any RAILPACK_*
+# container and checks that XLAUNCH_*, SOURCE_COMMIT, and any RAILPACK_*
 # build inputs landed correctly. Optionally curls the FQDN.
 #
 # Requires:
@@ -27,8 +27,8 @@
 #
 set -euo pipefail
 
-API_BASE="${COOLIFY_API_BASE:-http://localhost:8000/api/v1}"
-TOKEN="${COOLIFY_API_TOKEN:-root}"
+API_BASE="${XLAUNCH_API_BASE:-http://localhost:8000/api/v1}"
+TOKEN="${XLAUNCH_API_TOKEN:-root}"
 TIMEOUT="${SMOKE_TIMEOUT:-600}"
 DO_CURL=1
 BUILD_ENVS=()
@@ -159,16 +159,16 @@ assert_envs_present() {
     env_dump=$(docker exec "$container" env 2>/dev/null || true)
 
     local missing=()
-    for required in COOLIFY_FQDN COOLIFY_URL COOLIFY_BRANCH COOLIFY_RESOURCE_UUID COOLIFY_CONTAINER_NAME SOURCE_COMMIT; do
+    for required in XLAUNCH_FQDN XLAUNCH_URL XLAUNCH_BRANCH XLAUNCH_RESOURCE_UUID XLAUNCH_CONTAINER_NAME SOURCE_COMMIT; do
         if ! grep -q "^${required}=" <<<"$env_dump"; then
             missing+=("$required")
         fi
     done
 
     local resource_uuid
-    resource_uuid=$(grep '^COOLIFY_RESOURCE_UUID=' <<<"$env_dump" | cut -d= -f2- || true)
+    resource_uuid=$(grep '^XLAUNCH_RESOURCE_UUID=' <<<"$env_dump" | cut -d= -f2- || true)
     if [[ "$resource_uuid" != "$app_uuid" ]]; then
-        missing+=("COOLIFY_RESOURCE_UUID-mismatch(got=${resource_uuid})")
+        missing+=("XLAUNCH_RESOURCE_UUID-mismatch(got=${resource_uuid})")
     fi
 
     if (( ${#missing[@]} == 0 )); then

@@ -306,7 +306,7 @@ test('admin can save team smtp settings without a resend api key when resend is 
 
     Livewire::test(EmailNotification::class)
         ->set('smtpFromAddress', 'alerts@example.com')
-        ->set('smtpFromName', 'Coolify')
+        ->set('smtpFromName', 'Xlaunch')
         ->set('smtpHost', 'smtp.example.com')
         ->set('smtpPort', '587')
         ->set('smtpEncryption', 'starttls')
@@ -323,7 +323,7 @@ test('admin cannot enable team resend without an api key', function () {
 
     Livewire::test(EmailNotification::class)
         ->set('smtpFromAddress', 'alerts@example.com')
-        ->set('smtpFromName', 'Coolify')
+        ->set('smtpFromName', 'Xlaunch')
         ->set('resendEnabled', true)
         ->set('resendApiKey', null)
         ->call('submitResend')

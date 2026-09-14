@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 
 test('admin search only shows users with paid subscriptions as active', function () {
     config()->set('cache.default', 'array');
-    config()->set('constants.coolify.self_hosted', false);
+    config()->set('constants.xlaunch.self_hosted', false);
 
     InstanceSettings::unguarded(
         fn () => InstanceSettings::query()->firstOrCreate(['id' => 0])

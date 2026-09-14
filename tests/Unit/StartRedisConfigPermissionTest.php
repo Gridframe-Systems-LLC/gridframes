@@ -5,7 +5,7 @@ use App\Models\StandaloneRedis;
 
 test('redis config chown command is added when redis_conf is set', function () {
     $action = new StartRedis;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneRedis::class)->makePartial();
@@ -17,12 +17,12 @@ test('redis config chown command is added when redis_conf is set', function () {
         $action->commands[] = "chown 999:999 {$action->configuration_dir}/redis.conf";
     }
 
-    expect($action->commands)->toContain('chown 999:999 /data/coolify/databases/test-uuid/redis.conf');
+    expect($action->commands)->toContain('chown 999:999 /data/xlaunch/databases/test-uuid/redis.conf');
 });
 
 test('redis config chown command is not added when redis_conf is null', function () {
     $action = new StartRedis;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneRedis::class)->makePartial();
@@ -38,7 +38,7 @@ test('redis config chown command is not added when redis_conf is null', function
 
 test('redis config chown command is not added when redis_conf is empty', function () {
     $action = new StartRedis;
-    $action->configuration_dir = '/data/coolify/databases/test-uuid';
+    $action->configuration_dir = '/data/xlaunch/databases/test-uuid';
     $action->commands = [];
 
     $database = Mockery::mock(StandaloneRedis::class)->makePartial();

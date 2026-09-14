@@ -82,27 +82,27 @@ class ProductionSeeder extends Seeder
             ]);
         }
 
-        if (! isCloud() && config('constants.coolify.is_windows_docker_desktop') == false) {
-            $coolify_key_name = '@host.docker.internal';
+        if (! isCloud() && config('constants.xlaunch.is_windows_docker_desktop') == false) {
+            $xlaunch_key_name = '@host.docker.internal';
             $ssh_keys_directory = Storage::disk('ssh-keys')->files();
-            $coolify_key = collect($ssh_keys_directory)->firstWhere(fn ($item) => str($item)->contains($coolify_key_name));
+            $xlaunch_key = collect($ssh_keys_directory)->firstWhere(fn ($item) => str($item)->contains($xlaunch_key_name));
 
             $private_key_found = PrivateKey::find(0);
             if (! $private_key_found) {
-                if ($coolify_key) {
-                    $user = str($coolify_key)->before('@')->after('id.');
-                    $coolify_key = Storage::disk('ssh-keys')->get($coolify_key);
+                if ($xlaunch_key) {
+                    $user = str($xlaunch_key)->before('@')->after('id.');
+                    $xlaunch_key = Storage::disk('ssh-keys')->get($xlaunch_key);
                     PrivateKey::create([
                         'id' => 0,
                         'team_id' => 0,
                         'name' => 'localhost\'s key',
-                        'description' => 'The private key for the Coolify host machine (localhost).',
-                        'private_key' => $coolify_key,
+                        'description' => 'The private key for the Xlaunch host machine (localhost).',
+                        'private_key' => $xlaunch_key,
                     ]);
-                    echo "SSH key found for the Coolify host machine (localhost).\n";
+                    echo "SSH key found for the Xlaunch host machine (localhost).\n";
                 } else {
-                    echo "No SSH key found for the Coolify host machine (localhost).\n";
-                    echo "Please read the following documentation (point 3) to fix it: https://coolify.
+                    echo "No SSH key found for the Xlaunch host machine (localhost).\n";
+                    echo "Please read the following documentation (point 3) to fix it: https://xlaunch.
                 io/docs/knowledge-base/server/openssh/\n";
                     echo "Your localhost connection won't work until then.";
                 }
@@ -114,7 +114,7 @@ class ProductionSeeder extends Seeder
                 $server_details = [
                     'id' => 0,
                     'name' => 'localhost',
-                    'description' => "This is the server where Coolify is running on. Don't delete this!",
+                    'description' => "This is the server where Xlaunch is running on. Don't delete this!",
                     'user' => $user,
                     'ip' => 'host.docker.internal',
                     'team_id' => 0,
@@ -149,14 +149,14 @@ class ProductionSeeder extends Seeder
             if (StandaloneDocker::find(0) == null) {
                 StandaloneDocker::create([
                     'id' => 0,
-                    'name' => 'localhost-coolify',
-                    'network' => 'coolify',
+                    'name' => 'localhost-xlaunch',
+                    'network' => 'xlaunch',
                     'server_id' => 0,
                 ]);
             }
         }
 
-        if (config('constants.coolify.is_windows_docker_desktop')) {
+        if (config('constants.xlaunch.is_windows_docker_desktop')) {
             PrivateKey::updateOrCreate(
                 [
                     'id' => 0,
@@ -178,11 +178,11 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
             if (Server::find(0) == null) {
                 $server_details = [
                     'id' => 0,
-                    'uuid' => 'coolify-testing-host',
+                    'uuid' => 'xlaunch-testing-host',
                     'name' => 'localhost',
-                    'description' => "This is the server where Coolify is running on. Don't delete this!",
+                    'description' => "This is the server where Xlaunch is running on. Don't delete this!",
                     'user' => 'root',
-                    'ip' => 'coolify-testing-host',
+                    'ip' => 'xlaunch-testing-host',
                     'team_id' => 0,
                     'private_key_id' => 0,
                 ];
@@ -206,8 +206,8 @@ uZx9iFkCELtxrh31QJ68AAAAEXNhaWxANzZmZjY2ZDJlMmRkAQIDBA==
             if (StandaloneDocker::find(0) == null) {
                 StandaloneDocker::create([
                     'id' => 0,
-                    'name' => 'localhost-coolify',
-                    'network' => 'coolify',
+                    'name' => 'localhost-xlaunch',
+                    'network' => 'xlaunch',
                     'server_id' => 0,
                 ]);
             }

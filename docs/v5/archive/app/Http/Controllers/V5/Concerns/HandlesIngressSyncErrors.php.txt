@@ -20,7 +20,7 @@ trait HandlesIngressSyncErrors
         $normalized = Str::lower($message);
 
         if (str_contains($normalized, 'invalid http response') || str_contains($normalized, 'could not talk to flux')) {
-            return 'Could not reach Flux. Check that Flux is running in the Coolify container and try again.';
+            return 'Could not reach Flux. Check that Flux is running in the Xlaunch container and try again.';
         }
 
         if (str_contains($normalized, 'dispatch timeout') || str_contains($normalized, 'timed out')) {

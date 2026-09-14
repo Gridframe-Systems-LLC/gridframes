@@ -2,7 +2,7 @@
 
 /**
  * Browser + domain assertions that configuration changes made in the UI
- * are persisted and reflected in generated Docker/Coolify deployment config.
+ * are persisted and reflected in generated Docker/Xlaunch deployment config.
  *
  * Full remote deploy against Docker is out of scope for pure browser tests;
  * these tests prove the deploy pipeline inputs update correctly after UI saves.
@@ -59,7 +59,7 @@ it('reflects application UI docker run options in compose conversion used by dep
         ->and(data_get($composeOptions, 'cap_add'))->toContain('SYS_ADMIN')
         ->and(data_get($composeOptions, 'shm_size'))->toBe('128m');
 
-    // Coolify configuration export includes ports; docker run options feed Start* compose merge.
+    // Xlaunch configuration export includes ports; docker run options feed Start* compose merge.
     $configuration = $this->application->getConfigurationAsArray();
     expect($configuration)->toBeArray()
         ->and(data_get($configuration, 'domains.ports_exposes'))->toBe('4000');

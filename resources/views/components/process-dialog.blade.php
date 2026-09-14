@@ -64,7 +64,7 @@
                             // Fixed shell size so empty “waiting for process” state does not collapse.
                             'min-h-[min(70dvh,28rem)] h-[min(85dvh,52rem)] max-h-[calc(100dvh-2rem)]',
                         ])
-                        style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                        style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                         <header class="flex-nowrap!">
                             <h3 id="process-dialog-title" class="min-w-0 flex-1 truncate">
                                 {{ $title }}

@@ -525,7 +525,7 @@ describe('Resource creation tags', function () {
                 'project_uuid' => $this->project->uuid,
                 'environment_uuid' => $this->environment->uuid,
                 'server_uuid' => $this->server->uuid,
-                'git_repository' => 'https://gitlab.com/coolify/test-static-app',
+                'git_repository' => 'https://gitlab.com/xlaunch/test-static-app',
                 'git_branch' => 'main',
                 'build_pack' => 'static',
                 'ports_exposes' => '80',

@@ -36,7 +36,7 @@ it('parses valid Docker Compose files with more than 128 collection aliases', fu
 
     expect(data_get($parsedCompose, 'services'))->toHaveCount(129)
         ->and(data_get($parsedCompose, 'services.service-129.image'))->toBe('alpine:latest')
-        ->and(data_get($parsedCompose, 'services.service-129.labels'))->toContain('coolify.managed=true');
+        ->and(data_get($parsedCompose, 'services.service-129.labels'))->toContain('xlaunch.managed=true');
 });
 
 it('keeps a finite collection alias limit for Docker Compose files', function () {

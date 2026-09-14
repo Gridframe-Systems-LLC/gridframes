@@ -47,7 +47,7 @@ class RemoveBootstrapMarker
         $script = implode("\n", [
             "SUDO=''",
             'if [ "$(id -u)" != "0" ]; then SUDO=\'sudo\'; fi',
-            '$SUDO rm -f /etc/coolify/v5-node.json /etc/coolify/host-jwt /etc/systemd/system/coold.service.d/10-flux.conf',
+            '$SUDO rm -f /etc/xlaunch/v5-node.json /etc/xlaunch/host-jwt /etc/systemd/system/coold.service.d/10-flux.conf',
         ]);
 
         try {

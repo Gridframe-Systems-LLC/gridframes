@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Authentication | Coolify
+        Authentication | Xlaunch
     </x-slot>
 
     <x-settings.layout>

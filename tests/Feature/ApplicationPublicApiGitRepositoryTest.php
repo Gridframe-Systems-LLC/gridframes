@@ -46,7 +46,7 @@ function createPublicGitApplication(array $overrides = []): Application
         'project_uuid' => test()->project->uuid,
         'environment_uuid' => test()->environment->uuid,
         'server_uuid' => test()->server->uuid,
-        'git_repository' => 'https://gitlab.com/coolify/test-static-app',
+        'git_repository' => 'https://gitlab.com/xlaunch/test-static-app',
         'git_branch' => 'main',
         'build_pack' => 'static',
         'ports_exposes' => '80',
@@ -79,10 +79,10 @@ test('public github repositories are stored as owner and repository with the pub
     ]));
 
     $application = createPublicGitApplication([
-        'git_repository' => 'https://github.com/coollabsio/coolify-examples',
+        'git_repository' => 'https://github.com/northlatch/xlaunch-examples',
     ]);
 
-    expect($application->git_repository)->toBe('coollabsio/coolify-examples')
+    expect($application->git_repository)->toBe('northlatch/xlaunch-examples')
         ->and($application->source_type)->toBe(GithubApp::class)
         ->and($application->source_id)->toBe(0);
 });

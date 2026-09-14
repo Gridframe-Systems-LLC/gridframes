@@ -23,8 +23,8 @@ test('login shows active forgot password link when transactional email is enable
         'id' => 0,
         'smtp_enabled' => true,
         'smtp_from_address' => 'hi@localhost.com',
-        'smtp_from_name' => 'Coolify',
-        'smtp_host' => 'coolify-mail',
+        'smtp_from_name' => 'Xlaunch',
+        'smtp_host' => 'xlaunch-mail',
         'smtp_port' => 1025,
     ]);
     Once::flush();

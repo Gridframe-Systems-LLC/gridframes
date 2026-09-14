@@ -45,7 +45,7 @@ test('s3 storage validate connection ability is enforced through the registered 
         'region' => 'us-east-1',
         'key' => 'access-key',
         'secret' => 'secret-key',
-        'bucket' => 'coolify-backups',
+        'bucket' => 'xlaunch-backups',
         'endpoint' => 'https://s3.us-east-1.amazonaws.com',
     ]);
 

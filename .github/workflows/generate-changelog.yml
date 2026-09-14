@@ -4,10 +4,10 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - .github/workflows/coolify-helper.yml
-      - .github/workflows/coolify-helper-next.yml
-      - .github/workflows/coolify-realtime.yml
-      - .github/workflows/coolify-realtime-next.yml
+      - .github/workflows/xlaunch-helper.yml
+      - .github/workflows/xlaunch-helper-next.yml
+      - .github/workflows/xlaunch-realtime.yml
+      - .github/workflows/xlaunch-realtime-next.yml
       - .github/workflows/pr-quality.yaml
   workflow_dispatch:
 

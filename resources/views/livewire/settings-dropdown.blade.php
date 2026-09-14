@@ -111,7 +111,7 @@
 
                 <section
                     class="application-settings-form application-settings-section relative flex max-h-[calc(100dvh-3rem)] !w-full max-w-5xl flex-col overflow-hidden"
-                    style="box-shadow: 0 0 0 1px var(--coollabs-hairline), var(--shadow-modal)">
+                    style="box-shadow: 0 0 0 1px var(--northlatch-hairline), var(--shadow-modal)">
                     <header class="relative !pr-11">
                         <div class="flex min-w-0 items-center gap-3">
                         <div
@@ -182,7 +182,7 @@
                                     <div class="mb-4 flex items-start gap-4">
                                         <div class="min-w-0 flex-1">
                                             <div class="flex flex-wrap items-center gap-x-2 gap-y-1">
-                                                <a :href="`https://github.com/coollabsio/coolify/releases/tag/${entry.tag_name}`"
+                                                <a :href="`https://github.com/northlatch/xlaunch/releases/tag/${entry.tag_name}`"
                                                     target="_blank" rel="noopener noreferrer"
                                                     class="inline-flex min-w-0 items-center gap-1.5 text-sm font-semibold text-black hover:text-accent dark:text-fg"
                                                     x-show="entry.title">

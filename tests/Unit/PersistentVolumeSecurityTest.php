@@ -132,7 +132,7 @@ it('escapeshellarg neutralizes injection in docker run -v command', function (st
 
 it('escapeshellarg neutralizes injection in docker network disconnect command', function (string $maliciousName) {
     $escaped = escapeshellarg($maliciousName);
-    $command = "docker network disconnect {$escaped} coolify-proxy";
+    $command = "docker network disconnect {$escaped} xlaunch-proxy";
 
     expect($command)->toStartWith('docker network disconnect ')
         ->and($escaped)->toStartWith("'")
@@ -163,7 +163,7 @@ it('accepts valid directory paths', function (string $path) {
 })->with([
     'root' => '/',
     'simple path' => '/data',
-    'nested path' => '/data/coolify/volumes',
+    'nested path' => '/data/xlaunch/volumes',
     'with dots' => '/data/my.app/storage',
     'with hyphens' => '/data/my-app/storage',
     'with underscores' => '/data/my_app/storage',

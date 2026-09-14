@@ -15,10 +15,10 @@ import {
     validateSshArgs,
 } from './terminal-utils.js';
 
-async function postToCoolify(path, headers) {
+async function postToXlaunch(path, headers) {
     return new Promise((resolve, reject) => {
         const request = http.request({
-            hostname: 'coolify',
+            hostname: 'xlaunch',
             port: 8080,
             path,
             method: 'POST',
@@ -130,7 +130,7 @@ const verifyClient = async (info, callback) => {
 
     try {
         // Authenticate with Laravel backend
-        const response = await postToCoolify('/terminal/auth', {
+        const response = await postToXlaunch('/terminal/auth', {
             'Cookie': `${sessionCookieName}=${laravelSession}`,
             'X-XSRF-TOKEN': xsrfToken
         });
@@ -214,7 +214,7 @@ wss.on('connection', async (ws, req) => {
     }
 
     try {
-        const response = await postToCoolify('/terminal/auth/ips', {
+        const response = await postToXlaunch('/terminal/auth/ips', {
             'Cookie': `${sessionCookieName}=${laravelSession}`,
             'X-XSRF-TOKEN': xsrfToken
         });
@@ -406,7 +406,7 @@ async function handleCommand(ws, command, userId) {
     };
 
     // NOTE: - Initiates a process within the Terminal container
-    //         Establishes an SSH connection to root@coolify with RequestTTY enabled
+    //         Establishes an SSH connection to root@xlaunch with RequestTTY enabled
     //         Executes the 'docker exec' command to connect to a specific container
     logTerminal('log', 'Spawning PTY process for terminal session.', {
         userId,

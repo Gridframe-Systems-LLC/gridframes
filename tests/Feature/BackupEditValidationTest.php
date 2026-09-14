@@ -282,20 +282,20 @@ it('queues instance database backup without redirecting when project context is 
     $destination = StandaloneDocker::where('server_id', $server->id)->first()
         ?? StandaloneDocker::create([
             'id' => 0,
-            'name' => 'coolify',
+            'name' => 'xlaunch',
             'uuid' => (string) str()->uuid(),
-            'network' => 'coolify',
+            'network' => 'xlaunch',
             'server_id' => $server->id,
         ]);
 
     $database = new StandalonePostgresql;
     $database->forceFill([
         'id' => 0,
-        'name' => 'coolify-db',
-        'description' => 'Coolify database',
-        'postgres_user' => 'coolify',
+        'name' => 'xlaunch-db',
+        'description' => 'Xlaunch database',
+        'postgres_user' => 'xlaunch',
         'postgres_password' => 'password',
-        'postgres_db' => 'coolify',
+        'postgres_db' => 'xlaunch',
         'status' => 'running',
         'destination_type' => StandaloneDocker::class,
         'destination_id' => $destination->id,

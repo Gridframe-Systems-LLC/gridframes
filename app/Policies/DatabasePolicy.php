@@ -127,7 +127,7 @@ class DatabasePolicy
 
     private function getTeamId($database): ?int
     {
-        // Instance-level databases (e.g., coolify-db) belong to root team
+        // Instance-level databases (e.g., xlaunch-db) belong to root team
         if (isset($database->id) && $database->id === 0) {
             return 0;
         }

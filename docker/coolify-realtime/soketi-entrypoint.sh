@@ -23,8 +23,8 @@ cleanup() {
     rm -f "$TERMINAL_LOG_FIFO" "$SOKETI_LOG_FIFO"
 }
 
-TERMINAL_LOG_FIFO="/tmp/coolify-terminal-log.$$"
-SOKETI_LOG_FIFO="/tmp/coolify-soketi-log.$$"
+TERMINAL_LOG_FIFO="/tmp/xlaunch-terminal-log.$$"
+SOKETI_LOG_FIFO="/tmp/xlaunch-soketi-log.$$"
 
 rm -f "$TERMINAL_LOG_FIFO" "$SOKETI_LOG_FIFO"
 mkfifo "$TERMINAL_LOG_FIFO" "$SOKETI_LOG_FIFO"
