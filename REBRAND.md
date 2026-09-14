@@ -160,13 +160,13 @@ image paths, because those are Coolify-published images (brand artifacts) rather
 than neutral third-party dependencies. The result is a set of `northlatch`
 placeholders (see §7), not references to the old brand.
 
-- **Helper & realtime Dockerfiles are in-repo** (`docker/coolify-helper`,
-  `docker/coolify-realtime`). Their image identifiers rename consistently:
+- **Helper & realtime Dockerfiles are in-repo** (`docker/xlaunch-helper`,
+  `docker/xlaunch-realtime`). Their image identifiers rename consistently:
   `IMAGE_NAME` in `.github/workflows/*` is now `northlatch/xlaunch-helper` and
   `northlatch/xlaunch-realtime`; exhaustive grep confirms **zero** `coollabsio`
   / `coolify` / `coollabs` / `COOLIFY_` strings remain in any workflow,
-  Dockerfile, or compose file. (The build-context *directory* names are a
-  separate, pending rename item — see §8.)
+  Dockerfile, or compose file. (The build-context directory names were renamed
+  in the follow-up remediation — see §9.)
 - **No genuine cross-repo runtime dependency required keeping.** Third-party
   images and CDNs that are not Coolify-branded (e.g. `ghcr.io/windmill-labs/windmill`,
   `ghcr.io/umami-software/umami`, `quay.io/soketi/soketi`, `minio/mc`) contain no
@@ -195,6 +195,12 @@ placeholders (see §7), not references to the old brand.
 `composer update --lock` completed successfully (exit 0), changing only the
 `content-hash` line of `composer.lock` (`971daeb1…` → `e09ef630…`); no
 dependency versions changed.
+
+**Follow-up remediation re-verification (renames only, no content change).**
+After the §9 file renames, the §2 counts were re-measured and are unchanged:
+`coolify` / `coollabs` / `COOLIFY_` / `coollabsio` all remain **0** outside the
+exempt attribution files; the old `docker/…` build-context path and old logo
+filename token each return **0** occurrences tree-wide.
 
 ---
 
@@ -253,8 +259,7 @@ Coolify-published, **not** rebuildable from this repo (republish or substitute):
 1. **Publish the 3 core images before deploy:** `xlaunch`, `xlaunch-helper`,
    `xlaunch-realtime` (plus `xlaunch-testing-host`) to `ghcr.io/northlatch/*`,
    and verify all three run. The in-repo Dockerfiles are
-   `docker/coolify-helper/Dockerfile` and `docker/coolify-realtime/Dockerfile`
-   (directories pending rename, below).
+   `docker/xlaunch-helper/Dockerfile` and `docker/xlaunch-realtime/Dockerfile`.
 2. **Resolve the Coolify-published images** listed in §7 that are not
    rebuildable here (`minio`, `example`, `jean-server`, `shoutrrr`, `pocketbase`,
    `next-image-transformation`, `maxio`): republish under `ghcr.io/northlatch/*`
@@ -269,70 +274,78 @@ Coolify-published, **not** rebuildable from this repo (republish or substitute):
 6. **GHCR write permissions** in the target `northlatch` org for the CI
    `GITHUB_TOKEN`.
 7. **Rename the pending filesystem paths** listed in §9 so that PHP PSR-4
-   autoloading and the image CI pipeline resolve correctly.
+   autoloading and the image CI pipeline resolve correctly — ✅ complete, see §9.
 
 ---
 
-## 9. Known consequences of the content-only sweep (pending renames)
+## 9. Follow-up remediation — filesystem renames (RESOLVED)
 
-The sweep was **content-only** (text files; logo SVGs keep their original
-filenames per the brief). Class names, namespace segments, and build-context
-paths were rewritten in content, but the corresponding **files/directories were
-not renamed**. These are documented, not silently fixed, and require a follow-up
-rename pass:
+The content-only sweep intentionally left the filesystem untouched. A follow-up
+commit — `Xlaunch rebrand fixes: PSR-4 file renames, docker dirs, logo filenames
+(upstream coollabsio/coolify@59eacc9ff8362e007104cd3549b3f4518ba70ff4)` — renamed
+every file/directory whose path had to match a rebranded class name, build-context
+path, or asset reference. No file/directory name containing the old brand token
+(`coolify` / `coollabs`, case-insensitive) remains in the tree.
 
-### 9a. PHP class/namespace ↔ filename mismatches (PSR-4 autoload break)
+### 9a. PHP class/namespace ↔ filename (PSR-4) — RESOLVED
 
-`composer dump-autoload` reports these classes no longer map to their files
-(they will fail to autoload until the files/directories are renamed):
+`git mv`-renamed so each class file path matches its PSR-4 class name:
 
-- `app/Mcp/Tools/CoolifyHelp.php` → class now `XlaunchHelp`
-- `app/Mcp/Servers/CoolifyServer.php` → class now `XlaunchServer`
-- `app/Actions/Server/UpdateCoolify.php` → class now `UpdateXlaunch`
-- `app/Jobs/CoolifyTask.php` → class now `XlaunchTask`
-- `app/Jobs/UpdateCoolifyJob.php` → class now `UpdateXlaunchJob`
-- `app/Services/CoolifyUpgradeStatus.php` → class now `XlaunchUpgradeStatus`
-- `app/Actions/CoolifyTask/` (directory) → namespace now `XlaunchTask`
-- `tests/Unit/UpdateCoolifyTest.php`, `tests/Unit/CoolifyTaskCleanupTest.php`,
-  `tests/Unit/CoolifyUpgradeStatusTest.php`,
-  `tests/Unit/StripCoolifyCustomFieldsTest.php`,
-  `tests/Unit/ApplicationDeploymentCoolifyUrlDomainsTest.php`,
-  `tests/Feature/Jobs/CoolifyTaskRetryTest.php`
+- `app/Mcp/Tools/CoolifyHelp.php` → `app/Mcp/Tools/XlaunchHelp.php`
+- `app/Mcp/Servers/CoolifyServer.php` → `app/Mcp/Servers/XlaunchServer.php`
+- `app/Actions/Server/UpdateCoolify.php` → `app/Actions/Server/UpdateXlaunch.php`
+- `app/Jobs/CoolifyTask.php` → `app/Jobs/XlaunchTask.php`
+- `app/Jobs/UpdateCoolifyJob.php` → `app/Jobs/UpdateXlaunchJob.php`
+- `app/Services/CoolifyUpgradeStatus.php` → `app/Services/XlaunchUpgradeStatus.php`
+- `app/Actions/CoolifyTask/` → `app/Actions/XlaunchTask/`
+- `tests/Unit/UpdateCoolifyTest.php` → `tests/Unit/UpdateXlaunchTest.php`
+- `tests/Unit/CoolifyTaskCleanupTest.php` → `tests/Unit/XlaunchTaskCleanupTest.php`
+- `tests/Unit/CoolifyUpgradeStatusTest.php` → `tests/Unit/XlaunchUpgradeStatusTest.php`
+- `tests/Unit/StripCoolifyCustomFieldsTest.php` → `tests/Unit/StripXlaunchCustomFieldsTest.php`
+- `tests/Unit/ApplicationDeploymentCoolifyUrlDomainsTest.php` → `tests/Unit/ApplicationDeploymentXlaunchUrlDomainsTest.php`
+- `tests/Feature/Jobs/CoolifyTaskRetryTest.php` → `tests/Feature/Jobs/XlaunchTaskRetryTest.php`
 
-### 9b. Docker build-context paths (CI image builds will fail until renamed)
+`composer dump-autoload` (exit 0) now reports **zero** rebrand-induced PSR-4
+warnings. The only remaining warnings are 12 pre-existing upstream test-double /
+Browser-helper classes whose names never matched PSR-4 (unchanged from the
+baseline; e.g. `TestableStopGracePeriodDeploymentJob`,
+`TestableXlaunchUrlDeploymentJob`, `Tests\Browser\ProjectTest`).
 
-The realtime/helper Docker directories are still named `docker/coolify-realtime`
-and `docker/coolify-helper`, but the content now references the renamed paths:
+### 9b. Docker build-context paths — RESOLVED
 
-- `.github/workflows/coolify-realtime.yml` → `file: docker/xlaunch-realtime/Dockerfile`
-  and `paths: - docker/xlaunch-realtime/**`
-- `.github/workflows/coolify-helper.yml` → `file: docker/xlaunch-helper/Dockerfile`
-- `docker/coolify-realtime/Dockerfile` → `COPY docker/xlaunch-realtime/…`
+The two helper/realtime build-context directories were renamed to
+`docker/xlaunch-helper/` and `docker/xlaunch-realtime/`. Every workflow
+(`file:` / `paths:`), `docker-compose*.yml` (`dockerfile:` / volumes), Dockerfile
+`COPY` line, `scripts/dev-helper`, and `tests/**` reference now resolves to a
+real directory; the old `docker/…` build-context path now has zero occurrences.
 
-Rename the two directories to `docker/xlaunch-realtime` and
-`docker/xlaunch-helper` (the workflow `dockerfile:`/`paths:` and the Dockerfile
-`COPY` lines then resolve correctly).
+### 9c. Logo filenames — RESOLVED
 
-### 9c. Logo filename mismatch
+The app favicon and wordmark assets were renamed to their referenced names:
 
-Code now references `xlaunch-logo.svg` / `xlaunch-logo-dev-transparent.png`
-(`resources/views/layouts/*.blade.php`, `tests/Feature/SidebarNavigationMarkupTest.php`),
-but the physical files are still `coolify-logo*.svg` (content replaced with an
-Xlaunch wordmark per the brief) and `coolify-logo*.png` (raster, left as-is).
-Reconcile by renaming the files or reverting the references.
+- `public/xlaunch-logo.svg`
+- `public/xlaunch-logo-dev-transparent.png`
+- `.xlaunch-logo` (ASCII banner)
 
-### 9d. Files/dirs whose names still contain the old brand (cosmetic)
+The remaining orphaned raster/SVG logo assets were also renamed to the matching
+`xlaunch-*` names (`public/xlaunch-logo-monochrome.*`,
+`public/xlaunch-logo-red.*`, `public/xlaunch-logo-dev-transparent.svg`,
+`public/xlaunch-transparent.png`, `public/svgs/xlaunch-logo.svg`,
+`public/svgs/xlaunch.png`). Every `xlaunch-logo*` reference resolves to an
+existing file; the old logo filename token now has zero occurrences.
 
-- Workflow filenames: `.github/workflows/coolify-*.yml` (9 files)
-- `.coolify-logo` (ASCII logo — content replaced with an Xlaunch banner)
-- `.cursor/rules/coolify-ai-docs.mdc`
-- `.dev/lima/coolify-naked-test.yaml`
-- `docs/v5/architecture/adr/0004-coolify-control-plane-boundary.md`
-- `resources/domain-connect/coolify.io.hosting.json`
-- Raster logos (left as-is, pending replacement):
-  `public/coolify-logo-dev-transparent.png`, `public/coolify-logo-monochrome.png`,
-  `public/coolify-logo-red.png`, `public/coolify-transparent.png`,
-  `public/svgs/coolify.png`
+### 9d. Files/dirs whose names still contained the old brand — RESOLVED
+
+The generalized check promoted several "cosmetic" §9d items to real breaks
+(because rebranded content referenced them by their new names), now fixed:
+
+- Workflow filenames `.github/workflows/coolify-*.yml` → `xlaunch-*.yml` (9 files)
+- `.dev/lima/coolify-naked-test.yaml` → `.dev/lima/xlaunch-naked-test.yaml`
+- `docs/v5/architecture/adr/0004-coolify-control-plane-boundary.md` → `docs/v5/architecture/adr/0004-xlaunch-control-plane-boundary.md`
+- `resources/domain-connect/coolify.io.hosting.json` → `resources/domain-connect/northlatch.com.hosting.json`
+- `.cursor/rules/coolify-ai-docs.mdc` → `.cursor/rules/xlaunch-ai-docs.mdc`
+
+No file/directory name containing the old brand token remains.
 
 ---
 
@@ -340,7 +353,8 @@ Reconcile by renaming the files or reverting the references.
 
 - **No Docker build** was run.
 - **No test suite / no container** was run.
-- The PHP PSR-4 autoload break (§9a) and Docker build-path break (§9b) are
-  documented consequences of the content-only sweep; they were not fixed by
-  file renames.
-- Raster logos were left in place (not redrawn).
+- The raster logos were left in place (not redrawn); they are renamed only,
+  pending real logo artwork per §7/§8.
+- The follow-up remediation (§9) was **renames only** — no file content was
+  changed, so the §2 occurrence counts are unchanged (still 0 outside the exempt
+  attribution files).
