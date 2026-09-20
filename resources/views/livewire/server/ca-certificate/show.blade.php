@@ -27,7 +27,7 @@
                 <x-callout type="info" title="Using this certificate">
                     Mount the CA certificate into containers that connect to databases over SSL. Re-deploy affected
                     databases and resources after replacing or regenerating it.
-                    <a class="font-medium underline" href="https://northlatch.com/docs/databases/ssl" target="_blank">
+                    <a class="font-medium underline" href="https://projectxprotocol.dev/docs/databases/ssl" target="_blank">
                         Read the SSL guide.
                     </a>
                 </x-callout>

@@ -22,7 +22,7 @@ jobs:
               This will help ensure that our documentation remains accurate and up-to-date for all users.
 
               Xlaunch Docs Repository: https://github.com/northlatch/xlaunch-docs
-              How to Contribute a new Service to the Docs: https://northlatch.com/docs/get-started/contribute/service#adding-a-new-service-template-to-the-xlaunch-documentation
+              How to Contribute a new Service to the Docs: https://projectxprotocol.dev/docs/get-started/contribute/service#adding-a-new-service-template-to-the-xlaunch-documentation
           - label: "🛠️ Feature"
             body: |
               Hi @${{ github.event.pull_request.user.login }}! 👋
@@ -32,7 +32,7 @@ jobs:
               This will help ensure that our documentation remains accurate and up-to-date for all users.
 
               Xlaunch Docs Repository: https://github.com/northlatch/xlaunch-docs
-              How to Contribute to the Docs: https://northlatch.com/docs/get-started/contribute/documentation
+              How to Contribute to the Docs: https://projectxprotocol.dev/docs/get-started/contribute/documentation
           # - label: "✨ Enhancement"
           #  body: |
           #    It appears to us that you are making an enhancement to Xlaunch.

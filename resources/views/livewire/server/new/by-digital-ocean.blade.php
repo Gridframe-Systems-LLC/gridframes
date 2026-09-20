@@ -7,7 +7,7 @@
                 routeType="digital-ocean" :tokens="$available_tokens" />
             <p class="text-[11px] text-neutral-500 dark:text-fg-faint">
                 New to DigitalOcean?
-                <a href="https://northlatch.com/digitalocean" target="_blank"
+                <a href="https://projectxprotocol.dev/digitalocean" target="_blank"
                     class="font-medium text-northlatch hover:underline dark:text-warning">Create an account</a>
                 through Xlaunch's referral link.
             </p>

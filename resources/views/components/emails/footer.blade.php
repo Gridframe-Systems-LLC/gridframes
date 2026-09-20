@@ -3,4 +3,4 @@
 Thank you,<br>
 {{ config('app.name') ?? 'Xlaunch' }}
 
-{{ Illuminate\Mail\Markdown::parse('[Contact Support](https://northlatch.com/docs/contact)') }}
+{{ Illuminate\Mail\Markdown::parse('[Contact Support](https://projectxprotocol.dev/docs/contact)') }}

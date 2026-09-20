@@ -4233,7 +4233,10 @@ COPY ./nginx.conf /etc/nginx/conf.d/default.conf");
             if ($this->application->build_pack === 'dockerimage') {
                 $this->application_deployment_queue->addLogEntry('Pulling latest images from the registry.');
                 $this->execute_remote_command(
-                    [executeInDocker($this->deployment_uuid, "docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} pull"), 'hidden' => true],
+                    // A locally built image has nothing to pull. Do not abort on a
+                    // failed pull: the `up` below uses the local image when it is
+                    // present, and fails on its own when it genuinely is not.
+                    [executeInDocker($this->deployment_uuid, "docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} pull"), 'hidden' => true, 'ignore_errors' => true],
                     [executeInDocker($this->deployment_uuid, "{$this->xlaunch_variables} docker compose --project-name {$this->application->uuid} --project-directory {$this->workdir} up --build -d"), 'hidden' => true],
                 );
             } else {

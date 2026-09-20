@@ -1,7 +1,7 @@
 # Contributing to Xlaunch
 > "First, thanks for considering contributing to my project. It really means a lot!" - [@andrasbacsai](https://github.com/andrasbacsai)
 
-You can ask for guidance anytime on our [Discord server](https://northlatch.com/discord) in the `#contribute` channel.
+You can ask for guidance anytime on our [Discord server](https://projectxprotocol.dev/discord) in the `#contribute` channel.
 
 To understand the tech stack, please refer to the [Tech Stack](TECH_STACK.md) document.
 
@@ -206,7 +206,7 @@ After completing these steps, you'll have a fresh development setup.
 
 ## Additional Development Guidelines
 ### Adding a New Service
-To add a new service to Xlaunch, please refer to our documentation: [Adding a New Service](https://northlatch.com/docs/get-started/contribute/service)
+To add a new service to Xlaunch, please refer to our documentation: [Adding a New Service](https://projectxprotocol.dev/docs/get-started/contribute/service)
 
 ### Development for Documentation
-To contribute to the Xlaunch documentation, please refer to this guide: [Contributing to the Xlaunch Documentation](https://northlatch.com/docs/get-started/contribute/documentation)
+To contribute to the Xlaunch documentation, please refer to this guide: [Contributing to the Xlaunch Documentation](https://projectxprotocol.dev/docs/get-started/contribute/documentation)

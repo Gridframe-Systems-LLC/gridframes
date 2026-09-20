@@ -32,7 +32,7 @@ function getTeamIdFromToken()
 }
 function invalidTokenResponse()
 {
-    return response()->json(['message' => 'Invalid token.', 'docs' => 'https://northlatch.com/docs/api-reference/authorization'], 400);
+    return response()->json(['message' => 'Invalid token.', 'docs' => 'https://projectxprotocol.dev/docs/api-reference/authorization'], 400);
 }
 
 function serializeApiResponse($data)

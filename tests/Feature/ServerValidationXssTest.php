@@ -37,7 +37,7 @@ it('strips script tags from validation_logs', function () {
 });
 
 it('preserves allowed HTML in validation_logs', function () {
-    $allowedHtml = 'Server is not reachable.<br>Check this <a target="_blank" class="underline" href="https://northlatch.com/docs">documentation</a> for further help.<br><br><div class="text-error">Error: Connection refused</div>';
+    $allowedHtml = 'Server is not reachable.<br>Check this <a target="_blank" class="underline" href="https://projectxprotocol.dev/docs">documentation</a> for further help.<br><br><div class="text-error">Error: Connection refused</div>';
     $this->server->update(['validation_logs' => $allowedHtml]);
     $this->server->refresh();
 

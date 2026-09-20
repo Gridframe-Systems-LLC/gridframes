@@ -69,12 +69,12 @@ return [
 
     /*
     | Domain Connect (Cloudflare automatic DNS).
-    | Template: resources/domain-connect/northlatch.com.hosting.json
+    | Template: resources/domain-connect/projectxprotocol.dev.hosting.json
     | Publish public key TXT at {key_id}.{syncPubKeyDomain} and onboard with Cloudflare.
     | @see https://developers.cloudflare.com/dns/reference/domain-connect/
     */
     'domain_connect' => [
-        'provider_id' => env('DOMAIN_CONNECT_PROVIDER_ID', 'northlatch.com'),
+        'provider_id' => env('DOMAIN_CONNECT_PROVIDER_ID', 'projectxprotocol.dev'),
         'service_id' => env('DOMAIN_CONNECT_SERVICE_ID', 'hosting'),
         'key_id' => env('DOMAIN_CONNECT_KEY_ID', '_dcpubkeyv1'),
         'private_key' => env('DOMAIN_CONNECT_PRIVATE_KEY'),

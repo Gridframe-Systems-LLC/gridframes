@@ -37,7 +37,7 @@
                         if (checkNumber > 5) {
                             this.popups.realtime = true;
                             console.error(
-                                'Xlaunch could not connect to its real-time service. This will cause unusual problems on the UI if not fixed! Please check the related documentation (https://northlatch.com/docs/knowledge-base/cloudflare/tunnels/overview) or get help on Discord (https://northlatch.com/discord).)'
+                                'Xlaunch could not connect to its real-time service. This will cause unusual problems on the UI if not fixed! Please check the related documentation (https://projectxprotocol.dev/docs/knowledge-base/cloudflare/tunnels/overview) or get help on Discord (https://projectxprotocol.dev/discord).)'
                             );
                         }
 
@@ -112,11 +112,11 @@
                                     <p class="mt-1 text-[12px] leading-5 text-neutral-500 dark:text-fg-dim">
                                         This will cause unusual problems on the UI. Open the
                                         <a class="font-medium text-northlatch underline decoration-northlatch/30 underline-offset-2 transition-colors hover:text-northlatch-100 dark:text-warning dark:decoration-warning/30 dark:hover:text-warning/90"
-                                            href="https://northlatch.com/docs/knowledge-base/server/firewall"
+                                            href="https://projectxprotocol.dev/docs/knowledge-base/server/firewall"
                                             target="_blank" rel="noopener noreferrer">required ports</a>
                                         or get help on
                                         <a class="font-medium text-northlatch underline decoration-northlatch/30 underline-offset-2 transition-colors hover:text-northlatch-100 dark:text-warning dark:decoration-warning/30 dark:hover:text-warning/90"
-                                            href="https://northlatch.com/discord" target="_blank"
+                                            href="https://projectxprotocol.dev/discord" target="_blank"
                                             rel="noopener noreferrer">Discord</a>.
                                     </p>
                                 </div>
@@ -124,7 +124,7 @@
 
                             <div class="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-end">
                                 <a target="_blank" rel="noopener noreferrer"
-                                    href="https://northlatch.com/docs/knowledge-base/server/firewall"
+                                    href="https://projectxprotocol.dev/docs/knowledge-base/server/firewall"
                                     class="button h-9 justify-center sm:min-w-28">
                                     View docs
                                 </a>

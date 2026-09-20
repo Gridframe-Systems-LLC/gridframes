@@ -13,19 +13,22 @@ return [
         'helper_image' => env('HELPER_IMAGE', env('REGISTRY_URL', 'docker.io').'/northlatch/xlaunch-helper'),
         'realtime_image' => env('REALTIME_IMAGE', env('REGISTRY_URL', 'docker.io').'/northlatch/xlaunch-realtime'),
         'is_windows_docker_desktop' => env('IS_WINDOWS_DOCKER_DESKTOP', false),
-        'cdn_url' => env('CDN_URL', 'https://cdn.northlatch.com'),
-        'versions_url' => env('VERSIONS_URL', env('CDN_URL', 'https://cdn.northlatch.com').'/xlaunch/versions.json'),
-        'upgrade_script_url' => env('UPGRADE_SCRIPT_URL', env('CDN_URL', 'https://cdn.northlatch.com').'/xlaunch/upgrade.sh'),
-        'releases_url' => env('RELEASES_URL', 'https://cdn.northlatch.com/xlaunch/releases.json'),
+        'cdn_url' => env('CDN_URL', 'https://cdn.projectxprotocol.dev'),
+        'versions_url' => env('VERSIONS_URL', env('CDN_URL', 'https://cdn.projectxprotocol.dev').'/xlaunch/versions.json'),
+        'upgrade_script_url' => env('UPGRADE_SCRIPT_URL', env('CDN_URL', 'https://cdn.projectxprotocol.dev').'/xlaunch/upgrade.sh'),
+        'releases_url' => env('RELEASES_URL', 'https://cdn.projectxprotocol.dev/xlaunch/releases.json'),
     ],
 
     'urls' => [
-        'docs' => 'https://northlatch.com/docs',
-        'contact' => 'https://northlatch.com/docs/contact',
+        'docs' => 'https://projectxprotocol.dev/docs',
+        'contact' => 'https://projectxprotocol.dev/docs/contact',
     ],
 
     'services' => [
-        'official' => 'https://cdn.northlatch.com/xlaunch/service-templates-latest.json',
+        'official' => env('SERVICE_TEMPLATES_URL', 'https://cdn.projectxprotocol.dev/xlaunch/service-templates-latest.json'),
+        // When false, the scheduled CDN refresh is skipped and the bundle shipped
+        // in templates/ is used as the source of truth.
+        'refresh_from_cdn' => env('SERVICE_TEMPLATES_REFRESH', false),
         'file_name' => 'service-templates-latest.json',
         // Shared across HTTP/Horizon nodes when CACHE_DRIVER is redis (default).
         'cache_key' => 'xlaunch:service-templates-bundle',

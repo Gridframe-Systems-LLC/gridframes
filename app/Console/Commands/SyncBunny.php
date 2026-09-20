@@ -256,7 +256,7 @@ class SyncBunny extends Command
             ],
             default: 'production',
         ) === 'nightly';
-        $bunny_cdn = 'https://cdn.northlatch.com';
+        $bunny_cdn = 'https://cdn.projectxprotocol.dev';
         $bunny_cdn_path = 'xlaunch';
         $bunny_cdn_storage_name = 'coolcdn';
 

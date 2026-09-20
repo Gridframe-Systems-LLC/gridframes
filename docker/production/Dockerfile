@@ -63,7 +63,7 @@ RUN npm run build
 # =================================================================
 # Stage 3: Get MinIO client
 # =================================================================
-FROM minio/mc:${MINIO_VERSION} AS minio-client
+FROM quay.io/minio/mc:${MINIO_VERSION} AS minio-client
 
 # =================================================================
 # Final Stage: Production image

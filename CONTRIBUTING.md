@@ -263,7 +263,7 @@ Mac users can use [Lima](https://lima-vm.io/) to run a lightweight Linux virtual
 After creating and starting a Lima VM, run the normal local development commands from inside the VM as described in [Development](./DEVELOPMENT.md).
 
 ## Adding a New Service
-To add a new one-click service, follow: https://northlatch.com/docs/get-started/contribute/service
+To add a new one-click service, follow: https://projectxprotocol.dev/docs/get-started/contribute/service
 
 ## Contributing to Documentation
-To contribute to documentation, see: https://northlatch.com/docs/get-started/contribute/documentation
+To contribute to documentation, see: https://projectxprotocol.dev/docs/get-started/contribute/documentation

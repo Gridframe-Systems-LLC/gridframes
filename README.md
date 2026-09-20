@@ -9,7 +9,7 @@ Xlaunch is developed and operated by **Northlatch Labs LLC** as the foundation o
 > Placeholder URL — the production install path is published to the Northlatch distribution host after image publication (see `REBRAND.md` bootstrap checklist).
 
 ```bash
-curl -fsSL https://northlatch.com/xlaunch/install.sh | bash
+curl -fsSL https://projectxprotocol.dev/xlaunch/install.sh | bash
 ```
 
 Then open the UI on port 8000 of your server and follow the onboarding.
@@ -25,14 +25,14 @@ Then open the UI on port 8000 of your server and follow the onboarding.
 
 ## Documentation
 
-- Docs: `https://northlatch.com/docs` *(placeholder — see REBRAND.md)*
+- Docs: `https://projectxprotocol.dev/docs` *(placeholder — see REBRAND.md)*
 - Business model: [`docs/business/REVENUE_MODEL.md`](./docs/business/REVENUE_MODEL.md)
 - Platform roadmap: [`docs/business/ENTERPRISE_ROADMAP.md`](./docs/business/ENTERPRISE_ROADMAP.md)
 - Rebrand & fork record: [`REBRAND.md`](./REBRAND.md)
 
 ## Security
 
-Report vulnerabilities to `hello@northlatch.com` *(placeholder — see REBRAND.md)*. See `SECURITY.md`.
+Report vulnerabilities to `hello@projectxprotocol.dev` *(placeholder — see REBRAND.md)*. See `SECURITY.md`.
 
 ## Attribution
 

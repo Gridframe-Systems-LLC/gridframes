@@ -28,10 +28,10 @@ and domains/emails are replaced before the bare brand tokens.
 | `ghcr.io/coollabsio/coolify` | `ghcr.io/northlatch/xlaunch` | main image |
 | `ghcr.io/coollabsio/coolify-helper` | `ghcr.io/northlatch/xlaunch-helper` | helper image |
 | `ghcr.io/coollabsio/coolify-realtime` | `ghcr.io/northlatch/xlaunch-realtime` | realtime image |
-| `coolify.io` | `northlatch.com` | domain (placeholder) |
-| `coollabs.io` | `northlatch.com` | domain (placeholder) |
-| `coolify.dev` | `northlatch.com` | domain (placeholder; 0 literal occurrences) |
-| `hi@…` / `hello@…` / `support@…` (coolify/coollabs domains) | `hello@northlatch.com` | contact emails |
+| `coolify.io` | `projectxprotocol.dev` | domain (placeholder) |
+| `coollabs.io` | `projectxprotocol.dev` | domain (placeholder) |
+| `coolify.dev` | `projectxprotocol.dev` | domain (placeholder; 0 literal occurrences) |
+| `hi@…` / `hello@…` / `support@…` (coolify/coollabs domains) | `hello@projectxprotocol.dev` | contact emails |
 | `coollabsio/coolify` | `northlatch/xlaunch` | repo slug |
 
 All other `coollabs`-published image paths (`ghcr.io/coollabsio/minio`,
@@ -211,17 +211,17 @@ not yet exist in production and must be provisioned before go-live.
 
 ### Domains
 
-- `northlatch.com` (793) — apex placeholder
-- `app.northlatch.com` (40), `app2.northlatch.com` (18), `cloud.northlatch.com`
-- `cdn.northlatch.com` (17) — install-script / asset CDN
-- `domainconnect.northlatch.com` (2), `analytics.northlatch.com`,
-  `www.app.northlatch.com`, `undead.northlatch.com`, `staging-but-dev.northlatch.com`
+- `projectxprotocol.dev` (793) — apex placeholder
+- `app.projectxprotocol.dev` (40), `app2.projectxprotocol.dev` (18), `cloud.projectxprotocol.dev`
+- `cdn.projectxprotocol.dev` (17) — install-script / asset CDN
+- `domainconnect.projectxprotocol.dev` (2), `analytics.projectxprotocol.dev`,
+  `www.app.projectxprotocol.dev`, `undead.projectxprotocol.dev`, `staging-but-dev.projectxprotocol.dev`
 
 ### Email
 
-- `hello@northlatch.com` — primary contact (README, CODE_OF_CONDUCT)
-- `security@northlatch.com` — `SECURITY.md` (domain-replaced local-part)
-- `feedback@northlatch.com` — in-app feedback (domain-replaced local-part)
+- `hello@projectxprotocol.dev` — primary contact (README, CODE_OF_CONDUCT)
+- `security@projectxprotocol.dev` — `SECURITY.md` (domain-replaced local-part)
+- `feedback@projectxprotocol.dev` — in-app feedback (domain-replaced local-part)
 
 ### Repositories (GitHub)
 
@@ -266,9 +266,9 @@ Coolify-published, **not** rebuildable from this repo (republish or substitute):
    or substitute with upstream equivalents.
 3. **`composer update --lock` status:** ✅ complete — `composer.lock`
    `content-hash` synced, no dependency changes.
-4. **Real domains:** replace `northlatch.com` (and subdomains) with the real
+4. **Real domains:** replace `projectxprotocol.dev` (and subdomains) with the real
    distribution host; update the install-script CDN path
-   (`cdn.northlatch.com`).
+   (`cdn.projectxprotocol.dev`).
 5. **Real logos:** replace the placeholder wordmark SVGs and the remaining
    raster logos (see §9).
 6. **GHCR write permissions** in the target `northlatch` org for the CI
@@ -342,7 +342,7 @@ The generalized check promoted several "cosmetic" §9d items to real breaks
 - Workflow filenames `.github/workflows/coolify-*.yml` → `xlaunch-*.yml` (9 files)
 - `.dev/lima/coolify-naked-test.yaml` → `.dev/lima/xlaunch-naked-test.yaml`
 - `docs/v5/architecture/adr/0004-coolify-control-plane-boundary.md` → `docs/v5/architecture/adr/0004-xlaunch-control-plane-boundary.md`
-- `resources/domain-connect/coolify.io.hosting.json` → `resources/domain-connect/northlatch.com.hosting.json`
+- `resources/domain-connect/coolify.io.hosting.json` → `resources/domain-connect/projectxprotocol.dev.hosting.json`
 - `.cursor/rules/coolify-ai-docs.mdc` → `.cursor/rules/xlaunch-ai-docs.mdc`
 
 No file/directory name containing the old brand token remains.

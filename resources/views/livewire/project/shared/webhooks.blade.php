@@ -33,7 +33,7 @@
             <x-application.settings-section id="deploy-webhook-section" title="Deploy webhook"
                 helper="Trigger a deployment from an external service. Requests must include a valid Xlaunch API authorization token.">
                 <x-slot:actions>
-                    <a class="button" href="https://northlatch.com/docs/api-reference/authorization" target="_blank"
+                    <a class="button" href="https://projectxprotocol.dev/docs/api-reference/authorization" target="_blank"
                         rel="noopener noreferrer">
                         Documentation
                         <x-external-link />
@@ -100,7 +100,7 @@
             <x-application.settings-section title="Deploy webhook"
                 helper="Trigger an external deployment with a valid Xlaunch API authorization token.">
                 <x-slot:actions>
-                    <a class="button" href="https://northlatch.com/docs/api-reference/authorization" target="_blank"
+                    <a class="button" href="https://projectxprotocol.dev/docs/api-reference/authorization" target="_blank"
                         rel="noopener noreferrer">
                         Documentation
                         <x-external-link />

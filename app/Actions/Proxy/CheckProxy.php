@@ -102,7 +102,7 @@ class CheckProxy
             foreach ($conflicts as $port => $conflict) {
                 if ($conflict) {
                     if ($fromUI) {
-                        throw new \Exception("Port $port is in use.<br>You must stop the process using this port.<br><br>Docs: <a target='_blank' class='dark:text-white hover:underline' href='https://northlatch.com/docs'>https://northlatch.com/docs</a><br>Discord: <a target='_blank' class='dark:text-white hover:underline' href='https://northlatch.com/discord'>https://northlatch.com/discord</a>");
+                        throw new \Exception("Port $port is in use.<br>You must stop the process using this port.<br><br>Docs: <a target='_blank' class='dark:text-white hover:underline' href='https://projectxprotocol.dev/docs'>https://projectxprotocol.dev/docs</a><br>Discord: <a target='_blank' class='dark:text-white hover:underline' href='https://projectxprotocol.dev/discord'>https://projectxprotocol.dev/discord</a>");
                     } else {
                         return false;
                     }

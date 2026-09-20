@@ -286,7 +286,7 @@ class ServicesController extends Controller
                                 type: 'object',
                                 properties: [
                                     'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                    'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com").'],
+                                    'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.projectxprotocol.dev,https://app2.projectxprotocol.dev").'],
                                 ],
                             ),
                         ],
@@ -1081,7 +1081,7 @@ class ServicesController extends Controller
                                     type: 'object',
                                     properties: [
                                         'name' => ['type' => 'string', 'description' => 'The service name as defined in docker-compose.'],
-                                        'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.northlatch.com,https://app2.northlatch.com").'],
+                                        'url' => ['type' => 'string', 'description' => 'Comma-separated list of URLs (e.g. "https://app.projectxprotocol.dev,https://app2.projectxprotocol.dev").'],
                                     ],
                                 ),
                             ],

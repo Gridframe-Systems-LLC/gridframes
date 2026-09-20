@@ -1,7 +1,7 @@
 #!/bin/bash
 ## Do not modify this file. You will lose the ability to autoupdate!
 
-CDN="https://cdn.northlatch.com/xlaunch-nightly"
+CDN="https://cdn.projectxprotocol.dev/xlaunch-nightly"
 LATEST_IMAGE=${1:-latest}
 LATEST_HELPER_VERSION=${2:-latest}
 ENV_FILE="/data/xlaunch/source/.env"

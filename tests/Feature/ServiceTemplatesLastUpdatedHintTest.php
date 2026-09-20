@@ -58,7 +58,7 @@ it('prefers embedded service template git timestamps from the templates bundle',
     $path = base_path('templates/'.config('constants.services.file_name'));
     $payload = json_encode([
         'activepieces' => [
-            'documentation' => 'https://northlatch.com/docs',
+            'documentation' => 'https://projectxprotocol.dev/docs',
             'slogan' => 'Open source no-code business automation.',
             'compose' => '',
             'tags' => null,

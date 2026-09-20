@@ -59,7 +59,7 @@
                     helper="Let Xlaunch configure the Cloudflare SSH tunnel on this server.">
                     <x-slot:actions>
                         <a class="button"
-                            href="https://northlatch.com/docs/knowledge-base/cloudflare/tunnels/server-ssh"
+                            href="https://projectxprotocol.dev/docs/knowledge-base/cloudflare/tunnels/server-ssh"
                             target="_blank">
                             Documentation
                             <x-external-link />

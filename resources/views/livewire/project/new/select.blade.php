@@ -453,7 +453,7 @@
                         },
                         xlaunchDocsUrl(service) {
                             const baseName = service.docsSlug || this.extractBaseServiceName(service.name);
-                            return 'https://northlatch.com/docs/services/' + baseName;
+                            return 'https://projectxprotocol.dev/docs/services/' + baseName;
                         },
                         officialDocsUrl(service) {
                             return service.documentation || null;

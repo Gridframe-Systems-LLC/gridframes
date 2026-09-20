@@ -160,6 +160,10 @@ class Init extends Command
 
     private function pullTemplatesFromCDN()
     {
+        // Opt-in only: the bundle in templates/ is the default source of truth.
+        if (! config('constants.services.refresh_from_cdn')) {
+            return;
+        }
         $response = Http::retry(3, 1000, throw: false)
             ->timeout(60)
             ->connectTimeout(10)
@@ -270,7 +274,7 @@ class Init extends Command
         $id = config('app.id');
         $version = config('constants.xlaunch.version');
         try {
-            Http::get("https://undead.northlatch.com/v4/alive?appId=$id&version=$version");
+            Http::get("https://undead.projectxprotocol.dev/v4/alive?appId=$id&version=$version");
         } catch (\Throwable $e) {
             echo "Error in sending live signal: {$e->getMessage()}\n";
         }

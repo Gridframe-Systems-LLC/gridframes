@@ -13,7 +13,7 @@
                     :authDisabled="!auth()->user()->can('update', $resource)"
                     title="Enable healthcheck?" buttonTitle="Enable"
                     submitAction="toggleHealthcheck" :actions="['Enable healthcheck for this resource.']"
-                    warningMessage="If the healthcheck fails, your application will become inaccessible. Review the <a href='https://northlatch.com/docs/knowledge-base/health-checks' target='_blank' class='underline text-white'>Healthchecks guide</a> before continuing."
+                    warningMessage="If the healthcheck fails, your application will become inaccessible. Review the <a href='https://projectxprotocol.dev/docs/knowledge-base/health-checks' target='_blank' class='underline text-white'>Healthchecks guide</a> before continuing."
                     step2ButtonText="Enable healthcheck" :confirmWithText="false"
                     :confirmWithPassword="false" isHighlightedButton />
             @else

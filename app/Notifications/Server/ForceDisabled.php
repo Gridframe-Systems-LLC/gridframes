@@ -40,7 +40,7 @@ class ForceDisabled extends CustomEmailNotification
             color: DiscordMessage::errorColor(),
         );
 
-        $message->addField('Please update your subscription to enable the server again!', '[Link](https://app.northlatch.com/subscription)');
+        $message->addField('Please update your subscription to enable the server again!', '[Link](https://app.projectxprotocol.dev/subscription)');
 
         return $message;
     }
@@ -48,7 +48,7 @@ class ForceDisabled extends CustomEmailNotification
     public function toTelegram(): array
     {
         return [
-            'message' => "Xlaunch: Server ({$this->server->name}) disabled because it is not paid!\n All automations and integrations are stopped.\nPlease update your subscription to enable the server again [here](https://app.northlatch.com/subscription).",
+            'message' => "Xlaunch: Server ({$this->server->name}) disabled because it is not paid!\n All automations and integrations are stopped.\nPlease update your subscription to enable the server again [here](https://app.projectxprotocol.dev/subscription).",
         ];
     }
 
@@ -57,7 +57,7 @@ class ForceDisabled extends CustomEmailNotification
         return new PushoverMessage(
             title: 'Server disabled',
             level: 'error',
-            message: "Server ({$this->server->name}) disabled because it is not paid!\n All automations and integrations are stopped.<br/>Please update your subscription to enable the server again [here](https://app.northlatch.com/subscription).",
+            message: "Server ({$this->server->name}) disabled because it is not paid!\n All automations and integrations are stopped.<br/>Please update your subscription to enable the server again [here](https://app.projectxprotocol.dev/subscription).",
         );
     }
 
@@ -66,7 +66,7 @@ class ForceDisabled extends CustomEmailNotification
         $title = 'Server disabled';
         $description = "Server ({$this->server->name}) disabled because it is not paid!\n";
         $description .= "All automations and integrations are stopped.\n\n";
-        $description .= 'Please update your subscription to enable the server again: https://app.northlatch.com/subscription';
+        $description .= 'Please update your subscription to enable the server again: https://app.projectxprotocol.dev/subscription';
 
         return new SlackMessage(
             title: $title,

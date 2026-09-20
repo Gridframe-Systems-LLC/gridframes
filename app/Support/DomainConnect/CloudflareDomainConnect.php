@@ -31,7 +31,7 @@ class CloudflareDomainConnect
 
     public function providerId(): string
     {
-        return (string) config('services.domain_connect.provider_id', 'northlatch.com');
+        return (string) config('services.domain_connect.provider_id', 'projectxprotocol.dev');
     }
 
     public function serviceId(): string

@@ -1,13 +1,13 @@
 {
-    "providerId": "northlatch.com",
+    "providerId": "projectxprotocol.dev",
     "providerName": "Xlaunch",
     "serviceId": "hosting",
     "serviceName": "Xlaunch Hosting",
     "version": 1,
-    "logoUrl": "https://northlatch.com/xlaunch-transparent.png",
+    "logoUrl": "https://projectxprotocol.dev/xlaunch-transparent.png",
     "description": "Point your domain to a Xlaunch-managed server via an A record.",
     "variableDescription": "ip is the Xlaunch server IP. host is the subdomain relative to the zone (empty for apex).",
-    "syncPubKeyDomain": "domainconnect.northlatch.com",
+    "syncPubKeyDomain": "domainconnect.projectxprotocol.dev",
     "syncBlock": false,
     "records": [
         {

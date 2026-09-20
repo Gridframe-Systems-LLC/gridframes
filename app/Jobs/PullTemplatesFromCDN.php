@@ -28,6 +28,11 @@ class PullTemplatesFromCDN implements ShouldBeEncrypted, ShouldQueue
             if (isDev()) {
                 return;
             }
+            // Xlaunch ships its own bundle in templates/. Remote refresh is opt-in
+            // so a self-hosted instance never depends on an external CDN.
+            if (! config('constants.services.refresh_from_cdn')) {
+                return;
+            }
             $response = Http::retry(3, 1000, throw: false)
                 ->timeout(60)
                 ->connectTimeout(10)

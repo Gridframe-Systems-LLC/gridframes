@@ -162,7 +162,7 @@ services:
     networks:
       - xlaunch
   # maxio-init:
-  #   image: minio/mc:latest
+  #   image: quay.io/minio/mc:latest
   #   pull_policy: always
   #   container_name: xlaunch-maxio-init
   #   restart: no
@@ -182,7 +182,7 @@ services:
   #   networks:
   #     - xlaunch
   minio-init:
-    image: minio/mc:latest
+    image: quay.io/minio/mc:latest
     pull_policy: always
     container_name: xlaunch-minio-init
     restart: no

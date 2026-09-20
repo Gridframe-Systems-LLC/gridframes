@@ -180,7 +180,7 @@ services:
 
   minio:
     profiles: ["minio"]
-    image: northlatch/maxio:latest
+    image: coollabsio/maxio:latest
     pull_policy: always
     ports:
       - "${FORWARD_MINIO_PORT:-9000}:9000"
@@ -195,7 +195,7 @@ services:
 
   minio-init:
     profiles: ["minio"]
-    image: minio/mc:latest
+    image: quay.io/minio/mc:latest
     pull_policy: always
     restart: "no"
     depends_on:

@@ -47,7 +47,7 @@
 
         <div class="flow-root mt-12">
             <div class="pb-10 text-xl text-center">For the detailed list of features, please visit our landing page: <a
-                    class="font-bold underline dark:text-white" href="https://northlatch.com">northlatch.com</a></div>
+                    class="font-bold underline dark:text-white" href="https://projectxprotocol.dev">projectxprotocol.dev</a></div>
             <div
                 class="grid max-w-sm grid-cols-1 -mt-16 divide-y divide-neutral-200 dark:divide-coolgray-500 isolate gap-y-16 sm:mx-auto lg:-mx-8 lg:mt-0 lg:max-w-none lg:grid-cols-3 lg:divide-x lg:divide-y-0 xl:-mx-4">
 

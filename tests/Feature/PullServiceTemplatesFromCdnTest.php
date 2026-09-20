@@ -24,7 +24,7 @@ it('stores the CDN service templates bundle in shared cache and local file', fun
         ],
         'activepieces' => [
             'category' => 'automation',
-            'documentation' => 'https://northlatch.com/docs',
+            'documentation' => 'https://projectxprotocol.dev/docs',
             'compose' => '',
             'slogan' => 'Activepieces',
             'tags' => null,
@@ -121,7 +121,7 @@ it('skips pulling templates in local development', function () {
 
 it('logs when the CDN responds with a non-success status', function () {
     Http::fake([
-        'cdn.northlatch.com/*' => Http::response('nope', 503),
+        'cdn.projectxprotocol.dev/*' => Http::response('nope', 503),
     ]);
     config(['app.env' => 'production']);
 

@@ -4,7 +4,7 @@
             <x-callout type="info" title="Required Port: {{ $requiredPort }}" class="mb-2">
                 This service requires port <strong>{{ $requiredPort }}</strong> to function correctly. All domains must include this port number (or any other port if you know what you're doing).
                 <br><br>
-                <strong>Example:</strong> https://app.northlatch.com:{{ $requiredPort }},https://www.app.northlatch.com:{{ $requiredPort }}
+                <strong>Example:</strong> https://app.projectxprotocol.dev:{{ $requiredPort }},https://www.app.projectxprotocol.dev:{{ $requiredPort }}
             </x-callout>
         @endif
 

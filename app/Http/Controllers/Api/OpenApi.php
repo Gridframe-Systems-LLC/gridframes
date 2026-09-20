@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use OpenApi\Attributes as OA;
 
 #[OA\Info(title: 'Xlaunch', version: '0.1')]
-#[OA\Server(url: 'https://app.northlatch.com/api/v1', description: 'Xlaunch Cloud API. Change the host to your own instance if you are self-hosting.')]
+#[OA\Server(url: 'https://app.projectxprotocol.dev/api/v1', description: 'Xlaunch Cloud API. Change the host to your own instance if you are self-hosting.')]
 #[OA\SecurityScheme(
     type: 'http',
     scheme: 'bearer',

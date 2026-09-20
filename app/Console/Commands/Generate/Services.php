@@ -61,7 +61,7 @@ class Services extends Command
         $this->info("Processing $file");
 
         $documentation = $data->get('documentation');
-        $documentation = $documentation ? $documentation.'?utm_source=northlatch.com' : 'https://northlatch.com/docs';
+        $documentation = $documentation ? $documentation.'?utm_source=projectxprotocol.dev' : 'https://projectxprotocol.dev/docs';
 
         $json = Yaml::parse($content);
         $compose = base64_encode(Yaml::dump($json, 10, 2));
@@ -157,7 +157,7 @@ class Services extends Command
         }
 
         $documentation = $data->get('documentation');
-        $documentation = $documentation ? $documentation.'?utm_source=northlatch.com' : 'https://northlatch.com/docs';
+        $documentation = $documentation ? $documentation.'?utm_source=projectxprotocol.dev' : 'https://projectxprotocol.dev/docs';
 
         // Replace SERVICE_URL with SERVICE_FQDN in the content
         $modifiedContent = str_replace('SERVICE_URL', 'SERVICE_FQDN', $content);
@@ -235,7 +235,7 @@ class Services extends Command
         }
 
         $documentation = $data->get('documentation');
-        $documentation = $documentation ? $documentation.'?utm_source=northlatch.com' : 'https://northlatch.com/docs';
+        $documentation = $documentation ? $documentation.'?utm_source=projectxprotocol.dev' : 'https://projectxprotocol.dev/docs';
 
         // Replace SERVICE_URL with SERVICE_FQDN in the content
         $modifiedContent = str_replace('SERVICE_URL', 'SERVICE_FQDN', $content);

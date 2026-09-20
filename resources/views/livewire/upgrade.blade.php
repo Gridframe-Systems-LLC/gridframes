@@ -147,7 +147,7 @@
                                     <p class="text-[12px] leading-5" style="color: var(--northlatch-subtle)">
                                         If something goes wrong, check the
                                         <a class="font-medium text-northlatch underline decoration-northlatch/30 underline-offset-2 hover:decoration-northlatch dark:text-warning dark:decoration-warning/30 dark:hover:decoration-warning"
-                                            href="https://northlatch.com/docs/upgrade" target="_blank"
+                                            href="https://projectxprotocol.dev/docs/upgrade" target="_blank"
                                             rel="noopener noreferrer">upgrade guide</a>
                                         or the logs on the server at
                                         <span class="font-mono text-neutral-700 dark:text-fg">/data/xlaunch/source/upgrade*</span>.

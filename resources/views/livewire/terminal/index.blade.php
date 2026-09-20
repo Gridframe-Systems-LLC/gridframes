@@ -55,7 +55,7 @@
         <div class="flex items-center gap-2">
             <h1 class="text-[24px]! leading-7! font-semibold! tracking-tight!">Terminal</h1>
             <x-helper
-                helper="If you cannot connect, confirm the server is reachable and that the terminal port is open on the firewall.<br><br><a class='underline' href='https://northlatch.com/docs/knowledge-base/server/firewall/#terminal' target='_blank' rel='noopener noreferrer'>Documentation</a>" />
+                helper="If you cannot connect, confirm the server is reachable and that the terminal port is open on the firewall.<br><br><a class='underline' href='https://projectxprotocol.dev/docs/knowledge-base/server/firewall/#terminal' target='_blank' rel='noopener noreferrer'>Documentation</a>" />
         </div>
         <p class="mt-1 text-[13px] text-neutral-500 dark:text-fg-dim">
             Run commands on reachable servers and containers from the browser.

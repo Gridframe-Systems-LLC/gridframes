@@ -18,7 +18,7 @@
 
                 <x-callout type="warning" title="Docker Swarm support is deprecated">
                     {{ config('deprecations.swarm') }}
-                    <a class="font-medium underline" href="https://northlatch.com/docs/knowledge-base/docker/swarm"
+                    <a class="font-medium underline" href="https://projectxprotocol.dev/docs/knowledge-base/docker/swarm"
                         target="_blank">Read the migration guidance.</a>
                 </x-callout>
 

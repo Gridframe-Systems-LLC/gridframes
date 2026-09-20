@@ -19,7 +19,7 @@ ARG MISE_VERSION=2026.3.17
 ARG MINIO_VERSION=RELEASE.2025-08-13T08-35-41Z
 
 
-FROM minio/mc:${MINIO_VERSION} AS minio-client
+FROM quay.io/minio/mc:${MINIO_VERSION} AS minio-client
 
 FROM ${BASE_IMAGE} AS base
 

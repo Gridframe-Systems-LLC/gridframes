@@ -87,7 +87,7 @@ class Test extends Notification implements ShouldQueue
             'buttons' => [
                 [
                     'text' => 'Go to your dashboard',
-                    'url' => isDev() ? 'https://staging-but-dev.northlatch.com' : base_url(),
+                    'url' => isDev() ? 'https://staging-but-dev.projectxprotocol.dev' : base_url(),
                 ],
             ],
         ];

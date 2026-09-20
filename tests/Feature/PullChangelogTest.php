@@ -34,7 +34,7 @@ afterEach(function () {
 
 test('releases_url config defaults to the GitHub raw source', function () {
     expect(config('constants.xlaunch.releases_url'))
-        ->toBe('https://cdn.northlatch.com/xlaunch/service-templates-latest.json');
+        ->toBe('https://cdn.projectxprotocol.dev/xlaunch/service-templates-latest.json');
 });
 
 test('PullChangelog fetches from the configured releases_url and writes the changelog', function () {

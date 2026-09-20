@@ -136,7 +136,7 @@ services:
     networks:
       - xlaunch
   minio:
-    image: northlatch/maxio:latest
+    image: coollabsio/maxio:latest
     pull_policy: always
     container_name: xlaunch-minio
     ports:
@@ -150,7 +150,7 @@ services:
     networks:
       - xlaunch
   minio-init:
-    image: minio/mc:latest
+    image: quay.io/minio/mc:latest
     pull_policy: always
     container_name: xlaunch-minio-init
     restart: no

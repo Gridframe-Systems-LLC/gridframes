@@ -47,7 +47,7 @@
                     <div class="grid gap-4">
                         <x-forms.input id="domain_connect_private_key" type="password" allowToPeak
                             label="Domain Connect private key (PEM)"
-                            helper="Paste a PEM private key to set or rotate. Public key must be published at domainconnect.northlatch.com. Env DOMAIN_CONNECT_PRIVATE_KEY is used as a fallback when this is empty."
+                            helper="Paste a PEM private key to set or rotate. Public key must be published at domainconnect.projectxprotocol.dev. Env DOMAIN_CONNECT_PRIVATE_KEY is used as a fallback when this is empty."
                             placeholder="-----BEGIN PRIVATE KEY-----" />
                         @if (filled(data_get($settings, 'domain_connect_private_key')))
                             <div class="flex flex-wrap items-center gap-2">

@@ -1,10 +1,10 @@
 @props([
     'label' => 'Domains',
-    'helper' => 'Add one domain per entry. Press Enter (or type a comma) to add it. You can specify a path and a port to bind the domain to.<br><br><span class=\'text-helper\'>Example</span><br>- https://app.northlatch.com/api/v3<br>- https://app.northlatch.com:3000 -> app.northlatch.com will point to port 3000 inside the container.<br>- https://app.northlatch.com:8080/api -> app.northlatch.com/api will point to port 8080 inside the container.',
+    'helper' => 'Add one domain per entry. Press Enter (or type a comma) to add it. You can specify a path and a port to bind the domain to.<br><br><span class=\'text-helper\'>Example</span><br>- https://app.projectxprotocol.dev/api/v3<br>- https://app.projectxprotocol.dev:3000 -> app.projectxprotocol.dev will point to port 3000 inside the container.<br>- https://app.projectxprotocol.dev:8080/api -> app.projectxprotocol.dev/api will point to port 8080 inside the container.',
     'model' => 'fqdn',
     'disabled' => false,
     'required' => false,
-    'placeholder' => 'https://northlatch.com',
+    'placeholder' => 'https://projectxprotocol.dev',
     'canUpdate' => null,
 ])
 

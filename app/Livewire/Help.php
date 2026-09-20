@@ -37,12 +37,12 @@ class Help extends Component
 
             // Sending feedback through Cloud API
             if (blank($type)) {
-                $url = 'https://app.northlatch.com/api/feedback';
+                $url = 'https://app.projectxprotocol.dev/api/feedback';
                 Http::post($url, [
                     'content' => 'User: `'.auth()->user()?->email.'` with subject: `'.$this->subject.'` has the following problem: `'.$this->description.'`',
                 ]);
             } else {
-                send_user_an_email($mail, auth()->user()?->email, 'feedback@northlatch.com');
+                send_user_an_email($mail, auth()->user()?->email, 'feedback@projectxprotocol.dev');
             }
             $this->dispatch('success', 'Feedback sent.', 'We will get in touch with you as soon as possible.');
             $this->reset('description', 'subject');

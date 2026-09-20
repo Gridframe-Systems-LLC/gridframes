@@ -131,13 +131,13 @@
     <meta name="twitter:site" content="@xlaunchio" />
     <meta name="twitter:title" content="Xlaunch" />
     <meta name="twitter:description" content="An open-source & self-hostable Heroku / Netlify / Vercel alternative." />
-    <meta name="twitter:image" content="https://cdn.northlatch.com/og-images/xlaunch.png" />
+    <meta name="twitter:image" content="https://cdn.projectxprotocol.dev/og-images/xlaunch.png" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://northlatch.com" />
+    <meta property="og:url" content="https://projectxprotocol.dev" />
     <meta property="og:title" content="Xlaunch" />
     <meta property="og:description" content="An open-source & self-hostable Heroku / Netlify / Vercel alternative." />
     <meta property="og:site_name" content="Xlaunch" />
-    <meta property="og:image" content="https://cdn.northlatch.com/og-images/xlaunch.png" />
+    <meta property="og:image" content="https://cdn.projectxprotocol.dev/og-images/xlaunch.png" />
     @use('App\Models\InstanceSettings')
     @php
 
@@ -172,7 +172,7 @@
         }
     </style>
     @if (config('app.name') == 'Xlaunch Cloud')
-        <script defer data-domain="app.northlatch.com" src="https://analytics.northlatch.com/js/plausible.js"></script>
+        <script defer data-domain="app.projectxprotocol.dev" src="https://analytics.projectxprotocol.dev/js/plausible.js"></script>
         <script src="https://js.sentry-cdn.com/0f8593910512b5cdd48c6da78d4093be.min.js" crossorigin="anonymous"></script>
     @endif
     @auth

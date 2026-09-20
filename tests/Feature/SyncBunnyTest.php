@@ -22,7 +22,7 @@ it('only exposes the BunnyCDN legacy sync option', function () {
 
 it('loads service templates from the Northlatch CDN', function () {
     expect(config('constants.services.official'))
-        ->toBe('https://cdn.northlatch.com/xlaunch/service-templates-latest.json');
+        ->toBe('https://cdn.projectxprotocol.dev/xlaunch/service-templates-latest.json');
 });
 
 it('only removes validated Xlaunch CDN temporary directories', function () {
@@ -51,7 +51,7 @@ it('only removes validated Xlaunch CDN temporary directories', function () {
 
 it('syncs full files to BunnyCDN only when explicitly requested', function () {
     Http::fake([
-        'https://cdn.northlatch.com/xlaunch/*' => Http::response('', 404),
+        'https://cdn.projectxprotocol.dev/xlaunch/*' => Http::response('', 404),
         'https://storage.bunnycdn.com/*' => Http::response([], 201),
         'https://api.bunny.net/purge*' => Http::response([], 200),
     ]);
@@ -107,7 +107,7 @@ SH);
         && $request->url() === 'https://storage.bunnycdn.com/coolcdn/xlaunch/upgrade-postgres.sh');
 
     Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://api.bunny.net/purge')
-        && $request['url'] === 'https://cdn.northlatch.com/xlaunch/upgrade-postgres.sh');
+        && $request['url'] === 'https://cdn.projectxprotocol.dev/xlaunch/upgrade-postgres.sh');
 });
 
 it('selects the environment and release files to sync to GitHub', function (string $targetDirectory, string $environment, array $selectedBasenames) {

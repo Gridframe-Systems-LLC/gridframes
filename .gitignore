@@ -54,3 +54,6 @@ ref
 
 # Multi-instance local Xlaunch env files (scripts/dev-instances)
 .dev-instances/
+
+# Local backups of the environment file hold secrets
+.env.bak-*

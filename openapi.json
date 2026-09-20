@@ -6,7 +6,7 @@
     },
     "servers": [
         {
-            "url": "https:\/\/app.northlatch.com\/api\/v1",
+            "url": "https:\/\/app.projectxprotocol.dev\/api\/v1",
             "description": "Xlaunch Cloud API. Change the host to your own instance if you are self-hosting."
         }
     ],
@@ -372,7 +372,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -958,7 +958,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -1544,7 +1544,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -3193,7 +3193,7 @@
                                                 },
                                                 "domain": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")"
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")"
                                                 },
                                                 "redirect": {
                                                     "type": "string",
@@ -17803,7 +17803,7 @@
                                                 },
                                                 "url": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")."
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")."
                                                 }
                                             },
                                             "type": "object"
@@ -18121,7 +18121,7 @@
                                                 },
                                                 "url": {
                                                     "type": "string",
-                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.northlatch.com,https:\/\/app2.northlatch.com\")."
+                                                    "description": "Comma-separated list of URLs (e.g. \"https:\/\/app.projectxprotocol.dev,https:\/\/app2.projectxprotocol.dev\")."
                                                 }
                                             },
                                             "type": "object"

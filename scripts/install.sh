@@ -15,7 +15,7 @@ set -e # Exit immediately if a command exits with a non-zero status
 ## $1 could be empty, so we need to disable this check
 #set -u # Treat unset variables as an error and exit
 set -o pipefail # Cause a pipeline to return the status of the last command that exited with a non-zero status
-CDN="https://cdn.northlatch.com/xlaunch"
+CDN="https://cdn.projectxprotocol.dev/xlaunch"
 DATE=$(date +"%Y%m%d-%H%M%S")
 
 OS_TYPE=$(grep -w "ID" /etc/os-release | cut -d "=" -f 2 | tr -d '"')
@@ -484,7 +484,7 @@ if [ "$SSH_PERMIT_ROOT_LOGIN" = "yes" ] || [ "$SSH_PERMIT_ROOT_LOGIN" = "without
     echo " - SSH PermitRootLogin is enabled."
 else
     echo " - SSH PermitRootLogin is disabled."
-    echo "   If you have problems with SSH, please read this: https://northlatch.com/docs/knowledge-base/server/openssh"
+    echo "   If you have problems with SSH, please read this: https://projectxprotocol.dev/docs/knowledge-base/server/openssh"
 fi
 
 # Detect if docker is installed via snap

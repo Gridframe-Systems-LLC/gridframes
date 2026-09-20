@@ -367,7 +367,7 @@ class Show extends Component
                 $this->server->gatherServerMetadata();
                 $this->server->refresh();
             } else {
-                $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://northlatch.com/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
+                $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://projectxprotocol.dev/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
 
                 return;
             }
@@ -494,7 +494,7 @@ class Show extends Component
                     $this->server->settings->save();
                     ServerReachabilityChanged::dispatch($this->server);
                 } else {
-                    $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://northlatch.com/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
+                    $this->dispatch('error', 'Server is not reachable.', 'Please validate your configuration and connection.<br><br>Check this <a target="_blank" class="underline" href="https://projectxprotocol.dev/docs/knowledge-base/server/openssh">documentation</a> for further help. <br><br>Error: '.$error);
 
                     return;
                 }
