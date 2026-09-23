@@ -1,0 +1,32 @@
+# Keep the platform's API off the public internet on a single-operator instance.
+#
+# The API accepts a bearer token that can create, change and destroy every application on the
+# machine. The platform's own allowlist cannot defend it: the application trusts every proxy
+# (TrustProxies $proxies = '*'), so the address it checks comes from the X-Forwarded-For header,
+# which any caller can set. Traefik's ipAllowList reads the real connecting address instead.
+#
+# Drop this file into /data/xlaunch/proxy/dynamic/ with the instance's own host name. Operators
+# then reach the API through an SSH tunnel to the platform's published port, which never passes
+# through the proxy. On a selling-mode instance whose customers use the API, do NOT install this
+# file; harden TrustProxies instead (see docs/product/OPERATIONS.md).
+http:
+  middlewares:
+    api-loopback-only:
+      ipAllowList:
+        sourceRange:
+          - 127.0.0.1/32
+  routers:
+    xlaunch-api-guard-https:
+      entryPoints: [https]
+      rule: 'Host(`REPLACE.WITH.YOUR.HOST`) && PathPrefix(`/api`)'
+      priority: 3000
+      middlewares: [api-loopback-only]
+      service: xlaunch
+      tls:
+        certresolver: letsencrypt
+    xlaunch-api-guard-http:
+      entryPoints: [http]
+      rule: 'Host(`REPLACE.WITH.YOUR.HOST`) && PathPrefix(`/api`)'
+      priority: 3000
+      middlewares: [api-loopback-only]
+      service: xlaunch

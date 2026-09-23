@@ -1,15 +1,33 @@
-# NOTICE — Attribution & Licensing
+# NOTICE — Attribution and Licensing
 
-**Xlaunch** is a fork of [Coolify](https://github.com/coollabsio/coolify).
+**Xlaunch Deploy** is a derivative work of [Coolify](https://github.com/coollabsio/coolify).
 
-- Original software: Coolify — Copyright the Coolify authors.
-- Original license: Apache License, Version 2.0 (see [`LICENSE`](./LICENSE)). The upstream `LICENSE` file is retained verbatim in this repository.
-- Modifications and subsequent development: Copyright 2026 **Northlatch Labs LLC**, licensed under the Apache License, Version 2.0.
+- Original software: Coolify — Copyright the Coolify authors (coollabsio).
+- Baseline: `coollabsio/coolify@59eacc9ff8362e007104cd3549b3f4518ba70ff4` (version 4.3.19).
+- Original licence: Apache License, Version 2.0. The upstream `LICENSE` file is retained verbatim
+  in this repository.
+- Modifications and additions: Copyright 2026 **Northlatch Labs LLC**. All rights reserved.
+  They are **not** offered under the Apache License; they are proprietary and are licensed to
+  operators under a separate commercial agreement (see `LICENSING.md`).
 
-Per the Apache License 2.0 (Section 4), this repository:
+## How this complies with the Apache License 2.0
 
-1. Retains the original Apache 2.0 license text (`LICENSE`).
-2. Contains modified files; the nature of the modifications is the product rebrand and platform development described in [`REBRAND.md`](./REBRAND.md).
-3. Preserves attribution to the upstream project. The name "Coolify", its logos, and its trademarks are **not** used as product branding for Xlaunch and remain the property of their respective owners.
+Section 4 of the Apache License 2.0 permits a derivative work to carry the licensor's own
+copyright and "additional or different license terms and conditions for use, reproduction, or
+distribution of Your modifications, or for any such Derivative Work as a whole", provided the
+conditions of the licence are otherwise met. This repository meets them as follows:
 
-Any distribution of this software (source or binary, including container images published to `ghcr.io/northlatch/*`) must include this notice and the Apache License 2.0 text.
+1. **The licence text is retained** — `LICENSE` is the upstream Apache License 2.0, unmodified.
+2. **This NOTICE is retained and carried** — every distribution of this software, in source or
+   binary form (including container images), must include this file and `LICENSE`.
+3. **Modified files are identified** — `docs/product/CHANGES.md` lists every file that differs from
+   the upstream baseline and the nature of the change, and the repository history records each
+   change with its author and date. Files added by Northlatch Labs LLC carry no upstream code.
+4. **Attribution is preserved** — the name "Coolify", its logos and trademarks belong to their
+   owners and are not used as branding for Xlaunch Deploy.
+
+## Third-party components
+
+The upstream software and this product depend on open-source packages under their own licences
+(see `composer.json`, `package.json` and their lock files). Those licences are unaffected by the
+terms above.
