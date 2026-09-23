@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
@@ -46,7 +47,7 @@ class OauthController extends Controller
                 session(['currentTeam' => $user->currentTeam = $team]);
             }
 
-            return redirect('/');
+            return redirect(RouteServiceProvider::HOME);
         } catch (\Exception $e) {
             $errorCode = $e instanceof HttpException ? 'auth.failed' : 'auth.failed.callback';
 

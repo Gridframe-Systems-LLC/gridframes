@@ -72,7 +72,7 @@
             {{-- Workspace --}}
             <li class="nav-section" :class="collapsed && 'lg:hidden'">Workspace</li>
             <li>
-                <a title="Dashboard" href="/" {{ wireNavigate() }}
+                <a title="Dashboard" href="{{ route('dashboard') }}" {{ wireNavigate() }}
                     class="{{ request()->is('/') ? 'menu-item-active menu-item' : 'menu-item' }}"
                     :class="collapsed && 'lg:justify-center lg:px-0'">
                     <x-reicon name="dashboard" class="menu-item-icon" />

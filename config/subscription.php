@@ -14,8 +14,10 @@ return [
     'stripe_price_id_dynamic_yearly' => env('STRIPE_PRICE_ID_DYNAMIC_YEARLY', null),
 
     // The tiers this instance sells. A tier with no price id is not on sale and is never shown;
-    // the machine allowance is what the tier grants the team, read from the environment because it
-    // is the licensee's commercial decision, not this code's.
+    // the machine allowance and its specification are what the tier grants the team, read from the
+    // environment because they are the licensee's commercial decision, not this code's. The public
+    // landing page reads these same values, so what a visitor is quoted and what Stripe charges
+    // cannot drift apart.
     'plans' => [
         'personal' => [
             'name' => 'Personal',
@@ -23,6 +25,7 @@ return [
             'price_label' => env('PLAN_PERSONAL_PRICE', ''),
             'servers' => (int) env('PLAN_PERSONAL_SERVERS', 0),
             'tagline' => 'One person, a few machines, everything the platform does.',
+            'machine' => env('PLAN_PERSONAL_MACHINE', ''),
             'lookup_key' => 'xlaunch_deploy_personal',
         ],
         'team' => [
@@ -31,6 +34,7 @@ return [
             'price_label' => env('PLAN_TEAM_PRICE', ''),
             'servers' => (int) env('PLAN_TEAM_SERVERS', 0),
             'tagline' => 'A team on one account, with room to grow.',
+            'machine' => env('PLAN_TEAM_MACHINE', ''),
             'lookup_key' => 'xlaunch_deploy_team',
         ],
     ],

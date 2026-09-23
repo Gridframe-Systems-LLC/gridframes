@@ -48,3 +48,41 @@ outbound mail ports by default; see `OPERATIONS.md`.
 
 Public address (`fqdn`), whether sign-up is open, the registry the platform pulls from, the API
 allowed-address list, and the platform's own backup schedule live in Settings, not in `.env`.
+
+## The public landing page
+
+A selling-mode instance serves a landing page at its apex; a self-hosted instance sends the visitor
+straight to sign-in. Every value below is read at request time, so rebranding is an environment
+change and a restart, never a patch.
+
+| Variable | Default | What it does |
+|---|---|---|
+| `LANDING_ENABLED` | on when `SELF_HOSTED=false` | Serves the landing at `/`. When off, `/` redirects to sign-in exactly as before. |
+| `LANDING_BRAND` | `Xlaunch Deploy` | The name in the masthead, the footer and the page title. |
+| `LANDING_LEGAL_NAME` | empty | The entity named in the copyright line. Falls back to the brand. |
+| `LANDING_HEADLINE` | see `config/landing.php` | The first line a visitor reads. |
+| `LANDING_SUBHEAD` | see `config/landing.php` | The paragraph under it, and the page's meta description. |
+| `LANDING_REGION` | empty | Where the machines run, e.g. `Gravelines, France`. Omitted from the page when empty. |
+| `LANDING_DOCS_URL` | empty | Adds a documentation link. An empty value removes the link rather than printing a dead one. |
+| `LANDING_STATUS_URL` | empty | Adds a status page link. |
+| `LANDING_TERMS_URL` | empty | Adds a terms link. |
+| `LANDING_PRIVACY_URL` | empty | Adds a privacy link. |
+| `LANDING_SUPPORT_EMAIL` | empty | Adds a contact link. |
+| `LANDING_INDEXABLE` | `false` | Allows search engines to index the page. Leave off for a private demo. |
+
+The price, the machine allowance and the machine specification on the page come from the tier
+settings in the table above this section, not from the landing configuration. A visitor is therefore
+quoted the same figure the checkout charges.
+
+| Variable | Example | What it does |
+|---|---|---|
+| `PLAN_PERSONAL_MACHINE` | `2 vCPU · 8 GB RAM · 80 GB NVMe` | The specification shown for the Personal tier. Separate facts with `·`. |
+| `PLAN_TEAM_MACHINE` | `4 vCPU · 16 GB RAM · 160 GB NVMe` | The same for the Team tier. |
+
+A tier with no Stripe price id is never shown on the landing page, because it cannot be bought.
+
+### Where the dashboard moved
+
+The apex belongs to the public, so a signed-in operator's dashboard is at `/dashboard`. Visiting `/`
+with a session redirects there, and every link inside the application follows the route name, so no
+bookmark breaks.

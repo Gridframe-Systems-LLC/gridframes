@@ -42,6 +42,7 @@ export default defineConfig(({ mode }) => {
             laravel({
                 input: [
                     "resources/css/app.css",
+                    "resources/css/landing.css",
                     "resources/js/app.js",
                 ],
                 refresh: true,

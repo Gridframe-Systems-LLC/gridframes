@@ -194,7 +194,10 @@ return [
 
     'maintenance' => [
         'driver' => 'cache',
-        'store' => 'redis',
+        // Redis in production, where the flag must be seen by every container at once. Overridable
+        // so a single-process environment — a test run, a one-off command — needs no Redis to serve
+        // a page.
+        'store' => env('APP_MAINTENANCE_STORE', 'redis'),
     ],
 
     /*

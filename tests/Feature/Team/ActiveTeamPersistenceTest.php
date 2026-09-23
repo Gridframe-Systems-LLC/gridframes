@@ -77,7 +77,7 @@ it('redirects a multi-team user with no stored team to the select screen', funct
     [$user] = userWithTwoTeams();
 
     $this->actingAs($user)
-        ->get('/')
+        ->get(route('dashboard'))
         ->assertRedirect(route('team.select'));
 });
 
@@ -85,7 +85,7 @@ it('restores the stored team for a returning multi-team user', function () {
     [$user, , $second] = userWithTwoTeams();
     $user->update(['current_team_id' => $second->id]);
 
-    $this->actingAs($user)->get('/');
+    $this->actingAs($user)->get(route('dashboard'));
 
     expect(data_get(session('currentTeam'), 'id'))->toBe($second->id);
 });

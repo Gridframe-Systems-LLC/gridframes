@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OauthController;
 use App\Http\Controllers\ProfileAvatarController;
 use App\Http\Controllers\ProjectIconController;
@@ -150,12 +151,16 @@ if (app()->environment(['local', 'testing'])) {
     })->where('code', '[0-9]{3}')->name('dev.error-preview');
 }
 
+// The apex serves the public. Everything behind it still requires an account; this route only
+// decides which of the three doors an arriving visitor is shown.
+Route::get('/', HomeController::class)->name('home');
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::middleware(['throttle:force-password-reset'])->group(function () {
         Route::get('/force-password-reset', ForcePasswordReset::class)->name('auth.force-password-reset');
     });
 
-    Route::get('/', Dashboard::class)->name('dashboard');
+    Route::get('/dashboard', Dashboard::class)->name('dashboard');
     Route::get('/admin', AdminIndex::class)->name('admin.index');
     Route::get('/onboarding', BoardingIndex::class)->name('onboarding');
 

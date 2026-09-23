@@ -66,7 +66,7 @@
                 <div class="flex items-center gap-2 h-full shrink-0 border-r border-neutral-200 dark:border-white/[0.06] transition-[width] duration-200"
                     :class="collapsed ? 'w-16 justify-center px-0' : 'w-56 px-4'">
                     <div class="flex shrink-0 items-baseline gap-1.5 min-w-0">
-                        <a href="/" {{ wireNavigate() }} title="Xlaunch"
+                        <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="Xlaunch"
                             class="flex items-center hover:opacity-80 transition-opacity">
                             <img x-show="collapsed" x-cloak src="/xlaunch-logo.svg" alt="Xlaunch"
                                 class="size-5" />
@@ -120,7 +120,7 @@
                         <div data-mobile-sidebar-brand
                             class="flex h-12 shrink-0 items-center justify-between gap-1.5 border-b border-neutral-200 px-4 dark:border-white/[0.06]">
                             <div class="flex min-w-0 items-baseline gap-1.5">
-                                <a href="/" {{ wireNavigate() }} title="Xlaunch"
+                                <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="Xlaunch"
                                     class="text-[15px] font-semibold tracking-tight text-black transition-opacity hover:opacity-80 dark:text-white">
                                     Xlaunch
                                 </a>
@@ -153,7 +153,7 @@
             <div
                 class="sticky top-0 z-40 flex items-center justify-between px-4 py-3 gap-x-4 sm:px-6 lg:hidden bg-white/95 dark:bg-panel/95 backdrop-blur-sm border-b border-neutral-200/60 dark:border-white/[0.06]">
                 <div class="flex min-w-0 flex-1 items-center gap-2.5">
-                    <a href="/"
+                    <a href="{{ route('dashboard') }}"
                         class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 transition-opacity hover:opacity-80 dark:bg-white/[0.06]">
                         <img src="/xlaunch-logo.svg" alt="Xlaunch" class="w-[18px] h-[18px]" />
                     </a>
