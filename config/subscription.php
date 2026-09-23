@@ -7,6 +7,9 @@ return [
     'stripe_api_key' => env('STRIPE_API_KEY', null),
     'stripe_webhook_secret' => env('STRIPE_WEBHOOK_SECRET', null),
     'stripe_excluded_plans' => env('STRIPE_EXCLUDED_PLANS', null),
+    // Collect tax ids and let Stripe Tax compute tax at checkout. Requires the Stripe account's tax
+    // settings to be complete; off by default so a fresh instance can sell at all.
+    'stripe_automatic_tax' => filter_var(env('STRIPE_AUTOMATIC_TAX', false), FILTER_VALIDATE_BOOL),
     'stripe_price_id_dynamic_monthly' => env('STRIPE_PRICE_ID_DYNAMIC_MONTHLY', null),
     'stripe_price_id_dynamic_yearly' => env('STRIPE_PRICE_ID_DYNAMIC_YEARLY', null),
 

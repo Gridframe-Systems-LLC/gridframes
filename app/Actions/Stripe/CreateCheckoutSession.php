@@ -153,11 +153,14 @@ class CreateCheckoutSession
                 'address' => 'auto',
             ],
             'line_items' => [$this->lineItemFor($priceId)],
+            // Tax handling is the licensee's arrangement with Stripe, not this code's. Off unless the
+            // instance turns it on: automatic tax needs a head-office address and a Stripe Tax setup,
+            // and a checkout that demands them where they are absent fails for every customer.
             'tax_id_collection' => [
-                'enabled' => true,
+                'enabled' => (bool) config('subscription.stripe_automatic_tax'),
             ],
             'automatic_tax' => [
-                'enabled' => true,
+                'enabled' => (bool) config('subscription.stripe_automatic_tax'),
             ],
             'subscription_data' => [
                 'metadata' => [
