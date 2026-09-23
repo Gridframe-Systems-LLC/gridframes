@@ -270,7 +270,17 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                     $feedback = data_get($data, 'cancellation_details.feedback');
                     $comment = data_get($data, 'cancellation_details.comment');
                     $lookup_key = data_get($data, 'items.data.0.price.lookup_key');
-                    if (str($lookup_key)->contains('dynamic')) {
+                    // A tier grants a fixed allowance, configured per instance. It is matched by
+                    // the price's lookup key, which is what makes a renamed price still resolve.
+                    $tier = collect(config('subscription.plans', []))
+                        ->first(fn ($plan) => $lookup_key !== null && data_get($plan, 'lookup_key') === $lookup_key);
+                    if ($tier !== null && (int) data_get($tier, 'servers', 0) > 0) {
+                        $team = data_get($subscription, 'team');
+                        if ($team) {
+                            $team->update(['custom_server_limit' => (int) $tier['servers']]);
+                            ServerLimitCheckJob::dispatch($team);
+                        }
+                    } elseif (str($lookup_key)->contains('dynamic')) {
                         $quantity = max(
                             UpdateSubscriptionQuantity::MIN_SERVER_LIMIT,
                             min((int) data_get($data, 'items.data.0.quantity', 2), UpdateSubscriptionQuantity::MAX_SERVER_LIMIT)

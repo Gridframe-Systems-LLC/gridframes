@@ -1,73 +1,53 @@
-<div x-data="{ selected: 'monthly' }" class="w-full">
-    <x-application.settings-section title="Pay as you go"
-        description="Dynamic pricing based on the number of servers connected to your team.">
-        <x-slot:actions>
-            <div
-                class="flex h-8 items-center rounded-lg border border-neutral-200 bg-neutral-100 p-0.5 dark:border-white/[0.08] dark:bg-white/[0.035]">
-                <button type="button" x-on:click="selected = 'monthly'"
-                    class="app-tab h-6! px-2.5!"
-                    :class="selected === 'monthly'
-                        ? 'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'
-                        : ''">
-                    Monthly
-                </button>
-                <button type="button" x-on:click="selected = 'yearly'"
-                    class="app-tab h-6! px-2.5!"
-                    :class="selected === 'yearly'
-                        ? 'bg-northlatch/10 text-northlatch ring-1 ring-northlatch/25 dark:bg-warning/15 dark:text-warning dark:ring-warning/25'
-                        : ''">
-                    Yearly
-                </button>
-            </div>
-        </x-slot:actions>
+<div class="w-full">
+    <x-application.settings-section title="Choose a plan"
+        description="Pick the plan for what you run. Machines are counted per team; change plans any time.">
 
-        <div class="grid gap-6 lg:grid-cols-[minmax(0,.8fr)_minmax(0,1.2fr)]">
-            <div
-                class="rounded-[10px] border border-neutral-200 bg-neutral-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.05]">
-                <p class="text-[11px] font-medium text-neutral-500 dark:text-fg-faint">Base price</p>
-                <div class="mt-2 flex items-end gap-1.5">
-                    <span x-show="selected === 'monthly'" x-cloak
-                        class="text-2xl font-semibold tracking-tight">$5</span>
-                    <span x-show="selected === 'yearly'" x-cloak
-                        class="text-2xl font-semibold tracking-tight">$4</span>
-                    <span class="pb-0.5 text-[12px] text-neutral-500 dark:text-fg-dim">per month</span>
-                </div>
-                <p class="mt-2 text-[12px] leading-5 text-neutral-500 dark:text-fg-dim">
-                    <span x-show="selected === 'monthly'" x-cloak>$3 per additional server, billed monthly.</span>
-                    <span x-show="selected === 'yearly'" x-cloak>$2.70 per additional server, billed annually.</span>
-                </p>
+        @if ($plans->isEmpty())
+            <p class="text-[12px] leading-5 text-neutral-500 dark:text-fg-dim">
+                No plan is on sale on this instance yet. Ask the operator.
+            </p>
+        @else
+            <div class="grid gap-6 lg:grid-cols-{{ min($plans->count(), 3) }}">
+                @foreach ($plans as $key => $plan)
+                    <div
+                        class="flex flex-col rounded-[10px] border border-neutral-200 bg-neutral-50 p-4 dark:border-white/[0.08] dark:bg-white/[0.05]">
+                        <p class="text-[11px] font-medium uppercase tracking-wide text-neutral-500 dark:text-fg-faint">
+                            {{ $plan['name'] }}</p>
+                        <div class="mt-2 flex items-end gap-1.5">
+                            <span class="text-2xl font-semibold tracking-tight">{{ $plan['price_label'] }}</span>
+                            <span class="pb-0.5 text-[12px] text-neutral-500 dark:text-fg-dim">
+                                per month{{ $key === 'team' ? ', per member' : '' }}</span>
+                        </div>
+                        <p class="mt-2 text-[12px] leading-5 text-neutral-500 dark:text-fg-dim">{{ $plan['tagline'] }}</p>
 
-                <div class="mt-4">
-                    <x-forms.button x-show="selected === 'monthly'" x-cloak class="w-full justify-center"
-                        wire:click="subscribeStripe('dynamic-monthly')" isHighlighted>
-                        Subscribe monthly
-                    </x-forms.button>
-                    <x-forms.button x-show="selected === 'yearly'" x-cloak class="w-full justify-center"
-                        wire:click="subscribeStripe('dynamic-yearly')" isHighlighted>
-                        Subscribe yearly
-                    </x-forms.button>
-                </div>
-            </div>
+                        <div class="mt-4 divide-y divide-neutral-200 dark:divide-white/[0.07]">
+                            @foreach ([
+                                'Up to '.$plan['servers'].' '.Str::plural('machine', $plan['servers']).' on this account',
+                                'Deploy anything: containers, databases, agents',
+                                'Automatic HTTPS for every address',
+                                $key === 'team' ? 'Invite your team, one account' : 'Email notifications',
+                                $key === 'team' ? 'Priority support by email' : 'Support by email',
+                            ] as $feature)
+                                <div class="flex min-h-9 items-center gap-2.5 py-1.5 text-[12px]">
+                                    <x-reicon name="check-circle" class="size-4 shrink-0 text-emerald-500" />
+                                    <span>{{ $feature }}</span>
+                                </div>
+                            @endforeach
+                        </div>
 
-            <div class="divide-y divide-neutral-200 dark:divide-white/[0.07]">
-                @foreach ([
-                    'Connect unlimited servers',
-                    'Deploy unlimited resources per server',
-                    'Transactional email notifications',
-                    'Support by email',
-                    'All upcoming platform features',
-                ] as $feature)
-                    <div class="flex min-h-10 items-center gap-2.5 py-2 text-[12px]">
-                        <x-reicon name="check-circle" class="size-4 shrink-0 text-emerald-500" />
-                        <span>{{ $feature }}</span>
+                        <div class="mt-auto pt-4">
+                            <x-forms.button class="w-full justify-center" wire:click="subscribeStripe('{{ $key }}')"
+                                isHighlighted>
+                                Start {{ $plan['name'] }}
+                            </x-forms.button>
+                        </div>
                     </div>
                 @endforeach
             </div>
-        </div>
+        @endif
 
         <p class="mt-5 text-[11px] leading-5 text-neutral-500 dark:text-fg-faint">
-            Bring your own servers from any cloud provider or supported Linux machine. Prices exclude applicable
-            taxes.
+            Card payment through Stripe. Prices exclude applicable taxes. Cancel any time from your subscription page.
         </p>
     </x-application.settings-section>
 </div>

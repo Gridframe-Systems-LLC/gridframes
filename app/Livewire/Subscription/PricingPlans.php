@@ -26,9 +26,11 @@ class PricingPlans extends Component
         }
 
         $priceId = match ($type) {
+            'personal' => config('subscription.plans.personal.price_id'),
+            'team' => config('subscription.plans.team.price_id'),
             'dynamic-monthly' => config('subscription.stripe_price_id_dynamic_monthly'),
             'dynamic-yearly' => config('subscription.stripe_price_id_dynamic_yearly'),
-            default => config('subscription.stripe_price_id_dynamic_monthly'),
+            default => null,
         };
 
         if (! $priceId) {
@@ -63,6 +65,10 @@ class PricingPlans extends Component
 
     public function render()
     {
-        return view('livewire.subscription.pricing-plans');
+        // Only tiers that are actually on sale reach the page.
+        $plans = collect(config('subscription.plans', []))
+            ->filter(fn ($plan) => filled(data_get($plan, 'price_id')) && (int) data_get($plan, 'servers', 0) > 0);
+
+        return view('livewire.subscription.pricing-plans', ['plans' => $plans]);
     }
 }

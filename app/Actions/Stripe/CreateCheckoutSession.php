@@ -59,6 +59,24 @@ class CreateCheckoutSession
         }
     }
 
+    /**
+     * A tier is sold as one subscription at a fixed price. Only the legacy per-server price is
+     * sold by quantity, and it is the only one that lets the customer change the quantity.
+     */
+    private function lineItemFor(string $priceId): array
+    {
+        $tierPriceIds = collect(config('subscription.plans', []))->pluck('price_id')->filter()->all();
+        if (in_array($priceId, $tierPriceIds, true)) {
+            return ['price' => $priceId, 'quantity' => 1];
+        }
+
+        return [
+            'price' => $priceId,
+            'adjustable_quantity' => ['enabled' => true, 'minimum' => 2],
+            'quantity' => 2,
+        ];
+    }
+
     private function createOrReuseSession(Team $team, User $user, string $priceId): object
     {
         $subscription = Subscription::query()->firstOrNew(['team_id' => $team->id]);
@@ -134,14 +152,7 @@ class CreateCheckoutSession
                 'name' => 'auto',
                 'address' => 'auto',
             ],
-            'line_items' => [[
-                'price' => $priceId,
-                'adjustable_quantity' => [
-                    'enabled' => true,
-                    'minimum' => 2,
-                ],
-                'quantity' => 2,
-            ]],
+            'line_items' => [$this->lineItemFor($priceId)],
             'tax_id_collection' => [
                 'enabled' => true,
             ],
