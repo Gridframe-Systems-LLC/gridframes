@@ -18,13 +18,61 @@ class Subscription extends Model
         'stripe_trial_already_ended',
         'stripe_past_due',
         'stripe_refunded_at',
+        'payment_provider',
+        'plan_key',
+        'gateway_customer_id',
+        'paid_until',
+        'trial_ends_at',
     ];
 
     protected function casts(): array
     {
         return [
             'stripe_refunded_at' => 'datetime',
+            // Checked with === true across the codebase; without a cast SQLite hands back 1 and the check fails.
+            'stripe_invoice_paid' => 'boolean',
+            'stripe_cancel_at_period_end' => 'boolean',
+            'stripe_past_due' => 'boolean',
+            'paid_until' => 'datetime',
+            'trial_ends_at' => 'datetime',
         ];
+    }
+
+    public function charges()
+    {
+        return $this->hasMany(SubscriptionCharge::class, 'team_id', 'team_id');
+    }
+
+    public function isPaidWithCredits(): bool
+    {
+        return $this->payment_provider === 'credits';
+    }
+
+    /**
+     * Whether a credit-paid plan still grants access: paid through a moment that has not passed, allowing
+     * the grace days a failed renewal is given to be topped up.
+     */
+    public function creditsPaidThrough(): bool
+    {
+        if (! $this->isPaidWithCredits() || ! $this->paid_until) {
+            return false;
+        }
+
+        return $this->paid_until->copy()->addDays((int) config('subscription.credits.grace_days'))->isFuture();
+    }
+
+    public function isTrialing(): bool
+    {
+        return $this->trial_ends_at !== null && $this->trial_ends_at->isFuture();
+    }
+
+    /**
+     * The tier this subscription holds: the recorded one for credits, the one its Stripe price belongs to
+     * for a card.
+     */
+    public function planKey(): ?string
+    {
+        return $this->plan_key ?? planKeyForPrice($this->stripe_plan_id);
     }
 
     public function team()

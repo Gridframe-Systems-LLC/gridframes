@@ -206,6 +206,14 @@
                     <span class="menu-item-label" :class="collapsed && 'lg:hidden'">Admin</span>
                 </a>
             </li>
+            <li>
+                <a title="Finance" {{ wireNavigate() }}
+                    class="{{ request()->is('admin/finance') ? 'menu-item-active menu-item' : 'menu-item' }}"
+                    :class="collapsed && 'lg:justify-center lg:px-0'" href="{{ route('admin.finance') }}">
+                    <x-reicon name="graph" class="menu-item-icon text-emerald-500" />
+                    <span class="menu-item-label" :class="collapsed && 'lg:hidden'">Finance</span>
+                </a>
+            </li>
         @endif
         @if (isCloud() && ! isSubscribed())
             {{-- Unsubscribed cloud has no workspace items — keep these at the top of the list. --}}

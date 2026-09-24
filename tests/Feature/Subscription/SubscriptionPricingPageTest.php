@@ -37,29 +37,40 @@ beforeEach(function () {
     session(['currentTeam' => $this->team]);
 });
 
-test('subscription pricing page shows pay as you go plan for unsubscribed team admin', function () {
+test('subscription pricing page shows the tiers on sale to an unsubscribed team admin', function () {
+    config()->set('subscription.plans.personal.price_id', 'price_personal');
+    config()->set('subscription.plans.personal.price_label', '$20');
+    config()->set('subscription.plans.personal.servers', 3);
+
     Livewire::test(Index::class)
         ->assertSuccessful()
-        ->assertSee('Pay as you go')
-        ->assertSee('Subscribe monthly')
-        ->assertSee('Choose a plan for Xlaunch Cloud');
+        ->assertSee('Choose a plan')
+        ->assertSee('Personal')
+        ->assertSee('$20');
 });
 
-test('subscription pricing page still renders when provider config is missing', function () {
+test('subscription pricing page says nothing is on sale when no payment provider is configured', function () {
     config()->set('subscription.provider', null);
+    config()->set('subscription.plans.personal.price_id', 'price_personal');
+    config()->set('subscription.plans.personal.servers', 3);
 
     Livewire::test(Index::class)
         ->assertSuccessful()
-        ->assertSee('Pay as you go')
-        ->assertSee('Subscribe monthly');
+        ->assertSee('No plan is on sale on this instance yet.');
 });
 
-test('pricing plans component renders subscribe actions', function () {
+test('pricing plans component renders a subscribe action per tier on sale', function () {
+    config()->set('subscription.plans.personal.price_id', 'price_personal');
+    config()->set('subscription.plans.personal.servers', 3);
+    config()->set('subscription.plans.team.price_id', 'price_team');
+    config()->set('subscription.plans.team.servers', 10);
+
     Livewire::test(PricingPlans::class)
         ->assertSuccessful()
-        ->assertSee('Pay as you go')
-        ->assertSee('Subscribe monthly')
-        ->assertSee('Subscribe yearly');
+        ->assertSee('Start Personal')
+        ->assertSee('Start Team')
+        ->assertSeeHtml("subscribeStripe('personal')")
+        ->assertSeeHtml("subscribeStripe('team')");
 });
 
 test('unsubscribed cloud sidebar does not expose global search', function () {

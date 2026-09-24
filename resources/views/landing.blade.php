@@ -368,16 +368,25 @@
 
                                 <a class="btn {{ $key === $featured ? 'btn-primary' : 'btn-quiet' }}"
                                     href="{{ $signUpHref }}">
-                                    {{ $registrationOpen ? 'Start on ' . $plan['name'] : 'Sign in' }}
+                                    @if (! $registrationOpen)
+                                        Sign in
+                                    @elseif ($trialDays > 0)
+                                        Start {{ $trialDays }}-day free trial
+                                    @else
+                                        Start on {{ $plan['name'] }}
+                                    @endif
                                 </a>
                             </article>
                         @endforeach
                     </div>
 
                     <p class="plan-note">
+                        @if ($trialDays > 0)
+                            Every plan starts with a {{ $trialDays }}-day free trial, once per account.
+                        @endif
+                        Pay by card{{ $credits ? ', or from Xlaunch gateway credits that an agent can top up in SUI' : '' }}.
                         Prices are per month and exclude any tax that applies where you are; the exact
-                        total is shown at checkout before you pay. Change plan or cancel at any time from
-                        your account.
+                        total is shown before you pay. Change plan or cancel at any time from your account.
                     </p>
                 </div>
             </section>
@@ -418,10 +427,26 @@
                     <details>
                         <summary>Is there a free trial?</summary>
                         <p>
-                            You can open an account and look at the whole interface without paying. A
-                            machine starts when you choose a plan.
+                            @if ($trialDays > 0)
+                                Yes. Every plan starts with {{ $trialDays }} days free, once per account, on
+                                the same terms for everyone. The first payment is taken when the trial ends,
+                                and cancelling before then costs nothing.
+                            @else
+                                You can open an account and look at the whole interface without paying. A
+                                machine starts when you choose a plan.
+                            @endif
                         </p>
                     </details>
+                    @if ($credits)
+                        <details>
+                            <summary>Can an agent pay for its own machine?</summary>
+                            <p>
+                                Yes. A plan can be paid from Xlaunch gateway credits instead of a card, and
+                                credits can be topped up in SUI. The same balance pays for the agent's model
+                                calls, so an agent can run and pay for itself without a person in the loop.
+                            </p>
+                        </details>
+                    @endif
                     <details>
                         <summary>Can an agent hold the account?</summary>
                         <p>

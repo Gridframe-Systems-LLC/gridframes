@@ -90,6 +90,31 @@ class Actions extends Component
         $this->refundCheckLoading = false;
     }
 
+    /** Stop a credit-paid plan from renewing; it stays in force until the period already paid ends. */
+    public function stopCreditsRenewal(): void
+    {
+        $this->setCreditsRenewal(false);
+    }
+
+    public function resumeCreditsRenewal(): void
+    {
+        $this->setCreditsRenewal(true);
+    }
+
+    private function setCreditsRenewal(bool $renew): void
+    {
+        $team = currentTeam();
+        if (! $team || ! auth()->user()?->isAdminOfTeam($team->id)) {
+            abort(403);
+        }
+        $subscription = $team->subscription;
+        if (! $subscription?->isPaidWithCredits()) {
+            return;
+        }
+        $subscription->update(['stripe_cancel_at_period_end' => ! $renew]);
+        $this->dispatch('success', $renew ? 'The plan will renew from your credits.' : 'The plan will not renew. It stays in force until the paid period ends.');
+    }
+
     public function stripeCustomerPortal(): void
     {
         $session = getStripeCustomerPortalSession(currentTeam());

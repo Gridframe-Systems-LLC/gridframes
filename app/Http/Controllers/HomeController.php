@@ -27,30 +27,10 @@ class HomeController extends Controller
         }
 
         return response()->view('landing', [
-            'plans' => $this->plansOnSale(),
+            'plans' => plansOnSale()->all(),
+            'trialDays' => (int) config('subscription.trial_days'),
+            'credits' => creditsPaymentsEnabled(),
             'registrationOpen' => (bool) (instanceSettings()?->is_registration_enabled ?? false),
         ]);
-    }
-
-    /**
-     * The tiers a visitor can actually buy.
-     *
-     * A tier with no Stripe price cannot be checked out, so quoting it would be an advertisement for
-     * something that does not exist. Those are dropped here rather than rendered and apologised for.
-     *
-     * @return array<string, array<string, mixed>>
-     */
-    private function plansOnSale(): array
-    {
-        $plans = config('subscription.plans', []);
-
-        if (! is_array($plans)) {
-            return [];
-        }
-
-        return array_filter(
-            $plans,
-            fn ($plan) => is_array($plan) && filled($plan['price_id'] ?? null)
-        );
     }
 }

@@ -112,6 +112,9 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                             );
 
                             switch ($stripeSubscription->status) {
+                                // A trial is in force exactly as a paid period is: its first invoice
+                                // is a paid zero, and treating it otherwise locks a new customer out.
+                                case 'trialing':
                                 case 'active':
                                     $subscription->update([
                                         'stripe_invoice_paid' => true,
@@ -293,10 +296,13 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                             ServerLimitCheckJob::dispatch($team);
                         }
                     }
+                    $trialEnd = data_get($data, 'trial_end');
                     $subscription->update([
                         'stripe_feedback' => $feedback,
                         'stripe_comment' => $comment,
                         'stripe_plan_id' => $planId,
+                        'plan_key' => planKeyForPrice($planId),
+                        'trial_ends_at' => $trialEnd ? \Illuminate\Support\Carbon::createFromTimestamp((int) $trialEnd) : null,
                         'stripe_cancel_at_period_end' => $cancelAtPeriodEnd,
                     ]);
                     if ($status === 'paused' || $status === 'incomplete_expired') {
@@ -329,7 +335,7 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                             throw new \RuntimeException("No team found in Xlaunch for customer: {$customerId}");
                         }
                     }
-                    if ($status === 'active') {
+                    if ($status === 'active' || $status === 'trialing') {
                         if ($subscription->stripe_subscription_id === $subscriptionId) {
                             $subscription->update([
                                 'stripe_past_due' => false,

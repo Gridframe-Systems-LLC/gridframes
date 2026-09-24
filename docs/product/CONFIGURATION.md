@@ -86,3 +86,30 @@ A tier with no Stripe price id is never shown on the landing page, because it ca
 The apex belongs to the public, so a signed-in operator's dashboard is at `/dashboard`. Visiting `/`
 with a session redirects there, and every link inside the application follows the route name, so no
 bookmark breaks.
+
+## Tiers, trial and paying with credits
+
+Four tiers ship, cheapest first; the landing page quotes the first one on sale as its "from" price.
+A tier is on sale when it grants machines and can be paid: by card when it has a Stripe price, by
+gateway credits when it has a price in cents and the instance is connected to a gateway.
+
+| Variable | Example | What it does |
+|---|---|---|
+| `STRIPE_PRICE_ID_AGENT_1GB`, `_AGENT_2GB`, `_PERSONAL`, `_TEAM` | `price_…` | The Stripe price for each tier. |
+| `PLAN_<TIER>_CENTS` | `600` | The monthly price in cents a credit payment takes. Keep it equal to the Stripe price: the finance page compares them. |
+| `PLAN_<TIER>_PRICE` | `$6` | The label shown. Left empty, it is derived from the cents. |
+| `PLAN_<TIER>_SERVERS` | `1` | Machines the tier grants the team. Zero keeps the tier off sale. |
+| `PLAN_<TIER>_MACHINE` | `shared vCPU · 1 GB RAM` | The specification line. Separate facts with `·`. |
+| `PLAN_TRIAL_DAYS` | `30` | Free days before the first payment, once per team, for card and credit payers alike. `0` is no trial. |
+| `GATEWAY_URL` | `https://gateway.xlaunch.work` | The Xlaunch gateway whose credits can pay for plans. |
+| `GATEWAY_PLATFORM_TOKEN` | secret | The platform token that gateway issued (`XLAUNCH_PLATFORM_SERVICE_TOKEN` on its side). Both this and the URL must be set to take credit payments. |
+| `PLAN_CREDITS_GRACE_DAYS` | `3` | Days a credit-paid plan keeps working after a renewal the balance could not cover. |
+| `LICENSE_REVENUE_SHARE_PERCENT` | `30` | The licensor's share, shown on the finance page. Unset hides the line. |
+
+A customer pays with credits by giving one of their gateway API keys once; the platform uses it to
+find the account and keeps only the account id. Credit-paid plans renew hourly from the moment their
+paid period ends, charged once per period under a reference the gateway will not take twice.
+
+The operator's finance page is at `/admin/finance`: plans in force by how they pay, monthly
+recurring revenue, card and credit revenue this month, the licence share, trials ending, refused
+renewals, and a check that every configured price still matches Stripe.

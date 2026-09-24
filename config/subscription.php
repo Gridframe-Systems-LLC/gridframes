@@ -1,5 +1,23 @@
 <?php
 
+/*
+ * One tier, read from the environment. A tier is shown and sold only when it grants machines and can be
+ * paid: by card when it has a Stripe price, by gateway credits when it has a monthly price in cents and
+ * the instance is connected to a gateway. The price label is what a visitor reads; the cents are what a
+ * credit payment takes. Keep them equal to the Stripe price: the operator's finance page compares them
+ * with Stripe and flags any difference.
+ */
+$tier = fn (string $prefix, string $name, string $tagline, string $lookupKey): array => [
+    'name' => $name,
+    'price_id' => env("STRIPE_PRICE_ID_{$prefix}", null),
+    'price_label' => env("PLAN_{$prefix}_PRICE", ''),
+    'price_cents' => max(0, (int) env("PLAN_{$prefix}_CENTS", 0)),
+    'servers' => (int) env("PLAN_{$prefix}_SERVERS", 0),
+    'tagline' => $tagline,
+    'machine' => env("PLAN_{$prefix}_MACHINE", ''),
+    'lookup_key' => $lookupKey,
+];
+
 return [
     'provider' => env('SUBSCRIPTION_PROVIDER', null), // stripe
 
@@ -13,29 +31,27 @@ return [
     'stripe_price_id_dynamic_monthly' => env('STRIPE_PRICE_ID_DYNAMIC_MONTHLY', null),
     'stripe_price_id_dynamic_yearly' => env('STRIPE_PRICE_ID_DYNAMIC_YEARLY', null),
 
-    // The tiers this instance sells. A tier with no price id is not on sale and is never shown;
-    // the machine allowance and its specification are what the tier grants the team, read from the
-    // environment because they are the licensee's commercial decision, not this code's. The public
-    // landing page reads these same values, so what a visitor is quoted and what Stripe charges
-    // cannot drift apart.
+    // Free days before the first payment, once per team, the same for every customer. Zero is no trial.
+    'trial_days' => max(0, (int) env('PLAN_TRIAL_DAYS', 0)),
+
+    // Paying for a plan out of Xlaunch gateway credits, which an agent can top up in SUI. Off until both
+    // the gateway's address and the platform token it issued are set.
+    'credits' => [
+        'gateway_url' => rtrim((string) env('GATEWAY_URL', ''), '/'),
+        'token' => env('GATEWAY_PLATFORM_TOKEN'),
+        // Days a credit-paid plan keeps working after a renewal the balance could not cover.
+        'grace_days' => max(0, (int) env('PLAN_CREDITS_GRACE_DAYS', 3)),
+    ],
+
+    // The licensor's share of revenue, shown on the operator's finance page. Unset hides the line.
+    'license_share_percent' => is_numeric(env('LICENSE_REVENUE_SHARE_PERCENT')) ? (float) env('LICENSE_REVENUE_SHARE_PERCENT') : null,
+
+    // The tiers this instance sells, cheapest first: the landing page quotes the first one on sale as
+    // its "from" price. What a tier grants is the licensee's commercial decision, not this code's.
     'plans' => [
-        'personal' => [
-            'name' => 'Personal',
-            'price_id' => env('STRIPE_PRICE_ID_PERSONAL', null),
-            'price_label' => env('PLAN_PERSONAL_PRICE', ''),
-            'servers' => (int) env('PLAN_PERSONAL_SERVERS', 0),
-            'tagline' => 'One person, a few machines, everything the platform does.',
-            'machine' => env('PLAN_PERSONAL_MACHINE', ''),
-            'lookup_key' => 'xlaunch_deploy_personal',
-        ],
-        'team' => [
-            'name' => 'Team',
-            'price_id' => env('STRIPE_PRICE_ID_TEAM', null),
-            'price_label' => env('PLAN_TEAM_PRICE', ''),
-            'servers' => (int) env('PLAN_TEAM_SERVERS', 0),
-            'tagline' => 'A team on one account, with room to grow.',
-            'machine' => env('PLAN_TEAM_MACHINE', ''),
-            'lookup_key' => 'xlaunch_deploy_team',
-        ],
+        'agent_1gb' => $tier('AGENT_1GB', 'Agent 1 GB', 'One agent, one small machine of its own.', 'xlaunch_deploy_agent_1gb'),
+        'agent_2gb' => $tier('AGENT_2GB', 'Agent 2 GB', 'An agent with a database or a heavier client.', 'xlaunch_deploy_agent_2gb'),
+        'personal' => $tier('PERSONAL', 'Personal', 'One person, a few machines, everything the platform does.', 'xlaunch_deploy_personal'),
+        'team' => $tier('TEAM', 'Team', 'A team on one account, with room to grow.', 'xlaunch_deploy_team'),
     ],
 ];

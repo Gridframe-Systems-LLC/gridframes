@@ -57,6 +57,7 @@ class VerifyStripeSubscriptionStatusJob implements ShouldBeEncrypted, ShouldQueu
             );
 
             switch ($stripeSubscription->status) {
+                case 'trialing':
                 case 'active':
                     $this->subscription->update([
                         'stripe_invoice_paid' => true,

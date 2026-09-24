@@ -102,11 +102,13 @@ class CreateCheckoutSession
         }
 
         $blockingSubscription = null;
+        $everSubscribed = false;
         foreach ($this->stripe->subscriptions->all([
             'customer' => $customerId,
             'limit' => 10,
             'status' => 'all',
         ])->autoPagingIterator() as $stripeSubscription) {
+            $everSubscribed = true;
             if (in_array($stripeSubscription->status, self::BLOCKING_SUBSCRIPTION_STATUSES, true)) {
                 $blockingSubscription = $stripeSubscription;
                 break;
@@ -143,6 +145,10 @@ class CreateCheckoutSession
             $this->stripe->checkout->sessions->expire($openSession->id);
         }
 
+        // One trial per team, never a second: not after a card subscription, not after a credit plan.
+        $trialDays = (int) config('subscription.trial_days');
+        $trial = $trialDays > 0 && ! $everSubscribed && ! $this->teamHadAPlan($subscription);
+
         $session = $this->stripe->checkout->sessions->create([
             'allow_promotion_codes' => true,
             'billing_address_collection' => 'required',
@@ -162,13 +168,19 @@ class CreateCheckoutSession
             'automatic_tax' => [
                 'enabled' => (bool) config('subscription.stripe_automatic_tax'),
             ],
-            'subscription_data' => [
+            'subscription_data' => array_filter([
                 'metadata' => [
                     'user_id' => $user->id,
                     'team_id' => $team->id,
                 ],
-            ],
-            'payment_method_collection' => 'if_required',
+                'trial_period_days' => $trial ? $trialDays : null,
+                // A trial that ends without a card on file ends the subscription instead of leaving an
+                // unpaid one behind.
+                'trial_settings' => $trial ? ['end_behavior' => ['missing_payment_method' => 'cancel']] : null,
+            ], fn ($value) => $value !== null),
+            // During a trial nothing is due, so Stripe would not ask for a card; the first payment then
+            // could not happen by itself. Collect it up front when a trial is given.
+            'payment_method_collection' => $trial ? 'always' : 'if_required',
             'mode' => 'subscription',
             'expires_at' => now()->addMinutes(35)->timestamp,
             'success_url' => route('dashboard', ['success' => true]),
@@ -183,6 +195,13 @@ class CreateCheckoutSession
         ]);
 
         return $session;
+    }
+
+    private function teamHadAPlan(Subscription $subscription): bool
+    {
+        return filled($subscription->stripe_subscription_id)
+            || $subscription->trial_ends_at !== null
+            || $subscription->paid_until !== null;
     }
 
     private function throwIfBlockingSubscription(Team $team, string $customerId, ?object $blockingSubscription): void

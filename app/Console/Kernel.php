@@ -11,6 +11,7 @@ use App\Jobs\CleanupOrphanedPreviewContainersJob;
 use App\Jobs\CleanupStaleMultiplexedConnections;
 use App\Jobs\PullChangelog;
 use App\Jobs\PullTemplatesFromCDN;
+use App\Jobs\RenewCreditSubscriptionsJob;
 use App\Jobs\RegenerateSslCertJob;
 use App\Jobs\ScheduledJobManager;
 use App\Jobs\ServerManagerJob;
@@ -54,6 +55,11 @@ class Kernel extends ConsoleKernel
         $this->scheduleInstance->command('sanctum:prune-expired --hours=1')->hourly()->onOneServer();
         $this->scheduleInstance->job(new ApiTokenExpirationWarningJob)->hourly()->onOneServer();
         $this->scheduleInstance->job(new CheckMissingDatabaseBackupsJob)->hourly()->onOneServer();
+
+        // Plans paid from gateway credits renew themselves; card plans are renewed by Stripe.
+        if (isCloud() && creditsPaymentsEnabled()) {
+            $this->scheduleInstance->job(new RenewCreditSubscriptionsJob)->hourly()->onOneServer();
+        }
 
         if (isDev()) {
             // Instance Jobs

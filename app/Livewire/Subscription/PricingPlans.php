@@ -3,6 +3,8 @@
 namespace App\Livewire\Subscription;
 
 use App\Actions\Stripe\CreateCheckoutSession;
+use App\Actions\Subscription\SubscribeWithCredits;
+use App\Exceptions\CreditsPaymentException;
 use App\Exceptions\CheckoutUnavailableException;
 use Livewire\Component;
 use RuntimeException;
@@ -10,6 +12,40 @@ use Stripe\Exception\ApiErrorException;
 
 class PricingPlans extends Component
 {
+    /** The tier whose credit payment form is open, or null. */
+    public ?string $creditsPlan = null;
+
+    /** A gateway API key, held only for the one request that uses it. */
+    public string $gatewayKey = '';
+
+    public function chooseCredits(string $plan): void
+    {
+        $this->creditsPlan = data_get(plansOnSale()->get($plan), 'by_credits') ? $plan : null;
+        $this->gatewayKey = '';
+    }
+
+    public function subscribeCredits(): mixed
+    {
+        $team = currentTeam();
+        $user = auth()->user();
+        if (! $team || ! $user?->isAdminOfTeam($team->id)) {
+            abort(403);
+        }
+        $this->validate(['gatewayKey' => 'required|string|min:16|max:512']);
+        $key = $this->gatewayKey;
+        $this->gatewayKey = '';
+
+        try {
+            app(SubscribeWithCredits::class)->execute($team, (string) $this->creditsPlan, $key);
+        } catch (CreditsPaymentException $e) {
+            $this->dispatch('error', $e->getMessage());
+
+            return null;
+        }
+
+        return redirect()->route('dashboard');
+    }
+
     public function subscribeStripe(string $type): mixed
     {
         $team = currentTeam();
@@ -26,11 +62,9 @@ class PricingPlans extends Component
         }
 
         $priceId = match ($type) {
-            'personal' => config('subscription.plans.personal.price_id'),
-            'team' => config('subscription.plans.team.price_id'),
             'dynamic-monthly' => config('subscription.stripe_price_id_dynamic_monthly'),
             'dynamic-yearly' => config('subscription.stripe_price_id_dynamic_yearly'),
-            default => null,
+            default => data_get(plansOnSale()->get($type), 'by_card') ? config("subscription.plans.{$type}.price_id") : null,
         };
 
         if (! $priceId) {
@@ -66,9 +100,9 @@ class PricingPlans extends Component
     public function render()
     {
         // Only tiers that are actually on sale reach the page.
-        $plans = collect(config('subscription.plans', []))
-            ->filter(fn ($plan) => filled(data_get($plan, 'price_id')) && (int) data_get($plan, 'servers', 0) > 0);
-
-        return view('livewire.subscription.pricing-plans', ['plans' => $plans]);
+        return view('livewire.subscription.pricing-plans', [
+            'plans' => plansOnSale(),
+            'trialDays' => (int) config('subscription.trial_days'),
+        ]);
     }
 }

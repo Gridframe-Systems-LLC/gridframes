@@ -31,7 +31,9 @@
     }
 }" @success.window="preview = null; showModal = false; qty = $wire.server_limits"
     @keydown.escape.window="if (showModal) { closeAdjust(); }">
-    @if (subscriptionProvider() === 'stripe')
+    @if (currentTeam()->subscription?->isPaidWithCredits())
+        @include('livewire.subscription.partials.credits')
+    @elseif (subscriptionProvider() === 'stripe')
         {{-- Plan Overview --}}
         <x-application.settings-section title="Plan overview"
             description="Review billing status and the number of servers included in this plan.">

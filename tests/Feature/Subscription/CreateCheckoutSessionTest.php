@@ -230,6 +230,8 @@ test('an expired checkout session permits a new checkout', function () {
 });
 
 test('checkout creates and persists one Stripe customer for later attempts', function () {
+    // Tax is the instance's choice and off by default; this instance has turned it on.
+    config()->set('subscription.stripe_automatic_tax', true);
     $this->customers->shouldReceive('create')->once()
         ->withArgs(fn (array $payload, array $options): bool => $payload['metadata']['team_id'] === $this->team->id && $options['idempotency_key'] === 'xlaunch-team-'.$this->team->id.'-customer')
         ->andReturn((object) ['id' => 'cus_new']);

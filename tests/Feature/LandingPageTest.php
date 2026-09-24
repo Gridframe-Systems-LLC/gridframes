@@ -14,6 +14,7 @@ beforeEach(function () {
     );
 
     config()->set('landing.enabled', true);
+    config()->set('subscription.provider', 'stripe');
     config()->set('landing.brand', 'GridFrame Systems');
     config()->set('landing.headline', 'Your own cloud, on machines you can point at.');
     config()->set('subscription.plans', [
@@ -87,4 +88,22 @@ it('keeps a private instance private by handing the visitor the sign-in form', f
     config()->set('landing.enabled', false);
 
     $this->get('/')->assertRedirect(route('login'));
+});
+
+it('shows every tier on sale and the trial when the instance gives one', function () {
+    config()->set('subscription.trial_days', 30);
+    config()->set('subscription.provider', 'stripe');
+    config()->set('subscription.plans', [
+        'agent_1gb' => ['name' => 'Agent 1 GB', 'price_id' => 'price_a1', 'price_label' => '$6', 'price_cents' => 600, 'servers' => 1, 'machine' => 'shared vCPU · 1 GB RAM', 'tagline' => 'One agent.', 'lookup_key' => 'a1'],
+        'agent_2gb' => ['name' => 'Agent 2 GB', 'price_id' => 'price_a2', 'price_label' => '$12', 'price_cents' => 1200, 'servers' => 1, 'machine' => '', 'tagline' => 'Two.', 'lookup_key' => 'a2'],
+        'personal' => ['name' => 'Personal', 'price_id' => 'price_p', 'price_label' => '$20', 'price_cents' => 2000, 'servers' => 3, 'machine' => '', 'tagline' => 'One person.', 'lookup_key' => 'p'],
+        'team' => ['name' => 'Team', 'price_id' => 'price_t', 'price_label' => '$25', 'price_cents' => 2500, 'servers' => 10, 'machine' => '', 'tagline' => 'A team.', 'lookup_key' => 't'],
+    ]);
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSeeInOrder(['Agent 1 GB', 'Agent 2 GB', 'Personal', 'Team'])
+        ->assertSee('Machines from $6')
+        ->assertSee('Start 30-day free trial')
+        ->assertSee('Every plan starts with a 30-day free trial');
 });
