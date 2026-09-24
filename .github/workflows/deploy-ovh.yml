@@ -15,7 +15,6 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-24.04
-    environment: production
     steps:
       - uses: actions/checkout@v5
 
@@ -42,4 +41,4 @@ jobs:
             root@ns5037844.ip-51-161-112.net \
             "[ -f /opt/xlaunch-deploy/composer.json ] && composer -d /opt/xlaunch-deploy install --no-dev --optimize-autoloader 2>/dev/null || true
              [ -f /opt/xlaunch-deploy/docker-compose.yml ] && docker compose -f /opt/xlaunch-deploy/docker-compose.yml up -d --build --remove-orphans || true
-             echo Deploy OK at $(date)"
+             echo Deploy OK at \$(date)"
