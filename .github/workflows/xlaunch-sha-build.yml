@@ -40,6 +40,9 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Fetch the MinIO client binary
+        run: scripts/fetch-minio-mc.sh
+
       - name: Set up build
         uses: docker/setup-buildx-action@v3
 
