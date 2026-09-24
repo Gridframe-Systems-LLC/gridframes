@@ -7,6 +7,10 @@
     $termsUrl = config('landing.terms_url');
     $privacyUrl = config('landing.privacy_url');
     $supportEmail = config('landing.support_email');
+    $logo = config('landing.logo');
+    $logoWords = config('landing.logo_words') ?: strtolower(str_replace(' ', '', $brand));
+    // The box keeps the word's proportions: 5-block letters, one block apart, 9 rows tall.
+    $logoColumns = collect(explode(',', $logoWords))->map(fn ($w) => strlen(trim($w)) * 6 - 1)->max();
 
     // The headline plan is whatever the operator sells cheapest, so the number on the hero and the
     // number Stripe charges are the same number.
@@ -25,8 +29,12 @@
     <header class="masthead" id="masthead">
         <div class="wrap">
             <a href="{{ url('/') }}" class="mark" aria-label="{{ $brand }} home">
-                <x-landing.mark />
-                <span>{{ $brand }}</span>
+                @if ($logo)
+                    <span class="logo" data-logo="{{ $logoWords }}" data-logo-split="{{ config('landing.logo_split') }}"
+                        style="aspect-ratio: {{ $logoColumns }} / 9"><img src="{{ $logo }}" alt="{{ $brand }}"></span>
+                @else
+                    <span>{{ $brand }}</span>
+                @endif
             </a>
 
             <nav aria-label="Sections">
@@ -481,9 +489,13 @@
     <footer class="site">
         <div class="wrap">
             <div class="row">
-                <a href="{{ url('/') }}" class="mark" style="font-size:0.9rem">
-                    <x-landing.mark />
-                    <span>{{ $brand }}</span>
+                <a href="{{ url('/') }}" class="mark" style="font-size:0.9rem" aria-label="{{ $brand }} home">
+                    @if ($logo)
+                        <span class="logo logo-sm" data-logo="{{ $logoWords }}" data-logo-split="{{ config('landing.logo_split') }}"
+                            style="aspect-ratio: {{ $logoColumns }} / 9"><img src="{{ $logo }}" alt="{{ $brand }}"></span>
+                    @else
+                        <span>{{ $brand }}</span>
+                    @endif
                 </a>
 
                 <nav aria-label="Footer">
@@ -518,6 +530,9 @@
         </div>
     </footer>
 
+    @if ($logo)
+        <script src="{{ asset('js/brand-blocks.js') }}" defer></script>
+    @endif
     <script>
         // The masthead gains its hairline only once the page has moved, so the first view is clean.
         (function () {

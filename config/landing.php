@@ -26,6 +26,16 @@ return [
     'legal_name' => env('LANDING_LEGAL_NAME', ''),
 
     /*
+    | The operator's block wordmark: a static file for anyone without script, and the words its blocks
+    | rebuild into (public/js/brand-blocks.js). Letters before `logo_split` take the accent. Unset, the
+    | page names the brand in plain text rather than inventing a symbol for it.
+    */
+    'logo' => env('LANDING_LOGO', ''),
+    'logo_words' => env('LANDING_LOGO_WORDS', ''),
+    'logo_split' => max(0, (int) env('LANDING_LOGO_SPLIT', 0)),
+    'favicon' => env('LANDING_FAVICON', ''),
+
+    /*
     | The promise, in the operator's own words. Defaults describe the product as
     | it actually behaves; an operator with a sharper pitch overrides them.
     */

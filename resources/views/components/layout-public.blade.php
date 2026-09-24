@@ -27,7 +27,7 @@
     <meta name="twitter:description" content="{{ $summary }}">
 
     <link rel="canonical" href="{{ url('/') }}">
-    <link rel="icon" href="{{ asset('xlaunch-logo.svg') }}" type="image/svg+xml">
+    <link rel="icon" href="{{ config('landing.favicon') ?: asset('xlaunch-logo.svg') }}" type="image/svg+xml">
 
     @vite(['resources/css/landing.css'])
 </head>

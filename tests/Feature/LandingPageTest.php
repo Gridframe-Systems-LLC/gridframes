@@ -107,3 +107,26 @@ it('shows every tier on sale and the trial when the instance gives one', functio
         ->assertSee('Start 30-day free trial')
         ->assertSee('Every plan starts with a 30-day free trial');
 });
+
+it('draws the operator block wordmark and favicon when they are configured', function () {
+    config()->set('landing.logo', '/brand/gridframes/logo.svg');
+    config()->set('landing.logo_words', 'gridframes');
+    config()->set('landing.logo_split', 4);
+    config()->set('landing.favicon', '/brand/gridframes/favicon.svg');
+
+    $this->get('/')
+        ->assertOk()
+        ->assertSee('data-logo="gridframes"', false)
+        ->assertSee('data-logo-split="4"', false)
+        ->assertSee('aspect-ratio: 59 / 9', false)
+        ->assertSee('/brand/gridframes/logo.svg', false)
+        ->assertSee('href="/brand/gridframes/favicon.svg"', false)
+        ->assertSee('js/brand-blocks.js', false);
+});
+
+it('names the brand in plain text when no wordmark is configured', function () {
+    $this->get('/')
+        ->assertOk()
+        ->assertDontSee('data-logo=', false)
+        ->assertDontSee('brand-blocks.js', false);
+});
