@@ -1,9 +1,25 @@
 name: Deploy to OVH Production
 
+# Production is an image registry deploy, not a source sync: the host runs
+# localhost:5000/northlatch/xlaunch:$LATEST_IMAGE from /data/xlaunch/source. This workflow builds the
+# image, ships it over SSH, loads it into the host's local registry, points .env at it, and brings the
+# app service up. The database, redis and realtime services are not touched.
+#
+# Runs when a stable tag is pushed, or by hand with optional version/ref overrides.
+
 on:
   push:
-    branches: ["main"]
+    tags: ["v*.*.*"]
   workflow_dispatch:
+    inputs:
+      version:
+        description: "Image version tag (defaults to the tag name, or the config version)"
+        required: false
+        type: string
+      ref:
+        description: "Git ref to build from (defaults to the branch dispatched from)"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -12,33 +28,88 @@ concurrency:
   group: deploy-production
   cancel-in-progress: false
 
+env:
+  HOST: ns5037844.ip-51-161-112.net
+  USER: ubuntu
+  SOURCE_DIR: /data/xlaunch/source
+  IMAGE_LOCAL: localhost:5000/northlatch/xlaunch
+  IMAGE_GHCR: ghcr.io/gridframe-systems-llc/gridframes
+
 jobs:
   deploy:
     runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.ref || github.ref }}
+          persist-credentials: false
 
-      - name: Setup SSH key
+      - name: Resolve version
+        id: version
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+          TAG_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || '' }}
+        run: |
+          CONFIG_VERSION=$(sed -n "s/.*?: '\([0-9]*\.[0-9]*\.[0-9]*\)'.*/\1/p" config/constants.php | head -1)
+          VERSION="${INPUT_VERSION:-${TAG_VERSION:-$CONFIG_VERSION}}"
+          if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Refusing to deploy under a non-semantic version: '${VERSION}'"
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "sha=${GITHUB_SHA::7}" >> "$GITHUB_OUTPUT"
+
+      - name: Set up build
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/production/Dockerfile
+          platforms: linux/amd64
+          push: false
+          build-args: |
+            XLAUNCH_VERSION=${{ steps.version.outputs.version }}
+          tags: |
+            ${{ env.IMAGE_LOCAL }}:${{ steps.version.outputs.version }}
+            ${{ env.IMAGE_LOCAL }}:sha-${{ steps.version.outputs.sha }}
+          outputs: type=docker,dest=/tmp/xlaunch-image.tar
+
+      - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
           printf "%s" "${{ secrets.OVH_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
-          ssh-keyscan -H ns5037844.ip-51-161-112.net >> ~/.ssh/known_hosts 2>/dev/null
+          ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
-      - name: Sync code to OVH
+      - name: Ship image to the host registry
         run: |
-          rsync -az --delete \
-            --exclude ".git" \
-            --exclude ".github" \
-            --exclude "node_modules" \
-            --exclude "vendor" \
-            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
-            ./ root@ns5037844.ip-51-161-112.net:/opt/xlaunch-deploy/
+          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no /tmp/xlaunch-image.tar ${{ env.USER }}@${{ env.HOST }}:/tmp/xlaunch-image.tar
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} \
+            "sudo -n docker load -i /tmp/xlaunch-image.tar \
+             && sudo -n docker push ${IMAGE_LOCAL}:${{ steps.version.outputs.version }} \
+             && sudo -n docker push ${IMAGE_LOCAL}:sha-${{ steps.version.outputs.sha }} \
+             && rm /tmp/xlaunch-image.tar"
 
-      - name: Post-deploy
+      - name: Point production at the new image and roll the app
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
-            root@ns5037844.ip-51-161-112.net \
-            "[ -f /opt/xlaunch-deploy/composer.json ] && composer -d /opt/xlaunch-deploy install --no-dev --optimize-autoloader 2>/dev/null || true
-             [ -f /opt/xlaunch-deploy/docker-compose.yml ] && docker compose -f /opt/xlaunch-deploy/docker-compose.yml up -d --build --remove-orphans || true
-             echo Deploy OK at \$(date)"
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} "set -e
+            cd ${SOURCE_DIR}
+            sudo -n sed -i \"s|^LATEST_IMAGE=.*|LATEST_IMAGE=${{ steps.version.outputs.version }}|\" .env
+            sudo -n sed -i \"s|^XLAUNCH_VERSION=.*|XLAUNCH_VERSION=${{ steps.version.outputs.version }}|\" .env
+            sudo -n docker compose --env-file .env -f docker-compose.yml -f docker-compose.prod.yml up -d --wait --wait-timeout 300 xlaunch
+            sudo -n docker exec xlaunch php artisan migrate --force
+            sudo -n docker image prune -f >/dev/null
+            echo \"Deployed ${IMAGE_LOCAL}:${{ steps.version.outputs.version }} at \$(date -Is)\"
+          "
+
+      - name: Health check
+        run: |
+          for attempt in 1 2 3 4 5 6; do
+            if curl -fsS --max-time 10 https://gridframes.app/api/health | grep -q OK; then
+              echo "Production healthy"; exit 0
+            fi
+            echo "Attempt $attempt failed; waiting"; sleep 10
+          done
+          echo "Production did not report healthy after the deploy"; exit 1
