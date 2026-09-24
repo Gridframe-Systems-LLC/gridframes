@@ -1,0 +1,45 @@
+name: Deploy to OVH Production
+
+on:
+  push:
+    branches: ["main"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-24.04
+    environment: production
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Setup SSH key
+        run: |
+          mkdir -p ~/.ssh
+          printf "%s" "${{ secrets.OVH_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -H ns5037844.ip-51-161-112.net >> ~/.ssh/known_hosts 2>/dev/null
+
+      - name: Sync code to OVH
+        run: |
+          rsync -az --delete \
+            --exclude ".git" \
+            --exclude ".github" \
+            --exclude "node_modules" \
+            --exclude "vendor" \
+            -e "ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no" \
+            ./ root@ns5037844.ip-51-161-112.net:/opt/xlaunch-deploy/
+
+      - name: Post-deploy
+        run: |
+          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no \
+            root@ns5037844.ip-51-161-112.net \
+            "[ -f /opt/xlaunch-deploy/composer.json ] && composer -d /opt/xlaunch-deploy install --no-dev --optimize-autoloader 2>/dev/null || true
+             [ -f /opt/xlaunch-deploy/docker-compose.yml ] && docker compose -f /opt/xlaunch-deploy/docker-compose.yml up -d --build --remove-orphans || true
+             echo Deploy OK at $(date)"
