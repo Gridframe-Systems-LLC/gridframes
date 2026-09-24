@@ -52,6 +52,7 @@ jobs:
         run: |
           CONFIG_VERSION=$(sed -n "s/.*?: '\([0-9]*\.[0-9]*\.[0-9]*\)'.*/\1/p" config/constants.php | head -1)
           VERSION="${INPUT_VERSION:-${TAG_VERSION:-$CONFIG_VERSION}}"
+          VERSION="${VERSION#v}"
           if [[ ! "${VERSION}" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
             echo "Refusing to deploy under a non-semantic version: '${VERSION}'"
             exit 1
@@ -82,14 +83,15 @@ jobs:
       - name: Set up SSH
         run: |
           mkdir -p ~/.ssh
-          printf "%s" "${{ secrets.OVH_SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          printf "%s" "${{ secrets.OVH_SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
+          ssh-keygen -y -f ~/.ssh/deploy_key > /dev/null || { echo "OVH_SSH_PRIVATE_KEY is not a readable private key (expected base64 of the key file)"; exit 1; }
           ssh-keyscan -H ${{ env.HOST }} >> ~/.ssh/known_hosts 2>/dev/null
 
       - name: Ship image to the host registry
         run: |
-          scp -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no /tmp/xlaunch-image.tar ${{ env.USER }}@${{ env.HOST }}:/tmp/xlaunch-image.tar
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} \
+          scp -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no /tmp/xlaunch-image.tar ${{ env.USER }}@${{ env.HOST }}:/tmp/xlaunch-image.tar
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} \
             "sudo -n docker load -i /tmp/xlaunch-image.tar \
              && sudo -n docker push ${IMAGE_LOCAL}:${{ steps.version.outputs.version }} \
              && sudo -n docker push ${IMAGE_LOCAL}:sha-${{ steps.version.outputs.sha }} \
@@ -97,7 +99,7 @@ jobs:
 
       - name: Point production at the new image and roll the app
         run: |
-          ssh -i ~/.ssh/deploy_key -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} "set -e
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no ${{ env.USER }}@${{ env.HOST }} "set -e
             cd ${SOURCE_DIR}
             sudo -n sed -i \"s|^LATEST_IMAGE=.*|LATEST_IMAGE=${{ steps.version.outputs.version }}|\" .env
             sudo -n sed -i \"s|^XLAUNCH_VERSION=.*|XLAUNCH_VERSION=${{ steps.version.outputs.version }}|\" .env
