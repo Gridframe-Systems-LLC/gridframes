@@ -30,6 +30,7 @@ use App\Http\Controllers\Api\ServiceApplicationsController;
 use App\Http\Controllers\Api\ServiceDatabasesController;
 use App\Http\Controllers\Api\ServicesController;
 use App\Http\Controllers\Api\SharedEnvironmentVariablesController;
+use App\Http\Controllers\Api\SuiIdentityController;
 use App\Http\Controllers\Api\TagsController;
 use App\Http\Controllers\Api\TeamController;
 use App\Http\Controllers\Api\VolumeBackupsController;
@@ -92,6 +93,12 @@ Route::group([
     Route::delete('/team/envs/{env_id}', [SharedEnvironmentVariablesController::class, 'team_delete_env'])->middleware(['api.ability:write']);
     Route::get('/teams/{id}', [TeamController::class, 'team_by_id'])->middleware(['api.ability:read']);
     Route::get('/teams/{id}/members', [TeamController::class, 'members_by_id'])->middleware(['api.ability:read']);
+
+    // Soul-bound Sui identity: prove an address the team owns by signing the platform's challenge.
+    Route::get('/team/sui', [SuiIdentityController::class, 'index'])->middleware(['api.ability:read']);
+    Route::post('/team/sui/challenge', [SuiIdentityController::class, 'challenge'])->middleware(['api.ability:write']);
+    Route::post('/team/sui/verify', [SuiIdentityController::class, 'verify_identity'])->middleware(['api.ability:write']);
+    Route::delete('/team/sui/{sui_identity}', [SuiIdentityController::class, 'destroy'])->middleware(['api.ability:write']);
 
     Route::get('/projects', [ProjectController::class, 'projects'])->middleware(['api.ability:read']);
     Route::get('/projects/{uuid}', [ProjectController::class, 'project_by_uuid'])->middleware(['api.ability:read']);

@@ -301,4 +301,6 @@
                 target="_blank">Contact us.</a>
         </div>
     @endif
+
+    @include('livewire.subscription.partials.sui-identities')
 </div>

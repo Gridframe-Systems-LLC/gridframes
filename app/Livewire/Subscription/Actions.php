@@ -6,7 +6,10 @@ use App\Actions\Stripe\CancelSubscriptionAtPeriodEnd;
 use App\Actions\Stripe\RefundSubscription;
 use App\Actions\Stripe\ResumeSubscription;
 use App\Actions\Stripe\UpdateSubscriptionQuantity;
+use App\Exceptions\SuiProofException;
+use App\Models\SuiIdentity;
 use App\Models\Team;
+use App\Services\Sui\SuiIdentityService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Livewire\Component;
@@ -38,11 +41,24 @@ class Actions extends Component
 
     public ?string $nextBillingDate = null;
 
+    public ?string $suiChallenge = null;
+
+    public ?string $suiChallengeExpiresAt = null;
+
+    public string $suiAddress = '';
+
+    public string $suiSignature = '';
+
+    public string $suiMessage = '';
+
+    public array $suiIdentities = [];
+
     public function mount(): void
     {
         $this->server_limits = Team::serverLimit();
         $this->quantity = (int) $this->server_limits;
         $this->billingInterval = currentTeam()->subscription?->billingInterval() ?? 'monthly';
+        $this->loadSuiIdentities();
     }
 
     public function loadPricePreview(int $quantity): void
@@ -119,6 +135,71 @@ class Actions extends Component
     {
         $session = getStripeCustomerPortalSession(currentTeam());
         redirect($session->url);
+    }
+
+    public function loadSuiIdentities(): void
+    {
+        $this->suiIdentities = currentTeam()->suiIdentities()
+            ->whereNull('unbound_at')
+            ->orderByDesc('verified_at')
+            ->get()
+            ->map(fn (SuiIdentity $identity) => [
+                'id' => $identity->id,
+                'sui_address' => $identity->sui_address,
+                'sui_ns_name' => $identity->sui_ns_name,
+                'verified_at' => $identity->verified_at->toFormattedDateString(),
+            ])
+            ->toArray();
+    }
+
+    public function startSuiChallenge(): void
+    {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+        $challenge = app(SuiIdentityService::class)->challenge(currentTeam());
+        $this->suiChallenge = $challenge['message'];
+        $this->suiChallengeExpiresAt = $challenge['expires_at']->toFormattedDateString();
+        $this->suiMessage = $challenge['message'];
+    }
+
+    public function verifySuiIdentity(): void
+    {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+        try {
+            $identity = app(SuiIdentityService::class)->verify(currentTeam(), $this->suiAddress, $this->suiMessage, $this->suiSignature);
+        } catch (SuiProofException $e) {
+            // Whatever went wrong, the challenge is spent: a new one is needed before another try.
+            $this->suiChallenge = null;
+            $this->dispatch('error', $e->getMessage());
+
+            return;
+        }
+        $this->suiAddress = '';
+        $this->suiSignature = '';
+        $this->suiChallenge = null;
+        $this->loadSuiIdentities();
+        $label = $identity->sui_ns_name ? $identity->sui_ns_name.' ('.$identity->sui_address.')' : $identity->sui_address;
+        $this->dispatch('success', $label.' is now bound to this team.');
+    }
+
+    public function removeSuiIdentity(int $identityId): void
+    {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+        $identity = currentTeam()->suiIdentities()
+            ->where('id', $identityId)
+            ->whereNull('unbound_at')
+            ->first();
+        if ($identity) {
+            // The row stays; the address never binds to another team. This team may bind it again.
+            $identity->update(['unbound_at' => now()]);
+        }
+        $this->loadSuiIdentities();
+        $this->dispatch('success', 'The address is unbound from this team.');
     }
 
     public function refundSubscription(string $password): bool|string
