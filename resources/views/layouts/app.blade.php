@@ -70,7 +70,7 @@
                             class="flex items-center hover:opacity-80 transition-opacity">
                             <img x-show="collapsed" x-cloak src="/brand/gridframes/app-icon.svg" alt="GridFrames"
                                 class="size-5" />
-                            <span x-show="!collapsed" class="text-[15px] font-semibold tracking-tight text-black dark:text-white">GridFrames</span>
+                            <x-brand-logo x-show="!collapsed" />
                         </a>
                         <x-version x-show="!collapsed"
                             class="!text-[10.5px] font-medium text-neutral-400 dark:text-fg-faint !opacity-100 hover:!opacity-100 dark:hover:text-fg hover:text-black" />
@@ -121,8 +121,8 @@
                             class="flex h-12 shrink-0 items-center justify-between gap-1.5 border-b border-neutral-200 px-4 dark:border-white/[0.06]">
                             <div class="flex min-w-0 items-baseline gap-1.5">
                                 <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="GridFrames"
-                                    class="text-[15px] font-semibold tracking-tight text-black transition-opacity hover:opacity-80 dark:text-white">
-                                    GridFrames
+                                    class="transition-opacity hover:opacity-80">
+                                    <x-brand-logo />
                                 </a>
                                 <x-version class="!text-[10.5px] font-medium text-neutral-400 dark:text-fg-faint !opacity-100 hover:!opacity-100 hover:text-black dark:hover:text-fg" />
                             </div>

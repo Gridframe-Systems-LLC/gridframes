@@ -7,7 +7,11 @@
     <div class="auth-shell-content">
         <div class="auth-card">
             <div class="auth-card-heading">
-                <h1>{{ $title }}</h1>
+                @if ($title === 'GridFrames')
+                    <h1><x-brand-logo class="mb-1" /><span class="sr-only">{{ $title }}</span></h1>
+                @else
+                    <h1>{{ $title }}</h1>
+                @endif
                 @if ($description)
                     <p>{{ $description }}</p>
                 @endif

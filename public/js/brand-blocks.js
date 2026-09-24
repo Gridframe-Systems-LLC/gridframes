@@ -91,9 +91,12 @@
     c.style.width = "100%"; c.style.height = "100%";
     el.appendChild(c);
     this.canvas = c;
-    var img = el.querySelector("img"); if (img) img.style.display = "none";
+    var imgs = el.querySelectorAll("img"); for (var n = 0; n < imgs.length; n++) imgs[n].style.display = "none";
     this.layout();
     el.__blocks = this;
+    var self = this;
+    // A logo shown after load (a collapsed sidebar opening) is laid out again at its real size.
+    if (window.ResizeObserver) new ResizeObserver(function () { self.layout(); if (self.onScreen) wake(self); }).observe(el);
     this.onScreen = !io;
     all.push(this);
     if (io) io.observe(el); else wake(this);
@@ -190,5 +193,8 @@
     clearTimeout(rt);
     rt = setTimeout(function () { all.forEach(function (p) { p.layout(); if (p.onScreen) wake(p); }); }, 180);
   });
+  // Pages swapped in by Livewire navigation bring new logos; a theme switch changes their colours.
+  document.addEventListener("livewire:navigated", mount);
+  if (window.MutationObserver) new MutationObserver(function () { all.forEach(function (p) { p.layout(); if (p.onScreen) wake(p); }); }).observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mount); else mount();
 })();
