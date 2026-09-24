@@ -4,6 +4,12 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 📚 Documentation
+
+- Update changelog
+
+## [4.4.0] - 2026-09-24
+
 ### 🚀 Features
 
 - Use tags in update
