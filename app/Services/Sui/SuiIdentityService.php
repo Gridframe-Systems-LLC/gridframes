@@ -23,18 +23,19 @@ class SuiIdentityService
     {
         $nonce = bin2hex(random_bytes(16));
         $message = "GridFrames identity proof\nTeam: {$team->name} (#{$team->id})\nNonce: {$nonce}";
+        $ttl = now()->addMinutes(max(1, (int) config('sui.challenge_ttl', 15)));
 
-        Cache::put($this->cacheKey($team), hash('sha256', $message), now()->addMinutes((int) config('sui.challenge_ttl')));
+        Cache::put($this->cacheKey($team), hash('sha256', $message), $ttl);
 
         return [
             'message' => $message,
-            'expires_at' => now()->addMinutes((int) config('sui.challenge_ttl')),
+            'expires_at' => $ttl,
         ];
     }
 
     /**
      * @throws SuiProofException When no challenge is outstanding, the answer does not match, the
-     *                            signature does not verify, or the address is spoken for.
+     *                           signature does not verify, or the address is spoken for.
      */
     public function verify(Team $team, string $address, string $message, string $wireSignature): SuiIdentity
     {

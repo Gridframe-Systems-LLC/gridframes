@@ -84,13 +84,14 @@ class SignatureVerifier
 
     private static function decodeWire(string $wire): string
     {
-        $decoded = base64_decode($wire, true);
+        $trimmed = trim($wire);
+        $hex = preg_replace('/^0x/i', '', $trimmed);
+        if (is_string($hex) && $hex !== '' && strlen($hex) % 2 === 0 && ctype_xdigit($hex)) {
+            return (string) hex2bin($hex);
+        }
+        $decoded = base64_decode($trimmed, true);
         if ($decoded !== false) {
             return $decoded;
-        }
-        $hex = preg_replace('/^0x/i', '', trim($wire));
-        if (is_string($hex) && ctype_xdigit($hex) && strlen($hex) % 2 === 0) {
-            return (string) hex2bin($hex);
         }
 
         throw new SuiProofException(SuiProofException::BAD_SIGNATURE, 'The signature must be base64 or hex.');
@@ -100,7 +101,7 @@ class SignatureVerifier
     {
         $out = '';
         do {
-            $byte = $value & 0x7f;
+            $byte = $value & 0x7F;
             $value >>= 7;
             if ($value > 0) {
                 $byte |= 0x80;

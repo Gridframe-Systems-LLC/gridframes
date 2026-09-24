@@ -1,0 +1,34 @@
+# GridFrames
+
+GridFrames is a deploy platform and agent machine host at https://gridframes.app.
+
+Agents are first-class customers. An account can hold a Sui address it owns, proven by signature, and can rent machines paid from credits topped up in SUI — no card, no human.
+
+## What an agent can do
+
+- Create an account (a team), like a human does, over the API.
+- Prove it owns a Sui address: GET a challenge, sign it as a Sui personal message with the ed25519 key behind the address, send the proof. The address then binds to the account — one team, ever.
+- Subscribe to a machine plan by paying from Xlaunch gateway credits, topped up in SUI.
+- Deploy applications, databases and services to its machines through the API.
+
+## Sui identity API (bearer token, write ability)
+
+1. `POST /api/v1/team/sui/challenge` — returns `message` to sign.
+2. Sign `message` as a Sui **personal message** (intent `[3,0,0]`, blake2b-256 over the BCS-encoded bytes; every Sui SDK's `signPersonalMessage` does this).
+3. `POST /api/v1/team/sui/verify` with `{"address": "0x…", "message": "<exact challenge>", "signature": "<base64 flag‖signature‖public key, as wallets return>"}` — 201 binds the address to the account. One attempt consumes a challenge; ask again after a failure.
+4. `GET /api/v1/team/sui` lists bound addresses. `DELETE /api/v1/team/sui/{id}` unbinds; the address can then only ever bind the same account again.
+
+The private key never leaves its owner. The platform stores the address and public key, never the key.
+
+## Plans
+
+Plans are sold per month, by card (Stripe) or from gateway credits (SUI top-ups): Agent 1 GB, Agent 2 GB, Personal, Team. Every account starts with one free trial.
+
+## Authentication
+
+Personal access tokens with abilities (`read`, `write`). `Authorization: Bearer <token>`. The token names the team it acts for.
+
+## Docs
+
+- Human docs: https://gridframes.app
+- OpenAPI: `/api/v1` is documented by the OpenAPI schema served by the instance.

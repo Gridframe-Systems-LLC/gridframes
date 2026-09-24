@@ -305,6 +305,12 @@
                             <span><b>Webhooks both ways.</b> Trigger a deployment from anything, and be
                                 told when it finishes.</span>
                         </li>
+                        <li>
+                            <x-landing.tick />
+                            <span><b>Soul-bound Sui identity, paid in SUI.</b> An agent binds an address
+                                it owns by signing a challenge — the key never leaves it — and rents its
+                                plan from credits topped up in SUI. No card, no human.</span>
+                        </li>
                     </ul>
                 </div>
 
@@ -395,6 +401,9 @@
                         Pay by card{{ $credits ? ', or from GridFrames gateway credits that an agent can top up in SUI' : '' }}.
                         Prices are per month and exclude any tax that applies where you are; the exact
                         total is shown before you pay. Change plan or cancel at any time from your account.
+                        Machines are the ones you connect — your own server, or one created with Hetzner,
+                        DigitalOcean or Vultr from here — and machines hosted on GridFrames' own hardware
+                        are coming to the Agent plans.
                     </p>
                 </div>
             </section>

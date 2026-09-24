@@ -5,11 +5,14 @@ arrive. Everything here was learned on the reference instance, not assumed.
 
 ## Backups
 
-The platform backs up its own database nightly (Settings → Backups, "add the platform database").
-The dump lands under `/data/xlaunch/backups`. A backup that only exists on the machine it protects
-is not a backup: copy it off the host (object storage, another machine) on the same schedule, and
-rehearse a restore. The operator's own accounts, sessions and API tokens are deliberately excluded
-from those dumps.
+The platform can back up its own database nightly (Settings → Backups, "add the platform database").
+Independently of that, the host runs a nightly `pg_dump` of its own: the
+`xlaunch-db-backup.timer` systemd timer calls `/usr/local/sbin/xlaunch-db-backup.sh`, which dumps
+the `xlaunch-db` container into `/data/xlaunch/backups/db` and snapshots the environment file into
+`/data/xlaunch/backups/env`, keeping both for 14 days. A backup that only exists on the machine it
+protects is not a backup: copy it off the host (object storage, another machine) on the same
+schedule, and rehearse a restore. The operator's own accounts, sessions and API tokens are
+deliberately excluded from those dumps.
 
 ## Mail
 
@@ -47,10 +50,17 @@ refuses to open a checkout and every customer sees "Unable to confirm checkout".
 
 ## Upgrades
 
-Build the new image from the tagged release, push it into the instance's registry, set
-`LATEST_IMAGE` and `XLAUNCH_VERSION`, and `docker compose up -d --wait xlaunch`. Database
-migrations run at start. Keep the previous image tag in the registry until the new one has served
-a day.
+Deploys run through GitHub Actions: `deploy-ovh.yml` builds the image from a tag (or by hand from
+any ref), ships it over SSH into the host's local registry, points `LATEST_IMAGE` and
+`XLAUNCH_VERSION` at it, brings the `xlaunch` service up with `--wait`, runs
+`php artisan migrate --force` (the container does not migrate at start by itself), and health
+checks `https://gridframes.app/api/health` before it reports success. The database, redis and
+realtime services are not touched. It needs the `OVH_SSH_PRIVATE_KEY` repository secret. Pushing
+plain commits to `main` builds a `sha-` image and `main` tag on ghcr but deploys nothing. Keep the
+previous image tag in the registry until the new one has served a day; rolling back is setting
+`LATEST_IMAGE` back and `up -d`.
+
+The host also runs fail2ban against sshd (`/etc/fail2ban/jail.local`); sshd itself is key-only.
 
 ## Roadmap, as it stands
 
@@ -58,10 +68,14 @@ Things the product does not do yet, in the order they are planned:
 
 1. **Provisioning machines.** Today a team connects servers it already has, within its tier's
    allowance. The next piece creates a machine for the team on the operator's infrastructure and
-   attaches it, so "new machine" is one click.
+   attaches it, so "new machine" is one click. Scoped in Northlatch's GridFrames Machines
+   proposal: Incus VMs on the operator's OVH host, "GridFrames machine" as a server source, plan
+   pools with billed overage, an SSH gateway and per-machine HTTPS, metering and lifecycle.
 2. **An agent as the operator's front door.** The customer tells an agent what to run; the agent
    provisions, deploys and opens a shell through the platform's API. The API already exists; the
    agent surface is the work.
+3. **Off-host backups.** The nightly dumps above still live on the host; object storage and a
+   rehearsed restore are the missing half.
 3. **A financial ledger in the platform.** Today Stripe is the book of record and the platform
    stores entitlement only (paid or not, which tier). A per-team ledger, invoice history and an
    operator revenue view are planned; until then, accounting lives in the Stripe dashboard.

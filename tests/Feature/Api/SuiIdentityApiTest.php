@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Services\Sui\SignatureVerifier;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Testing\TestResponse;
 
 uses(RefreshDatabase::class);
 
@@ -53,7 +54,7 @@ function suiWire(array $keypair, string $message): string
     return base64_encode(chr(0x00).$signature.$keypair['public']);
 }
 
-function challengeAndVerify(Team $team, array $keypair, ?string $token = null): Illuminate\Testing\TestResponse
+function challengeAndVerify(Team $team, array $keypair, ?string $token = null): TestResponse
 {
     $headers = $token ? ['Authorization' => 'Bearer '.$token] : [];
 
@@ -123,10 +124,12 @@ it('consumes the challenge on a failed proof', function () {
         ->postJson('/api/v1/team/sui/challenge')
         ->json('message');
 
+    $wire = suiWire($keypair, $message);
+    $tampered = substr_replace($wire, $wire[10] === 'A' ? 'B' : 'A', 10, 1);
     $this->withToken($this->bearerToken)->postJson('/api/v1/team/sui/verify', [
         'address' => suiAddressOf($keypair),
         'message' => $message,
-        'signature' => suiWire(suiKeyPair(), $message), // right shape, wrong wallet.
+        'signature' => $tampered,
     ])->assertStatus(422)->assertJsonPath('error.kind', 'bad-signature');
 
     // The spent challenge does not accept the honest proof; a fresh one is needed.
@@ -142,13 +145,18 @@ it('binds a soul-bound address to one team ever', function () {
 
     challengeAndVerify($this->team, $keypair, $this->bearerToken)->assertStatus(201);
 
+    // A second team under the same account — the token names it — is still another team, and a
+    // soul-bound address binds one team, ever.
     $otherTeam = Team::factory()->create();
-    $otherUser = User::factory()->create();
-    $otherTeam->members()->attach($otherUser->id, ['role' => 'owner']);
-    session(['currentTeam' => $otherTeam]);
-    $otherToken = $otherUser->createToken('other-token', ['*'])->plainTextToken;
+    $otherTeam->members()->attach($this->user->id, ['role' => 'owner']);
+    $otherToken = $this->user->createToken('other-team-token', ['*']);
+    $otherToken->accessToken->update(['team_id' => $otherTeam->id]);
 
-    challengeAndVerify($otherTeam, $keypair, $otherToken)
+    // The auth manager caches guard instances across in-test requests, so the sanctum guard would
+    // otherwise keep serving the first token it resolved.
+    $this->app->make('auth')->forgetGuards();
+
+    challengeAndVerify($otherTeam, $keypair, $otherToken->plainTextToken)
         ->assertStatus(422)
         ->assertJsonPath('error.kind', 'address-taken');
 });
@@ -170,9 +178,7 @@ it('frees the address for its own team alone after unbinding', function () {
 it('caps how many addresses a team may bind', function () {
     config()->set('sui.max_per_team', 1);
 
-    $response = challengeAndVerify($this->team, suiKeyPair(), $this->bearerToken);
-    dump($response->json());
-    $response->assertStatus(201);
+    challengeAndVerify($this->team, suiKeyPair(), $this->bearerToken)->assertStatus(201);
     challengeAndVerify($this->team, suiKeyPair(), $this->bearerToken)
         ->assertStatus(422)
         ->assertJsonPath('error.kind', 'too-many');
