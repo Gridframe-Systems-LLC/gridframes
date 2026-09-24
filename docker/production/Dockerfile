@@ -3,6 +3,10 @@
 ARG SERVERSIDEUP_PHP_VERSION=8.4-fpm-nginx-alpine
 # https://github.com/minio/mc/releases
 ARG MINIO_VERSION=RELEASE.2025-08-13T08-35-41Z
+# Where the MinIO client binary comes from. MinIO archived the open-source client and withdrew its
+# images and downloads, so a build without a cached copy must name an image that already carries
+# /usr/bin/mc at this release, such as an earlier build of this platform.
+ARG MINIO_CLIENT_IMAGE=quay.io/minio/mc:${MINIO_VERSION}
 # https://github.com/cloudflare/cloudflared/releases
 ARG CLOUDFLARED_VERSION=2026.7.3
 # https://www.postgresql.org/support/versioning/
@@ -63,7 +67,7 @@ RUN npm run build
 # =================================================================
 # Stage 3: Get MinIO client
 # =================================================================
-FROM quay.io/minio/mc:${MINIO_VERSION} AS minio-client
+FROM ${MINIO_CLIENT_IMAGE} AS minio-client
 
 # =================================================================
 # Final Stage: Production image
