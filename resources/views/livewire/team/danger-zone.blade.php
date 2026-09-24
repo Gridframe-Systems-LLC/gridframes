@@ -8,7 +8,7 @@
         ];
     @endphp
     <x-slot:title>
-        Team Danger Zone | Xlaunch
+        Team Danger Zone | GridFrames
     </x-slot>
 
     <x-team.settings-layout>
@@ -45,11 +45,11 @@
                             @elseif($deletionBlockers === [])
                                 <p class="mt-2 max-w-2xl text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
                                     Permanently delete <strong class="font-semibold text-black dark:text-fg">{{ currentTeam()->name }}</strong>
-                                    from Xlaunch. This action cannot be undone.
+                                    from GridFrames. This action cannot be undone.
                                 </p>
                                 <ul class="mt-3 space-y-1 text-xs text-neutral-500 dark:text-fg-dim">
                                     <li>• All members will lose access to this team.</li>
-                                    <li>• This team cannot be restored from Xlaunch after deletion.</li>
+                                    <li>• This team cannot be restored from GridFrames after deletion.</li>
                                 </ul>
                             @else
                                 <p class="mt-2 text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
@@ -81,7 +81,7 @@
                                     $deletionBlockers === [])
                                 <x-modal-confirmation title="Confirm Team Deletion?" buttonTitle="Delete team"
                                     isErrorButton submitAction="delete"
-                                    :actions="['The current team will be permanently deleted from Xlaunch and the database.']"
+                                    :actions="['The current team will be permanently deleted from GridFrames and the database.']"
                                     confirmationText="{{ currentTeam()->name }}"
                                     confirmationLabel="Enter the team name to confirm permanent deletion"
                                     shortConfirmationLabel="Team name" :confirmWithPassword="false"

@@ -62,7 +62,7 @@ class XlaunchUpgradeStatus
             return [
                 'status' => 'in_progress',
                 'step' => $stepInt,
-                'message' => "Waiting for Xlaunch {$targetVersion} to come online...",
+                'message' => "Waiting for GridFrames {$targetVersion} to come online...",
                 ...$base,
             ];
         }

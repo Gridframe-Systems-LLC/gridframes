@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Transactional Email | Xlaunch
+        Transactional Email | GridFrames
     </x-slot>
 
     <x-settings.layout>

@@ -31,7 +31,7 @@
                     Need a sample? Browse
                     <a class="font-medium text-northlatch hover:underline dark:text-warning"
                         href="https://github.com/northlatch/xlaunch-examples/" target="_blank">
-                        Xlaunch Examples
+                        GridFrames Examples
                     </a>.
                 </p>
             </div>
@@ -44,7 +44,7 @@
                 <div class="application-settings-section-header">
                     <div>
                         <h2>Build configuration</h2>
-                        <p>Choose how Xlaunch builds and runs this repository.</p>
+                        <p>Choose how GridFrames builds and runs this repository.</p>
                     </div>
                     <x-forms.button type="submit" isHighlighted>Continue</x-forms.button>
                 </div>

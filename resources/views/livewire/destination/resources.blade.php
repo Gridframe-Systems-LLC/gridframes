@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ $destination->name }} Resources | Xlaunch
+        {{ $destination->name }} Resources | GridFrames
     </x-slot>
 
     <x-dashboard.navbar section="destination" :parameters="['destination_uuid' => $destination->uuid]"

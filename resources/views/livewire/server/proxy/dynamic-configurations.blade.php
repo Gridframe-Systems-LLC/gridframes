@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Proxy Dynamic Configuration | Xlaunch
+        Proxy Dynamic Configuration | GridFrames
     </x-slot>
 
     <livewire:server.navbar :server="$server" />

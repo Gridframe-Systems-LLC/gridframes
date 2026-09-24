@@ -172,7 +172,7 @@
             </template>
         </div>
     @elseif ($fullButton)
-        <p class="text-sm text-neutral-600 dark:text-fg-dim">Xlaunch is up to date.</p>
+        <p class="text-sm text-neutral-600 dark:text-fg-dim">GridFrames is up to date.</p>
     @endif
 </div>
 
@@ -213,7 +213,7 @@
                 const steps = [
                     { step: 1, status: '[DEV] Preparing upgrade environment...' },
                     { step: 2, status: '[DEV] Pulling helper image...' },
-                    { step: 3, status: '[DEV] Pulling Xlaunch image...' },
+                    { step: 3, status: '[DEV] Pulling GridFrames image...' },
                     { step: 4, status: '[DEV] Restarting services...' },
                 ];
 
@@ -337,9 +337,9 @@
 
             getReviveStatusMessage(elapsedMinutes, attempts) {
                 if (elapsedMinutes === 0) {
-                    return `Waiting for Xlaunch to come back online... (attempt ${attempts})`;
+                    return `Waiting for GridFrames to come back online... (attempt ${attempts})`;
                 } else if (elapsedMinutes < 2) {
-                    return `Waiting for Xlaunch to come back online... (${elapsedMinutes} minute${elapsedMinutes !== 1 ? 's' : ''} elapsed)`;
+                    return `Waiting for GridFrames to come back online... (${elapsedMinutes} minute${elapsedMinutes !== 1 ? 's' : ''} elapsed)`;
                 } else if (elapsedMinutes < 5) {
                     return `Update in progress, this may take several minutes... (${elapsedMinutes} minutes elapsed)`;
                 } else if (elapsedMinutes < 10) {
@@ -461,7 +461,7 @@
                             this.serviceDown = true;
                             this.instanceWentDown = true;
                             this.currentStep = 4;
-                            this.currentStatus = 'Xlaunch is restarting with the new version...';
+                            this.currentStatus = 'GridFrames is restarting with the new version...';
                             if (this.checkUpgradeStatusInterval) {
                                 clearInterval(this.checkUpgradeStatusInterval);
                                 this.checkUpgradeStatusInterval = null;

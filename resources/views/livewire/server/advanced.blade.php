@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($server, 'name')->limit(10) }} > Advanced | Xlaunch
+        {{ data_get_str($server, 'name')->limit(10) }} > Advanced | GridFrames
     </x-slot>
 
     <livewire:server.navbar :server="$server" />
@@ -13,7 +13,7 @@
             <x-unsaved-bar action="submit" />
 
             <x-application.settings-section id="server-disk-usage-section" title="Disk usage"
-                helper="Control when Xlaunch checks this server and when your team is notified.">
+                helper="Control when GridFrames checks this server and when your team is notified.">
                 <div class="grid gap-4 lg:grid-cols-2">
                     <x-forms.input canGate="update" :canResource="$server" placeholder="0 23 * * *"
                         id="serverDiskUsageCheckFrequency" label="Check frequency" required

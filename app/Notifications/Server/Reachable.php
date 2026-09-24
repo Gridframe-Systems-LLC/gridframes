@@ -33,7 +33,7 @@ class Reachable extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject("Xlaunch: Server ({$this->server->name}) revived.");
+        $mail->subject("GridFrames: Server ({$this->server->name}) revived.");
         $mail->view('emails.server-revived', [
             'name' => $this->server->name,
         ]);
@@ -62,7 +62,7 @@ class Reachable extends CustomEmailNotification
     public function toTelegram(): array
     {
         return [
-            'message' => "Xlaunch: Server '{$this->server->name}' revived. All automations & integrations are turned on again!",
+            'message' => "GridFrames: Server '{$this->server->name}' revived. All automations & integrations are turned on again!",
         ];
     }
 

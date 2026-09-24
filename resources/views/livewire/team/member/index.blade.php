@@ -53,7 +53,7 @@
     }
 }">
     <x-slot:title>
-        Team Members | Xlaunch
+        Team Members | GridFrames
     </x-slot>
 
     <x-team.settings-layout>

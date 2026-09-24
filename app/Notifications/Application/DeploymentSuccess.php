@@ -58,10 +58,10 @@ class DeploymentSuccess extends CustomEmailNotification
         $pull_request_id = data_get($this->preview, 'pull_request_id', 0);
         $fqdn = $this->fqdn;
         if ($pull_request_id === 0) {
-            $mail->subject("Xlaunch: New version is deployed of {$this->application_name}");
+            $mail->subject("GridFrames: New version is deployed of {$this->application_name}");
         } else {
             $fqdn = $this->preview->fqdn;
-            $mail->subject("Xlaunch: Pull request #{$pull_request_id} of {$this->application_name} deployed successfully");
+            $mail->subject("GridFrames: Pull request #{$pull_request_id} of {$this->application_name} deployed successfully");
         }
         $mail->view('emails.application-deployment-success', [
             'name' => $this->application_name,
@@ -114,7 +114,7 @@ class DeploymentSuccess extends CustomEmailNotification
     public function toTelegram(): array
     {
         if ($this->preview) {
-            $message = 'Xlaunch: New PR'.$this->preview->pull_request_id.' version successfully deployed of '.$this->application_name.'';
+            $message = 'GridFrames: New PR'.$this->preview->pull_request_id.' version successfully deployed of '.$this->application_name.'';
             if ($this->preview->fqdn) {
                 $buttons[] = [
                     'text' => 'Open Application',

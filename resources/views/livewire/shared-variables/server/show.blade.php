@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Server Variables | Xlaunch
+        Server Variables | GridFrames
     </x-slot>
 
     <x-shared-variables.editor :resource="$server"

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Cloud Tokens | Xlaunch
+        Cloud Tokens | GridFrames
     </x-slot>
 
     <x-security.settings-layout>

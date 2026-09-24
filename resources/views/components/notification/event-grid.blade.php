@@ -14,7 +14,7 @@
             [
                 'key' => 'statusChange',
                 'label' => 'Resource status changes',
-                'helper' => 'Notify when a resource stops or Xlaunch automatically restarts it.',
+                'helper' => 'Notify when a resource stops or GridFrames automatically restarts it.',
             ],
             [
                 'key' => 'restartLimitReached',

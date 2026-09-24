@@ -13,9 +13,9 @@
             primary-label="Back to login">
             <x-forms.collapsible title="Using a reverse proxy or Cloudflare Tunnel?" class="error-proxy-help">
                 <ul>
-                    <li>Set your domain in <strong>Settings &rarr; FQDN</strong> to match the URL you use to access Xlaunch.</li>
-                    <li>Cloudflare users: disable <strong>Browser Integrity Check</strong> and <strong>Under Attack Mode</strong> for your Xlaunch domain, as these can interrupt login sessions.</li>
-                    <li>If you can still access Xlaunch via <code>localhost</code>, log in there first to configure your FQDN.</li>
+                    <li>Set your domain in <strong>Settings &rarr; FQDN</strong> to match the URL you use to access GridFrames.</li>
+                    <li>Cloudflare users: disable <strong>Browser Integrity Check</strong> and <strong>Under Attack Mode</strong> for your GridFrames domain, as these can interrupt login sessions.</li>
+                    <li>If you can still access GridFrames via <code>localhost</code>, log in there first to configure your FQDN.</li>
                 </ul>
             </x-forms.collapsible>
         </x-error-page>

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Shared Variables | Xlaunch
+        Shared Variables | GridFrames
     </x-slot>
 
     <x-shared-variables.layout>

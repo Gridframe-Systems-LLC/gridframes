@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Teams | Xlaunch
+        Teams | GridFrames
     </x-slot>
 
     <x-team.settings-layout>

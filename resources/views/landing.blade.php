@@ -392,7 +392,7 @@
                         @if ($trialDays > 0)
                             Every plan starts with a {{ $trialDays }}-day free trial, once per account.
                         @endif
-                        Pay by card{{ $credits ? ', or from Xlaunch gateway credits that an agent can top up in SUI' : '' }}.
+                        Pay by card{{ $credits ? ', or from GridFrames gateway credits that an agent can top up in SUI' : '' }}.
                         Prices are per month and exclude any tax that applies where you are; the exact
                         total is shown before you pay. Change plan or cancel at any time from your account.
                     </p>
@@ -449,7 +449,7 @@
                         <details>
                             <summary>Can an agent pay for its own machine?</summary>
                             <p>
-                                Yes. A plan can be paid from Xlaunch gateway credits instead of a card, and
+                                Yes. A plan can be paid from GridFrames gateway credits instead of a card, and
                                 credits can be topped up in SUI. The same balance pays for the agent's model
                                 calls, so an agent can run and pay for itself without a person in the loop.
                             </p>

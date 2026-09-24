@@ -1,6 +1,6 @@
 <x-layout>
     <x-slot:title>
-        Sources | Xlaunch
+        Sources | GridFrames
     </x-slot>
 
     <div class="application-settings-form w-full">

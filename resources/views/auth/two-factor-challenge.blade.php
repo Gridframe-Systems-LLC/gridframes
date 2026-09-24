@@ -1,5 +1,5 @@
 <x-layout-simple>
-    <x-auth.shell title="Xlaunch" description="Verify your identity to finish signing in.">
+    <x-auth.shell title="GridFrames" description="Verify your identity to finish signing in.">
         <div class="flex flex-col gap-4" x-data="{
             showRecovery: false,
             submitting: false,

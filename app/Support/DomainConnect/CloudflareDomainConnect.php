@@ -55,7 +55,7 @@ class CloudflareDomainConnect
     ): string {
         if (! $this->isAvailable()) {
             throw new RuntimeException(
-                'Domain Connect is only available on Xlaunch Cloud when a Domain Connect private key is configured.'
+                'Domain Connect is only available on GridFrames when a Domain Connect private key is configured.'
             );
         }
 

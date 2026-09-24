@@ -53,7 +53,7 @@ class TraefikVersionOutdated extends CustomEmailNotification
             ];
         });
 
-        $mail->subject("Xlaunch: Traefik proxy outdated on {$count} server(s)");
+        $mail->subject("GridFrames: Traefik proxy outdated on {$count} server(s)");
         $mail->view('emails.traefik-version-outdated', [
             'servers' => $serversWithUrls,
             'count' => $count,
@@ -99,7 +99,7 @@ class TraefikVersionOutdated extends CustomEmailNotification
         }
 
         return new DiscordMessage(
-            title: ':warning: Xlaunch: Traefik proxy outdated',
+            title: ':warning: GridFrames: Traefik proxy outdated',
             description: $description,
             color: DiscordMessage::warningColor(),
         );
@@ -112,7 +112,7 @@ class TraefikVersionOutdated extends CustomEmailNotification
             isset($s->outdatedInfo['newer_branch_target'])
         );
 
-        $message = "⚠️ Xlaunch: Traefik proxy outdated on {$count} server(s)!\n\n";
+        $message = "⚠️ GridFrames: Traefik proxy outdated on {$count} server(s)!\n\n";
         $message .= "Update recommended for security and features.\n";
         $message .= "📊 Affected servers:\n";
 
@@ -228,7 +228,7 @@ class TraefikVersionOutdated extends CustomEmailNotification
         }
 
         return new SlackMessage(
-            title: 'Xlaunch: Traefik proxy outdated',
+            title: 'GridFrames: Traefik proxy outdated',
             description: $description,
             color: SlackMessage::warningColor()
         );

@@ -32,7 +32,7 @@ class TaskSuccess extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject("Xlaunch: Scheduled task ({$this->task->name}) succeeded.");
+        $mail->subject("GridFrames: Scheduled task ({$this->task->name}) succeeded.");
         $mail->view('emails.scheduled-task-success', [
             'task' => $this->task,
             'url' => $this->url,
@@ -59,10 +59,10 @@ class TaskSuccess extends CustomEmailNotification
 
     public function toTelegram(): array
     {
-        $message = "Xlaunch: Scheduled task ({$this->task->name}) succeeded.";
+        $message = "GridFrames: Scheduled task ({$this->task->name}) succeeded.";
         if ($this->url) {
             $buttons[] = [
-                'text' => 'Open task in Xlaunch',
+                'text' => 'Open task in GridFrames',
                 'url' => (string) $this->url,
             ];
         }
@@ -74,11 +74,11 @@ class TaskSuccess extends CustomEmailNotification
 
     public function toPushover(): PushoverMessage
     {
-        $message = "Xlaunch: Scheduled task ({$this->task->name}) succeeded.";
+        $message = "GridFrames: Scheduled task ({$this->task->name}) succeeded.";
         $buttons = [];
         if ($this->url) {
             $buttons[] = [
-                'text' => 'Open task in Xlaunch',
+                'text' => 'Open task in GridFrames',
                 'url' => (string) $this->url,
             ];
         }

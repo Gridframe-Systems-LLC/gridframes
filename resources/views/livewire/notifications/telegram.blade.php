@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Telegram Notifications | Xlaunch
+        Telegram Notifications | GridFrames
     </x-slot>
 
     <x-notification.settings-layout>

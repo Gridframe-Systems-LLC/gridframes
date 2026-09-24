@@ -140,7 +140,7 @@
                                                 'default_warning' => 'The Docker volume and its data will not be deleted.',
                                             ]]"
                                             :actions="[
-                                                'This removes only the stale volume entry from Xlaunch.',
+                                                'This removes only the stale volume entry from GridFrames.',
                                             ]" confirmationText="{{ $form['name'] }}"
                                             confirmationLabel="Please confirm by entering the Storage Name below"
                                             shortConfirmationLabel="Storage Name" />

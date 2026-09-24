@@ -17,7 +17,7 @@
         </form>
     @else
     <x-slot:title>
-        {{ $cloudInitScript->name }} | Cloud-Init Scripts | Xlaunch
+        {{ $cloudInitScript->name }} | Cloud-Init Scripts | GridFrames
     </x-slot>
 
     <x-security.settings-layout>

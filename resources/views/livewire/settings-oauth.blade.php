@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Authentication | Xlaunch
+        Authentication | GridFrames
     </x-slot>
 
     <x-settings.layout>

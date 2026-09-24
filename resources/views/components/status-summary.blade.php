@@ -91,7 +91,7 @@
                 {{ $healthLabel }}
                 @if ($healthLabel === 'Not configured')
                     <x-helper label="About unconfigured healthchecks"
-                        helper="No healthcheck is configured, so Xlaunch can only report the container state. Traffic can still be routed to the container, but Xlaunch cannot verify that the application inside it is ready to receive requests." />
+                        helper="No healthcheck is configured, so GridFrames can only report the container state. Traffic can still be routed to the container, but GridFrames cannot verify that the application inside it is ready to receive requests." />
                 @endif
             </span>
         </div>

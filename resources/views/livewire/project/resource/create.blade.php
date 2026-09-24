@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($project, 'name')->limit(10) }} > New | Xlaunch
+        {{ data_get_str($project, 'name')->limit(10) }} > New | GridFrames
     </x-slot>
     @if ($type === 'public')
         <livewire:project.new.public-git-repository :type="$type" />

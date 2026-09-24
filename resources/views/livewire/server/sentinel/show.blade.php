@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Sentinel Configuration | Xlaunch
+        Sentinel Configuration | GridFrames
     </x-slot>
     <livewire:server.navbar :server="$server" />
     <div

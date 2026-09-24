@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Slack Notifications | Xlaunch
+        Slack Notifications | GridFrames
     </x-slot>
 
     <x-notification.settings-layout>

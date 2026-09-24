@@ -66,11 +66,11 @@
                 <div class="flex items-center gap-2 h-full shrink-0 border-r border-neutral-200 dark:border-white/[0.06] transition-[width] duration-200"
                     :class="collapsed ? 'w-16 justify-center px-0' : 'w-56 px-4'">
                     <div class="flex shrink-0 items-baseline gap-1.5 min-w-0">
-                        <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="Xlaunch"
+                        <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="GridFrames"
                             class="flex items-center hover:opacity-80 transition-opacity">
-                            <img x-show="collapsed" x-cloak src="/xlaunch-logo.svg" alt="Xlaunch"
+                            <img x-show="collapsed" x-cloak src="/brand/gridframes/app-icon.svg" alt="GridFrames"
                                 class="size-5" />
-                            <span x-show="!collapsed" class="text-[15px] font-semibold tracking-tight text-black dark:text-white">Xlaunch</span>
+                            <span x-show="!collapsed" class="text-[15px] font-semibold tracking-tight text-black dark:text-white">GridFrames</span>
                         </a>
                         <x-version x-show="!collapsed"
                             class="!text-[10.5px] font-medium text-neutral-400 dark:text-fg-faint !opacity-100 hover:!opacity-100 dark:hover:text-fg hover:text-black" />
@@ -120,9 +120,9 @@
                         <div data-mobile-sidebar-brand
                             class="flex h-12 shrink-0 items-center justify-between gap-1.5 border-b border-neutral-200 px-4 dark:border-white/[0.06]">
                             <div class="flex min-w-0 items-baseline gap-1.5">
-                                <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="Xlaunch"
+                                <a href="{{ route('dashboard') }}" {{ wireNavigate() }} title="GridFrames"
                                     class="text-[15px] font-semibold tracking-tight text-black transition-opacity hover:opacity-80 dark:text-white">
-                                    Xlaunch
+                                    GridFrames
                                 </a>
                                 <x-version class="!text-[10.5px] font-medium text-neutral-400 dark:text-fg-faint !opacity-100 hover:!opacity-100 hover:text-black dark:hover:text-fg" />
                             </div>
@@ -155,7 +155,7 @@
                 <div class="flex min-w-0 flex-1 items-center gap-2.5">
                     <a href="{{ route('dashboard') }}"
                         class="flex size-8 shrink-0 items-center justify-center rounded-lg bg-neutral-100 transition-opacity hover:opacity-80 dark:bg-white/[0.06]">
-                        <img src="/xlaunch-logo.svg" alt="Xlaunch" class="w-[18px] h-[18px]" />
+                        <img src="/brand/gridframes/app-icon.svg" alt="GridFrames" class="w-[18px] h-[18px]" />
                     </a>
                     <div class="min-w-0" x-data="{ collapsed: false }">
                         <livewire:switch-team />

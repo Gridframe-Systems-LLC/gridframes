@@ -154,7 +154,7 @@ class Select extends Component
             [
                 'id' => 'public',
                 'name' => 'Public Git Repository',
-                'description' => 'Deploy any public Git repository. Xlaunch builds it from source, no credentials required.',
+                'description' => 'Deploy any public Git repository. GridFrames builds it from source, no credentials required.',
                 'documentation' => 'https://projectxprotocol.dev/docs/applications/ci-cd',
                 'logo' => asset('svgs/resources/public-repo.svg'),
             ],

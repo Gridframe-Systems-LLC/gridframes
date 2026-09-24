@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Scheduled Jobs | Xlaunch
+        Scheduled Jobs | GridFrames
     </x-slot>
 
     <x-settings.layout>

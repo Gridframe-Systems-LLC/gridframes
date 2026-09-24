@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Import server transfer | Xlaunch
+        Import server transfer | GridFrames
     </x-slot>
     <div class="flex flex-col gap-6">
         <div class="flex flex-wrap items-center gap-2">
@@ -10,7 +10,7 @@
             </a>
         </div>
         <div class="subtitle">
-            Paste or upload a transfer bundle exported from another Xlaunch instance. This creates the server and its
+            Paste or upload a transfer bundle exported from another GridFrames instance. This creates the server and its
             resources under the current team and <strong>claims</strong> the host for this instance
             (control-plane only — host data stays on the machine).
         </div>

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Cloud-Init Scripts | Xlaunch
+        Cloud-Init Scripts | GridFrames
     </x-slot>
 
     <x-security.settings-layout>

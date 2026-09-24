@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Update Settings | Xlaunch
+        Update Settings | GridFrames
     </x-slot>
 
     <x-settings.layout>
@@ -8,8 +8,8 @@
             {{-- Exclude is_auto_update_enabled (instantSave) so the bar does not flash. --}}
             <x-unsaved-bar action="submit" targets="update_check_frequency,auto_update_frequency" />
 
-            <x-application.settings-section title="Update Xlaunch"
-                helper="Install the latest Xlaunch version manually when an update is available.">
+            <x-application.settings-section title="Update GridFrames"
+                helper="Install the latest GridFrames version manually when an update is available.">
                 <livewire:upgrade :full-button="true" key="settings-upgrade" />
             </x-application.settings-section>
 

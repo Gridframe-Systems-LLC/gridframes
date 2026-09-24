@@ -59,7 +59,7 @@
                 @if ($dumpAll)
                             <x-callout type="warning" title="Full restore overwrites administrator passwords">
                                 The backup replaces PostgreSQL administrator role passwords, including the destination administrator password.
-                                <span class="mt-1 block">If the administrator password changes, update it in Xlaunch's database configuration after the restore.</span>
+                                <span class="mt-1 block">If the administrator password changes, update it in GridFrames's database configuration after the restore.</span>
                             </x-callout>
                             <x-forms.textarea rows="6" readonly label="Import command"
                                 wire:model="restoreCommandText" canGate="update"

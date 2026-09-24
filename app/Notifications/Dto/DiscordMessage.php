@@ -46,9 +46,9 @@ class DiscordMessage
 
     public function toPayload(): array
     {
-        $footerText = 'Xlaunch v'.config('constants.xlaunch.version');
+        $footerText = 'GridFrames v'.config('constants.xlaunch.version');
         if (isCloud()) {
-            $footerText = 'Xlaunch Cloud';
+            $footerText = 'GridFrames';
         }
         $payload = [
             'embeds' => [

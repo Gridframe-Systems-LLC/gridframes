@@ -506,7 +506,7 @@ class Index extends Component
     private function createNewPrivateKey()
     {
         $this->privateKeyName = generate_random_name();
-        $this->privateKeyDescription = 'Created by Xlaunch';
+        $this->privateKeyDescription = 'Created by GridFrames';
         ['private' => $this->privateKey, 'public' => $this->publicKey] = generateSSHKey();
     }
 

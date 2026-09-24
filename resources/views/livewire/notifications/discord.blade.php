@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Discord Notifications | Xlaunch
+        Discord Notifications | GridFrames
     </x-slot>
 
     <x-notification.settings-layout>

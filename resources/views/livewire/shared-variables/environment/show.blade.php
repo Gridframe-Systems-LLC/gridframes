@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Environment Variables | Xlaunch
+        Environment Variables | GridFrames
     </x-slot>
 
     <x-shared-variables.editor :resource="$environment"

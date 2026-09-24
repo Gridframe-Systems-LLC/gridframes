@@ -4,7 +4,7 @@
     $charges = $subscription->charges()->latest('period_start')->limit(6)->get();
 @endphp
 <x-application.settings-section title="Plan overview"
-    description="This plan is paid from Xlaunch gateway credits, month by month.">
+    description="This plan is paid from GridFrames gateway credits, month by month.">
     <div class="space-y-2 text-sm">
         <div><span class="text-neutral-500">Plan:</span> <span class="font-medium">{{ data_get($plan, 'name', $subscription->plan_key) }}</span>
             @if (data_get($plan, 'price_cents'))

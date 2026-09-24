@@ -34,7 +34,7 @@ class ValidateAndInstallServerJob implements ShouldBeEncrypted, ShouldQueue
     {
         try {
             if (! $this->server->canBeValidated()) {
-                $message = 'This server was transferred to another Xlaunch instance and cannot be revalidated here.';
+                $message = 'This server was transferred to another GridFrames instance and cannot be revalidated here.';
                 $this->server->update([
                     'validation_logs' => $message,
                     'is_validating' => false,

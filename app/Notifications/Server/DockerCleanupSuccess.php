@@ -24,7 +24,7 @@ class DockerCleanupSuccess extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject("Xlaunch: Docker cleanup job succeeded on {$this->server->name}");
+        $mail->subject("GridFrames: Docker cleanup job succeeded on {$this->server->name}");
         $mail->view('emails.docker-cleanup-success', [
             'name' => $this->server->name,
             'text' => $this->message,
@@ -36,7 +36,7 @@ class DockerCleanupSuccess extends CustomEmailNotification
     public function toDiscord(): DiscordMessage
     {
         return new DiscordMessage(
-            title: ':white_check_mark: Xlaunch: Docker cleanup job succeeded on '.$this->server->name,
+            title: ':white_check_mark: GridFrames: Docker cleanup job succeeded on '.$this->server->name,
             description: $this->message,
             color: DiscordMessage::successColor(),
         );
@@ -45,7 +45,7 @@ class DockerCleanupSuccess extends CustomEmailNotification
     public function toTelegram(): array
     {
         return [
-            'message' => "Xlaunch: Docker cleanup job succeeded on {$this->server->name}!\n\n{$this->message}",
+            'message' => "GridFrames: Docker cleanup job succeeded on {$this->server->name}!\n\n{$this->message}",
         ];
     }
 
@@ -61,7 +61,7 @@ class DockerCleanupSuccess extends CustomEmailNotification
     public function toSlack(): SlackMessage
     {
         return new SlackMessage(
-            title: 'Xlaunch: Docker cleanup job succeeded',
+            title: 'GridFrames: Docker cleanup job succeeded',
             description: "Docker cleanup job succeeded on '{$this->server->name}'!\n\n{$this->message}",
             color: SlackMessage::successColor()
         );

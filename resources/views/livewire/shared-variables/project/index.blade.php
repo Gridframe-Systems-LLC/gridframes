@@ -1,5 +1,5 @@
 <div>
-    <x-slot:title>Project Variables | Xlaunch</x-slot>
+    <x-slot:title>Project Variables | GridFrames</x-slot>
 
     <x-shared-variables.layout>
         <div class="w-full" x-data="{

@@ -46,7 +46,7 @@ class Delete extends Component
         try {
             $this->authorize('delete', $this->server);
             if ($this->server->is_xlaunch_host) {
-                $this->dispatch('error', 'The Xlaunch host server cannot be deleted.');
+                $this->dispatch('error', 'The GridFrames host server cannot be deleted.');
 
                 return;
             }

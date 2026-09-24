@@ -288,7 +288,7 @@ class User extends Authenticatable implements SendsEmail
         $mail->view('emails.email-verification', [
             'url' => $url,
         ]);
-        $mail->subject('Xlaunch: Verify your email.');
+        $mail->subject('GridFrames: Verify your email.');
         send_user_an_email($mail, $this->email);
     }
 

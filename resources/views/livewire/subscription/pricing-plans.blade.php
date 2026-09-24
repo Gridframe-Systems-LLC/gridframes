@@ -48,7 +48,7 @@
                             @if ($plan['by_credits'])
                                 @if ($creditsPlan === $key)
                                     <form wire:submit="subscribeCredits" class="space-y-2">
-                                        <x-forms.input type="password" id="gatewayKey" label="Xlaunch gateway API key"
+                                        <x-forms.input type="password" id="gatewayKey" label="GridFrames gateway API key"
                                             required
                                             helper="Used once to find your gateway account, then discarded. Only the account is kept, and the plan is charged to it each month." />
                                         <x-forms.button type="submit" class="w-full justify-center">
@@ -75,7 +75,7 @@
                 Card payment through Stripe.
             @endif
             @if ($plans->contains(fn ($plan) => $plan['by_credits']))
-                Or pay from Xlaunch gateway credits, which an agent can top up in SUI.
+                Or pay from GridFrames gateway credits, which an agent can top up in SUI.
             @endif
             Prices exclude applicable taxes. Cancel any time from your subscription page.
         </p>

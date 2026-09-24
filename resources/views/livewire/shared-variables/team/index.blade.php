@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Team Variables | Xlaunch
+        Team Variables | GridFrames
     </x-slot>
 
     <x-shared-variables.editor :resource="$team" :variables="$team->environment_variables"

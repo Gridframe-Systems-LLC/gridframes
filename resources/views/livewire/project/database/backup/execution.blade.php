@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($database, 'name')->limit(10) }} > Backup | Xlaunch
+        {{ data_get_str($database, 'name')->limit(10) }} > Backup | GridFrames
     </x-slot>
 
     <livewire:project.database.heading :database="$database" />

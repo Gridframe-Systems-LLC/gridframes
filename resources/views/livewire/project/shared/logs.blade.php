@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($resource, 'name')->limit(10) }} > Logs | Xlaunch
+        {{ data_get_str($resource, 'name')->limit(10) }} > Logs | GridFrames
     </x-slot>
 
     @if ($type === 'application')

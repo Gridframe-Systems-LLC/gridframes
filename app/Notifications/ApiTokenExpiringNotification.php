@@ -32,7 +32,7 @@ class ApiTokenExpiringNotification extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject("Xlaunch: API token '{$this->tokenName}' expires in 24 hours");
+        $mail->subject("GridFrames: API token '{$this->tokenName}' expires in 24 hours");
         $mail->view('emails.api-token-expiring', [
             'tokenName' => $this->tokenName,
             'expiresAt' => $this->expiresAt,
@@ -57,7 +57,7 @@ class ApiTokenExpiringNotification extends CustomEmailNotification
 
     public function toTelegram(): array
     {
-        $message = "Xlaunch: API token '{$this->tokenName}' expires on {$this->expiresAt}.\n\nAction Required: Rotate this token before it expires to avoid API outages.";
+        $message = "GridFrames: API token '{$this->tokenName}' expires on {$this->expiresAt}.\n\nAction Required: Rotate this token before it expires to avoid API outages.";
 
         return [
             'message' => $message,

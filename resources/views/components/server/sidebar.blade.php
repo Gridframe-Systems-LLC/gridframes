@@ -158,7 +158,7 @@
             'active' => $activeMenu === 'danger',
             'icon' => 'shield-alert',
             'group' => 'Danger zone',
-            // Xlaunch host (id 0) cannot be deleted. Other servers may still use
+            // GridFrames host (id 0) cannot be deleted. Other servers may still use
             // host.docker.internal (e.g. Lima VMs) and must keep the Danger menu.
             'visible' => ! $server->is_xlaunch_host,
         ],

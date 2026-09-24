@@ -31,7 +31,7 @@ class EmailChangeVerification extends CustomEmailNotification
         $expiryMinutes = config('constants.email_change.verification_code_expiry_minutes', 10);
 
         $mail = new MailMessage;
-        $mail->subject('Xlaunch: Verify Your New Email Address');
+        $mail->subject('GridFrames: Verify Your New Email Address');
         $mail->view('emails.email-change-verification', [
             'newEmail' => $this->newEmail,
             'verificationCode' => $this->verificationCode,

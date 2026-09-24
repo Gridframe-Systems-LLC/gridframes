@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ data_get_str($server, 'name')->limit(10) }} > Server Resources | Xlaunch
+        {{ data_get_str($server, 'name')->limit(10) }} > Server Resources | GridFrames
     </x-slot>
 
     <livewire:server.navbar :server="$server" />
@@ -9,7 +9,7 @@
         <x-server.sidebar :server="$server" activeMenu="resources" />
         <div class="application-settings-form min-w-0 w-full">
         <x-application.settings-section id="server-resources-section" title="Resources"
-            helper="Review Xlaunch-managed resources and other Docker containers running on this server."
+            helper="Review GridFrames-managed resources and other Docker containers running on this server."
             flush>
             <x-slot:actions>
                 <div class="inline-flex w-fit rounded-[10px] bg-neutral-100 p-1 dark:bg-white/[0.05]">
@@ -155,7 +155,7 @@
                 @else
                     <div class="p-6">
                         <x-empty size="sm" :title="trim($search) !== '' ? 'No matching containers' : 'No unmanaged containers'"
-                            :description="trim($search) !== '' ? 'Try another name or clear the search.' : 'All detected Docker containers are managed by Xlaunch.'"
+                            :description="trim($search) !== '' ? 'Try another name or clear the search.' : 'All detected Docker containers are managed by GridFrames.'"
                             icon-name="servers" />
                     </div>
                 @endif

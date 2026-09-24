@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        {{ $destination->name }} | Destination | Xlaunch
+        {{ $destination->name }} | Destination | GridFrames
     </x-slot>
 
     @php
@@ -31,7 +31,7 @@
                                         </div>
                                         <p class="mt-2 max-w-2xl text-[13px] leading-5 text-neutral-600 dark:text-fg-dim">
                                             Permanently delete <strong class="font-semibold text-black dark:text-fg">{{ $destination->name }}</strong>
-                                            from Xlaunch. The Docker network is also removed from the server.
+                                            from GridFrames. The Docker network is also removed from the server.
                                         </p>
                                         <p class="mt-2 text-xs text-neutral-500 dark:text-fg-dim">
                                             Delete or move every attached resource before deleting this destination.
@@ -47,7 +47,7 @@
                                             step2ButtonText="Permanently Delete" canGate="delete"
                                             :canResource="$destination" />
                                     @else
-                                        <x-forms.button isError disabled tooltip="The default Xlaunch destination cannot be deleted.">
+                                        <x-forms.button isError disabled tooltip="The default GridFrames destination cannot be deleted.">
                                             Delete destination
                                         </x-forms.button>
                                     @endif

@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Pushover Notifications | Xlaunch
+        Pushover Notifications | GridFrames
     </x-slot>
 
     <x-notification.settings-layout>

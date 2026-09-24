@@ -91,7 +91,7 @@ class SettingsBackup extends Component
             $this->database->forceFill([
                 'id' => 0,
                 'name' => 'xlaunch-db',
-                'description' => 'Xlaunch database',
+                'description' => 'GridFrames database',
                 'postgres_user' => $postgres_user,
                 'postgres_password' => $postgres_password,
                 'postgres_db' => $postgres_db,

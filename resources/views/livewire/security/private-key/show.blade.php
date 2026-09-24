@@ -43,7 +43,7 @@
         </div>
     @else
     <x-slot:title>
-        {{ $private_key->name }} | Private Keys | Xlaunch
+        {{ $private_key->name }} | Private Keys | GridFrames
     </x-slot>
 
     <x-security.settings-layout>

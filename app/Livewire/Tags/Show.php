@@ -11,7 +11,7 @@ use Livewire\Attributes\Locked;
 use Livewire\Attributes\Title;
 use Livewire\Component;
 
-#[Title('Tags | Xlaunch')]
+#[Title('Tags | GridFrames')]
 class Show extends Component
 {
     use AuthorizesRequests;

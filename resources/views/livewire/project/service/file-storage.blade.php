@@ -6,7 +6,7 @@
             </x-callout>
         @elseif ($fileStorage->is_host_file)
             <x-callout type="info" title="Host-managed file">
-                This host file mount is bind-only. Xlaunch will not create, edit, load, chmod, or delete the source file.
+                This host file mount is bind-only. GridFrames will not create, edit, load, chmod, or delete the source file.
             </x-callout>
         @elseif ($isReadOnly)
             <x-callout type="info" title="Read-only mount">

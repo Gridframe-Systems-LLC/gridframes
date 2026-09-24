@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Sentinel Logs | Xlaunch
+        Sentinel Logs | GridFrames
     </x-slot>
     <livewire:server.navbar :server="$server" />
     <div

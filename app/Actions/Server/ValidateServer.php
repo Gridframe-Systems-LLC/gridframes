@@ -26,7 +26,7 @@ class ValidateServer
     public function handle(Server $server)
     {
         if (! $server->canBeValidated()) {
-            $this->error = 'This server was transferred to another Xlaunch instance and cannot be revalidated here.';
+            $this->error = 'This server was transferred to another GridFrames instance and cannot be revalidated here.';
             $server->update([
                 'validation_logs' => $this->error,
                 'is_validating' => false,

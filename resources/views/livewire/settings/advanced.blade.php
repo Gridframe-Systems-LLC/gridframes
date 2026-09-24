@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Advanced Settings | Xlaunch
+        Advanced Settings | GridFrames
     </x-slot>
 
     <x-settings.layout>
@@ -43,7 +43,7 @@
 
             @if (isCloud())
                 <x-application.settings-section id="domain-connect-section" title="Domain Connect"
-                    helper="Optional RSA private key used to sign Cloudflare Domain Connect apply URLs on Xlaunch Cloud. Leave blank to keep the existing key.">
+                    helper="Optional RSA private key used to sign Cloudflare Domain Connect apply URLs on GridFrames. Leave blank to keep the existing key.">
                     <div class="grid gap-4">
                         <x-forms.input id="domain_connect_private_key" type="password" allowToPeak
                             label="Domain Connect private key (PEM)"
@@ -70,7 +70,7 @@
             <x-application.settings-section id="api-section" title="API and MCP">
                 <div class="grid gap-4 lg:grid-cols-2">
                     <x-forms.listbox id="is_api_enabled" label="API access"
-                        helper="Allow authenticated requests to the Xlaunch REST API." onChange="instantSave"
+                        helper="Allow authenticated requests to the GridFrames REST API." onChange="instantSave"
                         :options="[
                             ['value' => true, 'label' => 'Enabled'],
                             ['value' => false, 'label' => 'Disabled'],

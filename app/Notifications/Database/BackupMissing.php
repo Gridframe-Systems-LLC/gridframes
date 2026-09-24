@@ -28,7 +28,7 @@ class BackupMissing extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         return (new MailMessage)
-            ->subject("Xlaunch: [ACTION REQUIRED] No recent backup for {$this->databaseName}")
+            ->subject("GridFrames: [ACTION REQUIRED] No recent backup for {$this->databaseName}")
             ->view('emails.backup-missing', $this->messageData());
     }
 
@@ -44,7 +44,7 @@ class BackupMissing extends CustomEmailNotification
 
     public function toTelegram(): array
     {
-        return ['message' => 'Xlaunch: '.$this->description()];
+        return ['message' => 'GridFrames: '.$this->description()];
     }
 
     public function toPushover(): PushoverMessage

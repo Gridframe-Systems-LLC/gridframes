@@ -28,7 +28,7 @@ class ServerTransferClaimer
     public function claim(Server $server, bool $writeRemote = true, bool $rebindSentinel = true): array
     {
         if ($server->id === 0) {
-            throw new RuntimeException('Cannot claim the Xlaunch host itself.');
+            throw new RuntimeException('Cannot claim the GridFrames host itself.');
         }
 
         $instanceUrl = rtrim((string) (instanceSettings()->fqdn ?: config('app.url')), '/');
@@ -90,7 +90,7 @@ class ServerTransferClaimer
         $result['claim_written'] = $claimWritten;
         $result['message'] = $claimWritten
             ? 'Server claimed. Ownership file written and Sentinel rebound to this instance.'
-            : 'Server claimed in Xlaunch. Remote ownership file was not written (SSH unavailable or skipped).';
+            : 'Server claimed in GridFrames. Remote ownership file was not written (SSH unavailable or skipped).';
 
         return $result;
     }
@@ -107,7 +107,7 @@ class ServerTransferClaimer
     public function markTransferred(Server $server, ?string $exportId = null, ?string $targetInstanceUrl = null): array
     {
         if ($server->id === 0) {
-            throw new RuntimeException('Cannot transfer the Xlaunch host itself.');
+            throw new RuntimeException('Cannot transfer the GridFrames host itself.');
         }
 
         $result = DB::transaction(function () use ($server, $exportId, $targetInstanceUrl) {

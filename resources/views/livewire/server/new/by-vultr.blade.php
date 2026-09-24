@@ -9,7 +9,7 @@
                 New to Vultr?
                 <a href="https://projectxprotocol.dev/vultr" target="_blank"
                     class="font-medium text-northlatch hover:underline dark:text-warning">Create an account</a>
-                through Xlaunch's affiliate link.
+                through GridFrames's affiliate link.
             </p>
         </div>
     @elseif ($current_step === 2)
@@ -69,7 +69,7 @@
 
                 <form wire:submit="submit" class="flex flex-col gap-6">
                     <x-application.settings-section title="Vultr server"
-                        description="Choose the region, plan, operating system, and Xlaunch SSH key.">
+                        description="Choose the region, plan, operating system, and GridFrames SSH key.">
                         <x-slot:actions>
                             <button type="submit"
                                 class="button button-highlighted"
@@ -84,7 +84,7 @@
                         <div class="grid gap-4 lg:grid-cols-2">
                             <div class="lg:col-span-2">
                                 <x-forms.input id="server_name" label="Server name"
-                                    helper="A friendly name shown in Xlaunch." />
+                                    helper="A friendly name shown in GridFrames." />
                             </div>
                             <x-forms.listbox id="selected_region" label="Region" required live
                                 placeholder="Select a region" :options="$regionOptions" />

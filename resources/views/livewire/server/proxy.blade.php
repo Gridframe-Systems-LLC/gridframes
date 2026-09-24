@@ -97,7 +97,7 @@
                                     <x-modal-confirmation title="Reset Proxy Configuration?"
                                         buttonTitle="Reset configuration"
                                         submitAction="resetProxyConfiguration" :actions="[
-                                            'Reset the proxy configuration to Xlaunch defaults.',
+                                            'Reset the proxy configuration to GridFrames defaults.',
                                             'Remove custom ports, entrypoints, and other manual changes.',
                                         ]" confirmationText="{{ $server->name }}"
                                         confirmationLabel="Confirm by entering the server name"
@@ -151,14 +151,14 @@
             </form>
         @elseif($selectedProxy === 'NONE')
             <x-application.settings-section title="Custom proxy"
-                helper="Xlaunch will not manage a reverse proxy for this server.">
+                helper="GridFrames will not manage a reverse proxy for this server.">
                 <x-slot:actions>
                     @can('update', $server)
                         <x-forms.button wire:click.prevent="changeProxy">Switch proxy</x-forms.button>
                     @endcan
                 </x-slot:actions>
                 <x-callout type="info" title="Custom proxy selected">
-                    Configure and operate the proxy outside Xlaunch.
+                    Configure and operate the proxy outside GridFrames.
                 </x-callout>
             </x-application.settings-section>
         @else
@@ -167,9 +167,9 @@
                 @can('update', $server)
                     <div class="grid gap-3 lg:grid-cols-3">
                         @foreach ([
-                            ['value' => 'NONE', 'title' => 'Custom', 'description' => 'Manage the proxy outside Xlaunch.'],
-                            ['value' => 'TRAEFIK', 'title' => 'Traefik', 'description' => 'Use the default Xlaunch proxy.'],
-                            ['value' => 'CADDY', 'title' => 'Caddy', 'description' => 'Use the Xlaunch Caddy integration.'],
+                            ['value' => 'NONE', 'title' => 'Custom', 'description' => 'Manage the proxy outside GridFrames.'],
+                            ['value' => 'TRAEFIK', 'title' => 'Traefik', 'description' => 'Use the default GridFrames proxy.'],
+                            ['value' => 'CADDY', 'title' => 'Caddy', 'description' => 'Use the GridFrames Caddy integration.'],
                         ] as $proxyOption)
                             <button type="button" wire:click="selectProxy('{{ $proxyOption['value'] }}')"
                                 class="rounded-lg p-4 text-left ring-1 ring-neutral-200 transition-colors hover:bg-neutral-50 dark:ring-white/[0.08] dark:hover:bg-white/[0.04]">
@@ -195,9 +195,9 @@
             @can('update', $server)
                 <div class="grid gap-3 lg:grid-cols-3">
                     @foreach ([
-                        ['value' => 'NONE', 'title' => 'Custom', 'description' => 'Manage the proxy outside Xlaunch.'],
-                        ['value' => 'TRAEFIK', 'title' => 'Traefik', 'description' => 'Use the default Xlaunch proxy.'],
-                        ['value' => 'CADDY', 'title' => 'Caddy', 'description' => 'Use the Xlaunch Caddy integration.'],
+                        ['value' => 'NONE', 'title' => 'Custom', 'description' => 'Manage the proxy outside GridFrames.'],
+                        ['value' => 'TRAEFIK', 'title' => 'Traefik', 'description' => 'Use the default GridFrames proxy.'],
+                        ['value' => 'CADDY', 'title' => 'Caddy', 'description' => 'Use the GridFrames Caddy integration.'],
                     ] as $proxyOption)
                         <button type="button" wire:click="selectProxy('{{ $proxyOption['value'] }}')"
                             class="rounded-lg p-4 text-left ring-1 ring-neutral-200 transition-colors hover:bg-neutral-50 dark:ring-white/[0.08] dark:hover:bg-white/[0.04]">

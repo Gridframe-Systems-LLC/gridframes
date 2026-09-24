@@ -1,7 +1,7 @@
 <x-emails.layout>
 We would like to inform you that a {{ config('constants.limits.trial_period') }} days of trial has been added to all subscription plans.
 
-You can try out Xlaunch, without payment information for free. If you like it, you can upgrade to a paid plan at any time.
+You can try out GridFrames, without payment information for free. If you like it, you can upgrade to a paid plan at any time.
 
-[Click here](https://app.projectxprotocol.dev/subscription/new) to start your trial.
+[Click here]({{ config('app.url') }}/subscription/new) to start your trial.
 </x-emails.layout>

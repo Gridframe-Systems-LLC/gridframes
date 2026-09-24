@@ -22,7 +22,7 @@
         </form>
     @else
     <x-slot:title>
-        {{ $cloudProviderToken->name }} | Cloud Tokens | Xlaunch
+        {{ $cloudProviderToken->name }} | Cloud Tokens | GridFrames
     </x-slot>
 
     <x-security.settings-layout>

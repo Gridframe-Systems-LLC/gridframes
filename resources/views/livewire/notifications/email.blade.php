@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Notifications | Xlaunch
+        Notifications | GridFrames
     </x-slot>
 
     <x-notification.settings-layout>

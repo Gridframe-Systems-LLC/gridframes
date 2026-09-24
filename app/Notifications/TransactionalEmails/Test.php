@@ -23,7 +23,7 @@ class Test extends CustomEmailNotification
     public function toMail(): MailMessage
     {
         $mail = new MailMessage;
-        $mail->subject('Xlaunch: Test Email');
+        $mail->subject('GridFrames: Test Email');
         $mail->view('emails.test');
 
         return $mail;

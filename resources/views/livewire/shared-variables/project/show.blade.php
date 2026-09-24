@@ -1,6 +1,6 @@
 <div>
     <x-slot:title>
-        Project Variables | Xlaunch
+        Project Variables | GridFrames
     </x-slot>
 
     <x-shared-variables.editor :resource="$project" :variables="$project->environment_variables"
