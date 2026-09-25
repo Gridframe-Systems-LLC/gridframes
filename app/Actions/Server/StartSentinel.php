@@ -26,7 +26,9 @@ class StartSentinel
         $endpoint = $server->settings->ensureSentinelUrl();
         $debug = data_get($server, 'settings.is_sentinel_debug_enabled');
         $mountDir = '/data/xlaunch/sentinel';
-        $image = xlaunchRegistryUrl().'/northlatch/sentinel:'.$version;
+        // The sentinel agent pulls from its pinned public image: managed servers pull it with their
+        // own docker daemon, and the instance's local registry is not reachable from them.
+        $image = config('constants.xlaunch.sentinel_image').':'.$version;
         $environments = [
             'TOKEN' => $token,
             'DEBUG' => $debug ? 'true' : 'false',

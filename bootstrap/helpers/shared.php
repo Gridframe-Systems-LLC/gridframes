@@ -653,13 +653,14 @@ function get_route_parameters(): array
 
 function get_latest_sentinel_version(): string
 {
+    $fallback = config('constants.xlaunch.sentinel_version', '1.0.1');
     try {
         $response = Http::get(config('constants.xlaunch.versions_url'));
         $versions = $response->json();
 
-        return data_get($versions, 'xlaunch.sentinel.version');
+        return data_get($versions, 'xlaunch.sentinel.version', $fallback);
     } catch (Throwable) {
-        return '0.0.0';
+        return $fallback;
     }
 }
 function get_latest_version_of_xlaunch(): string

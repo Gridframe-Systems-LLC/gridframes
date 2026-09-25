@@ -5,6 +5,8 @@ return [
         'version' => env('XLAUNCH_VERSION') ?: '4.4.2',
         'helper_version' => '1.0.16',
         'realtime_version' => '1.0.19',
+        'sentinel_version' => env('SENTINEL_VERSION', '1.0.1'),
+        'sentinel_image' => env('SENTINEL_IMAGE', 'docker.io/coollabsio/sentinel'),
         'railpack_version' => '0.23.0',
         'self_hosted' => env('SELF_HOSTED', true),
         'autoupdate' => env('AUTOUPDATE'),
