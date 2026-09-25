@@ -4,8 +4,13 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 💼 Other
+
+- The data model and the Incus client, off by default
+
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 
 ## [4.4.0] - 2026-09-24
