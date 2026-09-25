@@ -13,6 +13,18 @@ $tier = fn (string $prefix, string $name, string $tagline, string $lookupKey): a
     'price_label' => env("PLAN_{$prefix}_PRICE", ''),
     'price_cents' => max(0, (int) env("PLAN_{$prefix}_CENTS", 0)),
     'servers' => (int) env("PLAN_{$prefix}_SERVERS", 0),
+    // The machine pool a plan grants and what using more costs, all in integers, zero meaning none
+    // and zero overage meaning overage is off for the plan. A pool marked per member multiplies by
+    // the team's member count.
+    'pool_vcpu' => (int) env("PLAN_{$prefix}_POOL_VCPU", 0),
+    'pool_memory_mb' => (int) env("PLAN_{$prefix}_POOL_MEMORY_MB", 0),
+    'pool_disk_gb' => (int) env("PLAN_{$prefix}_POOL_DISK_GB", 0),
+    'pool_transfer_gb' => (int) env("PLAN_{$prefix}_POOL_TRANSFER_GB", 0),
+    'max_machines' => (int) env("PLAN_{$prefix}_MAX_MACHINES", 0),
+    'overage_memory_cents_per_gb_month' => (int) env("PLAN_{$prefix}_OVERAGE_MEMORY_CENTS_PER_GB_MONTH", 0),
+    'overage_disk_cents_per_gb_month' => (int) env("PLAN_{$prefix}_OVERAGE_DISK_CENTS_PER_GB_MONTH", 0),
+    'overage_transfer_cents_per_gb' => (int) env("PLAN_{$prefix}_OVERAGE_TRANSFER_CENTS_PER_GB", 0),
+    'per_member' => filter_var(env("PLAN_{$prefix}_PER_MEMBER", false), FILTER_VALIDATE_BOOL),
     'tagline' => $tagline,
     'machine' => env("PLAN_{$prefix}_MACHINE", ''),
     'lookup_key' => $lookupKey,

@@ -318,6 +318,11 @@ class Team extends Model implements SendsDiscord, SendsEmail, SendsPushover, Sen
         return $this->hasMany(SuiIdentity::class);
     }
 
+    public function machines()
+    {
+        return $this->hasMany(Machine::class);
+    }
+
     public function sources()
     {
         $sources = collect([]);
