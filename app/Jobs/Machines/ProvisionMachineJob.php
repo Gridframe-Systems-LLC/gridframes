@@ -145,7 +145,14 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
      */
     private function pickAddress(array $addresses, string $family): ?string
     {
+        // The machine's own NIC carries the address the platform can reach; the golden image also
+        // runs Docker, whose internal bridges would otherwise masquerade as the machine's address.
+        $nic = collect($addresses)->first(fn (array $address) => $address['interface'] === 'enp5s0');
+
         foreach ($addresses as $address) {
+            if ($nic !== null && $address['interface'] !== $nic['interface']) {
+                continue;
+            }
             if ($address['family'] !== $family || $address['scope'] !== 'global') {
                 continue;
             }

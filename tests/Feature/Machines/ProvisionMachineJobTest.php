@@ -135,7 +135,11 @@ function incusStateAnswer(): object
                     'addresses' => [['family' => 'inet', 'address' => '127.0.0.1', 'scope' => 'local']],
                     'counters' => ['bytes_received' => 0, 'bytes_sent' => 0, 'packets_received' => 0, 'packets_sent' => 0],
                 ],
-                'eth0' => [
+                'docker0' => [
+                    'addresses' => [['family' => 'inet', 'address' => '172.17.0.1', 'scope' => 'global']],
+                    'counters' => ['bytes_received' => 0, 'bytes_sent' => 0, 'packets_received' => 0, 'packets_sent' => 0],
+                ],
+                'enp5s0' => [
                     'addresses' => [
                         ['family' => 'inet', 'address' => '10.150.0.12', 'scope' => 'global'],
                         ['family' => 'inet6', 'address' => 'fe80::1111', 'scope' => 'link'],
