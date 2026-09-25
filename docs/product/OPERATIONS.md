@@ -3,6 +3,30 @@
 What running a selling-mode instance involves, and the things to know before real customers
 arrive. Everything here was learned on the reference instance, not assumed.
 
+## Machines host: the storage decision, recorded
+
+The host's two NVMe disks are a RAID1 pair that carries the OS, the platform and the ZFS pool;
+there is no spare partition. The plan's preference — a dedicated partition — needs an OVH
+reinstall or a second disk. The decision taken on 25 September 2026: **run the pool as a bounded
+loop-backed ZFS volume (400 GB) inside the RAID1**, sellable disk capped at 330 GB, and treat a
+real partition as scheduled work, not an emergency:
+
+- Migrate when allocated disk passes **60% of the pool** (the finance page's capacity gauge shows
+  it), or when the second host arrives — whichever first. The second host installs to a real
+  partition from the start, and machines move with `incus move`.
+- Off-host backups (Phase 9) are what make this safe: a pool that lives in a file is recoverable
+  from its backups. Until OVH Object Storage credentials exist, keep the nightly local dumps and
+  treat the machines as single-host.
+
+Everything else about the machines host is live as of the same date: Incus 7.4 (Zabbly stable —
+the Ubuntu 6.0 package cannot create per-project networks), one ZFS pool, a platform client
+certificate trusted by the host, `core.https_address` on the Docker bridge gateway only, and
+`/usr/local/sbin/gf-tenant-firewall.sh` on cron fencing every `gf-team-*` bridge (DHCP and DNS in,
+egress out through NAT, no tenant-to-tenant, no platform ports, no outbound mail, SSH from the
+platform only). The golden image `gf-ubuntu-24.04` carries Docker and sshd and is rebuilt monthly
+by `scripts/machines/build-golden-image.sh`; `scripts/machines/host-check.sh` proves a machine end
+to end in a throwaway project.
+
 ## Backups
 
 The platform can back up its own database nightly (Settings → Backups, "add the platform database").
