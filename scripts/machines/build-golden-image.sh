@@ -22,6 +22,8 @@ echo
 incus exec "$TMP" -- bash -s <<'INSIDE'
 set -euo pipefail
 export DEBIAN_FRONTEND=noninteractive
+rm -f /etc/resolv.conf
+printf 'nameserver 1.1.1.1\nnameserver 8.8.8.8\n' > /etc/resolv.conf
 apt_ready=false
 for attempt in 1 2 3 4 5 6; do
   if apt-get update -qq; then apt_ready=true; break; fi
