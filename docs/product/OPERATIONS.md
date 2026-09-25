@@ -15,8 +15,23 @@ real partition as scheduled work, not an emergency:
   it), or when the second host arrives — whichever first. The second host installs to a real
   partition from the start, and machines move with `incus move`.
 - Off-host backups (Phase 9) are what make this safe: a pool that lives in a file is recoverable
-  from its backups. Until OVH Object Storage credentials exist, keep the nightly local dumps and
-  treat the machines as single-host.
+  from its backups. Keep the nightly local dumps running until then.
+
+## Off-host backups: the exact paste steps
+
+The platform speaks plain S3. The operator creates a bucket and S3 keys at their provider, then:
+
+1. **Settings → S3 Storages → +**: paste the endpoint, region, bucket, access key and secret.
+   Test the connection. For OVH: Public Cloud → Object Storage → create a bucket (any region near
+   the host), then Project → Users → + user, and from the user's "..." menu create **S3
+   credentials** — that yields the access and secret keys. (The OVH API key in the local vault is
+   stale: it signs as invalid on every endpoint, so this is a panel task.)
+2. **Databases → the platform's Postgres → Scheduled backups → +**: store it on that S3 storage,
+   daily, keep 14.
+3. **Machine backups (Phase 9)** export every VM through the same storage; the artisan command
+   reads the first S3 storage on the instance.
+4. Restore one dump into a scratch database and confirm row counts. A backup that has never been
+   restored is a hope, not a backup.
 
 Everything else about the machines host is live as of the same date: Incus 7.4 (Zabbly stable —
 the Ubuntu 6.0 package cannot create per-project networks), one ZFS pool, a platform client
