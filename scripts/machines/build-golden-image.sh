@@ -30,13 +30,13 @@ for attempt in 1 2 3 4 5 6; do
   echo "apt not ready (attempt $attempt); waiting"; sleep 10
 done
 $apt_ready || { echo "apt never became ready"; exit 1; }
-apt-get install -y -qq ca-certificates curl qemu-guest-agent
+apt-get install -y -qq ca-certificates curl openssh-server qemu-guest-agent
 install -m 0755 -d /etc/apt/keyrings
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
 echo "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu noble stable" > /etc/apt/sources.list.d/docker.list
 apt-get update -qq
 apt-get install -y -qq docker-ce docker-ce-cli containerd.io
-systemctl enable --now docker qemu-guest-agent
+systemctl enable --now docker ssh qemu-guest-agent
 echo "docker server: $(docker version --format '{{.Server.Version}}')"
 INSIDE
 

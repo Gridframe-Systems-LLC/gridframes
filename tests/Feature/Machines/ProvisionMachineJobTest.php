@@ -81,6 +81,10 @@ function fakeIncus(array $answers = []): void
             $step = 'network-create';
         } elseif ($method === 'POST' && $url === INCUS_PROVISION.'/1.0/instances') {
             $step = 'instance-create';
+        } elseif ($method === 'POST' && str_contains($url, '/files')) {
+            $step = 'file-write';
+        } elseif ($method === 'POST' && str_contains($url, '/exec')) {
+            $step = 'exec-run';
         } elseif ($method === 'PUT' && str_contains($url, '/instances/') && str_contains($url, '/state')) {
             $step = 'instance-start';
         } elseif ($method === 'GET' && str_contains($url, '/instances/') && str_contains($url, '/state')) {
@@ -98,7 +102,7 @@ function fakeIncus(array $answers = []): void
 
         return match ($step) {
             'network-lookup' => Http::response(['error' => 'not found'], 404),
-            'network-create', 'instance-create', 'instance-start', 'instance-delete' => Http::response([
+            'network-create', 'instance-create', 'instance-start', 'instance-delete', 'file-write', 'exec-run' => Http::response([
                 'type' => 'async',
                 'status' => 'Operation created',
                 'status_code' => 100,
@@ -179,11 +183,20 @@ it('creates the server exactly like ByHetzner does and sets the machine running'
     Queue::assertPushed(ValidateAndInstallServerJob::class, fn (ValidateAndInstallServerJob $job) => $job->server->is($server));
 
     Http::assertSent(function (Request $request) use ($machine) {
+        $config = data_get($request->data(), 'config');
+
         return $request->method() === 'POST'
             && $request->url() === INCUS_PROVISION.'/1.0/instances'
             && $request['name'] === $machine->incus_name
-            && str_contains($request['config']['cloud-init.user-data'], 'hostname: web-1')
-            && str_contains($request['config']['cloud-init.user-data'], $this->privateKey->getPublicKey());
+            && is_array($config)
+            && str_contains((string) ($config['cloud-init.user-data'] ?? ''), 'hostname: web-1')
+            && str_contains((string) ($config['cloud-init.user-data'] ?? ''), $this->privateKey->getPublicKey());
+    });
+
+    Http::assertSent(function (Request $request) use ($machine) {
+        return $request->method() === 'POST'
+            && str_contains($request->url(), '/1.0/instances/'.$machine->incus_name.'/files')
+            && str_contains((string) $request->body(), $this->privateKey->getPublicKey());
     });
 });
 
@@ -196,8 +209,9 @@ it('puts the customer key on the machine when one was given', function () {
 
     Http::assertSent(function (Request $request) {
         return $request->method() === 'POST'
-            && str_contains($request->url(), '/1.0/instances')
-            && str_contains($request['config']['cloud-init.user-data'], 'ssh-ed25519 AAAAC3Nza customer@example');
+            && $request->url() === INCUS_PROVISION.'/1.0/instances'
+            && is_array($config = data_get($request->data(), 'config'))
+            && str_contains((string) ($config['cloud-init.user-data'] ?? ''), 'ssh-ed25519 AAAAC3Nza customer@example');
     });
 });
 

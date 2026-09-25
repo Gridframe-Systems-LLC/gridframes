@@ -216,6 +216,49 @@ class IncusClient
     }
 
     /**
+     * Place a file inside the instance: POST /1.0/instances/{name}/files?path=<path> with the raw
+     * bytes in the body and the type and mode in headers. Used for the SSH keys, because the golden
+     * image carries no cloud-init to process user-data.
+     *
+     * @return array{operation:string}
+     */
+    public function writeFile(string $name, string $path, string $contents, int $mode = 0o600): array
+    {
+        $response = $this->send(fn (PendingRequest $http) => $http->withHeaders([
+            'X-Incus-type' => 'file',
+            'X-Incus-mode' => str_pad(decoct($mode), 4, '0', STR_PAD_LEFT),
+            'Content-Type' => 'application/octet-stream',
+        ])->send('POST', '/1.0/instances/'.rawurlencode($name).'/files?path='.rawurlencode($path), [
+            'body' => $contents,
+        ]));
+        $this->refuseUnlessOk($response, "File '{$path}' on machine '{$name}'");
+
+        return ['operation' => $this->operation($response)];
+    }
+
+    /**
+     * Run a command inside the instance as root: POST /1.0/instances/{name}/exec with
+     * wait-for-websocket off and record-output on, so the call needs no interactive session.
+     *
+     * @param  list<string>  $command
+     * @return array{operation:string}
+     */
+    public function exec(string $name, array $command): array
+    {
+        // POST /1.0/instances/{name}/exec — the operation finishes when the command does; its
+        // metadata carries the exit code under `return`.
+        $response = $this->send(fn (PendingRequest $http) => $http->post($this->instanceUrl($name, 'exec'), [
+            'command' => $command,
+            'wait-for-websocket' => false,
+            'record-output' => true,
+            'interactive' => false,
+        ]));
+        $this->refuseUnlessOk($response, "Command on machine '{$name}'");
+
+        return ['operation' => $this->operation($response)];
+    }
+
+    /**
      * Wait for an Incus operation to reach a final state. The host holds each call up to the timeout
      * it is given; this loops until the overall budget runs out.
      *

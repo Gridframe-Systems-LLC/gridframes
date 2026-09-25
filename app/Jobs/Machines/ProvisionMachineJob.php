@@ -67,6 +67,10 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
                 'ipv6_public' => $ipv6,
             ]);
 
+            // The golden image carries no cloud-init, so the keys go in through the host's file and
+            // exec APIs now that the agent is answering.
+            $this->installSshKeys($incus, $machine->incus_name);
+
             $privateKey = PrivateKey::findOrFail($this->privateKeyId);
 
             // The same shape ByHetzner's Server::create makes: the platform reaches the machine over
@@ -93,6 +97,29 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
         } catch (\Throwable $e) {
             $this->fail($e, $server, $instanceCreated, $incus);
         }
+    }
+
+    /**
+     * The machine's SSH keys, written through the host's file and exec APIs: the platform's key for
+     * root plus the customer's key when they brought one. The private key never leaves the platform.
+     */
+    private function installSshKeys(IncusClient $incus, string $name): void
+    {
+        $publicKey = PrivateKey::findOrFail($this->privateKeyId)->getPublicKey();
+        $keys = collect([$publicKey]);
+        if (filled($this->customerPublicKey)) {
+            $keys->push(trim((string) $this->customerPublicKey));
+        }
+        $authorised = $keys->implode("\n")."\n";
+
+        $incus->waitForOperation(
+            $incus->writeFile($name, '/tmp/gf-authorized-keys', $authorised)['operation'],
+            60,
+        );
+        $incus->waitForOperation(
+            $incus->exec($name, ['/bin/sh', '-c', 'mkdir -p /root/.ssh && cat /tmp/gf-authorized-keys >> /root/.ssh/authorized_keys && rm /tmp/gf-authorized-keys && chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys'])['operation'],
+            60,
+        );
     }
 
     /**

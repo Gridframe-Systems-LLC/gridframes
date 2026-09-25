@@ -179,6 +179,42 @@ it('deletes an instance as an operation the caller can wait for', function () {
     expect($result['operation'])->toBe('/1.0/operations/delete-1');
 });
 
+it('writes a file into an instance through the files endpoint', function () {
+    Http::fake([
+        INCUS_SHAPE.'/1.0/instances/web-1/files*' => anOperationAnswer('/1.0/operations/file-1'),
+    ]);
+
+    $result = (new IncusClient)->writeFile('web-1', '/tmp/gf-authorized-keys', 'ssh-ed25519 key\n');
+
+    Http::assertSent(function (Request $request) {
+        return $request->method() === 'POST'
+            && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/files?path=%2Ftmp%2Fgf-authorized-keys'
+            && $request->header('X-Incus-type') === ['file']
+            && $request->header('X-Incus-mode') === ['0600']
+            && $request->body() === 'ssh-ed25519 key\n';
+    });
+
+    expect($result['operation'])->toBe('/1.0/operations/file-1');
+});
+
+it('runs a command inside an instance over exec', function () {
+    Http::fake([
+        INCUS_SHAPE.'/1.0/instances/web-1/exec' => anOperationAnswer('/1.0/operations/exec-1'),
+    ]);
+
+    $result = (new IncusClient)->exec('web-1', ['/bin/sh', '-c', 'echo hi']);
+
+    Http::assertSent(function (Request $request) {
+        return $request->method() === 'POST'
+            && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/exec'
+            && $request['command'] === ['/bin/sh', '-c', 'echo hi']
+            && $request['wait-for-websocket'] === false
+            && $request['interactive'] === false;
+    });
+
+    expect($result['operation'])->toBe('/1.0/operations/exec-1');
+});
+
 it('creates the team bridge when the host does not have it', function () {
     Http::fake([
         INCUS_SHAPE.'/1.0/networks/gf-team-7' => Http::response(['type' => 'error', 'error' => 'Network not found', 'error_code' => 404], 404),
