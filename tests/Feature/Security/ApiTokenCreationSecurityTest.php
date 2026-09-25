@@ -5,12 +5,16 @@ use App\Models\InstanceSettings;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Features\SupportLockedProperties\CannotUpdateLockedPropertyException;
 use Livewire\Livewire;
 
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0], ['is_api_enabled' => true]);
+    // The api middleware group and the ApiTokens component read the instance settings
+    // row; id 0 is not fillable, so updateOrCreate silently inserts id 1 and
+    // instanceSettings() then fails to find row 0. Force-create it like the installer.
+    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
 
@@ -78,13 +82,20 @@ describe('Livewire ApiTokens — member cannot create elevated tokens', function
         $this->actingAs($this->member);
         session(['currentTeam' => $this->team]);
 
-        // Simulate snapshot replay: force the boolean to true
-        Livewire::test(ApiTokens::class)
-            ->set('canUseRootPermissions', true)
-            ->set('description', 'sneaky-root-token')
-            ->set('permissions', ['root'])
-            ->call('addNewToken')
-            ->assertDispatched('error');
+        // The property is #[Locked]: the wire protocol refuses to update it at all.
+        expect(fn () => Livewire::test(ApiTokens::class)
+            ->set('canUseRootPermissions', true))
+            ->toThrow(CannotUpdateLockedPropertyException::class);
+
+        // Simulate snapshot replay: hydrate the forged boolean (and the forged
+        // permissions) straight onto the component and invoke the action directly —
+        // exactly what a tampered snapshot would deliver. addNewToken re-evaluates
+        // the policy server-side and never trusts the snapshot booleans.
+        $component = Livewire::test(ApiTokens::class)->instance();
+        $component->canUseRootPermissions = true;
+        $component->permissions = ['root'];
+        $component->description = 'sneaky-root-token';
+        $component->addNewToken();
 
         expect($this->member->tokens()->count())->toBe(0);
     });

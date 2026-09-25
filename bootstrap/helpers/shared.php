@@ -657,8 +657,11 @@ function get_latest_sentinel_version(): string
     try {
         $response = Http::get(config('constants.xlaunch.versions_url'));
         $versions = $response->json();
+        $version = data_get($versions, 'xlaunch.sentinel.version', $fallback);
 
-        return data_get($versions, 'xlaunch.sentinel.version', $fallback);
+        // The answer is interpolated into a root docker command on every managed server, so anything
+        // that is not a plain semver tag is the CDN's problem, not ours: fall back to the pinned one.
+        return preg_match('/^\d+\.\d+\.\d+(-[0-9A-Za-z.-]+)?$/', (string) $version) ? $version : $fallback;
     } catch (Throwable) {
         return $fallback;
     }

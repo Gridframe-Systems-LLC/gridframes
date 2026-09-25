@@ -12,6 +12,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -28,6 +29,9 @@ class RenewCreditSubscriptionsJob implements ShouldBeEncrypted, ShouldQueue
     /** Most plans renewed in one run. More waiting is logged and picked up by the next run. */
     public const BATCH = 500;
 
+    /** How long a refused renewal waits before the hourly run asks the balance again. */
+    public const FAILED_RETRY_HOURS = 6;
+
     public function __construct()
     {
         $this->onQueue('high');
@@ -41,12 +45,23 @@ class RenewCreditSubscriptionsJob implements ShouldBeEncrypted, ShouldQueue
             ->whereNotNull('paid_until')
             ->whereNotNull('gateway_customer_id')
             ->where('paid_until', '<=', now()->addHours(12))
+            // Rows that cannot progress never reach the head of the batch: a plan with no chargeable
+            // price on this instance, and a renewal refused within the retry window, are skipped so
+            // the plans behind them are still charged this run.
+            ->whereIn('plan_key', static::chargeablePlanKeys())
+            ->whereNotExists(function ($query) {
+                $query->select(DB::raw(1))
+                    ->from('subscription_charges')
+                    ->whereColumn('subscription_charges.team_id', 'subscriptions.team_id')
+                    ->where('subscription_charges.status', 'failed')
+                    ->where('subscription_charges.updated_at', '>', now()->subHours(self::FAILED_RETRY_HOURS));
+            })
             ->orderBy('paid_until')
             ->limit(self::BATCH + 1)
             ->get();
 
         if ($due->count() > self::BATCH) {
-            Log::warning('Credit renewals: more plans due than one run takes; the rest wait for the next run.', ['batch' => self::BATCH]);
+            send_internal_notification('Credit renewals: more plans due than one run takes; the rest wait for the next run.');
             $due = $due->take(self::BATCH);
         }
 
@@ -63,8 +78,23 @@ class RenewCreditSubscriptionsJob implements ShouldBeEncrypted, ShouldQueue
                 $this->syncMachines($subscription);
             } catch (CreditsPaymentException $e) {
                 Log::info('Credit renewal not taken.', ['team_id' => $subscription->team_id, 'kind' => $e->kind]);
+            } catch (\Throwable $e) {
+                // One bad row — anything from a duplicate charge reference to a broken model — never
+                // aborts the renewals behind it.
+                Log::warning('Credit renewal failed.', ['team_id' => $subscription->team_id, 'error' => $e->getMessage()]);
             }
         }
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    private static function chargeablePlanKeys(): array
+    {
+        return collect(config('subscription.plans', []))
+            ->filter(fn ($plan) => (int) data_get($plan, 'price_cents', 0) > 0)
+            ->keys()
+            ->all();
     }
 
     /**

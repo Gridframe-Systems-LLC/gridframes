@@ -2,7 +2,6 @@
 
 use App\Livewire\Dashboard;
 use App\Models\Project;
-use App\Models\Server;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -31,9 +30,9 @@ function createProjectForTeam(Team $team): void
     ]);
 }
 
-function createServerWithKeyForTeam(Team $team): void
+function createPrivateKeyForTeam(Team $team): void
 {
-    $keyId = DB::table('private_keys')->insertGetId([
+    DB::table('private_keys')->insertGetId([
         'uuid' => (string) Str::uuid(),
         'name' => 'Test Key',
         'private_key' => 'test-key',
@@ -41,14 +40,9 @@ function createServerWithKeyForTeam(Team $team): void
         'created_at' => now(),
         'updated_at' => now(),
     ]);
-
-    Server::factory()->create([
-        'team_id' => $team->id,
-        'private_key_id' => $keyId,
-    ]);
 }
 
-test('admin sees add project button on dashboard', function () {
+test('admin sees resource-create affordances on project cards', function () {
     [$user, $team] = setupDashboardUser('admin');
 
     $this->actingAs($user);
@@ -57,10 +51,12 @@ test('admin sees add project button on dashboard', function () {
     createProjectForTeam($team);
 
     Livewire::test(Dashboard::class)
-        ->assertSee('New Project');
+        ->assertSee('Test Project')
+        ->assertSee('Add resource')
+        ->assertSee('Project settings');
 });
 
-test('member does not see add project button on dashboard', function () {
+test('member sees projects but not the resource-create affordances', function () {
     [$user, $team] = setupDashboardUser('member');
 
     $this->actingAs($user);
@@ -69,28 +65,32 @@ test('member does not see add project button on dashboard', function () {
     createProjectForTeam($team);
 
     Livewire::test(Dashboard::class)
-        ->assertDontSee('New Project');
+        ->assertSee('Test Project')
+        ->assertDontSee('Add resource')
+        ->assertDontSee('Project settings');
 });
 
-test('admin sees add server button on dashboard', function () {
+test('admin sees add server button in the servers empty state', function () {
     [$user, $team] = setupDashboardUser('admin');
 
     $this->actingAs($user);
     session(['currentTeam' => $team]);
 
-    createServerWithKeyForTeam($team);
+    // The create affordance lives in the empty state, shown once the team owns a
+    // private key but no server yet.
+    createPrivateKeyForTeam($team);
 
     Livewire::test(Dashboard::class)
         ->assertSee(route('server.create'));
 });
 
-test('member does not see add server button on dashboard', function () {
+test('member does not see add server button in the servers empty state', function () {
     [$user, $team] = setupDashboardUser('member');
 
     $this->actingAs($user);
     session(['currentTeam' => $team]);
 
-    createServerWithKeyForTeam($team);
+    createPrivateKeyForTeam($team);
 
     Livewire::test(Dashboard::class)
         ->assertDontSee(route('server.create'));

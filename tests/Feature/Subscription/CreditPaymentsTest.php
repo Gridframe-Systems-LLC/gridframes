@@ -4,10 +4,12 @@ use App\Actions\Subscription\ChargeCreditsPeriod;
 use App\Actions\Subscription\SubscribeWithCredits;
 use App\Exceptions\CreditsPaymentException;
 use App\Jobs\RenewCreditSubscriptionsJob;
+use App\Jobs\StripeProcessJob;
 use App\Models\InstanceSettings;
 use App\Models\Subscription;
 use App\Models\SubscriptionCharge;
 use App\Models\Team;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request;
@@ -75,7 +77,7 @@ test('subscribing charges the first month once, under the team, tier and day', f
         ->and(SubscriptionCharge::where('status', 'paid')->count())->toBe(1);
 
     Once::flush();
-    $member = \App\Models\User::factory()->create();
+    $member = User::factory()->create();
     $this->team->members()->attach($member->id, ['role' => 'owner']);
     $this->actingAs($member);
     session(['currentTeam' => ['id' => $this->team->id]]);
@@ -197,4 +199,91 @@ test('a tier that lost its credit price is never charged at a guessed one', func
     app(RenewCreditSubscriptionsJob::class)->handle(app(ChargeCreditsPeriod::class));
 
     Http::assertNothingSent();
+});
+
+test('a refused renewal waits out its retry window instead of every hourly run', function () {
+    gatewayAnswers();
+    $paidUntil = now()->subHour()->startOfSecond();
+    Subscription::create(['team_id' => $this->team->id, 'payment_provider' => 'credits', 'plan_key' => 'agent_1gb', 'gateway_customer_id' => 42, 'paid_until' => $paidUntil]);
+    SubscriptionCharge::create([
+        'team_id' => $this->team->id,
+        'provider' => 'credits',
+        'plan_key' => 'agent_1gb',
+        'amount_cents' => 600,
+        'charge_ref' => "team-{$this->team->id}-agent_1gb-{$paidUntil->format('Ymd')}",
+        'period_start' => $paidUntil->copy()->subMonthNoOverflow(),
+        'period_end' => $paidUntil,
+        'status' => 'failed',
+        'failure' => 'insufficient',
+    ]);
+
+    app(RenewCreditSubscriptionsJob::class)->handle(app(ChargeCreditsPeriod::class));
+
+    Http::assertNothingSent();
+
+    // Past the retry window the balance is asked again, so the plan can recover once it is topped up.
+    $this->travelTo(now()->addHours(7));
+    app(RenewCreditSubscriptionsJob::class)->handle(app(ChargeCreditsPeriod::class));
+
+    Http::assertSent(fn (Request $r) => str_ends_with($r->url(), '/charges') && $r['amountCents'] === 600);
+});
+
+test('a team that had a card plan gets no second trial when it switches to credits', function () {
+    config()->set('subscription.trial_days', 30);
+    gatewayAnswers();
+    $subscription = Subscription::create([
+        'team_id' => $this->team->id,
+        'stripe_subscription_id' => 'sub_card',
+        'stripe_customer_id' => 'cus_card',
+        'stripe_invoice_paid' => true,
+    ]);
+    $this->team->subscriptionEnded();
+
+    app(SubscribeWithCredits::class)->execute($this->team, 'agent_1gb', AGENT_KEY);
+
+    Http::assertSent(fn (Request $r) => str_ends_with($r->url(), '/charges'));
+    expect($subscription->fresh()->trial_ends_at)->toBeNull()
+        ->and($subscription->fresh()->paid_until->isSameDay(now()->addMonthNoOverflow()))->toBeTrue();
+});
+
+test('a stale update for the abandoned card plan cannot rewrite the plan bought with credits', function () {
+    gatewayAnswers();
+    Subscription::create([
+        'team_id' => $this->team->id,
+        'stripe_subscription_id' => 'sub_card',
+        'stripe_customer_id' => 'cus_card',
+        'stripe_invoice_paid' => true,
+    ]);
+    $this->team->subscriptionEnded();
+
+    app(SubscribeWithCredits::class)->execute($this->team, 'agent_1gb', AGENT_KEY);
+
+    // Stripe redelivers the abandoned card subscription's update, or its dunning cycle emits one.
+    (new StripeProcessJob(['type' => 'customer.subscription.updated', 'data' => ['object' => [
+        'id' => 'sub_card', 'customer' => 'cus_card', 'status' => 'unpaid',
+        'items' => ['data' => [[
+            'subscription' => 'sub_card',
+            'plan' => ['id' => 'price_team'],
+            'price' => ['lookup_key' => 'xlaunch_deploy_team'],
+            'quantity' => 10,
+        ]]],
+        'cancel_at_period_end' => true,
+        'cancellation_details' => ['feedback' => null, 'comment' => null],
+        'trial_end' => null,
+    ]]]))->handle();
+
+    $subscription = Subscription::where('team_id', $this->team->id)->first();
+    $paidUntil = $subscription->paid_until;
+    expect($subscription->payment_provider)->toBe('credits')
+        ->and($subscription->plan_key)->toBe('agent_1gb')
+        ->and($subscription->paid_until->equalTo($paidUntil))->toBeTrue()
+        ->and($this->team->fresh()->custom_server_limit)->toBe(1);
+
+    // And the credits plan still renews at its own tier's price, not the card tier's.
+    $this->travelTo($paidUntil->copy()->subHours(3));
+    app(RenewCreditSubscriptionsJob::class)->handle(app(ChargeCreditsPeriod::class));
+
+    Http::assertSent(fn (Request $r) => str_ends_with($r->url(), '/charges')
+        && $r['amountCents'] === 600
+        && $r['chargeRef'] === "team-{$this->team->id}-agent_1gb-{$paidUntil->format('Ymd')}");
 });

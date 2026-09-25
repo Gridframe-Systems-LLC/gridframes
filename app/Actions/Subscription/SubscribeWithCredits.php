@@ -78,7 +78,9 @@ class SubscribeWithCredits
 
     private function teamHadAPlan(Team $team, ?Subscription $existing): bool
     {
-        return ($existing && (filled($existing->stripe_subscription_id) || $existing->trial_ends_at !== null || $existing->paid_until !== null))
+        // A leftover stripe_customer_id counts too: subscriptionEnded() nulls the subscription id but
+        // never the customer id, so a former card plan never looks like a team that never had one.
+        return ($existing && (filled($existing->stripe_subscription_id) || filled($existing->stripe_customer_id) || $existing->trial_ends_at !== null || $existing->paid_until !== null))
             || SubscriptionCharge::where('team_id', $team->id)->exists();
     }
 }

@@ -11,6 +11,10 @@ use App\Notifications\Internal\GeneralNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Queue;
+use Stripe\Service\PaymentIntentService;
+use Stripe\Service\RefundService;
+use Stripe\Service\SubscriptionService;
+use Stripe\StripeClient;
 
 uses(RefreshDatabase::class);
 
@@ -84,7 +88,8 @@ describe('customer.subscription.created does not fall through to updated', funct
         ];
 
         $job = new StripeProcessJob($event);
-        $job->handle();
+        // The guard is not a silent success: it notifies and fails the job for the retries to see.
+        expect(fn () => $job->handle())->toThrow(RuntimeException::class);
 
         expect(Subscription::where('team_id', $this->team->id)->count())->toBe(1);
         $subscription = Subscription::where('team_id', $this->team->id)->first();
@@ -112,11 +117,11 @@ describe('customer.subscription.created does not fall through to updated', funct
             'stripe_invoice_paid' => false,
         ]);
 
-        (new StripeProcessJob(['type' => 'customer.subscription.created', 'data' => ['object' => [
+        expect(fn () => (new StripeProcessJob(['type' => 'customer.subscription.created', 'data' => ['object' => [
             'id' => 'sub_other',
             'customer' => 'cus_other',
             'metadata' => ['team_id' => $this->team->id, 'user_id' => $this->user->id],
-        ]]]))->handle();
+        ]]]))->handle())->toThrow(RuntimeException::class);
 
         $subscription = $this->team->subscription()->first();
         expect($subscription->stripe_subscription_id)->toBeNull()
@@ -408,4 +413,74 @@ test('created event fills a pending customer record without granting access', fu
     ]]]))->handle();
     expect($this->team->subscription()->first()->stripe_subscription_id)->toBe('sub_pending')
         ->and($this->team->subscription()->first()->stripe_invoice_paid)->toBeFalsy();
+});
+
+describe('customer.subscription.updated for an abandoned card subscription', function () {
+    test('cannot rewrite the plan of a row bound to a different stripe subscription', function () {
+        Queue::fake();
+        Subscription::create([
+            'team_id' => $this->team->id,
+            'stripe_subscription_id' => 'sub_new',
+            'stripe_customer_id' => 'cus_card',
+            'stripe_invoice_paid' => true,
+            'stripe_plan_id' => 'price_new',
+            'plan_key' => 'personal',
+            'trial_ends_at' => now()->addWeek(),
+        ]);
+
+        (new StripeProcessJob(['type' => 'customer.subscription.updated', 'data' => ['object' => [
+            'id' => 'sub_old', 'customer' => 'cus_card', 'status' => 'active',
+            'items' => ['data' => [[
+                'subscription' => 'sub_old',
+                'plan' => ['id' => 'price_old'],
+                'price' => ['lookup_key' => 'xlaunch_deploy_team'],
+                'quantity' => 10,
+            ]]],
+            'cancel_at_period_end' => true,
+            'cancellation_details' => ['feedback' => 'too_expensive', 'comment' => 'bye'],
+            'trial_end' => null,
+        ]]]))->handle();
+
+        $subscription = $this->team->subscription()->first();
+        expect($subscription->plan_key)->toBe('personal')
+            ->and($subscription->stripe_plan_id)->toBe('price_new')
+            ->and($subscription->stripe_feedback)->toBeNull()
+            ->and($subscription->trial_ends_at)->not->toBeNull()
+            ->and($subscription->stripe_cancel_at_period_end)->toBeFalse();
+        Queue::assertNotPushed(ServerLimitCheckJob::class);
+    });
+});
+
+describe('radar.early_fraud_warning.created', function () {
+    test('a transient failure before the refund is retried and ends cancelled and refunded', function () {
+        Notification::fake();
+        Subscription::create([
+            'team_id' => $this->team->id,
+            'stripe_subscription_id' => 'sub_fraud',
+            'stripe_customer_id' => 'cus_fraud',
+            'stripe_invoice_paid' => true,
+        ]);
+
+        $stripe = Mockery::mock(StripeClient::class);
+        $stripe->paymentIntents = Mockery::mock(PaymentIntentService::class);
+        $stripe->refunds = Mockery::mock(RefundService::class);
+        $stripe->subscriptions = Mockery::mock(SubscriptionService::class);
+        $stripe->paymentIntents->shouldReceive('retrieve')->twice()->andReturn((object) ['customer' => 'cus_fraud']);
+        // First delivery dies cancelling, before the irreversible refund; the retry finishes both.
+        $stripe->subscriptions->shouldReceive('cancel')->once()->andThrow(new Exception('transient'));
+        $stripe->subscriptions->shouldReceive('cancel')->once()->andReturn((object) ['id' => 'sub_fraud']);
+        $stripe->refunds->shouldReceive('create')->once()->with(['charge' => 'ch_fraud'])->andReturn((object) ['id' => 're_1']);
+        app()->instance(StripeClient::class, $stripe);
+
+        $event = ['type' => 'radar.early_fraud_warning.created', 'data' => ['object' => [
+            'id' => 'issfr_1', 'charge' => 'ch_fraud', 'payment_intent' => 'pi_fraud',
+        ]]];
+
+        expect(fn () => (new StripeProcessJob($event))->handle())->toThrow(Exception::class);
+        expect($this->team->subscription()->first()->stripe_invoice_paid)->toBeTrue();
+
+        (new StripeProcessJob($event))->handle();
+
+        expect($this->team->subscription()->first()->stripe_invoice_paid)->toBeFalse();
+    });
 });

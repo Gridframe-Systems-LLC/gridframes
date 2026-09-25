@@ -193,6 +193,27 @@ test('a refused credit charge is a failed row a re-run never retries', function 
     expect(MachineOverageCharge::count())->toBe(1);
 });
 
+test('a machine the lifecycle job destroyed is still billed for the month it ran', function () {
+    aCreditsSubscription($this->team);
+    $machine = anOverageMachine($this->team);
+    // Destroyed on April 20: soft-deleted, and nothing sampled past its destruction.
+    MachineUsageSample::where('machine_id', $machine->id)->where('sampled_at', '>=', '2026-04-20 00:00:00')->delete();
+    $machine->forceFill(['deleted_at' => Carbon::parse('2026-04-20 00:00:00')])->saveQuietly();
+    machineGatewayAnswers();
+
+    chargeJob()->handle(app(UsageCalculator::class), app(GatewayCredits::class), app(StripeClient::class), app(StripeMeters::class));
+
+    // 19 measured days of the overage machine: 1 GB-month of memory (400c), 3 GB-months of disk
+    // (24c) and 405 GB of transfer over the pool (2025c).
+    $charge = MachineOverageCharge::first();
+    expect($charge)->not->toBeNull()
+        ->and($charge->status)->toBe('paid')
+        ->and($charge->total_cents)->toBe(2449)
+        ->and($charge->memory_cents)->toBe(400)
+        ->and($charge->disk_cents)->toBe(24)
+        ->and($charge->transfer_cents)->toBe(2025);
+});
+
 test("a card-paid team's overage becomes meter events on the three meters", function () {
     aCreditsSubscription($this->team, ['payment_provider' => 'stripe', 'gateway_customer_id' => null, 'stripe_customer_id' => 'cus_overage', 'stripe_subscription_id' => 'sub_1', 'stripe_invoice_paid' => true]);
     anOverageMachine($this->team);

@@ -68,3 +68,49 @@ describe('cancelImmediately with refund option', function () {
             ->assertReturned('Invalid password.');
     });
 });
+
+describe('money actions require an admin of the current team', function () {
+    test('a member cannot refund the subscription', function () {
+        $this->team->members()->updateExistingPivot($this->user->id, ['role' => 'member']);
+        $this->user->unsetRelation('teams');
+
+        $mock = Mockery::mock(RefundSubscription::class);
+        $mock->shouldNotReceive('execute');
+        $this->instance(RefundSubscription::class, $mock);
+
+        Livewire::test(Actions::class)
+            ->call('refundSubscription', 'password')
+            ->assertForbidden();
+    });
+
+    test('a member cannot change the server limit', function () {
+        $this->team->members()->updateExistingPivot($this->user->id, ['role' => 'member']);
+        $this->user->unsetRelation('teams');
+
+        Livewire::test(Actions::class)
+            ->call('updateQuantity', '')
+            ->assertForbidden();
+    });
+
+    test('a component rendered for an owned team cannot act on a team the user is only a member of', function () {
+        $owned = Team::factory()->create();
+        $owned->members()->attach($this->user->id, ['role' => 'owner']);
+        $this->team->members()->updateExistingPivot($this->user->id, ['role' => 'member']);
+        $this->user->unsetRelation('teams');
+
+        $mock = Mockery::mock(RefundSubscription::class);
+        $mock->shouldNotReceive('execute');
+        $this->instance(RefundSubscription::class, $mock);
+
+        // Rendered while the owned team is current; a replayed call after the session moved to the
+        // member team must not move money on the team it lands on.
+        $rendered = Livewire::test(Actions::class);
+        session(['currentTeam' => ['id' => $this->team->id]]);
+
+        $rendered->call('refundSubscription', 'password')->assertForbidden();
+
+        Livewire::test(Actions::class)
+            ->call('updateQuantity', '')
+            ->assertForbidden();
+    });
+});

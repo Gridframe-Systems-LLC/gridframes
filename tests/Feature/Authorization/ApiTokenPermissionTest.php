@@ -8,7 +8,11 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0], ['is_api_enabled' => true]);
+    // The api middleware group reads the instance settings row; id 0 is not fillable,
+    // so updateOrCreate silently inserts id 1 and instanceSettings() then fails to
+    // find row 0 — every request 404s before the ability check can answer 403.
+    // Force-create row 0 exactly like the installer does.
+    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

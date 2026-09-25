@@ -190,6 +190,19 @@ it('refuses cleanly when the host is full', function () {
         ->toBe('GridFrames is at capacity; try a smaller size or contact support');
 });
 
+it('counts every team against the host, not just the team asking', function () {
+    Queue::fake();
+    // Another team already holds the whole host's vCPU; this team's own pool is nowhere near full.
+    $other = Team::factory()->create();
+    subscribeTeamForMachines($other);
+    aLiveMachine($other, 'theirs', 'm-8');
+    config()->set('machines.host', ['vcpu' => 4, 'memory_mb' => 32768, 'disk_gb' => 1000, 'memory_overcommit' => 1.0]);
+
+    expect(machineRefusal(fn () => (new CreateMachine)->handle($this->team, 'ours', 'm-1'))->getMessage())
+        ->toBe('GridFrames is at capacity; try a smaller size or contact support');
+    expect(Machine::where('team_id', $this->team->id)->exists())->toBeFalse();
+});
+
 it('sells overcommitted memory but no more than the host really has', function () {
     config()->set('machines.host', ['vcpu' => 16, 'memory_mb' => 1024, 'disk_gb' => 1000, 'memory_overcommit' => 2.0]);
 

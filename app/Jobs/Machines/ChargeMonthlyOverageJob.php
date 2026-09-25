@@ -65,7 +65,9 @@ class ChargeMonthlyOverageJob implements ShouldBeEncrypted, ShouldQueue
         $from = Carbon::parse($period.'-01')->startOfDay();
         $to = $from->copy()->addMonthNoOverflow();
 
-        $teamIds = Machine::query()->where('team_id', '>', 0)->distinct()->pluck('team_id');
+        // With trashed: a team whose only machine the lifecycle job destroyed still owes the month
+        // that machine ran, and the soft delete is what hides it from a plain query.
+        $teamIds = Machine::withTrashed()->where('team_id', '>', 0)->distinct()->pluck('team_id');
         foreach (Team::whereIn('id', $teamIds)->orderBy('id')->get() as $team) {
             try {
                 $this->chargeTeam($calculator, $gateway, $stripe, $meters, $team, $period, $from, $to);

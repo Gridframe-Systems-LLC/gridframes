@@ -114,6 +114,8 @@ class UsageCalculator
     /**
      * A team's usage over a window, machine by machine. A machine is charged from when it existed,
      * at the size its row holds; its samples before the window or after the month are ignored.
+     * Machines the lifecycle job destroyed are soft-deleted, not gone: the month they ran is still
+     * billed, so they are read with their trashed siblings.
      */
     public function team(Team $team, Carbon $from, Carbon $to): TeamUsage
     {
@@ -124,7 +126,7 @@ class UsageCalculator
         $measuredHours = 0;
         $failedHours = 0;
         $notMeasuredHours = 0;
-        foreach ($team->machines()->with('usageSamples')->get() as $machine) {
+        foreach ($team->machines()->withTrashed()->with('usageSamples')->get() as $machine) {
             $machineFrom = $machine->created_at->gt($from) ? $machine->created_at->copy() : $from->copy();
             $usage = $this->machine($machineFrom, $to->copy(), [
                 ['from' => $machineFrom, 'to' => $to->copy(), 'memory_mb' => $machine->memory_mb, 'disk_gb' => $machine->disk_gb],

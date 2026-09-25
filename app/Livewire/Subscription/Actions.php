@@ -73,6 +73,10 @@ class Actions extends Component
     // non-destructive, reversible billing adjustment (prorated by Stripe).
     public function updateQuantity(string $password = ''): bool
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+
         if ($this->quantity < UpdateSubscriptionQuantity::MIN_SERVER_LIMIT) {
             $this->dispatch('error', 'Minimum server limit is '.UpdateSubscriptionQuantity::MIN_SERVER_LIMIT.'.');
             $this->quantity = UpdateSubscriptionQuantity::MIN_SERVER_LIMIT;
@@ -133,6 +137,9 @@ class Actions extends Component
 
     public function stripeCustomerPortal(): void
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
         $session = getStripeCustomerPortalSession(currentTeam());
         redirect($session->url);
     }
@@ -204,6 +211,10 @@ class Actions extends Component
 
     public function refundSubscription(string $password): bool|string
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+
         if (! shouldSkipPasswordConfirmation() && ! Hash::check($password, auth()->user()->password)) {
             return 'Invalid password.';
         }
@@ -224,6 +235,10 @@ class Actions extends Component
 
     public function cancelImmediately(string $password, array $selectedActions = []): bool|string
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+
         if (! shouldSkipPasswordConfirmation() && ! Hash::check($password, auth()->user()->password)) {
             return 'Invalid password.';
         }
@@ -285,6 +300,10 @@ class Actions extends Component
 
     public function cancelAtPeriodEnd(string $password): bool|string
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+
         if (! shouldSkipPasswordConfirmation() && ! Hash::check($password, auth()->user()->password)) {
             return 'Invalid password.';
         }
@@ -304,6 +323,10 @@ class Actions extends Component
 
     public function resumeSubscription(): bool
     {
+        if (! auth()->user()?->isAdminOfTeam(currentTeam()->id)) {
+            abort(403);
+        }
+
         $result = (new ResumeSubscription)->execute(currentTeam());
 
         if ($result['success']) {

@@ -11,6 +11,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
+use Stripe\Exception\InvalidRequestException;
 use Stripe\StripeClient;
 
 class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
@@ -41,9 +42,6 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                     $stripe = app(StripeClient::class);
                     $id = data_get($data, 'id');
                     $charge = data_get($data, 'charge');
-                    if ($charge) {
-                        $stripe->refunds->create(['charge' => $charge]);
-                    }
                     $pi = data_get($data, 'payment_intent');
                     $piData = $stripe->paymentIntents->retrieve($pi, []);
                     $customerId = data_get($piData, 'customer');
@@ -54,6 +52,17 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                         $subscription->update([
                             'stripe_invoice_paid' => false,
                         ]);
+                        if ($charge) {
+                            // The refund lands last: everything before it is reversible on a retry,
+                            // and a retry that finds the charge already refunded has reached the goal.
+                            try {
+                                $stripe->refunds->create(['charge' => $charge]);
+                            } catch (InvalidRequestException $e) {
+                                if (! str_contains($e->getMessage(), 'already been refunded')) {
+                                    throw $e;
+                                }
+                            }
+                        }
                         send_internal_notification("Early fraud warning created Refunded, subscription canceled. Charge: {$charge}, id: {$id}, pi: {$pi}");
                     } else {
                         send_internal_notification("Early fraud warning: subscription not found. Charge: {$charge}, id: {$id}, pi: {$pi}");
@@ -271,6 +280,13 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                             ]
                         );
                     }
+                    // An update for an abandoned card subscription (a redelivery, or its dunning
+                    // cycle) must never rewrite the plan this team now holds — least of all a
+                    // credits-paid row, which Stripe no longer bills at all.
+                    if ($subscription->payment_provider === 'credits' ||
+                        (filled($subscription->stripe_subscription_id) && $subscription->stripe_subscription_id !== $subscriptionId)) {
+                        break;
+                    }
                     $cancelAtPeriodEnd = data_get($data, 'cancel_at_period_end');
                     $feedback = data_get($data, 'cancellation_details.feedback');
                     $comment = data_get($data, 'cancellation_details.comment');
@@ -381,6 +397,10 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
             }
         } catch (\Exception $e) {
             send_internal_notification('StripeProcessJob error: '.$e->getMessage());
+
+            // The webhook controller already answered 200, so redelivery never comes from Stripe;
+            // rethrowing is what makes $tries fire and a half-done branch finish on a later run.
+            throw $e;
         }
     }
 

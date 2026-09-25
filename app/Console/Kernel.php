@@ -61,7 +61,7 @@ class Kernel extends ConsoleKernel
 
         // Plans paid from gateway credits renew themselves; card plans are renewed by Stripe.
         if (isCloud() && creditsPaymentsEnabled()) {
-            $this->scheduleInstance->job(new RenewCreditSubscriptionsJob)->hourly()->onOneServer();
+            $this->scheduleInstance->job(new RenewCreditSubscriptionsJob)->hourly()->onOneServer()->withoutOverlapping();
         }
 
         // GridFrames machines: hourly metering and plan-lifecycle enforcement, and the month's

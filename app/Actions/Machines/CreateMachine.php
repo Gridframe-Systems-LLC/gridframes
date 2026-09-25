@@ -7,6 +7,8 @@ use App\Jobs\Machines\ProvisionMachineJob;
 use App\Models\Machine;
 use App\Models\PrivateKey;
 use App\Models\Team;
+use Illuminate\Contracts\Cache\LockTimeoutException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -34,42 +36,61 @@ class CreateMachine
 
         $name = $this->normaliseName($name, $team);
         $size = $this->size($sizeKey);
-        $pool = static::poolFor($team, $plan);
-        $usage = static::poolUsage($team);
-
-        $this->checkQuota($plan, $pool, $usage, $size, $acceptOverage);
-        $this->checkHostCapacity($usage, $size);
 
         $customerPublicKey = trim((string) $customerPublicKey) ?: null;
 
-        // The key and the row are made together: a machine recorded without its key could never be
-        // logged into, and a key recorded without its machine would linger unowned by any build.
-        [$privateKey, $machine] = DB::transaction(function () use ($team, $name, $sizeKey, $size) {
-            $keyData = generateSSHKey('ed25519');
-            $privateKey = PrivateKey::createAndStore([
-                'name' => "GridFrames machine {$name}",
-                'description' => 'Created by GridFrames',
-                'private_key' => $keyData['private'],
-                'team_id' => $team->id,
-            ]);
+        // Creation is serialized — per team by this lock, and on Postgres across teams by the advisory
+        // lock below — so the usage the checks read is everything committed before this create. Two
+        // submits racing the same pool (or the same host) cannot both pass on the usage they both saw.
+        $lock = Cache::lock("machine-create:team:{$team->id}", 30);
 
-            $machine = Machine::create([
-                'uuid' => Str::uuid()->toString(),
-                'team_id' => $team->id,
-                'name' => $name,
-                'size_key' => $sizeKey,
-                'vcpu' => $size['vcpu'],
-                'memory_mb' => $size['memory_mb'],
-                'disk_gb' => $size['disk_gb'],
-                'incus_project' => 'default',
-                'incus_name' => "gf-{$team->id}-{$name}",
-                'state' => 'creating',
-            ]);
+        try {
+            [$privateKey, $machine] = $lock->block(10, function () use ($team, $name, $sizeKey, $size, $plan, $acceptOverage, $customerPublicKey) {
+                $created = DB::transaction(function () use ($team, $name, $sizeKey, $size, $plan, $acceptOverage) {
+                    if (DB::connection()->getDriverName() === 'pgsql') {
+                        // Held to commit: every other create, from any team, waits here in turn.
+                        DB::select('select pg_advisory_xact_lock(hashtext(?)) as locked', ['machines.create']);
+                    }
 
-            return [$privateKey, $machine];
-        });
+                    $pool = static::poolFor($team, $plan);
+                    $usage = static::poolUsage($team);
+                    $this->checkQuota($plan, $pool, $usage, $size, $acceptOverage);
+                    $this->checkHostCapacity(static::hostUsage(), $size);
 
-        ProvisionMachineJob::dispatch($machine, $privateKey->id, $customerPublicKey);
+                    // The key and the row are made together: a machine recorded without its key could never be
+                    // logged into, and a key recorded without its machine would linger unowned by any build.
+                    $keyData = generateSSHKey('ed25519');
+                    $privateKey = PrivateKey::createAndStore([
+                        'name' => "GridFrames machine {$name}",
+                        'description' => 'Created by GridFrames',
+                        'private_key' => $keyData['private'],
+                        'team_id' => $team->id,
+                    ]);
+
+                    $machine = Machine::create([
+                        'uuid' => Str::uuid()->toString(),
+                        'team_id' => $team->id,
+                        'name' => $name,
+                        'size_key' => $sizeKey,
+                        'vcpu' => $size['vcpu'],
+                        'memory_mb' => $size['memory_mb'],
+                        'disk_gb' => $size['disk_gb'],
+                        'incus_project' => 'default',
+                        'incus_name' => "gf-{$team->id}-{$name}",
+                        'state' => 'creating',
+                    ]);
+
+                    return [$privateKey, $machine];
+                });
+
+                // Dispatched under the lock: a crashed run leaves the row, which the next create counts.
+                ProvisionMachineJob::dispatch($created[1], $created[0]->id, $customerPublicKey);
+
+                return $created;
+            });
+        } catch (LockTimeoutException) {
+            throw new MachineException(MachineException::REJECTED, 'Another machine creation is still under way; try again in a moment.');
+        }
 
         return $machine;
     }
@@ -151,6 +172,24 @@ class CreateMachine
             'memory_mb' => (int) $machines->sum('memory_mb'),
             'disk_gb' => (int) $machines->sum('disk_gb'),
             'machines' => $machines->count(),
+        ];
+    }
+
+    /**
+     * What every team's live machines hold today — the whole host's commitment, not one team's, so
+     * the capacity check below fences the machine every tenant shares. The same
+     * failed-holds-nothing rule as poolUsage.
+     *
+     * @return array{vcpu:int, memory_mb:int, disk_gb:int}
+     */
+    public static function hostUsage(): array
+    {
+        $machines = Machine::query()->where('state', '!=', 'failed')->get(['vcpu', 'memory_mb', 'disk_gb']);
+
+        return [
+            'vcpu' => (int) $machines->sum('vcpu'),
+            'memory_mb' => (int) $machines->sum('memory_mb'),
+            'disk_gb' => (int) $machines->sum('disk_gb'),
         ];
     }
 
