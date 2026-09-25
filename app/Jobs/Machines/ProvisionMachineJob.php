@@ -112,14 +112,28 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
         }
         $authorised = $keys->implode("\n")."\n";
 
-        $incus->waitForOperation(
-            $incus->writeFile($name, '/tmp/gf-authorized-keys', $authorised)['operation'],
-            60,
-        );
-        $incus->waitForOperation(
-            $incus->exec($name, ['/bin/sh', '-c', 'mkdir -p /root/.ssh && cat /tmp/gf-authorized-keys >> /root/.ssh/authorized_keys && rm /tmp/gf-authorized-keys && chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys'])['operation'],
-            60,
-        );
+        // The guest agent starts answering a little after the addresses appear; the file and exec
+        // APIs ride on it, so the install waits for it inside a bounded budget.
+        $deadline = microtime(true) + 120;
+        do {
+            try {
+                $incus->waitForOperation(
+                    $incus->writeFile($name, '/tmp/gf-authorized-keys', $authorised)['operation'],
+                    60,
+                );
+                $incus->waitForOperation(
+                    $incus->exec($name, ['/bin/sh', '-c', 'mkdir -p /root/.ssh && cat /tmp/gf-authorized-keys >> /root/.ssh/authorized_keys && rm /tmp/gf-authorized-keys && chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys'])['operation'],
+                    60,
+                );
+
+                return;
+            } catch (MachineException $e) {
+                if (! str_contains($e->getMessage(), 'agent') || microtime(true) >= $deadline) {
+                    throw $e;
+                }
+                sleep(3);
+            }
+        } while (microtime(true) < $deadline);
     }
 
     /**
