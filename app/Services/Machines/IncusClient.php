@@ -220,7 +220,7 @@ class IncusClient
      * bytes in the body and the type and mode in headers. Used for the SSH keys, because the golden
      * image carries no cloud-init to process user-data.
      *
-     * @return array{operation:string}
+     * @return array{status:string}
      */
     public function writeFile(string $name, string $path, string $contents, int $mode = 0o600): array
     {
@@ -233,7 +233,8 @@ class IncusClient
         ]));
         $this->refuseUnlessOk($response, "File '{$path}' on machine '{$name}'");
 
-        return ['operation' => $this->operation($response)];
+        // The files API answers synchronously: there is no operation to follow.
+        return ['status' => (string) $response->json('status')];
     }
 
     /**

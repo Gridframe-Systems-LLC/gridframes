@@ -117,10 +117,7 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
         $deadline = microtime(true) + 120;
         do {
             try {
-                $incus->waitForOperation(
-                    $incus->writeFile($name, '/tmp/gf-authorized-keys', $authorised)['operation'],
-                    60,
-                );
+                $incus->writeFile($name, '/tmp/gf-authorized-keys', $authorised);
                 $incus->waitForOperation(
                     $incus->exec($name, ['/bin/sh', '-c', 'mkdir -p /root/.ssh && cat /tmp/gf-authorized-keys >> /root/.ssh/authorized_keys && rm /tmp/gf-authorized-keys && chmod 700 /root/.ssh && chmod 600 /root/.ssh/authorized_keys'])['operation'],
                     60,

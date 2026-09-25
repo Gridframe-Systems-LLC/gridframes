@@ -181,7 +181,7 @@ it('deletes an instance as an operation the caller can wait for', function () {
 
 it('writes a file into an instance through the files endpoint', function () {
     Http::fake([
-        INCUS_SHAPE.'/1.0/instances/web-1/files*' => anOperationAnswer('/1.0/operations/file-1'),
+        INCUS_SHAPE.'/1.0/instances/web-1/files*' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
     ]);
 
     $result = (new IncusClient)->writeFile('web-1', '/tmp/gf-authorized-keys', 'ssh-ed25519 key\n');
@@ -194,7 +194,7 @@ it('writes a file into an instance through the files endpoint', function () {
             && $request->body() === 'ssh-ed25519 key\n';
     });
 
-    expect($result['operation'])->toBe('/1.0/operations/file-1');
+    expect($result['status'])->toBe('Success');
 });
 
 it('runs a command inside an instance over exec', function () {
