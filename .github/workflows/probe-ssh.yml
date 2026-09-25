@@ -1,6 +1,11 @@
 name: Probe SSH from runner
 on:
   workflow_dispatch:
+    inputs:
+      cmd:
+        description: "Command to run on the host"
+        required: false
+        default: "echo ok"
 permissions:
   contents: read
 jobs:
@@ -13,4 +18,4 @@ jobs:
           printf "%s" "${{ secrets.OVH_SSH_PRIVATE_KEY }}" | base64 -d > ~/.ssh/deploy_key
           chmod 600 ~/.ssh/deploy_key
           ssh-keyscan -H ns5037844.ip-51-161-112.net >> ~/.ssh/known_hosts 2>/dev/null
-          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@ns5037844.ip-51-161-112.net "echo SSH-FROM-RUNNER-OK; sudo -n fail2ban-client status sshd 2>/dev/null | tail -6; sudo -n systemctl is-active ssh sshd 2>/dev/null; sudo -n journalctl -u ssh -n 5 --no-pager | tail -5"
+          ssh -i ~/.ssh/deploy_key -o IdentitiesOnly=yes -o StrictHostKeyChecking=no -o ConnectTimeout=10 ubuntu@ns5037844.ip-51-161-112.net "${{ inputs.cmd }}"
