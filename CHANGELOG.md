@@ -8,9 +8,12 @@ All notable changes to this project will be documented in this file.
 
 - The data model and the Incus client, off by default
 - Create, meter, bill overage, and tie the life of a machine to the plan
+- One-off runner SSH diagnostic
+- Parametrized runner SSH diagnostic
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
