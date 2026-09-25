@@ -51,3 +51,5 @@
         </div>
     </x-application.settings-section>
 @endif
+
+@include('livewire.subscription.partials.machines-usage')

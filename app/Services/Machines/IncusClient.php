@@ -4,6 +4,7 @@ namespace App\Services\Machines;
 
 use App\Exceptions\MachineException;
 use App\Models\Team;
+use Carbon\CarbonInterface;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
@@ -123,18 +124,24 @@ class IncusClient
     }
 
     /**
-     * Take a disk snapshot of the instance.
+     * Take a disk snapshot of the instance. An expiry, when given, is the Incus `expires_at` the
+     * host itself honours: the snapshot outlives the instance exactly as long as it was told to.
      *
      * @return array{operation:string}
      */
-    public function snapshot(string $project, string $name, string $snapshotName): array
+    public function snapshot(string $project, string $name, string $snapshotName, ?CarbonInterface $expiresAt = null): array
     {
         // POST /1.0/instances/{name}/snapshots?project=<project> — `stateful` false keeps the disks,
-        // not the machine's RAM, so it restores onto a stopped or running VM alike.
-        $response = $this->send(fn (PendingRequest $http) => $http->post($this->instanceUrl($project, $name, 'snapshots'), [
+        // not the machine's RAM, so it restores onto a stopped or running VM alike; `expires_at`
+        // (an RFC 3339 timestamp) has the host prune the snapshot itself when the time is out.
+        $body = [
             'name' => $snapshotName,
             'stateful' => false,
-        ]));
+        ];
+        if ($expiresAt !== null) {
+            $body['expires_at'] = $expiresAt->toIso8601String();
+        }
+        $response = $this->send(fn (PendingRequest $http) => $http->post($this->instanceUrl($project, $name, 'snapshots'), $body));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
 
         return ['operation' => $this->operation($response)];

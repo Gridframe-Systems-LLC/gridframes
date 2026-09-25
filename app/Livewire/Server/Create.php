@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Server;
 
+use App\Actions\Machines\CreateMachine;
 use App\Models\CloudProviderToken;
 use App\Models\PrivateKey;
 use App\Models\Team;
@@ -19,14 +20,19 @@ class Create extends Component
 
     public bool $has_hetzner_tokens = false;
 
+    public bool $machines_available = false;
+
     public function mount(?string $selectedType = null, ?string $selectedTokenUuid = null): void
     {
-        $this->selectedType = in_array($selectedType, ['hetzner', 'vultr', 'digital-ocean', 'manual'], true)
+        $this->selectedType = in_array($selectedType, ['hetzner', 'vultr', 'digital-ocean', 'manual', 'gridframes'], true)
             ? $selectedType
             : null;
-        $this->selectedTokenUuid = $this->selectedType && $this->selectedType !== 'manual' ? $selectedTokenUuid : null;
+        $this->selectedTokenUuid = $this->selectedType && $this->selectedType !== 'manual' && $this->selectedType !== 'gridframes'
+            ? $selectedTokenUuid
+            : null;
 
         $this->private_keys = PrivateKey::ownedByCurrentTeamCached();
+        $this->machines_available = currentTeam() instanceof Team && CreateMachine::availableFor(currentTeam());
         if (! isCloud()) {
             $this->limit_reached = false;
 

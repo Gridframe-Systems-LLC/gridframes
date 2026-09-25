@@ -42,4 +42,11 @@ return [
         'delete_after_stop_days' => (int) env('MACHINES_DELETE_AFTER_STOP_DAYS', 14),
         'final_snapshot_keep_days' => (int) env('MACHINES_FINAL_SNAPSHOT_KEEP_DAYS', 30),
     ],
+    'stripe' => [
+        // Overage is reported to Stripe as meter events on Billing Meters, one meter per resource,
+        // created once by `machines:stripe-meters`. The prefix is the wiring between this instance
+        // and the operator's Stripe prices: the event names are <prefix>_memory_gb_months,
+        // <prefix>_disk_gb_months and <prefix>_transfer_gb. Set once, then never changed.
+        'meter_prefix' => env('MACHINES_STRIPE_METER_PREFIX', 'gridframes_machine'),
+    ],
 ];

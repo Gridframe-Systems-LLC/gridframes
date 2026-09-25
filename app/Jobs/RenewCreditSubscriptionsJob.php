@@ -4,6 +4,7 @@ namespace App\Jobs;
 
 use App\Actions\Subscription\ChargeCreditsPeriod;
 use App\Exceptions\CreditsPaymentException;
+use App\Jobs\Machines\EnforceMachineLifecycleJob;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -59,9 +60,22 @@ class RenewCreditSubscriptionsJob implements ShouldBeEncrypted, ShouldQueue
             }
             try {
                 $chargePeriod->execute($subscription, $planKey, (int) $subscription->gateway_customer_id, $subscription->paid_until->copy());
+                $this->syncMachines($subscription);
             } catch (CreditsPaymentException $e) {
                 Log::info('Credit renewal not taken.', ['team_id' => $subscription->team_id, 'kind' => $e->kind]);
             }
+        }
+    }
+
+    /**
+     * A paid renewal reopens the plan, so machines stopped over payment can start again; machines
+     * whose grace has run out are caught by the hourly lifecycle job on its own schedule.
+     */
+    private function syncMachines(Subscription $subscription): void
+    {
+        $team = $subscription->team;
+        if ($team && config('machines.enabled') && $team->machines()->exists()) {
+            EnforceMachineLifecycleJob::dispatch($team);
         }
     }
 }

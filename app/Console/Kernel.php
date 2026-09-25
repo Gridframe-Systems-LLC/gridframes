@@ -9,10 +9,13 @@ use App\Jobs\CheckMissingDatabaseBackupsJob;
 use App\Jobs\CleanupInstanceStuffsJob;
 use App\Jobs\CleanupOrphanedPreviewContainersJob;
 use App\Jobs\CleanupStaleMultiplexedConnections;
+use App\Jobs\Machines\ChargeMonthlyOverageJob;
+use App\Jobs\Machines\EnforceMachineLifecycleJob;
+use App\Jobs\Machines\SampleMachineUsageJob;
 use App\Jobs\PullChangelog;
 use App\Jobs\PullTemplatesFromCDN;
-use App\Jobs\RenewCreditSubscriptionsJob;
 use App\Jobs\RegenerateSslCertJob;
+use App\Jobs\RenewCreditSubscriptionsJob;
 use App\Jobs\ScheduledJobManager;
 use App\Jobs\ServerManagerJob;
 use App\Jobs\UpdateXlaunchJob;
@@ -59,6 +62,14 @@ class Kernel extends ConsoleKernel
         // Plans paid from gateway credits renew themselves; card plans are renewed by Stripe.
         if (isCloud() && creditsPaymentsEnabled()) {
             $this->scheduleInstance->job(new RenewCreditSubscriptionsJob)->hourly()->onOneServer();
+        }
+
+        // GridFrames machines: hourly metering and plan-lifecycle enforcement, and the month's
+        // overage on the morning of the 1st for the month before.
+        if (isCloud() && config('machines.enabled')) {
+            $this->scheduleInstance->job(new SampleMachineUsageJob)->hourly()->onOneServer();
+            $this->scheduleInstance->job(new EnforceMachineLifecycleJob)->hourly()->onOneServer();
+            $this->scheduleInstance->job(new ChargeMonthlyOverageJob)->cron('0 6 1 * *')->onOneServer();
         }
 
         if (isDev()) {

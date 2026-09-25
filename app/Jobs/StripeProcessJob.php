@@ -3,11 +3,13 @@
 namespace App\Jobs;
 
 use App\Actions\Stripe\UpdateSubscriptionQuantity;
+use App\Jobs\Machines\EnforceMachineLifecycleJob;
 use App\Models\Subscription;
 use App\Models\Team;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
 use Stripe\StripeClient;
 
@@ -302,7 +304,7 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                         'stripe_comment' => $comment,
                         'stripe_plan_id' => $planId,
                         'plan_key' => planKeyForPrice($planId),
-                        'trial_ends_at' => $trialEnd ? \Illuminate\Support\Carbon::createFromTimestamp((int) $trialEnd) : null,
+                        'trial_ends_at' => $trialEnd ? Carbon::createFromTimestamp((int) $trialEnd) : null,
                         'stripe_cancel_at_period_end' => $cancelAtPeriodEnd,
                     ]);
                     if ($status === 'paused' || $status === 'incomplete_expired') {
@@ -330,6 +332,7 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                         $team = data_get($subscription, 'team');
                         if ($team) {
                             $team->subscriptionEnded();
+                            $this->syncMachines($team);
                         } else {
                             // send_internal_notification('Subscription unpaid but no team found in Xlaunch for customer: '.$customerId);
                             throw new \RuntimeException("No team found in Xlaunch for customer: {$customerId}");
@@ -341,6 +344,10 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                                 'stripe_past_due' => false,
                                 'stripe_invoice_paid' => true,
                             ]);
+                        }
+                        $team = data_get($subscription, 'team');
+                        if ($team) {
+                            $this->syncMachines($team);
                         }
                     }
                     if ($feedback) {
@@ -359,6 +366,7 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
                         $team = data_get($subscription, 'team');
                         if ($team) {
                             $team->subscriptionEnded();
+                            $this->syncMachines($team);
                         } else {
                             // send_internal_notification('Subscription deleted but no team found in Xlaunch for customer: '.$customerId);
                             throw new \RuntimeException("No team found in Xlaunch for customer: {$customerId}");
@@ -373,6 +381,17 @@ class StripeProcessJob implements ShouldBeEncrypted, ShouldQueue
             }
         } catch (\Exception $e) {
             send_internal_notification('StripeProcessJob error: '.$e->getMessage());
+        }
+    }
+
+    /**
+     * A webhook landed a plan-state change; nudge the machines' lifecycle, which stops them for an
+     * ended plan, restarts the ones stopped over payment, and does nothing while the plan holds.
+     */
+    private function syncMachines(Team $team): void
+    {
+        if (config('machines.enabled') && $team->machines()->exists()) {
+            EnforceMachineLifecycleJob::dispatch($team);
         }
     }
 }

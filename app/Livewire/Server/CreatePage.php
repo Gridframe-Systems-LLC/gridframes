@@ -44,6 +44,7 @@ class CreatePage extends Component
             'vultr' => 'Vultr',
             'digital-ocean' => 'DigitalOcean',
             'manual' => 'Manual',
+            'gridframes' => 'GridFrames',
             default => 'New Server',
         };
     }

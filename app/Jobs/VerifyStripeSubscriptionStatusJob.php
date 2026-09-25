@@ -2,6 +2,7 @@
 
 namespace App\Jobs;
 
+use App\Jobs\Machines\EnforceMachineLifecycleJob;
 use App\Models\Subscription;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldBeEncrypted;
@@ -97,10 +98,24 @@ class VerifyStripeSubscriptionStatusJob implements ShouldBeEncrypted, ShouldQueu
                     );
                     break;
             }
+
+            $this->syncMachines();
         } catch (\Exception $e) {
             send_internal_notification(
                 'VerifyStripeSubscriptionStatusJob failed for subscription ID '.$this->subscription->id.': '.$e->getMessage()
             );
+        }
+    }
+
+    /**
+     * A verified status is a plan-state change: nudge the machines' lifecycle, which stops them for
+     * an ended plan, restarts the ones stopped over payment, and does nothing while the plan holds.
+     */
+    private function syncMachines(): void
+    {
+        $team = $this->subscription->team;
+        if ($team && config('machines.enabled') && $team->machines()->exists()) {
+            EnforceMachineLifecycleJob::dispatch($team);
         }
     }
 }
