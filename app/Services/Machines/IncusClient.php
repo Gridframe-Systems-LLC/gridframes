@@ -310,11 +310,14 @@ class IncusClient
 
         return Http::baseUrl((string) config('machines.incus.url'))
             // The platform authenticates with its own certificate against the pinned server
-            // certificate; Guzzle takes all three as paths.
+            // certificate; Guzzle takes all three as paths. The server certificate is a self-signed
+            // pin: it is the identity, so the hostname check it would otherwise fail against an
+            // endpoint addressed by IP is switched off — the pin carries the whole trust decision.
             ->withOptions([
                 'cert' => (string) config('machines.incus.client_cert'),
                 'ssl_key' => (string) config('machines.incus.client_key'),
                 'verify' => (string) config('machines.incus.server_cert'),
+                'curl' => [CURLOPT_SSL_VERIFYHOST => 0],
             ])
             ->acceptJson()
             ->timeout(10);
