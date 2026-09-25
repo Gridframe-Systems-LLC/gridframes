@@ -244,13 +244,12 @@ class EnforceMachineLifecycleJob implements ShouldBeEncrypted, ShouldQueue
 
         try {
             $snapshot = $incus->snapshot(
-                $machine->incus_project,
                 $machine->incus_name,
                 $snapshotName,
                 now()->addDays($keepDays),
             );
             $incus->waitForOperation($snapshot['operation'], 600);
-            $delete = $incus->delete($machine->incus_project, $machine->incus_name);
+            $delete = $incus->delete($machine->incus_name);
             $incus->waitForOperation($delete['operation'], 600);
         } catch (MachineException $e) {
             Log::warning('Machine lifecycle: the host refused the delete; the next hour tries again.', [
@@ -279,8 +278,8 @@ class EnforceMachineLifecycleJob implements ShouldBeEncrypted, ShouldQueue
     {
         try {
             $operation = $action === 'start'
-                ? $incus->start($machine->incus_project, $machine->incus_name)
-                : $incus->stop($machine->incus_project, $machine->incus_name);
+                ? $incus->start($machine->incus_name)
+                : $incus->stop($machine->incus_name);
             $incus->waitForOperation($operation['operation'], self::OPERATION_TIMEOUT);
         } catch (MachineException $e) {
             Log::warning('Machine lifecycle: the host refused a state change; the next hour tries again.', [

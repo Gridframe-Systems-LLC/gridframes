@@ -101,7 +101,7 @@ it('creates a machine within the pool and queues its provisioning', function () 
         ->and($machine->vcpu)->toBe(1)
         ->and($machine->memory_mb)->toBe(2048)
         ->and($machine->disk_gb)->toBe(20)
-        ->and($machine->incus_project)->toBe('team-'.$this->team->id)
+        ->and($machine->incus_project)->toBe('default')
         ->and($machine->incus_name)->toBe('gf-'.$this->team->id.'-web-1')
         ->and($machine->uuid)->not->toBeEmpty();
 

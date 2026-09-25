@@ -111,7 +111,7 @@ test('a machine is stopped with an email once the grace days after a failed paym
     theLifecycleJob($this->team)->handle(app(IncusClient::class));
 
     Http::assertSent(fn (Request $r) => $r->method() === 'PUT'
-        && $r->url() === INCUS_LIFECYCLE.'/1.0/instances/web-1/state?project=team-'.$this->team->id
+        && $r->url() === INCUS_LIFECYCLE.'/1.0/instances/web-1/state'
         && $r['action'] === 'stop');
     $machine->refresh();
     expect($machine->state)->toBe('stopped')

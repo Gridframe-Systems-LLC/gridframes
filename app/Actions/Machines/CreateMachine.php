@@ -61,7 +61,7 @@ class CreateMachine
                 'vcpu' => $size['vcpu'],
                 'memory_mb' => $size['memory_mb'],
                 'disk_gb' => $size['disk_gb'],
-                'incus_project' => "team-{$team->id}",
+                'incus_project' => 'default',
                 'incus_name' => "gf-{$team->id}-{$name}",
                 'state' => 'creating',
             ]);

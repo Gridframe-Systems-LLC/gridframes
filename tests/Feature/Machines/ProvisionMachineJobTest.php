@@ -53,7 +53,7 @@ function aCreatingMachine(Team $team, string $name): Machine
         'vcpu' => 1,
         'memory_mb' => 1024,
         'disk_gb' => 10,
-        'incus_project' => 'team-'.$team->id,
+        'incus_project' => 'default',
         'incus_name' => 'gf-'.$team->id.'-'.$name,
         'state' => 'creating',
     ]);
@@ -75,15 +75,11 @@ function fakeIncus(array $answers = []): void
         $url = $request->url();
         $step = null;
 
-        if ($method === 'GET' && str_contains($url, '/1.0/projects/')) {
-            $step = 'project-lookup';
-        } elseif ($method === 'POST' && str_contains($url, '/1.0/projects')) {
-            $step = 'project-create';
-        } elseif ($method === 'GET' && str_contains($url, '/1.0/networks/')) {
+        if ($method === 'GET' && str_contains($url, '/1.0/networks/')) {
             $step = 'network-lookup';
         } elseif ($method === 'POST' && str_contains($url, '/1.0/networks')) {
             $step = 'network-create';
-        } elseif ($method === 'POST' && str_contains($url, '/1.0/instances?project=')) {
+        } elseif ($method === 'POST' && $url === INCUS_PROVISION.'/1.0/instances') {
             $step = 'instance-create';
         } elseif ($method === 'PUT' && str_contains($url, '/instances/') && str_contains($url, '/state')) {
             $step = 'instance-start';
@@ -101,8 +97,8 @@ function fakeIncus(array $answers = []): void
         }
 
         return match ($step) {
-            'project-lookup', 'network-lookup' => Http::response(['error' => 'not found'], 404),
-            'project-create', 'network-create', 'instance-create', 'instance-start', 'instance-delete' => Http::response([
+            'network-lookup' => Http::response(['error' => 'not found'], 404),
+            'network-create', 'instance-create', 'instance-start', 'instance-delete' => Http::response([
                 'type' => 'async',
                 'status' => 'Operation created',
                 'status_code' => 100,
@@ -180,7 +176,7 @@ it('creates the server exactly like ByHetzner does and sets the machine running'
 
     Http::assertSent(function (Request $request) use ($machine) {
         return $request->method() === 'POST'
-            && $request->url() === INCUS_PROVISION.'/1.0/instances?project=team-'.$this->team->id
+            && $request->url() === INCUS_PROVISION.'/1.0/instances'
             && $request['name'] === $machine->incus_name
             && str_contains($request['config']['cloud-init.user-data'], 'hostname: web-1')
             && str_contains($request['config']['cloud-init.user-data'], $this->privateKey->getPublicKey());
@@ -196,7 +192,7 @@ it('puts the customer key on the machine when one was given', function () {
 
     Http::assertSent(function (Request $request) {
         return $request->method() === 'POST'
-            && str_contains($request->url(), '/1.0/instances?project=')
+            && str_contains($request->url(), '/1.0/instances')
             && str_contains($request['config']['cloud-init.user-data'], 'ssh-ed25519 AAAAC3Nza customer@example');
     });
 });
@@ -232,7 +228,7 @@ it('deletes the instance when the start fails, leaving nothing half-made', funct
 
     Http::assertSent(function (Request $request) use ($machine) {
         return $request->method() === 'DELETE'
-            && $request->url() === INCUS_PROVISION.'/1.0/instances/'.$machine->incus_name.'?project=team-'.$this->team->id;
+            && $request->url() === INCUS_PROVISION.'/1.0/instances/'.$machine->incus_name;
     });
     $this->assertDatabaseMissing('servers', ['team_id' => $this->team->id]);
 });

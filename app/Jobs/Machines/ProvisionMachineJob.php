@@ -48,20 +48,20 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
         $server = null;
 
         try {
-            $project = $incus->ensureProject($machine->team)['project'];
+            $network = $incus->ensureNetwork($machine->team)['network'];
 
             $incus->waitForOperation(
-                $incus->createInstance($project, $machine->incus_name, $machine->size_key, $this->cloudInit())['operation'],
+                $incus->createInstance($network, $machine->incus_name, $machine->size_key, $this->cloudInit())['operation'],
                 60,
             );
             $instanceCreated = true;
 
             $incus->waitForOperation(
-                $incus->start($project, $machine->incus_name)['operation'],
+                $incus->start($machine->incus_name)['operation'],
                 60,
             );
 
-            ['ipv4' => $ipv4, 'ipv6' => $ipv6] = $this->waitForNetwork($incus, $project, $machine->incus_name);
+            ['ipv4' => $ipv4, 'ipv6' => $ipv6] = $this->waitForNetwork($incus, $machine->incus_name);
             $machine->update([
                 'ipv4_private' => $ipv4,
                 'ipv6_public' => $ipv6,
@@ -118,12 +118,12 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
      *
      * @return array{ipv4:string, ipv6:?string}
      */
-    private function waitForNetwork(IncusClient $incus, string $project, string $name): array
+    private function waitForNetwork(IncusClient $incus, string $name): array
     {
         $deadline = microtime(true) + 120;
 
         do {
-            $state = $incus->state($project, $name);
+            $state = $incus->state($name);
             $ipv4 = $this->pickAddress($state['addresses'], 'inet');
             $ipv6 = $this->pickAddress($state['addresses'], 'inet6');
 
@@ -193,7 +193,7 @@ class ProvisionMachineJob implements ShouldBeEncrypted, ShouldQueue
             ]);
             try {
                 $incus->waitForOperation(
-                    $incus->delete($machine->incus_project, $machine->incus_name)['operation'],
+                    $incus->delete($machine->incus_name)['operation'],
                     60,
                 );
             } catch (MachineException $cleanup) {

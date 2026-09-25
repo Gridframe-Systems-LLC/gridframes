@@ -53,7 +53,7 @@ class SampleMachineUsageJob implements ShouldBeEncrypted, ShouldQueue
     private function sample(IncusClient $incus, Machine $machine): void
     {
         try {
-            $state = $incus->state($machine->incus_project, $machine->incus_name);
+            $state = $incus->state($machine->incus_name);
         } catch (MachineException $e) {
             $this->storeFailure($machine->id, self::failureKind($e->kind), $e->getMessage());
 

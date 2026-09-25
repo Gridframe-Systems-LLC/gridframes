@@ -11,25 +11,26 @@ use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
 
 /**
- * The Incus 7.0 host's REST API, spoken with the platform's client certificate against the pinned
- * server certificate. Thin on purpose: one method per Incus call, each returning the piece of the
- * answer the platform needs or throwing a MachineException whose kind says what went wrong and whose
+ * The Incus host's REST API, spoken with the platform's client certificate against the pinned server
+ * certificate. Thin on purpose: one method per Incus call, each returning the piece of the answer
+ * the platform needs or throwing a MachineException whose kind says what went wrong and whose
  * message a customer can act on.
  */
 class IncusClient
 {
     /**
-     * Create a virtual machine from the golden image, sized to the plan key, seeded with cloud-init.
+     * Create a virtual machine from the golden image, sized to the plan key, seeded with cloud-init,
+     * and attached to the team's own bridge.
      *
      * @return array{operation:string}
      */
-    public function createInstance(string $project, string $name, string $sizeKey, string $cloudInit): array
+    public function createInstance(string $network, string $name, string $sizeKey, string $cloudInit): array
     {
         $size = $this->size($sizeKey);
 
-        // POST /1.0/instances?project=<project> — the body carries the instance type, the image alias,
-        // the CPU, memory and cloud-init config, and the root disk on the pool.
-        $response = $this->send(fn (PendingRequest $http) => $http->post('/1.0/instances?project='.rawurlencode($project), [
+        // POST /1.0/instances — the body carries the instance type, the image alias, the CPU, memory
+        // and cloud-init config, the root disk on the pool, and the NIC on the team's bridge.
+        $response = $this->send(fn (PendingRequest $http) => $http->post('/1.0/instances', [
             'name' => $name,
             'type' => 'virtual-machine',
             'source' => ['type' => 'image', 'alias' => (string) config('machines.incus.image')],
@@ -45,6 +46,10 @@ class IncusClient
                     'path' => '/',
                     'size' => $size['disk_gb'].'GiB',
                 ],
+                'eth0' => [
+                    'type' => 'nic',
+                    'network' => $network,
+                ],
             ],
         ]));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
@@ -55,25 +60,25 @@ class IncusClient
     /**
      * @return array{operation:string}
      */
-    public function start(string $project, string $name): array
+    public function start(string $name): array
     {
-        return $this->changeState($project, $name, 'start');
+        return $this->changeState($name, 'start');
     }
 
     /**
      * @return array{operation:string}
      */
-    public function stop(string $project, string $name): array
+    public function stop(string $name): array
     {
-        return $this->changeState($project, $name, 'stop');
+        return $this->changeState($name, 'stop');
     }
 
     /**
      * @return array{operation:string}
      */
-    public function restart(string $project, string $name): array
+    public function restart(string $name): array
     {
-        return $this->changeState($project, $name, 'restart');
+        return $this->changeState($name, 'restart');
     }
 
     /**
@@ -82,11 +87,11 @@ class IncusClient
      *
      * @return array{status:string, memory_bytes:int|null, disk_bytes:int|null, addresses:list<array{interface:string, family:string, address:string, scope:string}>, network:array<string, array{bytes_received:int|null, bytes_sent:int|null, packets_received:int|null, packets_sent:int|null}>}
      */
-    public function state(string $project, string $name): array
+    public function state(string $name): array
     {
-        // GET /1.0/instances/{name}/state?project=<project> — the answer's metadata holds the status,
-        // the memory and disk usage, and per-interface addresses and counters.
-        $response = $this->send(fn (PendingRequest $http) => $http->get($this->instanceUrl($project, $name, 'state')));
+        // GET /1.0/instances/{name}/state — the answer's metadata holds the status, the memory and
+        // disk usage, and per-interface addresses and counters.
+        $response = $this->send(fn (PendingRequest $http) => $http->get($this->instanceUrl($name, 'state')));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
 
         $metadata = $response->json('metadata');
@@ -129,11 +134,11 @@ class IncusClient
      *
      * @return array{operation:string}
      */
-    public function snapshot(string $project, string $name, string $snapshotName, ?CarbonInterface $expiresAt = null): array
+    public function snapshot(string $name, string $snapshotName, ?CarbonInterface $expiresAt = null): array
     {
-        // POST /1.0/instances/{name}/snapshots?project=<project> — `stateful` false keeps the disks,
-        // not the machine's RAM, so it restores onto a stopped or running VM alike; `expires_at`
-        // (an RFC 3339 timestamp) has the host prune the snapshot itself when the time is out.
+        // POST /1.0/instances/{name}/snapshots — `stateful` false keeps the disks, not the machine's
+        // RAM, so it restores onto a stopped or running VM alike; `expires_at` (an RFC 3339
+        // timestamp) has the host prune the snapshot itself when the time is out.
         $body = [
             'name' => $snapshotName,
             'stateful' => false,
@@ -141,7 +146,7 @@ class IncusClient
         if ($expiresAt !== null) {
             $body['expires_at'] = $expiresAt->toIso8601String();
         }
-        $response = $this->send(fn (PendingRequest $http) => $http->post($this->instanceUrl($project, $name, 'snapshots'), $body));
+        $response = $this->send(fn (PendingRequest $http) => $http->post($this->instanceUrl($name, 'snapshots'), $body));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
 
         return ['operation' => $this->operation($response)];
@@ -152,11 +157,11 @@ class IncusClient
      *
      * @return array{operation:string}
      */
-    public function restore(string $project, string $name, string $snapshotName): array
+    public function restore(string $name, string $snapshotName): array
     {
-        // PUT /1.0/instances/{name}?project=<project> — the `restore` field names the snapshot the
-        // instance is rolled back to.
-        $response = $this->send(fn (PendingRequest $http) => $http->put($this->instanceUrl($project, $name), [
+        // PUT /1.0/instances/{name} — the `restore` field names the snapshot the instance is rolled
+        // back to.
+        $response = $this->send(fn (PendingRequest $http) => $http->put($this->instanceUrl($name), [
             'restore' => $snapshotName,
         ]));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
@@ -170,48 +175,35 @@ class IncusClient
      *
      * @return array{operation:string}
      */
-    public function delete(string $project, string $name): array
+    public function delete(string $name): array
     {
-        // DELETE /1.0/instances/{name}?project=<project> — the removal runs as an operation the caller
-        // can wait for.
-        $response = $this->send(fn (PendingRequest $http) => $http->delete($this->instanceUrl($project, $name)));
+        // DELETE /1.0/instances/{name} — the removal runs as an operation the caller can wait for.
+        $response = $this->send(fn (PendingRequest $http) => $http->delete($this->instanceUrl($name)));
         $this->refuseUnlessOk($response, "Machine '{$name}'");
 
         return ['operation' => $this->operation($response)];
     }
 
     /**
-     * The team's project and its own bridge, created when the host does not have them yet and left
-     * alone when it does. Networks are a per-project feature, so the bridge is looked up inside the
-     * team's project: tenants cannot see each other's machines.
+     * The team's own bridge, created when the host does not have it yet and left alone when it does.
      *
-     * @return array{project:string, network:string}
+     * One bridge per team is the tenant boundary: a bridge is its own broadcast domain, so team A's
+     * machines never share a wire with team B's, and the host's firewall decides what leaves the
+     * bridge. Incus keeps plain bridges in the default project — per-project networks are an OVN
+     * feature — so the isolation comes from the separate bridge and the firewall, not from a project.
+     *
+     * @return array{network:string}
      */
-    public function ensureProject(Team $team): array
+    public function ensureNetwork(Team $team): array
     {
-        $project = "team-{$team->id}";
-        $network = "gf-{$project}";
+        $network = 'gf-team-'.$team->id;
 
-        // GET /1.0/projects/{name} — check for the team's project before creating it.
-        $found = $this->send(fn (PendingRequest $http) => $http->get("/1.0/projects/{$project}"));
+        // GET /1.0/networks/{name} — check for the team's bridge before creating it.
+        $found = $this->send(fn (PendingRequest $http) => $http->get("/1.0/networks/{$network}"));
         if ($found->status() === 404) {
-            // POST /1.0/projects — a project per team, with the networks feature so the team gets its
-            // own bridge instead of the host's default one.
-            $this->tolerateExisting($this->send(fn (PendingRequest $http) => $http->post('/1.0/projects', [
-                'name' => $project,
-                'description' => "GridFrames machines for team {$team->id}",
-                'config' => ['features.networks' => 'true'],
-            ])), "project '{$project}'");
-        } else {
-            $this->refuseUnlessOk($found, "Project '{$project}'");
-        }
-
-        // GET /1.0/networks/{name}?project=<project> — the team's bridge, looked up in its own project.
-        $found = $this->send(fn (PendingRequest $http) => $http->get("/1.0/networks/{$network}?project=".rawurlencode($project)));
-        if ($found->status() === 404) {
-            // POST /1.0/networks?project=<project> — the team's own bridge; Incus picks a free IPv4
-            // subnet and NATs it, and the host routes the team's IPv6 out of its own /64.
-            $this->tolerateExisting($this->send(fn (PendingRequest $http) => $http->post('/1.0/networks?project='.rawurlencode($project), [
+            // POST /1.0/networks — the team's own bridge; Incus picks a free IPv4 subnet and NATs it,
+            // and the host firewall decides what the bridge may reach.
+            $this->tolerateExisting($this->send(fn (PendingRequest $http) => $http->post('/1.0/networks', [
                 'name' => $network,
                 'type' => 'bridge',
                 'config' => ['ipv4.nat' => 'true'],
@@ -220,7 +212,7 @@ class IncusClient
             $this->refuseUnlessOk($found, "Network '{$network}'");
         }
 
-        return ['project' => $project, 'network' => $network];
+        return ['network' => $network];
     }
 
     /**
@@ -262,11 +254,11 @@ class IncusClient
     /**
      * @return array{operation:string}
      */
-    private function changeState(string $project, string $name, string $action): array
+    private function changeState(string $name, string $action): array
     {
-        // PUT /1.0/instances/{name}/state?project=<project> — the action is start, stop or restart;
-        // the host gives up on the change itself after its 30 seconds and says so in the operation.
-        $response = $this->send(fn (PendingRequest $http) => $http->put($this->instanceUrl($project, $name, 'state'), [
+        // PUT /1.0/instances/{name}/state — the action is start, stop or restart; the host gives up
+        // on the change itself after its 30 seconds and says so in the operation.
+        $response = $this->send(fn (PendingRequest $http) => $http->put($this->instanceUrl($name, 'state'), [
             'action' => $action,
             'timeout' => 30,
             'force' => false,
@@ -277,11 +269,10 @@ class IncusClient
         return ['operation' => $this->operation($response)];
     }
 
-    private function instanceUrl(string $project, string $name, string $suffix = ''): string
+    private function instanceUrl(string $name, string $suffix = ''): string
     {
-        $path = '/1.0/instances/'.rawurlencode($name).($suffix !== '' ? '/'.$suffix : '');
-
-        return $path.'?project='.rawurlencode($project);
+        // Instances live in the default project; per-team isolation is the team's own bridge.
+        return '/1.0/instances/'.rawurlencode($name).($suffix !== '' ? '/'.$suffix : '');
     }
 
     /**
@@ -369,7 +360,7 @@ class IncusClient
 
     /**
      * A create call is idempotent in practice: two provisions racing on the same team both try to
-     * make the project or the bridge, and the loser's "already exists" is a win.
+     * make the bridge, and the loser's "already exists" is a win.
      */
     private function tolerateExisting(Response $response, string $subject): void
     {

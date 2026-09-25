@@ -70,7 +70,7 @@ test('a running machine is read and its readings stored in MiB with the cumulati
     (new SampleMachineUsageJob)->handle(app(IncusClient::class));
 
     Http::assertSent(fn (Request $r) => $r->method() === 'GET'
-        && $r->url() === INCUS_SAMPLE.'/1.0/instances/web-1/state?project=team-'.$this->team->id);
+        && $r->url() === INCUS_SAMPLE.'/1.0/instances/web-1/state');
     $sample = MachineUsageSample::where('machine_id', $machine->id)->first();
     expect((int) round($sample->sampled_at->diffInSeconds(now())))->toBeLessThan(5)
         ->and($sample->memory_mb)->toBe(700)

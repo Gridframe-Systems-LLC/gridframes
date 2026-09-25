@@ -45,11 +45,11 @@ it('creates a virtual machine from the golden image, sized and seeded with cloud
         INCUS_SHAPE.'/1.0/instances*' => anOperationAnswer('/1.0/operations/create-1'),
     ]);
 
-    $result = (new IncusClient)->createInstance('team-7', 'web-1', 'm-2', "#cloud-config\nhostname: web-1");
+    $result = (new IncusClient)->createInstance('gf-team-7', 'web-1', 'm-2', "#cloud-config\nhostname: web-1");
 
     Http::assertSent(function (Request $request) {
         return $request->method() === 'POST'
-            && $request->url() === INCUS_SHAPE.'/1.0/instances?project=team-7'
+            && $request->url() === INCUS_SHAPE.'/1.0/instances'
             && $request->header('Accept') === ['application/json']
             && $request['name'] === 'web-1'
             && $request['type'] === 'virtual-machine'
@@ -57,7 +57,8 @@ it('creates a virtual machine from the golden image, sized and seeded with cloud
             && $request['config']['limits.cpu'] === '1'
             && $request['config']['limits.memory'] === '2048MiB'
             && $request['config']['cloud-init.user-data'] === "#cloud-config\nhostname: web-1"
-            && $request['devices']['root'] === ['type' => 'disk', 'pool' => 'gf-pool', 'path' => '/', 'size' => '20GiB'];
+            && $request['devices']['root'] === ['type' => 'disk', 'pool' => 'gf-pool', 'path' => '/', 'size' => '20GiB']
+            && $request['devices']['eth0'] === ['type' => 'nic', 'network' => 'gf-team-7'];
     });
 
     expect($result['operation'])->toBe('/1.0/operations/create-1');
@@ -69,12 +70,12 @@ it('changes the instance state through the state endpoint', function () {
     ]);
 
     $client = new IncusClient;
-    $results = [$client->start('team-7', 'web-1'), $client->stop('team-7', 'web-1'), $client->restart('team-7', 'web-1')];
+    $results = [$client->start('web-1'), $client->stop('web-1'), $client->restart('web-1')];
 
     $requests = collect(Http::recorded())->pluck(0)->values();
     expect($requests->count())->toBe(3)
         ->and($requests->every(fn (Request $request) => $request->method() === 'PUT'
-            && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/state?project=team-7'))->toBeTrue()
+            && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/state'))->toBeTrue()
         ->and($requests->map(fn (Request $request) => $request['action'])->all())->toBe(['start', 'stop', 'restart'])
         ->and($requests->map(fn (Request $request) => $request['timeout'])->all())->toBe([30, 30, 30])
         ->and($requests->map(fn (Request $request) => $request['force'])->all())->toBe([false, false, false])
@@ -101,10 +102,10 @@ it('reads the instance state with memory, disk, addresses and network counters',
         ]]),
     ]);
 
-    $state = (new IncusClient)->state('team-7', 'web-1');
+    $state = (new IncusClient)->state('web-1');
 
     Http::assertSent(fn (Request $request) => $request->method() === 'GET'
-        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/state?project=team-7');
+        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/state');
 
     expect($state['status'])->toBe('Running')
         ->and($state['memory_bytes'])->toBe(73248768)
@@ -128,7 +129,7 @@ it('reports a machine with no readings yet as not measured, not as zero', functi
         ]]),
     ]);
 
-    $state = (new IncusClient)->state('team-7', 'web-1');
+    $state = (new IncusClient)->state('web-1');
 
     expect($state['memory_bytes'])->toBeNull()
         ->and($state['disk_bytes'])->toBeNull()
@@ -141,10 +142,10 @@ it('takes a snapshot of an instance', function () {
         INCUS_SHAPE.'/1.0/instances/*' => anOperationAnswer('/1.0/operations/snapshot-1'),
     ]);
 
-    $result = (new IncusClient)->snapshot('team-7', 'web-1', 'before-upgrade');
+    $result = (new IncusClient)->snapshot('web-1', 'before-upgrade');
 
     Http::assertSent(fn (Request $request) => $request->method() === 'POST'
-        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/snapshots?project=team-7'
+        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1/snapshots'
         && $request['name'] === 'before-upgrade'
         && $request['stateful'] === false);
 
@@ -156,10 +157,10 @@ it('restores an instance to one of its snapshots', function () {
         INCUS_SHAPE.'/1.0/instances/*' => anOperationAnswer('/1.0/operations/restore-1'),
     ]);
 
-    $result = (new IncusClient)->restore('team-7', 'web-1', 'before-upgrade');
+    $result = (new IncusClient)->restore('web-1', 'before-upgrade');
 
     Http::assertSent(fn (Request $request) => $request->method() === 'PUT'
-        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1?project=team-7'
+        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1'
         && $request['restore'] === 'before-upgrade');
 
     expect($result['operation'])->toBe('/1.0/operations/restore-1');
@@ -170,55 +171,46 @@ it('deletes an instance as an operation the caller can wait for', function () {
         INCUS_SHAPE.'/1.0/instances/*' => anOperationAnswer('/1.0/operations/delete-1'),
     ]);
 
-    $result = (new IncusClient)->delete('team-7', 'web-1');
+    $result = (new IncusClient)->delete('web-1');
 
     Http::assertSent(fn (Request $request) => $request->method() === 'DELETE'
-        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1?project=team-7');
+        && $request->url() === INCUS_SHAPE.'/1.0/instances/web-1');
 
     expect($result['operation'])->toBe('/1.0/operations/delete-1');
 });
 
-it('creates the team project and its bridge when the host has neither', function () {
+it('creates the team bridge when the host does not have it', function () {
     Http::fake([
-        INCUS_SHAPE.'/1.0/projects/team-7' => Http::response(['type' => 'error', 'error' => 'Project not found', 'error_code' => 404], 404),
-        INCUS_SHAPE.'/1.0/projects' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
-        INCUS_SHAPE.'/1.0/networks/gf-team-7*' => Http::response(['type' => 'error', 'error' => 'Network not found', 'error_code' => 404], 404),
-        INCUS_SHAPE.'/1.0/networks*' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
+        INCUS_SHAPE.'/1.0/networks/gf-team-7' => Http::response(['type' => 'error', 'error' => 'Network not found', 'error_code' => 404], 404),
+        INCUS_SHAPE.'/1.0/networks' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
     ]);
 
-    $result = (new IncusClient)->ensureProject(aTeamForShapes());
+    $result = (new IncusClient)->ensureNetwork(aTeamForShapes());
 
     $requests = collect(Http::recorded())->pluck(0)->values();
-    expect($requests->count())->toBe(4)
+    expect($requests->count())->toBe(2)
         ->and($requests[0]->method())->toBe('GET')
-        ->and($requests[0]->url())->toBe(INCUS_SHAPE.'/1.0/projects/team-7')
+        ->and($requests[0]->url())->toBe(INCUS_SHAPE.'/1.0/networks/gf-team-7')
         ->and($requests[1]->method())->toBe('POST')
-        ->and($requests[1]->url())->toBe(INCUS_SHAPE.'/1.0/projects')
-        ->and($requests[1]['name'])->toBe('team-7')
-        ->and($requests[1]['config'])->toBe(['features.networks' => 'true'])
-        ->and($requests[2]->method())->toBe('GET')
-        ->and($requests[2]->url())->toBe(INCUS_SHAPE.'/1.0/networks/gf-team-7?project=team-7')
-        ->and($requests[3]->method())->toBe('POST')
-        ->and($requests[3]->url())->toBe(INCUS_SHAPE.'/1.0/networks?project=team-7')
-        ->and($requests[3]['name'])->toBe('gf-team-7')
-        ->and($requests[3]['type'])->toBe('bridge')
-        ->and($requests[3]['config'])->toBe(['ipv4.nat' => 'true'])
-        ->and($result)->toBe(['project' => 'team-7', 'network' => 'gf-team-7']);
+        ->and($requests[1]->url())->toBe(INCUS_SHAPE.'/1.0/networks')
+        ->and($requests[1]['name'])->toBe('gf-team-7')
+        ->and($requests[1]['type'])->toBe('bridge')
+        ->and($requests[1]['config'])->toBe(['ipv4.nat' => 'true'])
+        ->and($result)->toBe(['network' => 'gf-team-7']);
 });
 
-it('leaves the team project and its bridge alone when the host has them', function () {
+it('leaves the team bridge alone when the host has it', function () {
     Http::fake([
-        INCUS_SHAPE.'/1.0/projects/team-7' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
-        INCUS_SHAPE.'/1.0/networks/gf-team-7*' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
+        INCUS_SHAPE.'/1.0/networks/gf-team-7' => Http::response(['type' => 'sync', 'status' => 'Success', 'status_code' => 200, 'metadata' => []]),
     ]);
     Http::preventStrayRequests();
 
-    $result = (new IncusClient)->ensureProject(aTeamForShapes());
+    $result = (new IncusClient)->ensureNetwork(aTeamForShapes());
 
     $requests = collect(Http::recorded())->pluck(0);
-    expect($requests->count())->toBe(2)
+    expect($requests->count())->toBe(1)
         ->and($requests->every(fn (Request $request) => $request->method() === 'GET'))->toBeTrue()
-        ->and($result)->toBe(['project' => 'team-7', 'network' => 'gf-team-7']);
+        ->and($result)->toBe(['network' => 'gf-team-7']);
 });
 
 it('waits for an operation to finish and reports its result', function () {
@@ -282,7 +274,7 @@ it('refuses to speak when a piece of the Incus connection is missing', function 
     config()->set("machines.incus.{$key}", null);
     Http::preventStrayRequests();
 
-    expect(fn () => (new IncusClient)->start('team-7', 'web-1'))
+    expect(fn () => (new IncusClient)->start('web-1'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::UNCONFIGURED));
 })->with([
     'blank url' => 'url',
@@ -294,7 +286,7 @@ it('refuses to speak when a piece of the Incus connection is missing', function 
 it('refuses a size the instance does not offer before asking the host', function () {
     Http::preventStrayRequests();
 
-    expect(fn () => (new IncusClient)->createInstance('team-7', 'web-1', 'm-999', '#cloud-config'))
+    expect(fn () => (new IncusClient)->createInstance('gf-team-7', 'web-1', 'm-999', '#cloud-config'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::UNCONFIGURED)
             ->and($e->getMessage())->toContain('m-999'));
 });
@@ -302,14 +294,14 @@ it('refuses a size the instance does not offer before asking the host', function
 it('reports an unreachable host as a transport failure', function () {
     Http::fake(fn () => throw new ConnectionException('cURL error 7: Failed to connect to incus.test port 8443'));
 
-    expect(fn () => (new IncusClient)->createInstance('team-7', 'web-1', 'm-2', '#cloud-config'))
+    expect(fn () => (new IncusClient)->createInstance('gf-team-7', 'web-1', 'm-2', '#cloud-config'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::TRANSPORT));
 });
 
 it('reports a host that answers too late as a timeout', function () {
     Http::fake(fn () => throw new ConnectionException('cURL error 28: Connection timed out after 10000 milliseconds'));
 
-    expect(fn () => (new IncusClient)->state('team-7', 'web-1'))
+    expect(fn () => (new IncusClient)->state('web-1'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::TIMEOUT));
 });
 
@@ -318,7 +310,7 @@ it('reports a machine the host does not know as not found', function () {
         INCUS_SHAPE.'/1.0/instances/*' => Http::response(['type' => 'error', 'error' => 'Instance not found', 'error_code' => 404], 404),
     ]);
 
-    expect(fn () => (new IncusClient)->state('team-7', 'ghost'))
+    expect(fn () => (new IncusClient)->state('ghost'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::NOT_FOUND)
             ->and($e->getMessage())->toContain('ghost'));
 });
@@ -328,7 +320,7 @@ it('reports a host refusal with its reason', function (int $status) {
         INCUS_SHAPE.'/1.0/instances*' => Http::response(['type' => 'error', 'error' => 'Instance name already in use', 'error_code' => $status], $status),
     ]);
 
-    expect(fn () => (new IncusClient)->createInstance('team-7', 'web-1', 'm-2', '#cloud-config'))
+    expect(fn () => (new IncusClient)->createInstance('gf-team-7', 'web-1', 'm-2', '#cloud-config'))
         ->toThrow(fn (MachineException $e) => expect($e->kind)->toBe(MachineException::REJECTED)
             ->and($e->getMessage())->toContain('Instance name already in use'));
 })->with([
