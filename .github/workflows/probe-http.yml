@@ -1,0 +1,30 @@
+name: probe-http
+
+# One-off HTTP probe FROM THE RUNNER itself (not via SSH to the host) — the honest
+# way to observe the platform as a genuinely foreign source (rate limits, allowlists,
+# redirect and TLS behavior). Dispatch:
+#   gh workflow run probe-http.yml -f url=https://gridframes.app/api/v1/version
+
+on:
+  workflow_dispatch:
+    inputs:
+      url:
+        description: 'URL to request'
+        required: true
+      extra_args:
+        description: 'Extra curl arguments (quoted)'
+        required: false
+        default: ''
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Request and report
+        run: |
+          set -x
+          curl -sS -m 20 -o /tmp/body -w 'status=%{http_code} remote=%{remote_ip}\n' ${{ inputs.extra_args }} "${{ inputs.url }}" || true
+          echo "--- body (first 400 bytes)"
+          head -c 400 /tmp/body || true
+          echo
