@@ -10,9 +10,11 @@ All notable changes to this project will be documented in this file.
 - Create, meter, bill overage, and tie the life of a machine to the plan
 - One-off runner SSH diagnostic
 - Parametrized runner SSH diagnostic
+- A one-off HTTP probe from the runner itself
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
