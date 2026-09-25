@@ -13,6 +13,11 @@ beforeEach(function () {
     $this->user = User::factory()->create();
     $this->team->members()->attach($this->user->id, ['role' => 'owner']);
 
+    // ApiTokens mount and the api middleware read the instance settings row; id 0
+    // is not fillable, so it must be force-created exactly like the installer does.
+    // The suite exercises token creation, which requires the API to be enabled.
+    \App\Models\InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true]);
+
     session(['currentTeam' => $this->team]);
     $this->actingAs($this->user);
 });

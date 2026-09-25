@@ -10,9 +10,6 @@ class ApiAllowed
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (isCloud()) {
-            return $next($request);
-        }
         $settings = instanceSettings();
         if ($settings->is_api_enabled === false) {
             return response()->json(['success' => true, 'message' => 'API is disabled.'], 403);

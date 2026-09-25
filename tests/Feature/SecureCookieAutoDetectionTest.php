@@ -7,7 +7,10 @@ uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {
     Cache::forget('instance_settings_fqdn_host');
-    InstanceSettings::updateOrCreate(['id' => 0], ['fqdn' => null]);
+    // id 0 is not fillable — updateOrCreate silently creates id 1 and every
+    // instanceSettings() call then fails to find row 0. Force it, like the installer.
+    InstanceSettings::forceCreate(['id' => 0, 'fqdn' => null]);
+    \Illuminate\Support\Once::flush();
     // Ensure session.secure starts unconfigured for each test
     config(['session.secure' => null]);
 });

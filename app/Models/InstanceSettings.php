@@ -73,6 +73,10 @@ class InstanceSettings extends Model
     ];
 
     protected $casts = [
+        // Without the boolean cast a fresh fetch yields integer 0/1, and ApiAllowed's
+        // strict `=== false` check never fires — the disable-API kill switch would
+        // silently keep the API open.
+        'is_api_enabled' => 'boolean',
         'smtp_enabled' => 'boolean',
         'smtp_from_address' => 'encrypted',
         'smtp_from_name' => 'encrypted',

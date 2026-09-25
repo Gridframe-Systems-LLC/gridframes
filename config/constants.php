@@ -22,7 +22,7 @@ return [
     ],
 
     'urls' => [
-        'docs' => 'https://projectxprotocol.dev/docs',
+        'docs' => env('DOCS_URL', 'https://projectxprotocol.dev/docs'),
         'contact' => 'https://projectxprotocol.dev/docs/contact',
     ],
 

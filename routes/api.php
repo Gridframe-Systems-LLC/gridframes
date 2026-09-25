@@ -437,5 +437,5 @@ Route::group([
 });
 
 Route::any('/{any}', function () {
-    return response()->json(['message' => 'Not found.', 'docs' => 'https://projectxprotocol.dev/docs'], 404);
+    return response()->json(['message' => 'Not found.', 'docs' => config('constants.xlaunch.urls.docs')], 404);
 })->where('any', '.*');
