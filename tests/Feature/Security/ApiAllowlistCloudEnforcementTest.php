@@ -52,7 +52,7 @@ test('a cloud instance enforces the API allowlist against every source', functio
 });
 
 test('the api catch-all keeps the docs pointer on the instance docs url', function () {
-    config()->set('constants.xlaunch.urls.docs', 'https://gridframes.app/llms.txt');
+    config()->set('constants.urls.docs', 'https://gridframes.app/llms.txt');
 
     $response = $this->getJson('/api/definitely-not-a-route');
 
