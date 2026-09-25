@@ -60,7 +60,9 @@ Route::group([
     Route::post('/mcp/disable', [OtherController::class, 'disable_mcp']);
 });
 Route::group([
-    'middleware' => ['auth:sanctum', 'api.token.team', ApiAllowed::class, 'api.sensitive'],
+    // The allowlist runs before authentication: a blocked source is rejected
+    // outright instead of getting an auth-response oracle.
+    'middleware' => [ApiAllowed::class, 'auth:sanctum', 'api.token.team', 'api.sensitive'],
     'prefix' => 'v1',
 ], function () {
 
