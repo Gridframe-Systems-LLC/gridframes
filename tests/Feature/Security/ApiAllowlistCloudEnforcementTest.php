@@ -59,3 +59,30 @@ test('the api catch-all keeps the docs pointer on the instance docs url', functi
     $response->assertStatus(404);
     expect($response->json('docs'))->toBe('https://gridframes.app/llms.txt');
 });
+
+test('the kill switch and the allowlist act before authentication', function () {
+    $settings = instanceSettings();
+    $settings->update(['is_api_enabled' => false, 'allowed_ips' => null]);
+
+    // A disabled API answers with the operator's 403, not an auth error — even
+    // unauthenticated. Regression: middleware sorting used to run auth first,
+    // hiding both the kill switch and the allowlist behind a 401.
+    $this->getJson('/api/v1/version')->assertStatus(403)->assertJson([
+        'message' => 'API is disabled.',
+    ]);
+
+    $settings->update(['is_api_enabled' => true, 'allowed_ips' => '198.51.100.7']);
+
+    // With the API on, a source outside the allowlist is rejected before auth.
+    $this->withServerVariables(['REMOTE_ADDR' => '203.0.113.10'])
+        ->getJson('/api/v1/version')
+        ->assertStatus(403)
+        ->assertJson([
+            'message' => 'You are not allowed to access the API.',
+        ]);
+
+    // An allowed source reaches authentication and gets the ordinary 401.
+    $this->withServerVariables(['REMOTE_ADDR' => '198.51.100.7'])
+        ->getJson('/api/v1/version')
+        ->assertStatus(401);
+});

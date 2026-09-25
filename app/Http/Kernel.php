@@ -116,4 +116,27 @@ class Kernel extends HttpKernel
         'mcp.enabled' => EnsureMcpEnabled::class,
         'mcp.team.enabled' => EnsureTeamMcpEnabled::class,
     ];
+
+    /**
+     * Global middleware execution order. ApiAllowed must run before authentication:
+     * unlisted middleware sort after the listed block, which put auth:sanctum first —
+     * a disabled API or a blocked source then answered with an auth error instead of
+     * the operator's 403, and foreign sources could probe token validity.
+     *
+     * @var array<int, class-string|string>
+     */
+    protected $middlewarePriority = [
+        \App\Http\Middleware\ApiAllowed::class,
+        \Illuminate\Foundation\Http\Middleware\HandlePrecognitiveRequests::class,
+        \Illuminate\Cookie\Middleware\EncryptCookies::class,
+        \Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse::class,
+        \Illuminate\Session\Middleware\StartSession::class,
+        \Illuminate\View\Middleware\ShareErrorsFromSession::class,
+        \Illuminate\Contracts\Auth\Middleware\AuthenticatesRequests::class,
+        \Illuminate\Routing\Middleware\ThrottleRequests::class,
+        \Illuminate\Routing\Middleware\ThrottleRequestsWithRedis::class,
+        \Illuminate\Contracts\Session\Middleware\AuthenticatesSessions::class,
+        \Illuminate\Routing\Middleware\SubstituteBindings::class,
+        \Illuminate\Auth\Middleware\Authorize::class,
+    ];
 }
