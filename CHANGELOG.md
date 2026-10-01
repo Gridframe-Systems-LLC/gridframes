@@ -7,6 +7,7 @@ All notable changes to this project will be documented in this file.
 ### 🐛 Bug Fixes
 
 - Remove environment gate, fix StrictHostKeyChecking typo in deploy-ovh.yml
+- *(xlaunch)* Three app defects flagged by triage — domains filter, is_literal cast, sentinel gate (I3)
 
 ### 💼 Other
 
@@ -15,6 +16,7 @@ All notable changes to this project will be documented in this file.
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
