@@ -23,6 +23,11 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
+
+### 🧪 Testing
+
+- *(xlaunch)* Triage pass 1 — re-anchor drifted tests (I2)
 
 ### ⚙️ Miscellaneous Tasks
 
