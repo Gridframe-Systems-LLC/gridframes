@@ -28,7 +28,7 @@ V4_URL="https://www.cloudflare.com/ips-v4"
 V6_URL="https://www.cloudflare.com/ips-v6"
 INTERNAL_V4="10.0.0.0/8 172.16.0.0/12 192.168.0.0/16"
 INTERNAL_V6="fc00::/7 fe80::/10"
-PORTS_TCP="80 443"   # QUIC (443/udp) terminates at Cloudflare; origin speaks tcp
+PORTS_TCP="80 443 8000"   # 8000 = app HTTP published by compose; CF never proxies it, internal-only
 PORTS_UDP="443"
 
 V4_FILE="$(mktemp)"; V6_FILE="$(mktemp)"
