@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🐛 Bug Fixes
+
+- Remove environment gate, fix StrictHostKeyChecking typo in deploy-ovh.yml
+
 ### 💼 Other
 
 - The data model and the Incus client, off by default
@@ -18,8 +22,14 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
 
-## [4.4.0] - 2026-09-24
+### ⚙️ Miscellaneous Tasks
+
+- Add OVH production deploy workflow
+- *(xlaunch)* Test gate — pest in CI, release needs green suite (I1)
+
+## [1.0.0] - 2026-09-23
 
 ### 🚀 Features
 
@@ -5985,7 +5995,6 @@ All notable changes to this project will be documented in this file.
 - *(s3)* Allow uppercase letters in S3 bucket names
 - *(backups)* Keep service DB context after deleting a schedule
 - *(services)* Keep Traefik subtype from stored service type
-- Remove environment gate, fix StrictHostKeyChecking typo in deploy-ovh.yml
 
 ### 💼 Other
 
@@ -8395,7 +8404,6 @@ All notable changes to this project will be documented in this file.
 - *(notifications)* Remove broken notification interface
 - *(auth)* Remove unneeded return
 - *(sentinel)* Bump sentinel version from 0.0.22 to 1.0.1
-- Add OVH production deploy workflow
 
 ### ◀️ Revert
 
