@@ -46,7 +46,7 @@ test('returns domains for own team application via uuid query param', function (
         ->getJson("/api/v1/servers/{$this->server->uuid}/domains?uuid={$application->uuid}");
 
     $response->assertOk();
-    $response->assertJsonFragment(['my-app.example.com']);
+    $response->assertExactJson(['https://my-app.example.com']);
 });
 
 test('returns 404 when application uuid belongs to another team', function () {
@@ -90,6 +90,29 @@ test('returns 404 when server uuid belongs to another team', function () {
 
     $response = $this->withHeaders(domainApiAuthHeaders())
         ->getJson("/api/v1/servers/{$otherServer->uuid}/domains");
+
+    $response->assertNotFound();
+    $response->assertJson(['message' => 'Server not found.']);
+});
+
+test('resolves server from the path even when the uuid query filter is present', function () {
+    $application = Application::factory()->create([
+        'fqdn' => 'https://my-app.example.com',
+        'environment_id' => $this->environment->id,
+        'destination_id' => $this->destination->id,
+        'destination_type' => $this->destination->getMorphClass(),
+    ]);
+
+    $otherTeam = Team::factory()->create();
+    $otherUser = User::factory()->create();
+    $otherTeam->members()->attach($otherUser->id, ['role' => 'owner']);
+    $otherServer = Server::factory()->create(['team_id' => $otherTeam->id]);
+
+    // The path identifies a server the token's team cannot see; the ?uuid=
+    // filter must not be able to make the server lookup succeed or fail
+    // against a different (application) uuid.
+    $response = $this->withHeaders(domainApiAuthHeaders())
+        ->getJson("/api/v1/servers/{$otherServer->uuid}/domains?uuid={$application->uuid}");
 
     $response->assertNotFound();
     $response->assertJson(['message' => 'Server not found.']);
