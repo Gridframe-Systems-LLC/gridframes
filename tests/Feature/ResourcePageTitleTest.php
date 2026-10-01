@@ -44,35 +44,40 @@ it('renders the source name as a large page title before the navbar', function (
     $response->assertSuccessful();
     $response->assertSee('text-[24px]! leading-7! font-semibold! tracking-tight!', false);
     $response->assertSee('order-1 mb-4 flex min-w-0 items-start justify-between gap-4 lg:order-2', false);
-    $response->assertSee('order-2 lg:order-1', false);
+    // The source page uses a settings sidebar instead of a fixed layer-2 tab strip.
+    $response->assertSee('application-settings-navigation', false);
     $response->assertSee('xlaunch-laravel-dev-public');
     $response->assertSee('GitHub App for northlatch');
-    $response->assertSee('>General</h3>', false);
+    // The General settings section renders its heading through the info helper.
+    $response->assertSee('underline underline-offset-4">General</span>', false);
 
     $html = $response->getContent();
-    $titlePos = strpos($html, 'order-1 mb-4 flex items-start justify-between gap-4 lg:order-2');
-    $navbarPos = strpos($html, 'order-2 lg:order-1');
-    expect($titlePos)->toBeLessThan($navbarPos);
+    $titlePos = strpos($html, 'order-1 mb-4 flex min-w-0 items-start justify-between gap-4 lg:order-2');
+    // Anchor on the sidebar markup (not the inlined CSS rule) to compare positions.
+    $sidebarPos = strpos($html, '<aside class="application-settings-navigation');
+    expect($titlePos)->toBeLessThan($sidebarPos);
 });
 
 it('renders family page titles before tabs for team notifications and keys', function () {
     $team = $this->get(route('team.index'));
     $team->assertSuccessful();
     $team->assertSee('Team');
-    $team->assertSee('Members, roles, and team settings');
+    $team->assertSee('Manage your team, members, and access settings.');
     $team->assertSee('New team');
-    // Desktop shell (lg+) hides the family H1; mobile topbar layout keeps it.
-    expect($team->getContent())->toContain('lg:hidden');
+    // The family settings layout hides its H1 on the wider desktop shell (xl+),
+    // keeping the mobile header title.
+    expect($team->getContent())->toContain('xl:hidden');
 
     $this->get(route('notifications.email'))
         ->assertSuccessful()
         ->assertSee('Notifications')
-        ->assertSee('Delivery channels for team events');
+        ->assertSee('Configure how your team receives deployment and system alerts.');
 
     $keys = $this->get(route('security.private-key.index'));
     $keys->assertSuccessful();
-    $keys->assertSee('Keys &amp; Tokens', false);
-    $keys->assertSee('SSH keys, cloud tokens, and API access');
+    // assertSee escapes by default, matching the rendered "Keys & Tokens" H1.
+    $keys->assertSee('Keys & Tokens');
+    $keys->assertSee('Manage SSH keys, cloud credentials, and API access tokens.');
     $keys->assertSee('Private Keys');
     $keys->assertSee('New private key');
     $keys->assertDontSee('SSH keys available to this team');
@@ -90,7 +95,8 @@ it('renders the destination name as a large page title', function () {
     $response->assertSee('text-[24px]! leading-7! font-semibold! tracking-tight!', false);
     $response->assertSee('xlaunch');
     $response->assertSee('Docker network on prod-server');
-    $response->assertSee('>General</h3>', false);
+    // The General settings section renders its heading through the info helper.
+    $response->assertSee('underline underline-offset-4">General</span>', false);
 });
 
 it('renders the s3 storage name as a large page title', function () {
@@ -112,7 +118,8 @@ it('renders the s3 storage name as a large page title', function () {
     $response->assertSee('text-[24px]! leading-7! font-semibold! tracking-tight!', false);
     $response->assertSee('backup-bucket');
     $response->assertSee('Primary backup destination');
-    $response->assertSee('>General</h3>', false);
+    // The General settings section renders its heading through the info helper.
+    $response->assertSee('underline underline-offset-4">General</span>', false);
 });
 
 it('uses the same page title size on application database service and server headings', function () {

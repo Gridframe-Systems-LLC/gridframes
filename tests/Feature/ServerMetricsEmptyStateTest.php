@@ -5,7 +5,8 @@ test('sentinel-required metrics state does not repeat an unavailable badge', fun
     $sentinelRequiredState = str($view)->after('@else')->before('@endif')->toString();
 
     expect($sentinelRequiredState)
-        ->toContain('title="Sentinel is required"')
+        ->toContain('title="Metrics unavailable"')
+        ->toContain('Sentinel metrics are unavailable on build and Swarm servers.')
         ->not->toContain('status="Unavailable"');
 });
 

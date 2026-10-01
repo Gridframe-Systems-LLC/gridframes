@@ -280,12 +280,14 @@
                         description="Sentinel metrics are unavailable on build and Swarm servers."
                         icon-name="dashboard">
                         <x-slot:contents>
-                            <a class="button"
-                                href="{{ route('server.sentinel', ['server_uuid' => $server->uuid]) }}"
-                                {{ wireNavigate() }}>
-                                View Sentinel
-                                <x-external-link />
-                            </a>
+                            @can('viewSentinel', $server)
+                                <a class="button"
+                                    href="{{ route('server.sentinel', ['server_uuid' => $server->uuid]) }}"
+                                    {{ wireNavigate() }}>
+                                    View Sentinel
+                                    <x-external-link />
+                                </a>
+                            @endcan
                         </x-slot:contents>
                     </x-empty>
                 </x-application.settings-section>
