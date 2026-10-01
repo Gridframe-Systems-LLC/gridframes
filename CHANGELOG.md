@@ -26,10 +26,14 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
 
 ### 🧪 Testing
 
 - *(xlaunch)* Triage pass 1 — re-anchor drifted tests (I2)
+- *(xlaunch)* Triage pass 2 — re-anchor 13 suites, gate charts View Sentinel (I4 salvage)
+- *(xlaunch)* Triage pass 3 — Server identity-map flake fix, boot container for 7 Unit suites (I5)
+- *(xlaunch)* Pin app.env=production in CheckForUpdatesJobTest (I5 followup)
 
 ### ⚙️ Miscellaneous Tasks
 
