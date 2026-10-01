@@ -15,6 +15,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     InstanceSettings::updateOrCreate(['id' => 0]);
 
     $this->team = Team::factory()->create();

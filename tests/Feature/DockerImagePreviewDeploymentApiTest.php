@@ -15,6 +15,7 @@ use Illuminate\Support\Str;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     Queue::fake();
 
     $this->team = Team::factory()->create();

@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\Security\ApiTokens;
-use App\Models\InstanceSettings;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -10,7 +9,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0], ['is_api_enabled' => true]);
+    seedInstanceSettings(['is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
 

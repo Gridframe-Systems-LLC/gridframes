@@ -57,7 +57,10 @@ test('admin sees add project button on dashboard', function () {
     createProjectForTeam($team);
 
     Livewire::test(Dashboard::class)
-        ->assertSee('New Project');
+        // Project creation moved to the projects page ("New Project" modal);
+        // the dashboard links to it from the Projects section.
+        ->assertSee('Projects')
+        ->assertSee(route('project.index'));
 });
 
 test('member does not see add project button on dashboard', function () {
@@ -78,9 +81,19 @@ test('admin sees add server button on dashboard', function () {
     $this->actingAs($user);
     session(['currentTeam' => $team]);
 
-    createServerWithKeyForTeam($team);
+    // The add-server CTA renders in the servers empty state once the team has
+    // a private key; creating an actual server would hide it behind the grid.
+    DB::table('private_keys')->insert([
+        'uuid' => (string) Str::uuid(),
+        'name' => 'Test Key',
+        'private_key' => 'test-key',
+        'team_id' => $team->id,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     Livewire::test(Dashboard::class)
+        ->assertSee('New server')
         ->assertSee(route('server.create'));
 });
 
@@ -90,8 +103,18 @@ test('member does not see add server button on dashboard', function () {
     $this->actingAs($user);
     session(['currentTeam' => $team]);
 
-    createServerWithKeyForTeam($team);
+    // Mirror of the admin test: empty servers section with a private key,
+    // so only the @can('createAnyResource') gate can hide the CTA.
+    DB::table('private_keys')->insert([
+        'uuid' => (string) Str::uuid(),
+        'name' => 'Test Key',
+        'private_key' => 'test-key',
+        'team_id' => $team->id,
+        'created_at' => now(),
+        'updated_at' => now(),
+    ]);
 
     Livewire::test(Dashboard::class)
+        ->assertDontSee('New server')
         ->assertDontSee(route('server.create'));
 });

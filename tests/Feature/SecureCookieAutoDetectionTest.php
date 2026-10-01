@@ -1,13 +1,12 @@
 <?php
 
-use App\Models\InstanceSettings;
 use Illuminate\Support\Facades\Cache;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
 beforeEach(function () {
     Cache::forget('instance_settings_fqdn_host');
-    InstanceSettings::updateOrCreate(['id' => 0], ['fqdn' => null]);
+    seedInstanceSettings(['fqdn' => null]);
     // Ensure session.secure starts unconfigured for each test
     config(['session.secure' => null]);
 });

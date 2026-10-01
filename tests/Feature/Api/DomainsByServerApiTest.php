@@ -12,6 +12,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();
     $this->team->members()->attach($this->user->id, ['role' => 'owner']);
@@ -87,7 +88,7 @@ test('returns 404 when server uuid belongs to another team', function () {
 
     $otherServer = Server::factory()->create(['team_id' => $otherTeam->id]);
 
-    $response = $this->withHeaders(authHeaders())
+    $response = $this->withHeaders(domainApiAuthHeaders())
         ->getJson("/api/v1/servers/{$otherServer->uuid}/domains");
 
     $response->assertNotFound();
@@ -112,7 +113,7 @@ test('only returns domains for applications on the specified server', function (
         'destination_type' => $otherDestination->getMorphClass(),
     ]);
 
-    $response = $this->withHeaders(authHeaders())
+    $response = $this->withHeaders(domainApiAuthHeaders())
         ->getJson("/api/v1/servers/{$this->server->uuid}/domains");
 
     $response->assertOk();

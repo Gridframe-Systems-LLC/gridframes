@@ -9,6 +9,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create(['email' => 'invited@example.com']);
 

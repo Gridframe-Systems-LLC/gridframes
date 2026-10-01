@@ -4,8 +4,12 @@ use App\Models\Application;
 use App\Models\EnvironmentVariable;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     $this->user = User::factory()->create();
     $this->team = Team::factory()->create();
     $this->team->members()->attach($this->user, ['role' => 'owner']);
@@ -91,11 +95,12 @@ test('all boolean fields default correctly when not provided', function () {
         'resourceable_id' => $this->application->id,
     ]);
 
-    // Boolean fields can be null or false depending on database defaults
+    // is_runtime and is_buildtime default to true via the model's $attributes;
+    // the other flags have no model default.
     expect($env->is_multiline)->toBeIn([false, null]);
     expect($env->is_preview)->toBeIn([false, null]);
-    expect($env->is_runtime)->toBeIn([false, null]);
-    expect($env->is_buildtime)->toBeIn([false, null]);
+    expect($env->is_runtime)->toBeTrue();
+    expect($env->is_buildtime)->toBeTrue();
     expect($env->is_shown_once)->toBeIn([false, null]);
 });
 
@@ -121,15 +126,24 @@ test('value field is properly encrypted when mass assigned', function () {
     expect($rawValue)->not->toBeNull();
 });
 
-test('key field is trimmed and spaces replaced with underscores', function () {
+test('key field is trimmed and keys with inner spaces are rejected', function () {
     $env = EnvironmentVariable::create([
-        'key' => '  TEST KEY WITH SPACES  ',
+        'key' => '  TEST_VAR  ',
         'value' => 'test_value',
         'resourceable_type' => Application::class,
         'resourceable_id' => $this->application->id,
     ]);
 
-    expect($env->key)->toBe('TEST_KEY_WITH_SPACES');
+    expect($env->key)->toBe('TEST_VAR');
+
+    // Keys containing inner spaces are invalid; ValidationPatterns rejects them
+    // instead of silently coercing them to underscores.
+    expect(fn () => EnvironmentVariable::create([
+        'key' => '  TEST KEY WITH SPACES  ',
+        'value' => 'test_value',
+        'resourceable_type' => Application::class,
+        'resourceable_id' => $this->application->id,
+    ]))->toThrow(InvalidArgumentException::class);
 });
 
 test('version field can be mass assigned', function () {

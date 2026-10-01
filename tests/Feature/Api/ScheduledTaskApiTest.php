@@ -16,6 +16,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     // ApiAllowed middleware requires InstanceSettings with id=0
     InstanceSettings::create(['id' => 0, 'is_api_enabled' => true]);
 
