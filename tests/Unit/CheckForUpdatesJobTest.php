@@ -14,6 +14,9 @@ use Tests\TestCase;
 uses(TestCase::class, RefreshDatabase::class);
 
 beforeEach(function () {
+    // CheckForUpdatesJob::handle() early-returns when isDev() (app.env=local)
+    // or isCloud(); pin the env so the job actually runs its File/Http path.
+    config(['app.env' => 'production']);
     Queue::fake();
     Cache::flush();
     seedInstanceSettings();
