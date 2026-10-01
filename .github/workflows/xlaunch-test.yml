@@ -1,0 +1,45 @@
+name: Test Xlaunch (Pest)
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  pest:
+    # The suite is RED at HEAD (audit E1, 2026-10-01: 710 failed / 7563 passed,
+    # including 32 security-flavoured failures). This job exists to make that
+    # visible on every push and PR; it must stay red-failing until the suite
+    # is actually fixed. Do not silence it with continue-on-error.
+    name: Pest suite (Unit + Feature + v4/Feature, browser excluded)
+    runs-on: ubuntu-24.04
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          # Platform requirements from composer check-platform-reqs, plus the
+          # pdo/sqlite drivers for the in-memory testing connection
+          # (DB_CONNECTION=testing, config/database.php).
+          extensions: ctype, curl, dom, fileinfo, filter, iconv, mbstring, openssl, pcntl, pdo, pdo_sqlite, posix, session, simplexml, sockets, sodium, sqlite3, tokenizer, xml, xmlwriter, zip, zlib
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      # The browser tests (tests/Browser is Laravel Dusk, tests/v4/Browser is
+      # the Pest Playwright plugin) are not runnable on CI: no groups are
+      # marked on them, so --exclude-group would not skip them. Passing the
+      # three source directories explicitly runs exactly the rest of the
+      # suite and edits no test files. Frontend build steps are not needed:
+      # no test reads built assets.
+      - name: Run Pest
+        run: vendor/bin/pest tests/Unit tests/Feature tests/v4/Feature
