@@ -2139,7 +2139,9 @@ it('regenerates an application domain as a draft while preserving its url settin
         ->assertSet('editingDomainParts.path', '/api');
 
     expect($component->get('editingDomainParts')['host'])
-        ->toEndWith('.sslip.io')
+        // The server has a wildcard configured, so generateUrl() regenerates
+        // under it — the sslip.io fallback only applies without a wildcard.
+        ->toEndWith('.wildcard.example.net')
         ->not->toBe('old.example.com')
         ->and($this->application->fresh()->fqdn)->toBe('http://old.example.com/api')
         ->and($this->application->fresh()->domain_port_overrides)->toMatchArray([

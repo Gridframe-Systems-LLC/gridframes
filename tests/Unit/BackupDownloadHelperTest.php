@@ -5,6 +5,9 @@ use App\Models\Server;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\File\Exception\FileNotFoundException;
 use Symfony\Component\HttpFoundation\StreamedResponse;
+use Tests\TestCase;
+
+uses(TestCase::class);
 
 function backupDownloadServer(): Server
 {
