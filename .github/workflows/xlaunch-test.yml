@@ -40,6 +40,9 @@ jobs:
       # marked on them, so --exclude-group would not skip them. Passing the
       # three source directories explicitly runs exactly the rest of the
       # suite and edits no test files. Frontend build steps are not needed:
-      # no test reads built assets.
+      # tests never read built assets, and Tests\TestCase::setUp() swaps Vite
+      # for a no-op, so page rendering never requires public/build. Do not
+      # remove that without running `npm run build` here first — @vite throws
+      # ViteManifestNotFoundException without a manifest (the I8 CI family).
       - name: Run Pest
         run: vendor/bin/pest tests/Unit tests/Feature tests/v4/Feature
