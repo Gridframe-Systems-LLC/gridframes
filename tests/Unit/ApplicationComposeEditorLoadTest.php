@@ -1,65 +1,51 @@
 <?php
 
 use App\Models\Application;
-use App\Models\Server;
-use App\Models\StandaloneDocker;
 
 /**
- * Unit test to verify docker_compose_raw is properly synced to the Livewire component
- * after loading the compose file from Git.
+ * Unit coverage for the docker_compose_raw sync the Monaco editor relies on.
  *
- * This test addresses the issue where the Monaco editor remains empty because
- * the component property is not synced after loadComposeFile() completes.
+ * Application::loadComposeFile() shells out to the destination server
+ * (git clone + sparse checkout), so the full load path belongs to
+ * feature-level tests with process doubles. What is testable at the model
+ * level: the isInit guard must not touch the server when raw compose is
+ * already populated, and the attribute must round-trip the loaded content.
  */
-it('syncs docker_compose_raw to component property after loading compose file', function () {
-    // Create a mock application
-    $app = Mockery::mock(Application::class)->makePartial();
-    $app->shouldReceive('getAttribute')->with('docker_compose_raw')->andReturn(null, 'version: "3"\nservices:\n  web:\n    image: nginx');
-    $app->shouldReceive('getAttribute')->with('docker_compose_location')->andReturn('/docker-compose.yml');
-    $app->shouldReceive('getAttribute')->with('base_directory')->andReturn('/');
-    $app->shouldReceive('getAttribute')->with('docker_compose_domains')->andReturn(null);
-    $app->shouldReceive('getAttribute')->with('build_pack')->andReturn('dockercompose');
-    $app->shouldReceive('getAttribute')->with('settings')->andReturn((object) ['is_raw_compose_deployment_enabled' => false]);
+it('does not reload the compose file on init when docker_compose_raw is already populated', function () {
+    $app = new Application;
+    $app->docker_compose_raw = 'services:
+  web:
+    image: nginx';
+    $app->docker_compose_location = '/docker-compose.yml';
+    $app->base_directory = '/';
 
-    // Mock destination and server
-    $server = Mockery::mock(Server::class);
-    $server->shouldReceive('proxyType')->andReturn('traefik');
+    // With isInit=true and raw compose present, loadComposeFile() must
+    // early-return before building any git/remote commands.
+    $app->loadComposeFile(isInit: true);
 
-    $destination = Mockery::mock(StandaloneDocker::class);
-    $destination->server = $server;
+    expect($app->docker_compose_raw)->toBe("services:\n  web:\n    image: nginx");
+});
 
-    $app->shouldReceive('getAttribute')->with('destination')->andReturn($destination);
-    $app->shouldReceive('refresh')->andReturnSelf();
+it('syncs docker_compose_raw to the model after loading a compose file', function () {
+    $app = new Application;
 
-    // Mock loadComposeFile to simulate loading compose file
-    $composeContent = 'version: "3"\nservices:\n  web:\n    image: nginx';
-    $app->shouldReceive('loadComposeFile')->andReturn([
-        'parsedServices' => ['services' => ['web' => ['image' => 'nginx']]],
-        'initialDockerComposeLocation' => '/docker-compose.yml',
-    ]);
+    expect($app->docker_compose_raw)->toBeNull();
 
-    // After loadComposeFile is called, the docker_compose_raw should be populated
+    $composeContent = 'version: "3"
+services:
+  web:
+    image: nginx';
+
     $app->docker_compose_raw = $composeContent;
 
-    // Verify that docker_compose_raw is populated after loading
-    expect($app->docker_compose_raw)->toBe($composeContent);
-    expect($app->docker_compose_raw)->not->toBeEmpty();
+    expect($app->docker_compose_raw)->toBe($composeContent)
+        ->not->toBeEmpty();
 });
 
 /**
  * Test that verifies the component properly syncs model data after loadComposeFile
  */
 it('ensures General component syncs docker_compose_raw property after loading', function () {
-    // This is a conceptual test showing the expected behavior
-    // In practice, this would be tested with a Feature test that actually renders the component
-
-    // The issue: Before the fix
-    // 1. mount() is called -> docker_compose_raw is null
-    // 2. syncFromModel() is called at end of mount -> component property = null
-    // 3. loadComposeFile() is triggered later via Alpine x-init
-    // 4. loadComposeFile() updates the MODEL's docker_compose_raw
-    // 5. BUT component property is never updated, so Monaco editor stays empty
-
     // The fix: After adding syncFromModel() in loadComposeFile()
     // 1. mount() is called -> docker_compose_raw is null
     // 2. syncFromModel() is called at end of mount -> component property = null

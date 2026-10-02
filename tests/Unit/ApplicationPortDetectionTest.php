@@ -6,52 +6,56 @@
  * Tests verify that the Application model can correctly detect PORT environment
  * variables and provide information to the UI about matches and mismatches with
  * the configured ports_exposes field.
+ *
+ * Real DB-backed Application + EnvironmentVariable rows (resourceable morph);
+ * the encrypted `value` cast only round-trips through the database, so the
+ * real_value accessor needs persisted rows — no Mockery on Eloquent.
  */
 
 use App\Models\Application;
+use App\Models\Environment;
 use App\Models\EnvironmentVariable;
-use Illuminate\Support\Collection;
+use App\Models\Project;
+use App\Models\Team;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
-beforeEach(function () {
-    // Clean up Mockery after each test
-    Mockery::close();
-});
+uses(TestCase::class, RefreshDatabase::class);
+
+function makePortDetectionApplication(): Application
+{
+    $team = Team::factory()->create();
+    $project = Project::factory()->create(['team_id' => $team->id]);
+    $environment = Environment::factory()->create(['project_id' => $project->id]);
+
+    return Application::factory()->create([
+        'environment_id' => $environment->id,
+    ]);
+}
+
+function makePortEnvVar(Application $application, string $key, ?string $value, bool $isPreview = false): EnvironmentVariable
+{
+    return EnvironmentVariable::create([
+        'key' => $key,
+        'value' => $value,
+        'is_preview' => $isPreview,
+        'resourceable_type' => Application::class,
+        'resourceable_id' => $application->id,
+    ]);
+}
 
 it('detects PORT environment variable when present', function () {
-    // Create a mock Application instance
-    $application = Mockery::mock(Application::class)->makePartial();
+    $application = makePortDetectionApplication();
+    makePortEnvVar($application, 'PORT', '3000');
 
-    // Mock environment variables collection with PORT set to 3000
-    $portEnvVar = Mockery::mock(EnvironmentVariable::class);
-    $portEnvVar->shouldReceive('getAttribute')->with('real_value')->andReturn('3000');
-
-    $envVars = new Collection([$portEnvVar]);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables')
-        ->andReturn($envVars);
-
-    // Mock the firstWhere method to return our PORT env var
-    $envVars = Mockery::mock(Collection::class);
-    $envVars->shouldReceive('firstWhere')->with('key', 'PORT')->andReturn($portEnvVar);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables')
-        ->andReturn($envVars);
-
-    // Call the method we're testing
     $detectedPort = $application->detectPortFromEnvironment();
 
     expect($detectedPort)->toBe(3000);
 });
 
 it('returns null when PORT environment variable is not set', function () {
-    $application = Mockery::mock(Application::class)->makePartial();
-
-    // Mock environment variables collection without PORT
-    $envVars = Mockery::mock(Collection::class);
-    $envVars->shouldReceive('firstWhere')->with('key', 'PORT')->andReturn(null);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables')
-        ->andReturn($envVars);
+    $application = makePortDetectionApplication();
+    makePortEnvVar($application, 'OTHER_VAR', 'some-value');
 
     $detectedPort = $application->detectPortFromEnvironment();
 
@@ -59,17 +63,8 @@ it('returns null when PORT environment variable is not set', function () {
 });
 
 it('returns null when PORT value is not numeric', function () {
-    $application = Mockery::mock(Application::class)->makePartial();
-
-    // Mock environment variables with non-numeric PORT value
-    $portEnvVar = Mockery::mock(EnvironmentVariable::class);
-    $portEnvVar->shouldReceive('getAttribute')->with('real_value')->andReturn('invalid-port');
-
-    $envVars = Mockery::mock(Collection::class);
-    $envVars->shouldReceive('firstWhere')->with('key', 'PORT')->andReturn($portEnvVar);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables')
-        ->andReturn($envVars);
+    $application = makePortDetectionApplication();
+    makePortEnvVar($application, 'PORT', 'invalid-port');
 
     $detectedPort = $application->detectPortFromEnvironment();
 
@@ -77,17 +72,8 @@ it('returns null when PORT value is not numeric', function () {
 });
 
 it('handles PORT value with whitespace', function () {
-    $application = Mockery::mock(Application::class)->makePartial();
-
-    // Mock environment variables with PORT value that has whitespace
-    $portEnvVar = Mockery::mock(EnvironmentVariable::class);
-    $portEnvVar->shouldReceive('getAttribute')->with('real_value')->andReturn('  8080  ');
-
-    $envVars = Mockery::mock(Collection::class);
-    $envVars->shouldReceive('firstWhere')->with('key', 'PORT')->andReturn($portEnvVar);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables')
-        ->andReturn($envVars);
+    $application = makePortDetectionApplication();
+    makePortEnvVar($application, 'PORT', '  8080  ');
 
     $detectedPort = $application->detectPortFromEnvironment();
 
@@ -95,17 +81,8 @@ it('handles PORT value with whitespace', function () {
 });
 
 it('detects PORT from preview environment variables when isPreview is true', function () {
-    $application = Mockery::mock(Application::class)->makePartial();
-
-    // Mock preview environment variables with PORT
-    $portEnvVar = Mockery::mock(EnvironmentVariable::class);
-    $portEnvVar->shouldReceive('getAttribute')->with('real_value')->andReturn('4000');
-
-    $envVars = Mockery::mock(Collection::class);
-    $envVars->shouldReceive('firstWhere')->with('key', 'PORT')->andReturn($portEnvVar);
-    $application->shouldReceive('getAttribute')
-        ->with('environment_variables_preview')
-        ->andReturn($envVars);
+    $application = makePortDetectionApplication();
+    makePortEnvVar($application, 'PORT', '4000', isPreview: true);
 
     $detectedPort = $application->detectPortFromEnvironment(true);
 
