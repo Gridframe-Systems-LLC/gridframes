@@ -29,6 +29,7 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
 
 ### 🧪 Testing
 
@@ -38,6 +39,7 @@ All notable changes to this project will be documented in this file.
 - *(xlaunch)* Pin app.env=production in CheckForUpdatesJobTest (I5 followup)
 - *(xlaunch)* Triage pass 4 — Mockery strict-mock bucket, real models (I6)
 - *(xlaunch)* Triage pass 5 — setRoutes TypeError bucket, deterministic test env (I7)
+- *(xlaunch)* Make Pest suite independent of built Vite manifest (I8)
 
 ### ⚙️ Miscellaneous Tasks
 
