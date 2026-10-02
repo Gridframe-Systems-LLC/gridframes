@@ -7,6 +7,18 @@ use Illuminate\Support\Facades\Cache;
 
 uses(RefreshDatabase::class);
 
+function createInstanceSettings(array $attributes): \App\Models\InstanceSettings
+{
+    // `id` is guarded (not in $fillable), so a plain updateOrCreate silently
+    // drops it: the row persists at autoincrement id=1 and InstanceSettings::get()
+    // — the app contract, findOrFail(0) — never sees it, so the middleware
+    // caches the empty-sentinel host. Same unguarded convention as
+    // SafeWebhookUrlTest / S3StorageEndpointValidationTest.
+    return InstanceSettings::unguarded(
+        fn () => InstanceSettings::query()->updateOrCreate(['id' => 0], $attributes)
+    );
+}
+
 beforeEach(function () {
     // Clear cache before each test to ensure isolation
     Cache::forget('instance_settings_fqdn_host');
@@ -14,8 +26,7 @@ beforeEach(function () {
 
 it('trusts the configured FQDN from InstanceSettings', function () {
     // Create instance settings with FQDN
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -27,8 +38,7 @@ it('trusts the configured FQDN from InstanceSettings', function () {
 
 it('rejects password reset request with malicious host header', function () {
     // Set up instance settings with legitimate FQDN
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -42,8 +52,7 @@ it('rejects password reset request with malicious host header', function () {
 
 it('handles missing FQDN gracefully', function () {
     // Create instance settings without FQDN
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => null]
     );
 
@@ -55,8 +64,7 @@ it('handles missing FQDN gracefully', function () {
 });
 
 it('filters out null and empty values from trusted hosts', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => '']
     );
 
@@ -72,8 +80,7 @@ it('filters out null and empty values from trusted hosts', function () {
 });
 
 it('extracts host from FQDN with protocol and port', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com:8443']
     );
 
@@ -96,8 +103,7 @@ it('handles exception during InstanceSettings fetch', function () {
 });
 
 it('trusts IP addresses with port', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'http://65.21.3.91:8000']
     );
 
@@ -108,8 +114,7 @@ it('trusts IP addresses with port', function () {
 });
 
 it('trusts IP addresses without port', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'http://192.168.1.100']
     );
 
@@ -121,8 +126,7 @@ it('trusts IP addresses without port', function () {
 
 it('rejects malicious host when using IP address', function () {
     // Simulate an instance using IP address
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'http://65.21.3.91:8000']
     );
 
@@ -136,8 +140,7 @@ it('rejects malicious host when using IP address', function () {
 });
 
 it('trusts IPv6 addresses', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'http://[2001:db8::1]:8000']
     );
 
@@ -150,8 +153,7 @@ it('trusts IPv6 addresses', function () {
 
 it('invalidates cache when FQDN is updated', function () {
     // Set initial FQDN
-    $settings = InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    $settings = createInstanceSettings(
         ['fqdn' => 'https://old-domain.com']
     );
 
@@ -178,8 +180,7 @@ it('invalidates cache when FQDN is updated', function () {
 });
 
 it('caches trusted hosts to avoid database queries on every request', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -204,8 +205,7 @@ it('caches trusted hosts to avoid database queries on every request', function (
 
 it('caches negative results when no FQDN is configured', function () {
     // Create instance settings without FQDN
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => null]
     );
 
@@ -250,18 +250,46 @@ it('skips host validation for terminal auth ips route', function () {
 });
 
 it('still enforces host validation for non-terminal routes', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
-    // Regular routes should still validate Host header
-    $response = $this->get('/', [
-        'Host' => 'evil.com',
-    ]);
+    $middleware = new TrustHosts($this->app);
 
-    // Should get 400 Bad Host for untrusted host
-    expect($response->status())->toBe(400);
+    // The framework's TrustHosts::handle only specifies trusted hosts when
+    // ! runningUnitTests(), so an HTTP-level 400 for an untrusted Host can
+    // never be produced under the test runner. Assert the enforcement
+    // mechanism itself instead: applying the middleware's hosts() to a
+    // request makes Symfony reject an untrusted Host (the source of the
+    // production 400) while the configured FQDN passes.
+    Symfony\Component\HttpFoundation\Request::setTrustedHosts(
+        array_filter($middleware->hosts())
+    );
+
+    try {
+        $untrusted = Symfony\Component\HttpFoundation\Request::create(
+            '/',
+            'GET',
+            [],
+            [],
+            [],
+            ['HTTP_HOST' => 'evil.com']
+        );
+        expect(fn () => $untrusted->getHost())
+            ->toThrow(Symfony\Component\HttpFoundation\Exception\SuspiciousOperationException::class);
+
+        $trusted = Symfony\Component\HttpFoundation\Request::create(
+            '/',
+            'GET',
+            [],
+            [],
+            [],
+            ['HTTP_HOST' => 'xlaunch.example.com']
+        );
+        expect($trusted->getHost())->toBe('xlaunch.example.com');
+    } finally {
+        Symfony\Component\HttpFoundation\Request::setTrustedHosts([]);
+    }
 });
 
 it('skips host validation for API routes', function () {
@@ -288,8 +316,7 @@ it('skips host validation for API routes', function () {
 });
 
 it('trusts localhost when FQDN is configured', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -300,8 +327,7 @@ it('trusts localhost when FQDN is configured', function () {
 });
 
 it('trusts 127.0.0.1 when FQDN is configured', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -312,8 +338,7 @@ it('trusts 127.0.0.1 when FQDN is configured', function () {
 });
 
 it('trusts IPv6 loopback when FQDN is configured', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -324,8 +349,7 @@ it('trusts IPv6 loopback when FQDN is configured', function () {
 });
 
 it('allows local access via localhost when FQDN is configured and request uses localhost host header', function () {
-    InstanceSettings::updateOrCreate(
-        ['id' => 0],
+    createInstanceSettings(
         ['fqdn' => 'https://xlaunch.example.com']
     );
 
@@ -353,9 +377,14 @@ it('skips host validation for webhook endpoints', function () {
     ]);
     expect($response->status())->not->toBe(400);
 
-    // Test Stripe webhook
+    // Test Stripe webhook: its controller answers 400 for an unsigned POST
+    // by design, so a "not 400" assertion here would contradict the endpoint's
+    // own contract. Host validation being skipped is proven by the request
+    // reaching the controller — i.e. a Stripe signature error, not the
+    // middleware's host rejection.
     $response = $this->post('/webhooks/payments/stripe/events', [], [
         'Host' => 'stripe-webhook-forwarder.local',
     ]);
-    expect($response->status())->not->toBe(400);
+    expect($response->status())->toBe(400);
+    expect($response->getContent())->toContain('signature');
 });
