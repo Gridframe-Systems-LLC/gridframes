@@ -31,6 +31,7 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
 
 ### 🧪 Testing
 
@@ -42,6 +43,9 @@ All notable changes to this project will be documented in this file.
 - *(xlaunch)* Triage pass 5 — setRoutes TypeError bucket, deterministic test env (I7)
 - *(xlaunch)* Make Pest suite independent of built Vite manifest (I8)
 - *(xlaunch)* Triage pass 6 — TrustHosts + VolumeBackup families (I9, salvaged + finished)
+- *(xlaunch)* Triage pass 7a — TeamInvitationCsrf family greened (I10 salvage, controller-finished)
+- *(xlaunch)* Triage pass 7b — sidebar/active-tab/backup-validation/ip-uniqueness families (I11 salvage, 4 of 6 green)
+- *(xlaunch)* Triage pass 7b final — SentinelUpdateCheckIndependence repinned to post-424dbd36ff architecture (I11 salvage, controller-finished)
 
 ### ⚙️ Miscellaneous Tasks
 
