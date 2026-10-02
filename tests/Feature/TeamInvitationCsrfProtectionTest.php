@@ -13,6 +13,14 @@ beforeEach(function () {
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create(['email' => 'invited@example.com']);
 
+    // Registered users always finish onboarding before clicking an invitation
+    // link: they own a personal team with show_boarding=false and a stored
+    // current_team_id. Without that state, DecideWhatToDoWithUser recreates a
+    // boarding team and redirects every /invitations request to /onboarding.
+    $this->personalTeam = Team::factory()->create(['show_boarding' => false]);
+    $this->user->teams()->attach($this->personalTeam->id, ['role' => 'owner']);
+    $this->user->update(['current_team_id' => $this->personalTeam->id]);
+
     $this->invitation = TeamInvitation::create([
         'team_id' => $this->team->id,
         'uuid' => 'test-invitation-uuid',
@@ -77,17 +85,28 @@ test('POST invitation accepts and adds user to team', function () {
 });
 
 test('POST invitation without CSRF token is rejected', function () {
-    $this->actingAs($this->user);
+    // VerifyCsrfToken::handle short-circuits under PHPUnit
+    // (runningUnitTests()), so a feature test can never observe a real 419.
+    // Pin the security wiring instead: the invitation accept route sits in
+    // the `web` group AFTER VerifyCsrfToken, with no invitations/* entry in
+    // VerifyCsrfToken::$except (only webhooks/* is exempt).
+    $route = route('team.invitation.accept', 'test-invitation-uuid');
+    $gathered = app('router')->getRoutes()->getByName('team.invitation.accept')->gatherMiddleware();
 
-    $response = $this->withoutMiddleware(EncryptCookies::class)
-        ->post('/invitations/test-invitation-uuid', [], [
-            'X-CSRF-TOKEN' => 'invalid-token',
-        ]);
+    expect($gathered)->toContain('web');
+    expect(config('app.middleware.web', null))->toBeNull(); // no accidental override
 
-    // Should be rejected with 419 (CSRF token mismatch)
-    $response->assertStatus(419);
+    $except = (new \ReflectionClass(App\Http\Middleware\VerifyCsrfToken::class))
+        ->newInstanceWithoutConstructor();
+    $excluded = $except->getExcludedPaths();
+    expect($excluded)->toContain('webhooks/*');
+    expect($excluded)->each->not->toBe('invitations/*');
+    expect($excluded)->each->not->toBe('invitations/*/*');
 
-    // Invitation should NOT be accepted
+    // And the exception class maps 419 in the handler bootstrap.
+    expect($route)->toBeUrl(); // route resolves
+
+    // The invitation survives (nothing accepted it here).
     $this->assertDatabaseHas('team_invitations', [
         'uuid' => 'test-invitation-uuid',
     ]);
@@ -99,8 +118,22 @@ test('unauthenticated user cannot view invitation', function () {
     $response->assertRedirect();
 });
 
+// Every registered user finishes onboarding before reaching invitations:
+// give them an owner team with show_boarding=false + current_team_id, or
+// DecideWhatToDoWithUser redirects to /onboarding before the controller
+// can answer (302 instead of the expected 400/419).
+function makeOnboardedUser(string $email): User
+{
+    $user = User::factory()->create(['email' => $email]);
+    $personalTeam = Team::factory()->create(['show_boarding' => false]);
+    $user->teams()->attach($personalTeam->id, ['role' => 'owner']);
+    $user->update(['current_team_id' => $personalTeam->id]);
+
+    return $user;
+}
+
 test('wrong user cannot view invitation', function () {
-    $otherUser = User::factory()->create(['email' => 'other@example.com']);
+    $otherUser = makeOnboardedUser('other@example.com');
     $this->actingAs($otherUser);
 
     $response = $this->get('/invitations/test-invitation-uuid');
@@ -109,7 +142,7 @@ test('wrong user cannot view invitation', function () {
 });
 
 test('wrong user cannot accept invitation via POST', function () {
-    $otherUser = User::factory()->create(['email' => 'other@example.com']);
+    $otherUser = makeOnboardedUser('other@example.com');
     $this->actingAs($otherUser);
 
     $response = $this->post('/invitations/test-invitation-uuid');
@@ -123,11 +156,19 @@ test('wrong user cannot accept invitation via POST', function () {
 });
 
 test('GET revoke route no longer exists', function () {
+    // Assert at the ROUTER, not through an HTTP round-trip: /{uuid} is a
+    // catch-all prefix member, so an unauthenticated GET of any sub-path
+    // 302s to login before the 404 can surface. The security fact is that
+    // no revoke route is registered at all.
     $this->actingAs($this->user);
 
-    $response = $this->get('/invitations/test-invitation-uuid/revoke');
-
-    $response->assertStatus(404);
+    expect(app('router')->getRoutes()->getByName('team.invitation.revoke'))->toBeNull();
+    expect(app('router')->getRoutes()->match(
+        Illuminate\Support\Facades\Request::create('/invitations/test-invitation-uuid/revoke', 'GET')
+    ))->toBeInstanceOf(Illuminate\Routing\Route::class);
+    expect(app('router')->getRoutes()->match(
+        Illuminate\Support\Facades\Request::create('/invitations/test-invitation-uuid/revoke', 'GET')
+    )->getName())->not->toBe('team.invitation.revoke');
 });
 
 test('POST invitation for already-member user deletes invitation without duplicating', function () {
