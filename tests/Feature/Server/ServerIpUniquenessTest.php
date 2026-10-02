@@ -15,9 +15,7 @@ beforeEach(function () {
     $this->actingAs($this->user);
     session(['currentTeam' => $this->team]);
 
-    $this->privateKey = PrivateKey::create([
-        'name' => 'Test Key',
-        'private_key' => 'test-key-content',
+    $this->privateKey = PrivateKey::factory()->create([
         'team_id' => $this->team->id,
     ]);
 });
