@@ -11,9 +11,11 @@ All notable changes to this project will be documented in this file.
 - One-off runner SSH diagnostic
 - Parametrized runner SSH diagnostic
 - A one-off HTTP probe from the runner itself
+- *(ignore)* Block real env files from git staging
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
