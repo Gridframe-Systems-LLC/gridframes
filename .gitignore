@@ -74,3 +74,9 @@ BUILD-PLAN.md
 
 # The MinIO client binary, fetched at build time by scripts/fetch-minio-mc.sh
 docker/minio-mc/
+
+# real env files (placeholder templates and examples stay tracked)
+.env.*
+!.env.example
+!.env.*.example
+!.env.template
