@@ -13,9 +13,11 @@ All notable changes to this project will be documented in this file.
 
 - The data model and the Incus client, off by default
 - Create, meter, bill overage, and tie the life of a machine to the plan
+- *(ignore)* Block real env files from git staging
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
