@@ -77,24 +77,26 @@ beforeEach(function () {
 });
 
 /**
- * Settings tab must carry both the active class and aria-current so CSS
- * under .application-heading-actions can override the base tab resets.
+ * Settings sub-pages no longer mark a "Settings" tab in the application
+ * heading (that nav moved into the configuration sidebar). Each sub-route
+ * must instead mark its own sidebar item with menu-item-active so the
+ * current section is visibly highlighted.
  */
-function assertSettingsTabActive(string $html): void
+function assertSettingsNavItemActive(string $html, string $label): void
 {
     expect(preg_match(
-        '/<a[^>]*(?:aria-current="page"[^>]*app-tab-active|app-tab-active[^>]*aria-current="page")[^>]*>\s*Settings\s*<\/a>/s',
+        '/<a[^>]*menu-item-active[^>]*>.*?<span class="menu-item-label">'.preg_quote($label, '/').'<\/span>/s',
         $html
     ))->toBe(1);
 
-    // Desktop navbar CSS override must exist so active styles are visible.
+    // Desktop navbar CSS override must exist so active tab styles are visible.
     $css = file_get_contents(resource_path('css/app.css'));
     expect($css)
         ->toContain(".application-heading-actions .app-tab[aria-current='page']")
         ->toContain('.application-heading-actions .app-tab.app-tab-active');
 }
 
-it('marks settings tab active on general configuration route', function () {
+it('marks the General settings item active on the general configuration route', function () {
     $this->actingAs($this->admin);
     session(['currentTeam' => $this->team]);
 
@@ -102,10 +104,10 @@ it('marks settings tab active on general configuration route', function () {
         ->assertSuccessful()
         ->getContent();
 
-    assertSettingsTabActive($html);
+    assertSettingsNavItemActive($html, 'General');
 });
 
-it('marks settings tab active on webhooks and other settings sub-routes', function (string $routeName) {
+it('marks its own settings item active on settings sub-routes', function (string $routeName, string $label) {
     $this->actingAs($this->admin);
     session(['currentTeam' => $this->team]);
 
@@ -113,13 +115,13 @@ it('marks settings tab active on webhooks and other settings sub-routes', functi
         ->assertSuccessful()
         ->getContent();
 
-    assertSettingsTabActive($html);
+    assertSettingsNavItemActive($html, $label);
 })->with([
-    'webhooks' => 'project.application.webhooks',
-    'domains' => 'project.application.domains',
-    'advanced' => 'project.application.advanced',
-    'environment-variables' => 'project.application.environment-variables',
-    'danger' => 'project.application.danger',
+    'webhooks' => ['project.application.webhooks', 'Webhooks'],
+    'domains' => ['project.application.domains', 'Domains'],
+    'advanced' => ['project.application.advanced', 'Advanced'],
+    'environment-variables' => ['project.application.environment-variables', 'Environment Variables'],
+    'danger' => ['project.application.danger', 'Danger Zone'],
 ]);
 
 it('does not mark settings tab active on deployment logs', function () {
@@ -153,7 +155,7 @@ it('syncs activeRouteName from the page route when heading is rendered on webhoo
         ->assertSeeLivewire(ApplicationHeading::class)
         ->getContent();
 
-    assertSettingsTabActive($html);
+    assertSettingsNavItemActive($html, 'Webhooks');
 });
 
 it('keeps activeRouteName when request is not an application page route', function () {
@@ -178,7 +180,7 @@ it('refreshes the breadcrumb application status after it changes', function () {
 
     $component
         ->call('refreshStatus')
-        ->assertSee('Stopped')
+        ->assertSee('Exited')
         ->assertDontSee('Running');
 
     expect($component->instance()->getListeners())

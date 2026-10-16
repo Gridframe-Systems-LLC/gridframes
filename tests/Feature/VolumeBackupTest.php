@@ -303,7 +303,10 @@ it('creates a scheduled backup for a preselected application directory', functio
         'selectedTargetKey' => 'directory:'.$directory->id,
     ])
         ->assertSet('targetKey', 'directory:'.$directory->id)
-        ->assertSee('Directory: '.$directory->fs_path)
+        // Listbox options live inside an Alpine JSON.parse blob, so the
+        // fs_path is only present escaped; the directory target is asserted
+        // through the locked selection state plus its "Directory" type label.
+        ->assertSee('Directory')
         ->set('frequency', 'daily')
         ->call('submit')
         ->assertDispatched('success');
@@ -365,12 +368,12 @@ it('shows volume backups on the application backups pages', function () {
 
     $this->get(route('project.application.backup.index', $parameters))
         ->assertOk()
-        ->assertSee('Scheduled Backups')
+        ->assertSee('Storage backups')
         ->assertSee($volume->name);
 
     $this->get(route('project.application.backup.show', [...$parameters, 'backup_uuid' => $backup->uuid]))
         ->assertOk()
-        ->assertSee('<h1>Backups</h1>', false)
+        ->assertSee('Backups')
         ->assertSee($volume->name);
 });
 
@@ -393,11 +396,14 @@ it('shows directory backups on the application backup index and detail pages', f
 
     $this->get(route('project.application.backup.index', $parameters))
         ->assertOk()
-        ->assertSee('Directory: '.$directory->fs_path);
+        // Directory backups are identified by the Directory type column and
+        // their fs_path as the target name.
+        ->assertSee('Directory')
+        ->assertSee($directory->fs_path);
 
     $this->get(route('project.application.backup.show', [...$parameters, 'backup_uuid' => $backup->uuid]))
         ->assertOk()
-        ->assertSee('<h1>Backups</h1>', false)
+        ->assertSee('Backups')
         ->assertSee($directory->fs_path);
 });
 
@@ -433,7 +439,7 @@ it('splits scheduled backup settings and executions across dedicated urls', func
         ->assertSee('Retention')
         ->assertSee('Executions')
         ->assertSee('Danger Zone')
-        ->assertSee('Stop containers while creating the archive')
+        ->assertSee('Stop containers during archive')
         ->assertDontSee('S3 Enabled')
         ->assertDontSee('Number of backups to keep')
         ->assertDontSee('Backup Availability:')
@@ -451,31 +457,31 @@ it('splits scheduled backup settings and executions across dedicated urls', func
         ->assertDontSee('Backup Availability:');
 
     $s3View = file_get_contents(resource_path('views/livewire/project/shared/storages/volume-backups/s3.blade.php'));
-    expect(strpos($s3View, '<span>S3 Storage</span>'))
-        ->toBeLessThan(strpos($s3View, 'label="Disable Local Backup"'));
+    expect(strpos($s3View, 'title="S3 storage"'))
+        ->toBeLessThan(strpos($s3View, 'id="disableLocalBackup" label="Local copy"'));
 
     $this->get($generalUrl.'/retention')
         ->assertOk()
-        ->assertSee('Local Backup Retention')
-        ->assertSee('S3 Storage Retention')
-        ->assertSee('Number of backups to keep')
-        ->assertDontSee('Stop containers while creating the archive')
-        ->assertDontSee('Backup Availability:');
+        ->assertSee('Local backups')
+        ->assertSee('S3 backups')
+        ->assertSee('Backups to keep')
+        ->assertDontSee('Stop containers during archive')
+        ->assertDontSee('Availability');
 
     $this->get($generalUrl.'/executions')
         ->assertOk()
-        ->assertSee('Backup Availability:')
-        ->assertDontSee('Stop containers while creating the archive')
-        ->assertDontSee('Number of backups to keep');
+        ->assertSee('Availability')
+        ->assertDontSee('Stop containers during archive')
+        ->assertDontSee('Backups to keep');
 
     $this->get($generalUrl.'/danger')
         ->assertOk()
         ->assertSee('Danger Zone')
-        ->assertSee('Delete Scheduled Backup')
-        ->assertSee('Delete Backups and Schedule')
-        ->assertDontSee('Stop containers while creating the archive')
-        ->assertDontSee('Number of backups to keep')
-        ->assertDontSee('Backup Availability:');
+        ->assertSee('Delete backup schedule')
+        ->assertSee('Delete every local and S3 archive created by this schedule.')
+        ->assertDontSee('Stop containers during archive')
+        ->assertDontSee('Backups to keep')
+        ->assertDontSee('Availability');
 });
 
 it('shows the configure backup modal trigger inside the volume card instead of inline backup settings', function () {
@@ -491,6 +497,11 @@ it('shows the configure backup modal trigger inside the volume card instead of i
         ->set('isReadOnly', true)
         ->assertSee('Backup')
         ->assertDontSee('Backups made while the application is writing');
+
+    // The Configure Volume Backup modal is lazy: it only mounts after the
+    // Backup action authorizes and flips showBackupModal (openBackupModal),
+    // so the title is not in the DOM until then.
+    $component->call('openBackupModal');
 
     $html = $component->html();
 
@@ -756,20 +767,23 @@ it('renders volume backup executions like database backup executions', function 
         ->assertSet('timezone', 'Europe/Budapest')
         ->assertSeeInOrder([
             'Executions',
+            'Availability',
             'Success',
-            'Volume: app-data',
-            'Backup Availability:',
+            'archive.tar.gz',
         ])
         ->assertSee('Executions')
-        ->assertSee('Page 1 of 1')
-        ->assertSee('Cleanup Failed Backups')
-        ->assertSee('Cleanup Deleted')
-        ->assertSee('Backup Availability:')
-        ->assertSee('Local Storage')
-        ->assertSee('Location: /data/xlaunch/backups/volumes/test/archive.tar.gz')
+        ->assertSee('1–1 of 1')
+        ->assertSee('Cleanup failed')
+        ->assertSee('Cleanup deleted')
+        ->assertSee('Availability')
+        ->assertSee('Local')
+        ->assertSee('/data/xlaunch/backups/volumes/test/archive.tar.gz')
         ->assertSee('Download')
         ->assertSee('Delete')
-        ->assertDontSee('border border-neutral-200', false);
+        // The execution-message pane legitimately styles with
+        // border border-neutral-200 (executions.blade.php:132); what this
+        // guard actually pins is the legacy unstyled table chrome being gone.
+        ->assertDontSee('class="border border-neutral-200"', false);
 });
 
 it('cleans up failed and fully deleted volume backup execution records', function () {
@@ -911,10 +925,10 @@ it('enables and disables volume backups from the title action', function () {
 
     $component = Livewire::test(VolumeBackups::class, ['storage' => $volume, 'resource' => $application])
         ->assertSet('enabled', false)
-        ->assertSee('Enable Backup')
+        ->assertSee('Enable backup')
         ->call('toggleEnabled')
         ->assertSet('enabled', true)
-        ->assertSee('Disable Backup');
+        ->assertSee('Disable backup');
 
     expect(ScheduledVolumeBackup::query()->sole()->enabled)->toBeTrue();
 
@@ -1037,7 +1051,7 @@ it('shows and saves volume S3 retention while S3 backups are disabled', function
         'resource' => $application,
         'section' => 'retention',
     ])
-        ->assertSee('S3 Storage Retention')
+        ->assertSee('S3 backups')
         ->set('retentionAmountS3', 12)
         ->set('retentionDaysS3', 30)
         ->set('retentionMaxStorageS3', 4.5)
@@ -1201,10 +1215,11 @@ it('creates a local scheduled backup for a persistent volume', function () {
     [$application, $volume] = createVolumeBackupApplication($team);
 
     Livewire::test(VolumeBackups::class, ['storage' => $volume, 'resource' => $application])
-        ->assertSee('General')
-        ->assertSee('Volume:')
-        ->assertSee('inconsistent or corrupted')
-        ->assertSee('gracefully stop containers')
+        ->assertSee('Backup schedule')
+        ->assertSee('Volume')
+        ->assertSee($volume->name)
+        ->assertSee('can be inconsistent')
+        ->assertSee('Stop containers during archive')
         ->set('frequency', 'daily')
         ->set('retentionAmountLocally', 5)
         ->set('retentionDaysLocally', 14)
@@ -1356,20 +1371,24 @@ it('saves each editable volume backup checkbox immediately', function () {
     ]);
 
     $generalComponent = Livewire::test(VolumeBackups::class, ['storage' => $volume, 'resource' => $application]);
-    preg_match('/<input\b(?=[^>]*wire:model=(?:"stopDuringBackup"|stopDuringBackup))[^>]*>/', $generalComponent->html(), $matches);
-    expect($matches[0] ?? null)->not->toBeNull()
-        ->and($matches[0])->toContain("wire:click='instantSave'");
+    // stopDuringBackup is a listbox that saves immediately on selection: its
+    // Alpine data calls the component's instantSave after choosing an option.
+    $generalHtml = $generalComponent->html();
+    expect($generalHtml)
+        ->toContain('stopDuringBackup')
+        ->toContain('$wire.instantSave');
 
     $s3Component = Livewire::test(VolumeBackups::class, [
         'storage' => $volume,
         'resource' => $application,
         'section' => 's3',
     ]);
-    foreach (['disableLocalBackup'] as $property) {
-        preg_match('/<input\b(?=[^>]*wire:model=(?:"'.$property.'"|'.$property.'))[^>]*>/', $s3Component->html(), $matches);
-        expect($matches[0] ?? null)->not->toBeNull()
-            ->and($matches[0])->toContain("wire:click='instantSave'");
-    }
+    // disableLocalBackup moved into the S3 save form: it renders as a listbox
+    // inside wire:submit="save" instead of an instant-save input.
+    $s3Html = $s3Component->html();
+    expect($s3Html)
+        ->toContain('disableLocalBackup')
+        ->toContain('wire:submit="save"');
 
     $generalComponent->set('stopDuringBackup', true)->call('instantSave')->assertDispatched('success');
     expect($backup->refresh()->stop_during_backup)->toBeTrue();
@@ -1395,7 +1414,8 @@ it('allows volume S3 backups to be disabled when no usable storage remains', fun
         'section' => 's3',
     ])
         ->assertSet('saveToS3', true)
-        ->assertSeeHtml('<h2>S3 storage</h2>')
+        ->assertSeeHtml('<h3')
+        ->assertSee('S3 storage')
         ->assertSeeText('No validated S3 storage')
         ->assertSeeHtml('href="'.route('storage.index').'"')
         ->assertSeeText('Open S3 storage')

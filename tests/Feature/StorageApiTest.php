@@ -23,7 +23,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     config(['app.maintenance.store' => 'array', 'cache.default' => 'array']);
     Bus::fake();
-    InstanceSettings::unguarded(fn () => InstanceSettings::updateOrCreate(['id' => 0], ['id' => 0]));
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

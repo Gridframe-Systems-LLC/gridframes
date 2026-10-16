@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🐛 Bug Fixes
+
+- Remove environment gate, fix StrictHostKeyChecking typo in deploy-ovh.yml
+- *(xlaunch)* Three app defects flagged by triage — domains filter, is_literal cast, sentinel gate (I3)
+
 ### 💼 Other
 
 - The data model and the Incus client, off by default
@@ -32,6 +37,9 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- One-off runner SSH diagnostic
+- Parametrized runner SSH diagnostic
+- A one-off HTTP probe from the runner itself
 - Update changelog
 - Update changelog
 - Update changelog
@@ -40,7 +48,26 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 
-## [4.4.0] - 2026-09-24
+### 🧪 Testing
+
+- *(xlaunch)* Triage pass 1 — re-anchor drifted tests (I2)
+- *(xlaunch)* Triage pass 2 — re-anchor 13 suites, gate charts View Sentinel (I4 salvage)
+- *(xlaunch)* Triage pass 3 — Server identity-map flake fix, boot container for 7 Unit suites (I5)
+- *(xlaunch)* Pin app.env=production in CheckForUpdatesJobTest (I5 followup)
+- *(xlaunch)* Triage pass 4 — Mockery strict-mock bucket, real models (I6)
+- *(xlaunch)* Triage pass 5 — setRoutes TypeError bucket, deterministic test env (I7)
+- *(xlaunch)* Make Pest suite independent of built Vite manifest (I8)
+- *(xlaunch)* Triage pass 6 — TrustHosts + VolumeBackup families (I9, salvaged + finished)
+- *(xlaunch)* Triage pass 7a — TeamInvitationCsrf family greened (I10 salvage, controller-finished)
+- *(xlaunch)* Triage pass 7b — sidebar/active-tab/backup-validation/ip-uniqueness families (I11 salvage, 4 of 6 green)
+- *(xlaunch)* Triage pass 7b final — SentinelUpdateCheckIndependence repinned to post-424dbd36ff architecture (I11 salvage, controller-finished)
+
+### ⚙️ Miscellaneous Tasks
+
+- Add OVH production deploy workflow
+- *(xlaunch)* Test gate — pest in CI, release needs green suite (I1)
+
+## [1.0.0] - 2026-09-23
 
 ### 🚀 Features
 
@@ -6006,7 +6033,6 @@ All notable changes to this project will be documented in this file.
 - *(s3)* Allow uppercase letters in S3 bucket names
 - *(backups)* Keep service DB context after deleting a schedule
 - *(services)* Keep Traefik subtype from stored service type
-- Remove environment gate, fix StrictHostKeyChecking typo in deploy-ovh.yml
 
 ### 💼 Other
 
@@ -8416,7 +8442,6 @@ All notable changes to this project will be documented in this file.
 - *(notifications)* Remove broken notification interface
 - *(auth)* Remove unneeded return
 - *(sentinel)* Bump sentinel version from 0.0.22 to 1.0.1
-- Add OVH production deploy workflow
 
 ### ◀️ Revert
 

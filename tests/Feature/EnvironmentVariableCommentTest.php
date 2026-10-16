@@ -2,15 +2,22 @@
 
 use App\Models\Application;
 use App\Models\EnvironmentVariable;
+use App\Models\Project;
 use App\Models\Team;
 use App\Models\User;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+
+uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     $this->user = User::factory()->create();
     $this->team = Team::factory()->create();
     $this->team->members()->attach($this->user, ['role' => 'owner']);
+    $this->project = Project::create(['name' => 'Test Project', 'team_id' => $this->team->id]);
+    // Project boot auto-creates the 'production' environment.
     $this->application = Application::factory()->create([
-        'team_id' => $this->team->id,
+        'environment_id' => $this->project->environments()->first()->id,
     ]);
 
     $this->actingAs($this->user);

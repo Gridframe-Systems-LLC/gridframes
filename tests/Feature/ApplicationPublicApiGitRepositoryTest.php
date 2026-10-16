@@ -15,7 +15,7 @@ use Illuminate\Support\Str;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::unguarded(fn () => InstanceSettings::firstOrCreate(['id' => 0]));
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

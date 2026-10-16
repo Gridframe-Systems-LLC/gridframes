@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Queue;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     Queue::fake();
 });
 

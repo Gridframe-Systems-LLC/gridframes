@@ -8,7 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::create(['id' => 0, 'is_api_enabled' => true]);
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
     $this->member = User::factory()->create();

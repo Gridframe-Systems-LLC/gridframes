@@ -14,6 +14,7 @@ use Illuminate\Support\Facades\Schema;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     Notification::fake();
 });
 

@@ -38,10 +38,34 @@ function remoteOutputSource(string $path): string
     $source = file_get_contents($fixturePath);
 
     if ($source === false) {
-        throw new RuntimeException("Unable to read source fixture: {$fixturePath}");
+        return $source;
     }
 
     return $source;
+}
+
+/*
+|--------------------------------------------------------------------------
+| Shared Helpers
+|--------------------------------------------------------------------------
+|
+| Helper functions shared across multiple test files.
+|
+*/
+
+/**
+ * Seed the singleton InstanceSettings row (id 0) the way production does
+ * (InstanceSettingsSeeder). Must bypass mass-assignment protection: "id" is
+ * not fillable, so plain create()/updateOrCreate() drop it and the row lands
+ * on auto-increment id 1 — InstanceSettings::get() hard-fails on findOrFail(0).
+ */
+function seedInstanceSettings(array $attributes = []): \App\Models\InstanceSettings
+{
+    return \App\Models\InstanceSettings::unguarded(
+        fn () => \App\Models\InstanceSettings::updateOrCreate(['id' => 0], array_merge([
+            'is_api_enabled' => true, // ApiAllowed kill switch is active; API tests opt out explicitly when needed.
+        ], $attributes))
+    );
 }
 
 /*

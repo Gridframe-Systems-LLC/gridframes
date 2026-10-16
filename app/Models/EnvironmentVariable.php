@@ -71,6 +71,8 @@ class EnvironmentVariable extends BaseModel
         'value' => 'encrypted',
         'is_multiline' => 'boolean',
         'is_preview' => 'boolean',
+        'is_literal' => 'boolean',
+        'is_shown_once' => 'boolean',
         'is_runtime' => 'boolean',
         'is_buildtime' => 'boolean',
         'version' => 'string',

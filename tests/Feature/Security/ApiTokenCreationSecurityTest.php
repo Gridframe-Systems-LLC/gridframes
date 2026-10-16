@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\Security\ApiTokens;
-use App\Models\InstanceSettings;
 use App\Models\Team;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -11,10 +10,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // The api middleware group and the ApiTokens component read the instance settings
-    // row; id 0 is not fillable, so updateOrCreate silently inserts id 1 and
-    // instanceSettings() then fails to find row 0. Force-create it like the installer.
-    InstanceSettings::forceCreate(['id' => 0, 'is_api_enabled' => true]);
+    seedInstanceSettings(['is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
 

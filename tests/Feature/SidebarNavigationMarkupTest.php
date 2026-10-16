@@ -38,11 +38,11 @@ it('initializes persisted sidebar state before enabling layout transitions', fun
         ->toContain(":class=\"[collapsed ? 'lg:ml-16' : 'lg:ml-56', sidebarReady ? 'transition-[margin] duration-200' : '']\"");
 });
 
-it('shows the xlaunch icon in the collapsed desktop brand slot', function () {
+it('shows the brand icon in the collapsed desktop brand slot', function () {
     $layout = file_get_contents(resource_path('views/layouts/app.blade.php'));
 
     expect($layout)
-        ->toContain('x-show="collapsed" x-cloak src="/xlaunch-logo.svg" alt="Xlaunch"')
+        ->toContain('x-show="collapsed" x-cloak src="/brand/gridframes/app-icon.svg" alt="GridFrames"')
         ->not->toContain('>C</span>');
 });
 
@@ -82,7 +82,8 @@ it('draws the desktop header border only above the main content', function () {
 it('separates the mobile sidebar from the page with a visible border', function () {
     $layout = file_get_contents(resource_path('views/layouts/app.blade.php'));
 
-    expect($layout)->toContain('max-w-56 min-w-0 flex-col border-l border-neutral-200 bg-white shadow-xl dark:border-white/[0.12] dark:bg-panel');
+    expect($layout)->toContain('flex-col overflow-hidden rounded-l-2xl border-l border-neutral-200 bg-white')
+        ->toContain('dark:border-white/[0.12] dark:bg-panel');
 });
 
 it('keeps the mobile navbar above floating configuration warnings', function () {
@@ -90,7 +91,7 @@ it('keeps the mobile navbar above floating configuration warnings', function () 
     $popup = file_get_contents(resource_path('views/components/popup-small.blade.php'));
 
     expect($layout)
-        ->toContain('class="relative z-[1000] lg:hidden"')
+        ->toContain('relative z-[1000] lg:hidden')
         ->and($popup)->toContain('z-999');
 });
 
@@ -146,7 +147,7 @@ it('shows section titles and descriptions above settings navigation on smaller s
         ->toContain('<header class="settings-mobile-header xl:hidden">')
         ->toContain("<h1 class=\"settings-mobile-title\">{$title}</h1>")
         ->toContain("<p class=\"settings-mobile-description\">{$description}</p>")
-        ->toContain('<section class="application-settings-workspace w-full max-w-[1180px]">')
+        ->toContain('<section class="application-settings-workspace w-full max-w-none">')
         ->and($css)
         ->toContain('.settings-mobile-title')
         ->toContain('.settings-mobile-description')
@@ -156,7 +157,7 @@ it('shows section titles and descriptions above settings navigation on smaller s
 })->with([
     ['notification/settings-layout.blade.php', 'Notifications', 'Configure how your team receives deployment and system alerts.'],
     ['security/settings-layout.blade.php', 'Keys & Tokens', 'Manage SSH keys, cloud credentials, and API access tokens.'],
-    ['settings/layout.blade.php', 'Instance Settings', 'Configure global settings for this Xlaunch instance.'],
+    ['settings/layout.blade.php', 'Instance Settings', 'Configure global settings for this GridFrames instance.'],
     ['team/settings-layout.blade.php', 'Team', 'Manage your team, members, and access settings.'],
 ]);
 
@@ -167,7 +168,8 @@ it('uses the structured sidebar and action HUD for server navigation', function 
     $terminal = file_get_contents(resource_path('views/livewire/project/shared/execute-container-command.blade.php'));
 
     expect($navbar)
-        ->toContain('class="hidden xl:fixed xl:top-14 xl:right-4 xl:z-30 xl:flex')
+        ->toContain("@teleport('#resource-action-hud-slot')")
+        ->toContain('class="hidden xl:flex xl:w-auto xl:items-center"')
         ->toContain('<x-resource-heading-tabs class="hidden" aria-hidden="true">')
         ->toContain('dark:bg-coolgray-100! dark:text-white!')
         ->and($sidebar)

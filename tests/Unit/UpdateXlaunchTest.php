@@ -48,6 +48,7 @@ it('has UpdateXlaunch action class', function () {
 });
 
 it('validates cache against running version before fallback', function () {
+    config(['app.env' => 'testing']);
     updateXlaunchTestCreateRootServerAndSettings();
 
     // CDN fails
@@ -73,6 +74,7 @@ it('validates cache against running version before fallback', function () {
 });
 
 it('uses validated cache when CDN fails and cache is newer', function () {
+    config(['app.env' => 'testing']);
     updateXlaunchTestCreateRootServerAndSettings();
     Queue::fake();
     config(['constants.ssh.mux_enabled' => false]);
@@ -289,6 +291,7 @@ it('appends registry url to env file when the key is missing', function () {
 });
 
 it('prevents downgrade even with manual update', function () {
+    config(['app.env' => 'testing']);
     updateXlaunchTestCreateRootServerAndSettings();
 
     // CDN returns older version

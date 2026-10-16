@@ -50,7 +50,10 @@ beforeEach(function () {
     $route = Route::get('/test/{project_uuid}/{environment_uuid}', fn () => '')->name('test.danger');
     $request = Request::create("/test/{$this->project->uuid}/{$this->environment->uuid}");
     $route->bind($request);
-    app('router')->setRoutes(app('router')->getRoutes());
+    // setRoutes() cannot take a CompiledRouteCollection, and re-assigning the
+    // router's own collection is a no-op anyway: Route::get() above already
+    // registered the route (CompiledRouteCollection::match() falls back to
+    // dynamically added routes), so dispatch alone binds Route::current().
     Route::dispatch($request);
 });
 

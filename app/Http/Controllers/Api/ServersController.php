@@ -302,7 +302,9 @@ class ServersController extends Controller
         if (is_null($teamId)) {
             return invalidTokenResponse();
         }
-        $server = ModelsServer::whereTeamId($teamId)->whereUuid($request->uuid)->first();
+        // The route param identifies the server; the ?uuid= query param is the
+        // application filter, so it must not leak into this lookup.
+        $server = ModelsServer::whereTeamId($teamId)->whereUuid($request->route('uuid'))->first();
         if (is_null($server)) {
             return response()->json(['message' => 'Server not found.'], 404);
         }

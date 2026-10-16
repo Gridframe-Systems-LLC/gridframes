@@ -40,9 +40,7 @@ function makeTeamUser(): array
 
 beforeEach(function () {
     InstanceSettings::query()->delete();
-    $settings = new InstanceSettings;
-    $settings->id = 0;
-    $settings->save();
+    seedInstanceSettings();
 
     [$this->team, $this->user] = makeTeamUser();
 

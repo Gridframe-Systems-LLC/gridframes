@@ -20,6 +20,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     // Attacker: Team A
     $this->userA = User::factory()->create();
     $this->teamA = Team::factory()->create();

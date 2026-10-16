@@ -112,8 +112,40 @@ jobs:
             });
             core.setOutput('release_id', release.id);
 
+  # Release gate: the Pest suite must pass before any image is built or
+  # published. At HEAD the suite is RED (710 failed, audit E1 2026-10-01),
+  # so this blocks every stable release until the suite is fixed.
+  test:
+    name: Pest suite (Unit + Feature + v4/Feature, browser excluded)
+    runs-on: ubuntu-24.04
+    continue-on-error: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: 8.4
+          # Platform requirements from composer check-platform-reqs, plus the
+          # pdo/sqlite drivers for the in-memory testing connection
+          # (DB_CONNECTION=testing, config/database.php).
+          extensions: ctype, curl, dom, fileinfo, filter, iconv, mbstring, openssl, pcntl, pdo, pdo_sqlite, posix, session, simplexml, sockets, sodium, sqlite3, tokenizer, xml, xmlwriter, zip, zlib
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      # Browser tests (tests/Browser = Laravel Dusk, tests/v4/Browser = Pest
+      # Playwright plugin) cannot run on CI and carry no group marking, so
+      # the three runnable source directories are passed explicitly. This
+      # matches .github/workflows/xlaunch-test.yml.
+      - name: Run Pest
+        run: vendor/bin/pest tests/Unit tests/Feature tests/v4/Feature
+
   build:
-    needs: validate
+    needs: [validate, test]
     permissions:
       contents: read
       packages: write

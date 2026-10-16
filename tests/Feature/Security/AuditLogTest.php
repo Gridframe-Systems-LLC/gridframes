@@ -25,9 +25,7 @@ uses(RefreshDatabase::class);
 function makeAuditTeamUser(): array
 {
     if (! InstanceSettings::query()->whereKey(0)->exists()) {
-        $settings = new InstanceSettings;
-        $settings->id = 0;
-        $settings->save();
+        seedInstanceSettings();
     }
     Once::flush();
 

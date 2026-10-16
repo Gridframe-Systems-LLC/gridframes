@@ -22,27 +22,34 @@ it('implements service multi-container aggregation in SSH path', function () {
         ->toContain('private function aggregateServiceContainerStatuses($services)')
         ->toContain('$this->aggregateServiceContainerStatuses($services);');
 
-    // Verify service aggregation uses same logic as applications
+    // Verify service aggregation uses same logic as applications:
+    // both paths delegate to the shared ContainerStatusAggregator state machine
     expect($actionFile)
-        ->toContain('$hasUnknown = false;');
+        ->toContain('use App\Services\ContainerStatusAggregator;')
+        ->toContain('$aggregator = new ContainerStatusAggregator;');
 });
 
 it('services use same priority as applications in SSH path', function () {
     $actionFile = file_get_contents(__DIR__.'/../../app/Actions/Docker/GetContainersStatus.php');
+    $aggregatorFile = file_get_contents(__DIR__.'/../../app/Services/ContainerStatusAggregator.php');
 
-    // Both aggregation methods should use the same priority logic
+    // The priority logic now lives in the shared ContainerStatusAggregator state machine
+    // (colon-format statuses), so services and applications get identical priorities.
     $priorityLogic = <<<'PHP'
-                if ($hasUnhealthy) {
-                    $aggregatedStatus = 'running (unhealthy)';
-                } elseif ($hasUnknown) {
-                    $aggregatedStatus = 'running (unknown)';
-                } else {
-                    $aggregatedStatus = 'running (healthy)';
-                }
+            if ($hasUnhealthy) {
+                return 'running:unhealthy';
+            } elseif ($hasUnknown) {
+                return 'running:unknown';
+            } else {
+                return 'running:healthy';
+            }
 PHP;
 
-    // Should appear in service aggregation
-    expect($actionFile)->toContain($priorityLogic);
+    // Should appear in the shared aggregator both aggregation paths delegate to
+    expect($aggregatorFile)->toContain($priorityLogic);
+
+    // The SSH path should use the shared aggregator for its service statuses
+    expect($actionFile)->toContain('$aggregator = new ContainerStatusAggregator;');
 });
 
 it('collects service containers before aggregating in SSH path', function () {
@@ -62,18 +69,20 @@ it('collects service containers before aggregating in SSH path', function () {
 it('SSH and Sentinel paths use identical service aggregation logic', function () {
     $jobFile = file_get_contents(__DIR__.'/../../app/Jobs/PushServerUpdateJob.php');
     $actionFile = file_get_contents(__DIR__.'/../../app/Actions/Docker/GetContainersStatus.php');
+    $aggregatorFile = file_get_contents(__DIR__.'/../../app/Services/ContainerStatusAggregator.php');
 
-    // Both should track the same status flags
-    expect($jobFile)->toContain('$hasUnknown = false;');
-    expect($actionFile)->toContain('$hasUnknown = false;');
+    // Both paths should delegate to the same shared aggregator state machine
+    expect($jobFile)->toContain('use App\Services\ContainerStatusAggregator;');
+    expect($actionFile)->toContain('use App\Services\ContainerStatusAggregator;');
+    expect($jobFile)->toContain('$aggregator = new ContainerStatusAggregator;');
+    expect($actionFile)->toContain('$aggregator = new ContainerStatusAggregator;');
 
-    // Both should check for unknown status
-    expect($jobFile)->toContain('if (str($status)->contains(\'unknown\')) {');
-    expect($actionFile)->toContain('if (str($status)->contains(\'unknown\')) {');
+    // The shared aggregator should track the unknown status flag
+    expect($aggregatorFile)->toContain('$hasUnknown = false;');
+    expect($aggregatorFile)->toContain('if (str($status)->contains(\'unknown\')) {');
 
-    // Both should have elseif for unknown priority
-    expect($jobFile)->toContain('} elseif ($hasUnknown) {');
-    expect($actionFile)->toContain('} elseif ($hasUnknown) {');
+    // The aggregator should give unknown lower priority than unhealthy
+    expect($aggregatorFile)->toContain('} elseif ($hasUnknown) {');
 });
 
 it('handles service status updates consistently', function () {
@@ -84,7 +93,9 @@ it('handles service status updates consistently', function () {
     expect($jobFile)->toContain('[$serviceId, $subType, $subId] = explode(\':\', $key);');
     expect($actionFile)->toContain('[$serviceId, $subType, $subId] = explode(\':\', $key);');
 
-    // Both should handle excluded containers
-    expect($jobFile)->toContain('$excludedContainers = collect();');
-    expect($actionFile)->toContain('$excludedContainers = collect();');
+    // Both should handle excluded containers via the shared CalculatesExcludedStatus trait
+    expect($jobFile)->toContain('use App\Traits\CalculatesExcludedStatus;');
+    expect($actionFile)->toContain('use App\Traits\CalculatesExcludedStatus;');
+    expect($jobFile)->toContain('$excludedContainers = $this->getExcludedContainersFromDockerCompose($dockerComposeRaw);');
+    expect($actionFile)->toContain('$excludedContainers = $this->getExcludedContainersFromDockerCompose($dockerComposeRaw);');
 });

@@ -1,29 +1,39 @@
 <?php
 
-use App\Jobs\CheckAndStartSentinelJob;
+use App\Jobs\ServerCheckJob;
 use App\Jobs\ServerManagerJob;
 use App\Models\InstanceSettings;
 use App\Models\Server;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Queue;
 
 uses(RefreshDatabase::class);
 
+// Architecture note (commit 424dbd36ff "make sentinel mandatory on regular
+// servers"): ServerManagerJob no longer dispatches CheckAndStartSentinelJob
+// directly. The only path is ServerManagerJob → ServerCheckJob (queued) →
+// ServerCheckJob::handle() → CheckAndStartSentinelJob. With Queue::fake()
+// the inner job can never be pushed, so this family pins the manager-level
+// contract instead: ServerCheckJob dispatch is gated by sentinelOutOfSync
+// (sentinel_updated_at vs waitBeforeDoingSshCheck) at the manager's own
+// cadence, independent of instance update_check_frequency.
+
 beforeEach(function () {
     Queue::fake();
+    Cache::flush(); // shouldRunCronNow dedup keys persist across tests otherwise
 
-    // Create user (which automatically creates a team)
+    seedInstanceSettings();
+
     $user = User::factory()->create();
     $this->team = $user->teams()->first();
 
-    // Create server with sentinel enabled
     $this->server = Server::factory()->create([
         'team_id' => $this->team->id,
     ]);
 
-    // Enable sentinel on the server
     $this->server->settings->update([
         'is_sentinel_enabled' => true,
         'server_timezone' => 'UTC',
@@ -36,152 +46,125 @@ afterEach(function () {
     Carbon::setTestNow(); // Reset frozen time
 });
 
-it('dispatches sentinel check hourly regardless of instance update_check_frequency setting', function () {
-    // Set instance update_check_frequency to yearly (most infrequent option)
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
-        'update_check_frequency' => '0 0 1 1 *', // Yearly - January 1st at midnight
-        'instance_timezone' => 'UTC',
-    ]);
+// sentinel_updated_at defaults to real now() (2026) at row creation, which
+// is always "fresher" than a frozen-2025 executionTime — the out-of-sync
+// path would never trigger. Backdate AFTER freezing time.
+function backdateSentinel(Server $server): void
+{
+    $server->forceFill(['sentinel_updated_at' => Carbon::now()->subDay()])->save();
+}
 
-    // Set time to top of any hour (sentinel should check every hour)
-    Carbon::setTestNow('2025-06-15 14:00:00'); // Random hour, not January 1st
-
-    // Run ServerManagerJob
-    $job = new ServerManagerJob;
-    $job->handle();
-
-    // Assert that CheckAndStartSentinelJob was dispatched despite yearly update check frequency
-    Queue::assertPushed(CheckAndStartSentinelJob::class, function ($job) {
-        return $job->server->id === $this->server->id;
-    });
-});
-
-it('does not dispatch sentinel check when not at top of hour', function () {
-    // Set instance update_check_frequency to hourly (most frequent)
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
-        'update_check_frequency' => '0 * * * *', // Hourly
-        'instance_timezone' => 'UTC',
-    ]);
-
-    // Set time to middle of the hour (sentinel check cron won't match)
-    Carbon::setTestNow('2025-06-15 14:30:00'); // 30 minutes past the hour
-
-    // Run ServerManagerJob
-    $job = new ServerManagerJob;
-    $job->handle();
-
-    // Assert that CheckAndStartSentinelJob was NOT dispatched (not top of hour)
-    Queue::assertNotPushed(CheckAndStartSentinelJob::class);
-});
-
-it('dispatches sentinel check at every hour mark throughout the day', function () {
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
+it('dispatches server check when sentinel is out of sync, regardless of instance update_check_frequency', function () {
+    InstanceSettings::first()->update([
         'update_check_frequency' => '0 0 1 1 *', // Yearly
         'instance_timezone' => 'UTC',
     ]);
 
-    // Test multiple hours throughout a day
-    $hoursToTest = [0, 6, 12, 18, 23]; // Various hours of the day
+    Carbon::setTestNow('2025-06-15 14:00:00');
+    backdateSentinel($this->server);
 
-    foreach ($hoursToTest as $hour) {
-        Queue::fake(); // Reset queue for each test
+    (new ServerManagerJob)->handle();
 
-        Carbon::setTestNow("2025-06-15 {$hour}:00:00");
-
-        $job = new ServerManagerJob;
-        $job->handle();
-
-        Queue::assertPushed(CheckAndStartSentinelJob::class, function ($job) {
-            return $job->server->id === $this->server->id;
-        }, "Failed to dispatch sentinel check at hour {$hour}");
-    }
-});
-
-it('respects server timezone when checking sentinel updates', function () {
-    // Update server timezone to America/New_York
-    $this->server->settings->update([
-        'server_timezone' => 'America/New_York',
-    ]);
-
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
-        'instance_timezone' => 'UTC',
-    ]);
-
-    // Set time to 17:00 UTC which is 12:00 PM EST (top of hour in server's timezone)
-    Carbon::setTestNow('2025-01-15 17:00:00');
-
-    $job = new ServerManagerJob;
-    $job->handle();
-
-    // Should dispatch because it's top of hour in server's timezone (America/New_York)
-    Queue::assertPushed(CheckAndStartSentinelJob::class, function ($job) {
+    // Self-hosted cadence is '* * * * *' (every minute), NOT the instance
+    // update_check_frequency — the independence this family protects.
+    Queue::assertPushed(ServerCheckJob::class, function ($job) {
         return $job->server->id === $this->server->id;
     });
 });
 
-it('does not dispatch sentinel check for servers without sentinel enabled', function () {
-    // Disable sentinel
-    $this->server->settings->update([
-        'is_sentinel_enabled' => false,
-    ]);
-
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
+it('does not dispatch server check when sentinel is in sync', function () {
+    InstanceSettings::first()->update([
         'update_check_frequency' => '0 * * * *',
         'instance_timezone' => 'UTC',
     ]);
 
     Carbon::setTestNow('2025-06-15 14:00:00');
+    // Leave sentinel_updated_at at its fresh default: sentinel is in sync,
+    // so the manager must not enqueue any server check.
+    (new ServerManagerJob)->handle();
 
-    $job = new ServerManagerJob;
-    $job->handle();
-
-    // Should NOT dispatch because sentinel is disabled
-    Queue::assertNotPushed(CheckAndStartSentinelJob::class);
+    Queue::assertNotPushed(ServerCheckJob::class);
 });
 
-it('handles multiple servers with different sentinel configurations', function () {
-    // Create a second server with sentinel disabled
-    $server2 = Server::factory()->create([
-        'team_id' => $this->team->id,
-    ]);
-    $server2->settings->update([
-        'is_sentinel_enabled' => false,
-        'server_timezone' => 'UTC',
+it('dispatches server check at every hour mark throughout the day', function () {
+    InstanceSettings::first()->update([
+        'update_check_frequency' => '0 0 1 1 *', // Yearly
+        'instance_timezone' => 'UTC',
     ]);
 
-    // Create a third server with sentinel enabled
-    $server3 = Server::factory()->create([
-        'team_id' => $this->team->id,
-    ]);
-    $server3->settings->update([
-        'is_sentinel_enabled' => true,
-        'server_timezone' => 'UTC',
+    foreach ([0, 6, 12, 18, 23] as $hour) {
+        Queue::fake();
+        Cache::flush(); // fresh dedup window per iteration
+
+        Carbon::setTestNow("2025-06-15 {$hour}:00:00");
+        backdateSentinel($this->server);
+
+        (new ServerManagerJob)->handle();
+
+        Queue::assertPushed(ServerCheckJob::class, function ($job) {
+            return $job->server->id === $this->server->id;
+        }, "Failed to dispatch server check at hour {$hour}");
+    }
+});
+
+it('dispatches server check regardless of server timezone', function () {
+    $this->server->settings->update([
+        'server_timezone' => 'America/New_York',
     ]);
 
-    $instanceSettings = InstanceSettings::first();
-    $instanceSettings->update([
+    InstanceSettings::first()->update([
+        'update_check_frequency' => '0 * * * *',
+        'instance_timezone' => 'UTC',
+    ]);
+
+    // 17:00 UTC = 12:00 EST; with per-minute cadence any minute is due.
+    Carbon::setTestNow('2025-01-15 17:00:00');
+    backdateSentinel($this->server);
+
+    (new ServerManagerJob)->handle();
+
+    Queue::assertPushed(ServerCheckJob::class, function ($job) {
+        return $job->server->id === $this->server->id;
+    });
+});
+
+it('does not dedupe a second dispatch once a new minute is due', function () {
+    InstanceSettings::first()->update([
         'instance_timezone' => 'UTC',
     ]);
 
     Carbon::setTestNow('2025-06-15 14:00:00');
+    backdateSentinel($this->server);
+    (new ServerManagerJob)->handle();
+    Queue::assertPushed(ServerCheckJob::class);
 
-    $job = new ServerManagerJob;
-    $job->handle();
+    // Same minute again: the cron dedup cache suppresses a re-dispatch.
+    Queue::fake();
+    (new ServerManagerJob)->handle();
+    Queue::assertNotPushed(ServerCheckJob::class);
+});
 
-    // Should dispatch for server1 (sentinel enabled) and server3 (sentinel enabled)
-    Queue::assertPushed(CheckAndStartSentinelJob::class, 2);
+it('handles multiple servers with different sync states', function () {
+    $server2 = Server::factory()->create(['team_id' => $this->team->id]);
+    $server3 = Server::factory()->create(['team_id' => $this->team->id]);
 
-    // Verify it was dispatched for the correct servers
-    Queue::assertPushed(CheckAndStartSentinelJob::class, function ($job) {
+    InstanceSettings::first()->update([
+        'instance_timezone' => 'UTC',
+    ]);
+
+    Carbon::setTestNow('2025-06-15 14:00:00');
+    backdateSentinel($this->server);
+    backdateSentinel($server3);
+    // $server2 keeps its fresh sentinel_updated_at → in sync, no check.
+
+    (new ServerManagerJob)->handle();
+
+    Queue::assertPushed(ServerCheckJob::class, 2);
+
+    Queue::assertPushed(ServerCheckJob::class, function ($job) {
         return $job->server->id === $this->server->id;
     });
-
-    Queue::assertPushed(CheckAndStartSentinelJob::class, function ($job) use ($server3) {
+    Queue::assertPushed(ServerCheckJob::class, function ($job) use ($server3) {
         return $job->server->id === $server3->id;
     });
 });
