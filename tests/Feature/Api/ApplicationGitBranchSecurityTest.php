@@ -14,7 +14,7 @@ use Visus\Cuid2\Cuid2;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::unguarded(fn () => InstanceSettings::firstOrCreate(['id' => 0]));
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

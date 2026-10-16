@@ -25,7 +25,7 @@ uses(RefreshDatabase::class);
 beforeEach(function () {
     Config::set('cache.default', 'array');
     Config::set('app.maintenance.store', 'array');
-    InstanceSettings::unguarded(fn () => InstanceSettings::updateOrCreate(['id' => 0], ['id' => 0]));
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

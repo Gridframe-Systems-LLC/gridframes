@@ -62,7 +62,9 @@ function remoteOutputSource(string $path): string
 function seedInstanceSettings(array $attributes = []): \App\Models\InstanceSettings
 {
     return \App\Models\InstanceSettings::unguarded(
-        fn () => \App\Models\InstanceSettings::updateOrCreate(['id' => 0], $attributes)
+        fn () => \App\Models\InstanceSettings::updateOrCreate(['id' => 0], array_merge([
+            'is_api_enabled' => true, // ApiAllowed kill switch is active; API tests opt out explicitly when needed.
+        ], $attributes))
     );
 }
 

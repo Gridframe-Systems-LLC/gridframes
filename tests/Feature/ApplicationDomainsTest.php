@@ -27,13 +27,7 @@ beforeEach(function () {
     $this->withoutVite();
     config(['app.maintenance.driver' => 'file']);
 
-    InstanceSettings::unguarded(fn () => InstanceSettings::updateOrCreate(
-        ['id' => 0],
-        [
-            'id' => 0,
-            'is_dns_validation_enabled' => false,
-        ]
-    ));
+    seedInstanceSettings(['is_dns_validation_enabled' => false]);
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();

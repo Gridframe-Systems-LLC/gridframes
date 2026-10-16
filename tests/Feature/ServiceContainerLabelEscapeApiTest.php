@@ -13,7 +13,6 @@ uses(RefreshDatabase::class);
 
 beforeEach(function () {
     seedInstanceSettings();
-    InstanceSettings::create(['id' => 0, 'is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
     $this->user = User::factory()->create();
