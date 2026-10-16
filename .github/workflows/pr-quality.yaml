@@ -87,7 +87,7 @@ jobs:
             dependabot[bot]
             renovate[bot]
             github-actions[bot]
-          exempt-users: ""
+          exempt-users: "0xda7"
           exempt-author-association: "OWNER,MEMBER,COLLABORATOR"
           exempt-label: "quality/exempt"
           exempt-pr-label: ""
