@@ -3,7 +3,6 @@
 use App\Livewire\Project\Application\Heading as ApplicationHeading;
 use App\Livewire\Project\Service\Heading as ServiceHeading;
 use App\Models\Application;
-use App\Models\InstanceSettings;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\Service;
@@ -19,7 +18,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0]);
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
 
@@ -146,16 +145,24 @@ test('member does not see terminal link for application', function () {
     $this->actingAs($this->member);
     session(['currentTeam' => $this->team]);
 
-    Livewire::test(ApplicationHeading::class, ['application' => $this->application])
-        ->assertDontSee('Terminal');
+    $rendered = view('components.application.configuration-sidebar', [
+        'application' => $this->application,
+        'currentRoute' => 'project.application.configuration',
+    ])->render();
+
+    expect($rendered)->not->toContain('Terminal');
 });
 
 test('admin sees terminal link for application', function () {
     $this->actingAs($this->admin);
     session(['currentTeam' => $this->team]);
 
-    Livewire::test(ApplicationHeading::class, ['application' => $this->application])
-        ->assertSee('Terminal');
+    $rendered = view('components.application.configuration-sidebar', [
+        'application' => $this->application,
+        'currentRoute' => 'project.application.configuration',
+    ])->render();
+
+    expect($rendered)->toContain('Terminal');
 });
 
 // --- Database Heading (via page route for rendering, policy checks for actions) ---
@@ -227,22 +234,22 @@ test('member does not see terminal link for service', function () {
     $this->actingAs($this->member);
     session(['currentTeam' => $this->team]);
 
-    Livewire::test(ServiceHeading::class, [
+    $rendered = view('components.service.configuration-sidebar', [
         'service' => $this->service,
-        'parameters' => $this->serviceParams,
-        'query' => [],
-    ])
-        ->assertDontSee('Terminal');
+        'currentRoute' => 'project.service.configuration',
+    ])->render();
+
+    expect($rendered)->not->toContain('Terminal');
 });
 
 test('admin sees terminal link for service', function () {
     $this->actingAs($this->admin);
     session(['currentTeam' => $this->team]);
 
-    Livewire::test(ServiceHeading::class, [
+    $rendered = view('components.service.configuration-sidebar', [
         'service' => $this->service,
-        'parameters' => $this->serviceParams,
-        'query' => [],
-    ])
-        ->assertSee('Terminal');
+        'currentRoute' => 'project.service.configuration',
+    ])->render();
+
+    expect($rendered)->toContain('Terminal');
 });

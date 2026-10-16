@@ -48,8 +48,8 @@ test('admin sees add and cleanup buttons on private key page', function () {
     session(['currentTeam' => $this->team]);
 
     Livewire::test(PrivateKeyIndex::class)
-        ->assertSee('+ Add')
-        ->assertSee('Delete unused SSH Keys');
+        ->assertSee('New private key')
+        ->assertSee('Delete unused keys');
 });
 
 test('member does not see add or cleanup buttons on private key page', function () {
@@ -57,8 +57,8 @@ test('member does not see add or cleanup buttons on private key page', function 
     session(['currentTeam' => $this->team]);
 
     Livewire::test(PrivateKeyIndex::class)
-        ->assertDontSee('+ Add')
-        ->assertDontSee('Delete unused SSH Keys');
+        ->assertDontSee('New private key')
+        ->assertDontSee('Delete unused keys');
 });
 
 test('member can view private key names on index page', function () {
@@ -87,7 +87,8 @@ test('admin sees invite section on team members page', function () {
     session(['currentTeam' => $this->team]);
 
     Livewire::test(TeamMemberIndex::class)
-        ->assertSee('Invite New Member');
+        ->assertSee('Invite a member')
+        ->assertSee('Generate link');
 });
 
 test('member does not see invite section on team members page', function () {
@@ -95,7 +96,8 @@ test('member does not see invite section on team members page', function () {
     session(['currentTeam' => $this->team]);
 
     Livewire::test(TeamMemberIndex::class)
-        ->assertDontSee('Invite New Member');
+        ->assertDontSee('Invite a member')
+        ->assertDontSee('Generate link');
 });
 
 // --- Notification Settings (Discord as representative) ---

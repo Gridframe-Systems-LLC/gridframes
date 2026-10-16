@@ -4,7 +4,6 @@ use App\Livewire\Project\Shared\EnvironmentVariable\All as EnvironmentVariableAl
 use App\Livewire\Project\Shared\EnvironmentVariable\Show as EnvironmentVariableShow;
 use App\Models\Application;
 use App\Models\EnvironmentVariable;
-use App\Models\InstanceSettings;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\StandaloneDocker;
@@ -18,7 +17,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0], ['is_api_enabled' => true]);
+    seedInstanceSettings(['is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();
 

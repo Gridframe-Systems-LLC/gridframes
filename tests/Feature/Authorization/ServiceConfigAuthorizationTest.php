@@ -1,7 +1,6 @@
 <?php
 
 use App\Livewire\Project\Service\Heading as ServiceHeading;
-use App\Models\InstanceSettings;
 use App\Models\Project;
 use App\Models\Server;
 use App\Models\Service;
@@ -16,7 +15,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    InstanceSettings::updateOrCreate(['id' => 0]);
+    seedInstanceSettings();
 
     $this->team = Team::factory()->create();
 

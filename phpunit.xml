@@ -13,7 +13,26 @@
   </testsuites>
   <coverage/>
   <php>
-    <env name="APP_ENV" value="testing"/>
+    <!-- force: a shell-exported APP_ENV (dev machines export APP_ENV=local)
+         must not leak into the harness — it flips isDev() and disables the
+         webhook HMAC gates (WebhookHmacTest), diverging local runs from CI. -->
+    <env name="APP_ENV" value="testing" force="true"/>
+    <!-- <env> only reaches putenv()/$_ENV, but Laravel's env() consults
+         $_SERVER first, which still holds the shell-exported value; <server>
+         overwrites $_SERVER unconditionally (PHPUnit PhpHandler). -->
+    <server name="APP_ENV" value="testing"/>
+    <!-- Likewise, never read this machine's artisan caches (php artisan
+         config:cache / route:cache / event:cache, refreshed by app:init): a
+         cached config freezes app.env at the value it was cached with, and a
+         cached route collection changes which Router methods tests may call.
+         Point them at paths that never exist under the gitignored
+         .phpunit.cache so both dev machines and CI boot from source. -->
+    <env name="APP_CONFIG_CACHE" value=".phpunit.cache/cache/config.php" force="true"/>
+    <env name="APP_ROUTES_CACHE" value=".phpunit.cache/cache/routes-v7.php" force="true"/>
+    <env name="APP_EVENTS_CACHE" value=".phpunit.cache/cache/events.php" force="true"/>
+    <server name="APP_CONFIG_CACHE" value=".phpunit.cache/cache/config.php"/>
+    <server name="APP_ROUTES_CACHE" value=".phpunit.cache/cache/routes-v7.php"/>
+    <server name="APP_EVENTS_CACHE" value=".phpunit.cache/cache/events.php"/>
     <env name="BCRYPT_ROUNDS" value="4"/>
     <env name="CACHE_DRIVER" value="array" force="true"/>
     <env name="APP_MAINTENANCE_STORE" value="array" force="true"/>

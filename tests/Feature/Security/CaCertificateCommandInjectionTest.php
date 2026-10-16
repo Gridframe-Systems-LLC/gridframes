@@ -14,10 +14,7 @@ use Livewire\Livewire;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
-    // The settings layout the component renders reads the instance settings row;
-    // id 0 is not fillable, so it must be force-created exactly like the installer does.
-    InstanceSettings::forceCreate(['id' => 0]);
-
+    seedInstanceSettings();
     $this->user = User::factory()->create();
     $this->team = Team::factory()->create();
     $this->user->teams()->attach($this->team, ['role' => 'owner']);

@@ -18,7 +18,7 @@ test('apexcharts delegates tooltip chrome to the custom content', function () {
         ->toContain('border-neutral-200')
         ->toContain('dark:border-coolgray-300')
         ->toContain('rounded-lg')
-        ->toContain('shadow-lg');
+        ->toContain('shadow-dropdown');
 });
 
 test('metrics charts render custom tooltip content', function (string $view) {

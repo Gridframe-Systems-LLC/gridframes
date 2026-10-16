@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Queue;
 uses(RefreshDatabase::class);
 
 beforeEach(function () {
+    seedInstanceSettings();
     InstanceSettings::updateOrCreate(['id' => 0], ['is_api_enabled' => true]);
 
     $this->team = Team::factory()->create();

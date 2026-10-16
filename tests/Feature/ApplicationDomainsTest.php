@@ -412,7 +412,7 @@ it('manages preview domains and their dns status', function () {
     Livewire::test(PreviewDomains::class, ['preview' => $preview])
         ->assertSet('domainRows.0.url', 'https://44.example.com')
         ->call('checkDomainDns', 0)
-        ->assertSet('domainRows.0.dns_status', 'skipped')
+        ->assertSet('domainRows.0.dns_status', 'checking')
         ->set('newDomainParts.host', 'second.example.com')
         ->call('addDomain')
         ->assertHasNoErrors()
@@ -422,7 +422,10 @@ it('manages preview domains and their dns status', function () {
         ->assertCount('domainRows', 1);
 
     expect($preview->fresh()->fqdn)->toBe('https://second.example.com')
-        ->and($preview->fresh()->domain_dns_statuses)->not->toBeNull();
+        ->and($preview->fresh()->domain_dns_statuses)->not->toBeNull()
+        // The inline sync-run job persisted the skipped result (validation disabled);
+        // preview rows are keyed by their stable sha256(url|service) identity.
+        ->and($preview->fresh()->domain_dns_statuses[hash('sha256', 'https://second.example.com'.'|')]['status'] ?? null)->toBe('skipped');
 });
 
 it('removes the intended preview domains by stable identities after reindexing', function () {
@@ -1196,7 +1199,7 @@ it('marks dns status as skipped when dns validation is disabled', function () {
 
     Livewire::test(Domains::class, ['application' => $this->application->fresh()])
         ->call('checkAllDns')
-        ->assertSet('domainRows.0.dns_status', 'skipped');
+        ->assertSet('domainRows.0.dns_status', 'checking');
 
     $this->application->refresh();
     $statuses = $this->application->domain_dns_statuses;
@@ -1301,7 +1304,7 @@ it('persists dns status after checking a domain', function () {
 
     Livewire::test(Domains::class, ['application' => $this->application->fresh()])
         ->call('checkDomainDns', 0)
-        ->assertSet('domainRows.0.dns_status', 'failed');
+        ->assertSet('domainRows.0.dns_status', 'checking');
 
     $this->application->refresh();
     $entry = $this->application->domain_dns_statuses[$domain] ?? null;
@@ -1426,12 +1429,19 @@ it('resolves hostname server addresses to a real ip for dns messages', function 
 
     $component->call('checkAllDns');
 
-    $message = $component->get('domainRows.0.dns_message');
+    // The check runs queued; with the sync queue the inline job already
+    // persisted the result, so the guidance comes from the persisted entry.
+    $this->application->refresh();
+    $entry = $this->application->domain_dns_statuses['https://app.example.com'] ?? null;
+    expect($entry)->toBeArray();
+
+    $message = $entry['message'];
+    $resolvedIp = $entry['expected_ip'];
     $recordType = dnsRecordTypeForIp($resolvedIp);
 
     // Failed checks show required DNS record guidance; ok checks mention the hostname label.
-    if ($component->get('domainRows.0.dns_status') === 'failed') {
-        expect($message)->toBe("{$recordType} record → {$resolvedIp}")
+    if (($entry['status'] ?? null) === 'failed') {
+        expect($message)->toBe("Required DNS record type {$recordType} pointing to {$resolvedIp}")
             ->and($message)->not->toContain('CNAME');
     } else {
         expect($message)->toContain($resolvedIp)
@@ -1450,10 +1460,13 @@ it('uses short aaaa guidance when the server ip is ipv6', function () {
     $settings->save();
 
     $component = Livewire::test(Domains::class, ['application' => $this->application->fresh()])
-        ->call('checkDomainDns', 0);
+        ->call('checkDomainDns', 0)
+        ->assertSet('domainRows.0.dns_status', 'checking');
 
+    // The queued check ran inline (sync queue) and persisted its guidance.
+    $entry = $this->application->refresh()->domain_dns_statuses['https://this-domain-should-not-resolve-for-xlaunch-aaaa.invalid'] ?? null;
     expect($component->get('serverIp'))->toBe('2001:db8::10')
-        ->and($component->get('domainRows.0.dns_message'))->toBe('Required DNS record type AAAA pointing to 2001:db8::10');
+        ->and($entry['message'] ?? null)->toBe('Required DNS record type AAAA pointing to 2001:db8::10');
 });
 
 it('uses short a-record guidance for compose applications', function () {
@@ -1473,10 +1486,14 @@ it('uses short a-record guidance for compose applications', function () {
     $this->server->update(['ip' => '172.16.0.3']);
 
     $component = Livewire::test(Domains::class, ['application' => $this->application->fresh()])
-        ->call('checkDomainDns', 0);
+        ->call('checkDomainDns', 0)
+        ->assertSet('domainRows.0.dns_status', 'checking');
 
-    expect($component->get('domainRows.0.dns_message'))->toBe('Required DNS record type A pointing to 172.16.0.3')
-        ->and($component->get('domainRows.0.dns_status'))->toBe('failed');
+    // The queued check ran inline (sync queue) and persisted its guidance;
+    // compose domain rows are keyed with their service prefix.
+    $entry = $this->application->refresh()->domain_dns_statuses['web|https://compose-dns-test.invalid'] ?? null;
+    expect($entry['message'] ?? null)->toBe('Required DNS record type A pointing to 172.16.0.3')
+        ->and($entry['status'] ?? null)->toBe('failed');
 });
 
 it('normalizes domains before saving', function () {
@@ -2122,7 +2139,9 @@ it('regenerates an application domain as a draft while preserving its url settin
         ->assertSet('editingDomainParts.path', '/api');
 
     expect($component->get('editingDomainParts')['host'])
-        ->toEndWith('.sslip.io')
+        // The server has a wildcard configured, so generateUrl() regenerates
+        // under it — the sslip.io fallback only applies without a wildcard.
+        ->toEndWith('.wildcard.example.net')
         ->not->toBe('old.example.com')
         ->and($this->application->fresh()->fqdn)->toBe('http://old.example.com/api')
         ->and($this->application->fresh()->domain_port_overrides)->toMatchArray([
@@ -2363,8 +2382,9 @@ it('exposes the domains route in the application configuration menu', function (
 
     $this->get($url)
         ->assertSuccessful()
-        ->assertSeeLivewire(Domains::class)
-        ->assertSee('Domains');
+        ->assertSee('Domains')
+        // Livewire 3 embeds the component name in the snapshot markup.
+        ->assertSee('project.application.domains', false);
 });
 
 it('sets redirect direction per compose service without changing other services', function () {

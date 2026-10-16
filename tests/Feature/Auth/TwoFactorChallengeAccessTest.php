@@ -3,6 +3,7 @@
 use App\Models\InstanceSettings;
 use App\Models\Team;
 use App\Models\User;
+use App\Providers\RouteServiceProvider;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Request;
@@ -90,8 +91,11 @@ it('redirects an authenticated stale two-factor submission home instead of showi
 
     $response = app(ExceptionHandler::class)->render($request, new TokenMismatchException('CSRF token mismatch.'));
 
+    // The handler sends an authenticated user who re-submits a stale login or
+    // 2FA form to RouteServiceProvider::HOME (/dashboard since d3d0394be,
+    // "Give a selling instance a front door"), not the apex.
     expect($response->getStatusCode())->toBe(302)
-        ->and($response->headers->get('Location'))->toBe(url('/'));
+        ->and($response->headers->get('Location'))->toBe(url(RouteServiceProvider::HOME));
 });
 
 it('still returns 419 for a stale two-factor submission without an authenticated session', function () {

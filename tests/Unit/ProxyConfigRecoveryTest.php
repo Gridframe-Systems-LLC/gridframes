@@ -5,6 +5,9 @@ use Illuminate\Log\LogManager;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 use Spatie\SchemalessAttributes\SchemalessAttributes;
+use Tests\TestCase;
+
+uses(TestCase::class);
 
 beforeEach(function () {
     Log::spy();
