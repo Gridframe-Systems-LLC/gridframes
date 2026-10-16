@@ -56,6 +56,7 @@ All notable changes to this project will be documented in this file.
 - Update changelog
 - Update changelog
 - Update changelog
+- Update changelog
 
 ### 🧪 Testing
 
@@ -75,6 +76,8 @@ All notable changes to this project will be documented in this file.
 ### ⚙️ Miscellaneous Tasks
 
 - *(xlaunch)* Test gate — pest in CI, release needs green suite (I1)
+- Exempt operator from pr-quality rejection
+- Remove coercive STRAWBERRY mandate from PR template
 
 ## [4.4.0] - 2026-09-24
 
