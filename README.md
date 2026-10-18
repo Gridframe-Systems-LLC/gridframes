@@ -1,12 +1,18 @@
-# Xlaunch Deploy
+# GridFrames
 
-A deployment control plane you run for your customers: they sign up, pick a tier, connect or
-receive machines, and deploy anything — applications, databases, one-click services, agents —
-with automatic HTTPS, a proxy, previews and multi-server orchestration over SSH. You operate it
-from a console that sees every team.
+Agent-native deployment platform: customers connect a machine, deploy from Git or a Docker
+image, and get HTTPS, databases, one-click services, previews and a REST API — with an agent
+surface that can drive all of it. You operate the platform from a console that sees every team.
 
-Xlaunch Deploy is software of **Northlatch Labs LLC**, licensed to operators under a commercial
+GridFrames is software of **GridFrame Systems LLC**, licensed to operators under a commercial
 agreement. See [`LICENSING.md`](./LICENSING.md).
+
+## Status
+
+In active development. The deployment core (machines, deployments, databases, HTTPS, proxy,
+API) is running in production; provisioning of machines from pools and the agent front door
+are the next major pieces. See the roadmap in
+[`docs/product/OPERATIONS.md`](./docs/product/OPERATIONS.md).
 
 ## Two modes, one code base
 
@@ -21,7 +27,7 @@ storefront switched off, useful for a licensee's own internal workbench.
 ## What a customer gets
 
 - Sign-up, email verification, a team, invitations
-- A choice of tiers on `/subscription/new`; each grants the team an allowance of machines
+- A choice of tiers; each grants the team an allowance of machines
 - Servers connected over SSH (provisioning machines for them is on the roadmap, see `docs/product/OPERATIONS.md`)
 - Deployments from Git, Docker images and Compose; one-click services; databases with backups
 - Automatic HTTPS for every address, a proxy, preview environments, scheduled tasks
@@ -34,19 +40,29 @@ storefront switched off, useful for a licensee's own internal workbench.
 - Stripe as the payment processor (checkout, webhook, customer portal), test or live
 - The platform's own database backed up nightly by itself
 
-## Documents
+## Getting started (operators)
 
-- [`docs/product/INSTALL.md`](./docs/product/INSTALL.md) — a fresh Ubuntu server to a running instance
-- [`docs/product/CONFIGURATION.md`](./docs/product/CONFIGURATION.md) — every setting the product reads
-- [`docs/product/OPERATIONS.md`](./docs/product/OPERATIONS.md) — running it: backups, mail, the API, hardening, upgrades, roadmap
-- [`docs/product/CHANGES.md`](./docs/product/CHANGES.md) — what this product changes against the software it is built on
+1. [`docs/product/INSTALL.md`](./docs/product/INSTALL.md) — a fresh Ubuntu server to a running instance
+2. [`docs/product/CONFIGURATION.md`](./docs/product/CONFIGURATION.md) — every setting the product reads
+3. [`docs/product/OPERATIONS.md`](./docs/product/OPERATIONS.md) — running it: backups, mail, the API, hardening, upgrades, roadmap
+
+## Security
+
+Vulnerability reports: [`SECURITY.md`](./SECURITY.md). Please do not open public issues for
+security problems. Every release image is built by CI from a tagged commit
+(`.github/workflows/deploy-ovh.yml`); base images are pinned by digest.
+
+## Contributing
+
+PRs welcome. CI enforces a conventional PR title, a description, and the repository's
+contributor agreement (`.github/PULL_REQUEST_TEMPLATE.md`). Keep AI-generated content out of
+commit messages and PR descriptions — contributions should read as written by their author.
+Commit small, test what you ship, and match the surrounding code style.
+
+## Licence & provenance
+
 - [`LICENSING.md`](./LICENSING.md) — the licence this repository is offered under, and the open-source obligations it carries
 - [`NOTICE.md`](./NOTICE.md) — attribution
-- [`SECURITY.md`](./SECURITY.md) — reporting a vulnerability
-
-## Provenance
-
-Xlaunch Deploy is built on [Coolify](https://github.com/coollabsio/coolify) 4.3.19
-(`coollabsio/coolify@59eacc9f`), which is licensed under the Apache License 2.0. The upstream
-licence text is kept verbatim in [`LICENSE`](./LICENSE). The modifications and additions that make
-it Xlaunch Deploy are Copyright 2026 Northlatch Labs LLC. See `NOTICE.md` and `LICENSING.md`.
+- Built on [Coolify](https://github.com/coollabsio/coolify) 4.3.19 (`coollabsio/coolify@59eacc9f`),
+  licensed under the Apache License 2.0; upstream licence text kept verbatim in [`LICENSE`](./LICENSE).
+  The modifications and additions that make it GridFrames are Copyright 2026 GridFrame Systems LLC.
