@@ -4,9 +4,14 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 🚀 Features
+
+- *(legal)* Cookie consent notice on public pages
+
 ### 🐛 Bug Fixes
 
 - *(xlaunch)* Three app defects flagged by triage — domains filter, is_literal cast, sentinel gate (I3)
+- *(build)* Pin serversideup base image by digest
 
 ### 💼 Other
 
@@ -18,9 +23,11 @@ All notable changes to this project will be documented in this file.
 - *(ignore)* Block real env files from git staging
 - *(ignore)* Block real env files from git staging
 - Untrack environment files, add placeholder templates
+- Stop tracking .env.dusk.ci (PR #1 missed it; populated 8-char DB_PASSWORD, CI-local dummy per estate audit)
 
 ### 📚 Documentation
 
+- Update changelog
 - Update changelog
 - Update changelog
 - Update changelog
