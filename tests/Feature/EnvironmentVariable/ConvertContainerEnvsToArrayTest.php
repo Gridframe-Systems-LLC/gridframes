@@ -228,8 +228,8 @@ test('convertContainerEnvsToArray', function () {
                   "com.docker.compose.image": "sha256:4100a24644378a24cdbe3def6fc2346999c53d87b12180c221ebb17f05259948",
                   "com.docker.compose.oneoff": "False",
                   "com.docker.compose.project": "xlaunch",
-                  "com.docker.compose.project.config_files": "/Users/heyandras/devel/xlaunch/docker-compose.yml,/Users/heyandras/devel/xlaunch/docker-compose.dev.yml",
-                  "com.docker.compose.project.working_dir": "/Users/heyandras/devel/xlaunch",
+                  "com.docker.compose.project.config_files": "/home/operator/devel/xlaunch/docker-compose.yml,/home/operator/devel/xlaunch/docker-compose.dev.yml",
+                  "com.docker.compose.project.working_dir": "/home/operator/devel/xlaunch",
                   "com.docker.compose.service": "postgres",
                   "com.docker.compose.version": "2.32.4"
               },
