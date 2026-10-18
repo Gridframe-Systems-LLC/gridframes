@@ -34,6 +34,7 @@
 
 <body>
     {{ $slot }}
+    @include('components.cookie-notice')
 </body>
 
 </html>
