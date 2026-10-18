@@ -80,3 +80,5 @@ docker/minio-mc/
 !.env.example
 !.env.*.example
 !.env.template
+# CI env carried a populated password (estate audit 2026-10-17, PR #1 missed it)
+other/nightly/.env*
