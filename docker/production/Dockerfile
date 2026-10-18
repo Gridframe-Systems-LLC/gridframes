@@ -21,7 +21,11 @@ ARG GROUP_ID=9999
 # =================================================================
 # Stage 1: Composer dependencies
 # =================================================================
-FROM serversideup/php:${SERVERSIDEUP_PHP_VERSION} AS base
+# Base is pinned BY DIGEST: the floating alpine tag moved v4.5.1 → v5.0.1 on
+# 2026-10-17 and the new base drops /etc/s6-overlay/s6-rc.d/user/type, which
+# boot-loops the container (prod incident, estate audit addendum-4). Bump the
+# digest deliberately, with a diag-container health check, never by pull.
+FROM serversideup/php:${SERVERSIDEUP_PHP_VERSION}@sha256:32cd3e7b02a2f9014d7f272f8299eea7dca8eba1e44bbb3971bac28693df2cb8 AS base
 
 USER root
 
@@ -72,7 +76,7 @@ COPY docker/minio-mc/mc /usr/bin/mc
 # =================================================================
 # Final Stage: Production image
 # =================================================================
-FROM serversideup/php:${SERVERSIDEUP_PHP_VERSION}
+FROM serversideup/php:${SERVERSIDEUP_PHP_VERSION}@sha256:32cd3e7b02a2f9014d7f272f8299eea7dca8eba1e44bbb3971bac28693df2cb8
 
 ARG USER_ID
 ARG GROUP_ID
