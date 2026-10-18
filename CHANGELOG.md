@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 ## [unreleased]
 
+### 📚 Documentation
+
+- Update changelog
+- Rewrite README for GridFrames; harden PR quality gate
+
+### ⚙️ Miscellaneous Tasks
+
+- Pseudonymize local developer path in test fixture
+
+## [4.4.14] - 2026-10-18
+
 ### 🚀 Features
 
 - *(legal)* Cookie consent notice on public pages
